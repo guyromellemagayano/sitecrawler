@@ -125,11 +125,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 							</label>
 							<div tw="relative w-full text-gray-400 focus-within:text-gray-600 flex items-center ">
 								<div tw="absolute inset-y-0 left-0 flex items-center pointer-events-none">
-									{sitesCount > 0 &&
-									isComponentReady &&
-									user &&
-									Math.round(user?.status / 100) === 2 &&
-									!user?.data?.detail ? (
+									{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 										<SearchIcon tw="h-5 w-5 text-gray-400" />
 									) : (
 										<Skeleton duration={2} width={20} height={20} />

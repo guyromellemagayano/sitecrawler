@@ -1,6 +1,6 @@
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import { orderingByNameQuery, perPageQuery } from "@constants/GlobalValues";
-import { ScanSlug, SiteImagesSlug, SiteLinksSlug } from "@constants/PageLinks";
+import { ScanSlug, SiteLinkSlug, SiteLinksSlug } from "@constants/PageLinks";
 import { handleConversionStringToNumber } from "@utils/convertCase";
 import { useRouter } from "next/router";
 import { useScan } from "./useScan";
@@ -16,37 +16,37 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 	const { asPath, query } = useRouter();
 	const { siteId } = query;
 
+	// Custom variables
+	const sanitizedSiteId = handleConversionStringToNumber(siteId);
+
 	// Site `scan` SWR hook
-	const { scanObjId } = useScan(siteId, {
-		revalidateOnFocus: false
-	});
+	const { scan, scanObjId } = useScan(sanitizedSiteId);
 
 	// Custom variables
-	let scanApiEndpoint = "";
+	let scanApiEndpoint = SitesApiEndpoint;
 	let queryString = "";
 
-	if (asPath.includes(SiteImagesSlug)) {
-		scanApiEndpoint =
-			SitesApiEndpoint +
-			handleConversionStringToNumber(siteId) +
-			ScanSlug +
-			scanObjId +
-			SiteLinksSlug +
-			"?" +
-			perPageQuery +
-			linksPerPage +
-			"&" +
-			orderingByNameQuery +
-			"name";
-	} else {
-		scanApiEndpoint = SitesApiEndpoint + "?" + perPageQuery + linksPerPage + "&" + orderingByNameQuery + "name";
+	if (asPath.includes(SiteLinksSlug)) {
+		scanApiEndpoint += sanitizedSiteId + ScanSlug + scanObjId + SiteLinkSlug;
 	}
+
+	scanApiEndpoint += "?" + perPageQuery + linksPerPage + "&" + orderingByNameQuery + "name";
 
 	const verifiedQuery = query?.verified
 		? scanApiEndpoint.includes("?")
 			? `&verified=${query.verified}`
 			: `?verified=${query.verified}`
 		: "";
+
+	const statusNeqQuery = query?.status__neq
+		? scanApiEndpoint.includes("?")
+			? `&status__neq=${query.status__neq}`
+			: `?status__neq=${query.status__neq}`
+		: "";
+
+	const typeString = Array.isArray(query?.type) ? query.type.join("&type=") : query.type;
+
+	const typeQuery = query?.type ? (scanApiEndpoint.includes("?") ? `&type=${typeString}` : `?type=${typeString}`) : "";
 
 	const pageQuery = query?.page ? (scanApiEndpoint.includes("?") ? `&page=${query.page}` : `?page=${query.page}`) : "";
 
@@ -63,10 +63,15 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 		: "";
 
 	queryString += verifiedQuery;
+	queryString += statusNeqQuery;
+	queryString += typeQuery;
 	queryString += pageQuery;
 	queryString += searchQuery;
 	queryString += orderingQuery;
+
 	scanApiEndpoint += queryString;
+
+	console.log(scanApiEndpoint);
 
 	return { scanApiEndpoint };
 };

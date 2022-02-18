@@ -43,7 +43,7 @@ const SiteMenu = () => {
 	// SWR hooks
 	const { user } = useUser();
 	const { scan, scanObjId } = useScan(sanitizedSiteId);
-	const { stats, validatingStats } = useStats(sanitizedSiteId, scanObjId);
+	const { stats, totalImages, totalLinks, totalPages } = useStats(sanitizedSiteId, scanObjId);
 
 	return (
 		<Scrollbars renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />} universal>
@@ -165,42 +165,64 @@ const SiteMenu = () => {
 															) : null}
 
 															{value2.title ? (
-																<>
-																	<span>
-																		{isComponentReady &&
-																		user &&
-																		Math.round(user?.status / 100) === 2 &&
-																		!user?.data?.detail ? (
-																			value2.title
-																		) : (
-																			<Skeleton duration={2} width={128} height={20} />
-																		)}
+																<span>
+																	{isComponentReady &&
+																	user &&
+																	Math.round(user?.status / 100) === 2 &&
+																	!user?.data?.detail ? (
+																		value2.title
+																	) : (
+																		<Skeleton duration={2} width={128} height={20} />
+																	)}
+																</span>
+															) : null}
+
+															{value2.slug === "links" ? (
+																isComponentReady &&
+																user &&
+																Math.round(user?.status / 100) === 2 &&
+																!user?.data?.detail &&
+																totalLinks ? (
+																	<span tw="ml-auto inline-block text-xs leading-4 rounded-full py-1 px-3 bg-white text-black">
+																		{totalLinks}
 																	</span>
+																) : (
+																	<span tw="flex items-center rounded-full">
+																		<Skeleton duration={2} width={30} height={20} tw="ml-3" />
+																	</span>
+																)
+															) : null}
 
-																	{value2.slug === "links" ? (
-																		!validatingStats && stats?.data?.num_links ? (
-																			<span tw="ml-auto inline-block text-xs leading-4 rounded-full py-1 px-3 bg-white text-black">
-																				{stats.data.num_links}
-																			</span>
-																		) : null
-																	) : null}
+															{value2.slug === "pages" ? (
+																isComponentReady &&
+																user &&
+																Math.round(user?.status / 100) === 2 &&
+																!user?.data?.detail &&
+																stats?.data?.num_pages ? (
+																	<span tw="ml-auto inline-block text-xs leading-4 rounded-full py-1 px-3 bg-white text-black">
+																		{stats.data.num_pages}
+																	</span>
+																) : (
+																	<span tw="flex items-center rounded-full">
+																		<Skeleton duration={2} width={30} height={20} tw="ml-3" />
+																	</span>
+																)
+															) : null}
 
-																	{value2.slug === "pages" ? (
-																		!validatingStats && stats?.data?.num_pages ? (
-																			<span tw="ml-auto inline-block text-xs leading-4 rounded-full py-1 px-3 bg-white text-black">
-																				{stats.data.num_pages}
-																			</span>
-																		) : null
-																	) : null}
-
-																	{value2.slug === "images" ? (
-																		!validatingStats && stats?.data?.num_images ? (
-																			<span tw="ml-auto inline-block text-xs leading-4 rounded-full py-1 px-3 bg-white text-black">
-																				{stats.data.num_images}
-																			</span>
-																		) : null
-																	) : null}
-																</>
+															{value2.slug === "images" ? (
+																isComponentReady &&
+																user &&
+																Math.round(user?.status / 100) === 2 &&
+																!user?.data?.detail &&
+																stats?.data?.num_images ? (
+																	<span tw="ml-auto inline-block text-xs leading-4 rounded-full py-1 px-3 bg-white text-black">
+																		{stats.data.num_images}
+																	</span>
+																) : (
+																	<span tw="flex items-center rounded-full">
+																		<Skeleton duration={2} width={30} height={20} tw="ml-3" />
+																	</span>
+																)
 															) : null}
 														</a>
 													</Link>

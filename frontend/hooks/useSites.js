@@ -27,7 +27,7 @@ export const useSites = (endpoint = null, options = null) => {
 	// SWR hook
 	const { data: sites, error: errorSites, isValidating: validatingSites } = useMainSWRConfig(currentEndpoint, options);
 
-	useMemo(() => {
+	useMemo(async () => {
 		if (errorSites) {
 			// Show alert message after failed `user` SWR hook fetch
 			errorSites
@@ -40,7 +40,7 @@ export const useSites = (endpoint = null, options = null) => {
 		}
 	}, [errorSites]);
 
-	useMemo(() => {
+	useMemo(async () => {
 		if (sites?.data) {
 			if (sites.data?.count) {
 				setSitesCount(sites.data.count);
@@ -52,7 +52,7 @@ export const useSites = (endpoint = null, options = null) => {
 		}
 
 		return { sitesResults, sitesCount };
-	}, [sites]);
+	}, [sites, sitesResults, sitesCount]);
 
 	return { sites, validatingSites, sitesResults, sitesCount };
 };

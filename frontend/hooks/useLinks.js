@@ -16,7 +16,7 @@ export const useLinks = (endpoint = null, querySid = null, scanObjId = null, opt
 	const [linksResults, setLinksResults] = useState([]);
 
 	// Custom context
-	const { setConfig: setSitesConfig } = useContext(SiteCrawlerAppContext);
+	const { setConfig: setLinksConfig } = useContext(SiteCrawlerAppContext);
 
 	// Custom variables
 	const currentEndpoint =
@@ -35,11 +35,11 @@ export const useLinks = (endpoint = null, querySid = null, scanObjId = null, opt
 	// SWR hook
 	const { data: links, error: errorLinks, isValidating: validatingLinks } = useMainSWRConfig(currentEndpoint, options);
 
-	useMemo(() => {
+	useMemo(async () => {
 		if (errorLinks) {
 			// Show alert message after failed `user` SWR hook fetch
 			errorLinks
-				? setSitesConfig({
+				? setLinksConfig({
 						isStats: true,
 						method: errorLinks?.config?.method ?? null,
 						status: errorLinks?.status ?? null
@@ -48,7 +48,7 @@ export const useLinks = (endpoint = null, querySid = null, scanObjId = null, opt
 		}
 	}, [errorLinks]);
 
-	useMemo(() => {
+	useMemo(async () => {
 		if (links?.data) {
 			if (links.data?.count) {
 				setLinksCount(links.data.count);
@@ -60,7 +60,7 @@ export const useLinks = (endpoint = null, querySid = null, scanObjId = null, opt
 		}
 
 		return { linksResults, linksCount };
-	}, [links]);
+	}, [links, linksResults, linksCount]);
 
 	return { links, errorLinks, validatingLinks, linksResults, linksCount };
 };

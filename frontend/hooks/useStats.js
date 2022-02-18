@@ -39,7 +39,7 @@ export const useStats = (querySid = null, scanObjId = null, options = null) => {
 	// SWR hook
 	const { data: stats, error: errorStats, isValidating: validatingStats } = useMainSWRConfig(currentEndpoint, options);
 
-	useMemo(() => {
+	useMemo(async () => {
 		if (errorStats) {
 			// Show alert message after failed `user` SWR hook fetch
 			errorStats
@@ -52,7 +52,7 @@ export const useStats = (querySid = null, scanObjId = null, options = null) => {
 		}
 	}, [errorStats]);
 
-	useMemo(() => {
+	useMemo(async () => {
 		if (stats?.data) {
 			const currentTotalImages = stats.data?.num_images ?? 0;
 			const currentTotalLinks = stats.data?.num_links ?? 0;
@@ -83,7 +83,7 @@ export const useStats = (querySid = null, scanObjId = null, options = null) => {
 		}
 
 		return { totalImages, totalLinks, totalPages, linkErrors, pageErrors, imageErrors, seoErrors, totalErrors };
-	}, [stats]);
+	}, [stats, totalImages, totalLinks, totalPages, linkErrors, pageErrors, imageErrors, seoErrors, totalErrors]);
 
 	return {
 		stats,

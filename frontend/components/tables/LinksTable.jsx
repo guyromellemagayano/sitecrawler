@@ -1,23 +1,23 @@
 import { MemoizedLoadingMessage } from "@components/messages/LoadingMessage";
 import { MemoizedDataSorting } from "@components/sorting/DataSorting";
-import { SitesTableLabels } from "@constants/SitesTableLabels";
+import { LinksTableLabels } from "@constants/LinksTableLabels";
 import { useSiteQueries } from "@hooks/useSiteQueries";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { memo } from "react";
 import tw from "twin.macro";
-import { MemoizedSitesData } from "./SitesData";
+import { MemoizedLinksData } from "./LinksData";
 
 /**
- * Custom function to render the `SitesTable` component
+ * Custom function to render the `LinksTable` component
  *
  * @param {object} sites
  */
-const SitesTable = ({ count = 0, results = [] }) => {
+const LinksTable = ({ count = 0, results = [] }) => {
 	// Translations
 	const { t } = useTranslation();
-	const noAvailableSites = t("sites:noAvailableSites");
+	const noAvailableLinks = t("sites:noAvailableLinks");
 	const loaderMessage = t("common:loaderMessage");
 
 	// Router
@@ -27,7 +27,7 @@ const SitesTable = ({ count = 0, results = [] }) => {
 	const { setPagePath } = useSiteQueries();
 
 	// Sites table labels with translations
-	const labelsArray = SitesTableLabels();
+	const labelsArray = LinksTableLabels();
 
 	return (
 		<section
@@ -57,24 +57,24 @@ const SitesTable = ({ count = 0, results = [] }) => {
 
 					<tbody tw="relative divide-y divide-gray-200">
 						{results.map((result) => {
-							return <MemoizedSitesData key={result.id} site={result} />;
+							return <MemoizedLinksData key={result.id} link={result} />;
 						})}
 					</tbody>
 				</table>
 			) : count === 0 && results?.length === 0 ? (
 				<div tw="px-4 py-5 sm:p-6 flex items-center justify-center">
-					<MemoizedLoadingMessage message={noAvailableSites} />
+					<MemoizedLoadingMessage message={noAvailableLinks} />
 				</div>
 			) : null}
 		</section>
 	);
 };
 
-SitesTable.propTypes = {
+LinksTable.propTypes = {
 	sites: PropTypes.any
 };
 
 /**
- * Memoized custom `SitesTable` component
+ * Memoized custom `LinksTable` component
  */
-export const MemoizedSitesTable = memo(SitesTable);
+export const MemoizedLinksTable = memo(LinksTable);

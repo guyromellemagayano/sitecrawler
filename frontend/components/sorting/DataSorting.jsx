@@ -6,7 +6,7 @@ import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import { handleConversionStringToCamelCase, handleConversionStringToLowercase } from "@utils/convertCase";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { memo, useState } from "react";
 import { useSWRConfig } from "swr";
 import "twin.macro";
 
@@ -15,13 +15,13 @@ const initialOrder = {
 };
 
 /**
- * Custom function to render the `SitesSorting` common component
+ * Custom function to render the `DataSorting` common component
  *
  * @param {string} slug
  * @param {array} labels
  * @param {function} setPagePath
  */
-export const SitesSorting = ({ slug = null, labels = null, setPagePath }) => {
+const DataSorting = ({ slug = null, labels = null, setPagePath }) => {
 	const [sortOrder, setSortOrder] = useState(initialOrder);
 
 	// Router
@@ -66,29 +66,29 @@ export const SitesSorting = ({ slug = null, labels = null, setPagePath }) => {
 		await mutate(SitesApiEndpoint);
 
 		// Push new path
-		return push(newPath);
+		push(newPath);
 	};
 
-	return slug !== null ? (
+	return slug ? (
 		<div tw="flex flex-row mr-3">
 			<div tw="inline-flex">
-				{slug === "site-name" ? (
-					<MemoizedSorting
-						sortOrder={sortOrder}
-						setSortOrder={setSortOrder}
-						tableContent={labels}
-						ordering={query?.ordering ?? null}
-						handleSort={handleSort}
-						slug={slug}
-					/>
-				) : null}
+				<MemoizedSorting
+					sortOrder={sortOrder}
+					setSortOrder={setSortOrder}
+					tableContent={labels}
+					ordering={query?.ordering ?? null}
+					handleSort={handleSort}
+					slug={slug}
+				/>
 			</div>
 		</div>
 	) : null;
 };
 
-SitesSorting.propTypes = {
+DataSorting.propTypes = {
 	labels: PropTypes.array,
 	setPagePath: PropTypes.func,
 	slug: PropTypes.string
 };
+
+export const MemoizedDataSorting = memo(DataSorting);

@@ -140,17 +140,17 @@ export const useScan = (querySid = null, options = null) => {
 			setCurrentScan(currentScanResult);
 			setPreviousScan(previousScanResult);
 
-			if (currentScan !== null) {
-				setScanObjId(currentScan.id);
-			} else if (previousScan !== null) {
+			if ((currentScan !== null && previousScan !== null) || (currentScan == null && previousScan !== null)) {
 				setScanObjId(previousScan.id);
+			} else if (currentScan !== null && previousScan == null) {
+				setScanObjId(currentScan.id);
 			} else {
 				setScanObjId(0);
 			}
 		}
 
 		return { scanResults, scanCount, currentScan, previousScan, scanObjId };
-	}, [scan]);
+	}, [scan, scanResults, scanCount, currentScan, previousScan, scanObjId]);
 
 	return {
 		currentScan,
