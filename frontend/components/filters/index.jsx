@@ -78,7 +78,7 @@ const Filter = ({
 
 	// Custom hooks
 	const { linksPerPage, setPagePath } = useSiteQueries();
-	const { scanApiEndpoint } = useScanApiEndpoint(linksPerPage, filterType);
+	const { scanApiEndpoint } = useScanApiEndpoint(linksPerPage);
 
 	// Instantiate the query string
 	useEffect(() => {
@@ -86,7 +86,7 @@ const Filter = ({
 	});
 
 	// Handle filter URLs
-	const handleFilterUrl = (e) => {
+	const handleFilterUrl = async (e) => {
 		const filterValue = e?.target?.value;
 		const filterChecked = e?.target?.checked;
 
@@ -141,7 +141,7 @@ const Filter = ({
 		if (newPath.includes("?")) setPagePath(`${newPath}&`);
 		else setPagePath(`${newPath}?`);
 
-		mutate(scanApiEndpoint);
+		await mutate(scanApiEndpoint);
 		push(newPath);
 	};
 
@@ -176,7 +176,7 @@ const Filter = ({
 				};
 			}
 		}
-	}, [query, filterType]);
+	}, [query]);
 
 	return (
 		<form tw="px-4 py-5 border border-gray-300 sm:px-6 bg-white rounded-lg lg:flex lg:justify-between">

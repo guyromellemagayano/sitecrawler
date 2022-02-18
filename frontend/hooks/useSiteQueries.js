@@ -1,7 +1,7 @@
 import { MaxSitesPerPage } from "@constants/GlobalValues";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 
 /**
  * Custom hook that handles the site queries
@@ -16,9 +16,10 @@ export const useSiteQueries = () => {
 	// Router
 	const { asPath, query } = useRouter();
 
-	useEffect(() => {
+	useMemo(() => {
 		let isMounted = true;
 
+		// Handle the queries
 		(async () => {
 			handleRemoveUrlParameter(asPath, "page").includes("?")
 				? setPagePath(`${handleRemoveUrlParameter(asPath, "page")}&`)
@@ -31,7 +32,7 @@ export const useSiteQueries = () => {
 		return () => {
 			isMounted = false;
 		};
-	}, [query, asPath]);
+	}, [query, pagePath]);
 
 	return { linksPerPage, setLinksPerPage, pagePath, setPagePath, searchKey, setSearchKey };
 };

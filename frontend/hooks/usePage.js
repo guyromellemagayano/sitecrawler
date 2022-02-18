@@ -1,5 +1,5 @@
 import { SiteCrawlerAppContext } from "@pages/_app";
-import { useContext, useMemo } from "react";
+import { useContext, useMemo, useState } from "react";
 import { useMainSWRConfig } from "./useMainSWRConfig";
 
 /**
@@ -10,6 +10,8 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  * @returns {object} page, errorPage, validatingPage
  */
 export const usePage = (endpoint = null, options = null) => {
+	const [pageCount, setPageCount] = useState(0);
+
 	// Custom context
 	const { setConfig: setPageConfig } = useContext(SiteCrawlerAppContext);
 
@@ -42,5 +44,25 @@ export const usePage = (endpoint = null, options = null) => {
 		};
 	}, [errorPage]);
 
-	return { page, errorPage, validatingPage };
+	useMemo(() => {
+		let isMounted = true;
+
+		(async () => {
+			if (!isMounted) return;
+
+			if (page?.data) {
+				if (page.data?.count) {
+					setPageCount(page.data.count);
+				}
+			}
+
+			return { pageCount };
+		})();
+
+		return () => {
+			isMounted = false;
+		};
+	}, [page]);
+
+	return { page, errorPage, validatingPage, pageCount };
 };
