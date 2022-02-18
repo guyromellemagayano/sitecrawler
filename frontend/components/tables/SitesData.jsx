@@ -15,11 +15,11 @@ import "react-loading-skeleton/dist/skeleton.css";
 import tw from "twin.macro";
 
 /**
- * Custom function to render the `DataTable` component
+ * Custom function to render the `SitesData` component
  *
  * @param {object} site
  */
-const DataTable = ({ site = null }) => {
+const SitesData = ({ site = null }) => {
 	// Site data props
 	const siteId = site?.id ?? null;
 	const siteName = site?.name ?? null;
@@ -83,14 +83,10 @@ const DataTable = ({ site = null }) => {
 		handleCrawl,
 		selectedSiteRef,
 		scanResults
-	} = useScan(siteId, {
-		revalidateOnFocus: false
-	});
+	} = useScan(siteId);
 
 	// Site `stats` SWR hook
-	const { stats, totalErrors, totalImages, totalLinks, totalPages } = useStats(siteId, scanObjId, {
-		revalidateOnFocus: false
-	});
+	const { stats, totalErrors, totalImages, totalLinks, totalPages } = useStats(siteId, scanObjId);
 
 	return (
 		<tr ref={selectedSiteRef}>
@@ -326,7 +322,7 @@ const DataTable = ({ site = null }) => {
 	);
 };
 
-DataTable.propTypes = {
+SitesData.propTypes = {
 	site: PropTypes.shape({
 		id: PropTypes.number,
 		name: PropTypes.string,
@@ -337,6 +333,6 @@ DataTable.propTypes = {
 };
 
 /**
- * Memoized custom `DataTable` component
+ * Memoized custom `SitesData` component
  */
-export const MemoizedDataTable = memo(DataTable);
+export const MemoizedSitesData = memo(SitesData);

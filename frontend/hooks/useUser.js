@@ -30,7 +30,7 @@ export const useUser = (options = null) => {
 	// SWR hook
 	const { data: user, error: errorUser, isValidating: validatingUser } = useMainSWRConfig(UserApiEndpoint, options);
 
-	useMemo(() => {
+	useMemo(async () => {
 		if (errorUser) {
 			// Show alert message after failed `user` SWR hook fetch
 			errorUser
@@ -43,7 +43,7 @@ export const useUser = (options = null) => {
 		}
 	}, [errorUser]);
 
-	useMemo(() => {
+	useMemo(async () => {
 		if (user?.data) {
 			// Update `settings` user setting
 			if (user.data?.settings) {
@@ -110,20 +110,29 @@ export const useUser = (options = null) => {
 			userIdApiEndpoint,
 			userId,
 			username,
-			setUsername,
 			email,
-			setEmail,
 			firstname,
-			setFirstname,
 			lastname,
-			setLastname,
 			group,
 			settings,
-			setSettings,
 			permissions,
 			largePageSizeThreshold
 		};
-	}, [user]);
+	}, [
+		user,
+		disableLocalTime,
+		maxSiteLimit,
+		userIdApiEndpoint,
+		userId,
+		username,
+		email,
+		firstname,
+		lastname,
+		group,
+		settings,
+		permissions,
+		largePageSizeThreshold
+	]);
 
 	return {
 		disableLocalTime,

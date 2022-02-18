@@ -32,7 +32,7 @@ const DataPagination = () => {
 
 	// SWR hooks
 	const { user } = useUser();
-	const { page, pageCount } = usePage(scanApiEndpoint);
+	const { pageCount } = usePage(scanApiEndpoint);
 
 	// Custom variables
 	const currentPage = query?.page ? parseInt(query.page) : 1;

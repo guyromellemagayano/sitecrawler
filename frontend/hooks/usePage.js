@@ -21,48 +21,28 @@ export const usePage = (endpoint = null, options = null) => {
 	// SWR hook
 	const { data: page, error: errorPage, isValidating: validatingPage } = useMainSWRConfig(currentEndpoint, options);
 
-	useMemo(() => {
-		let isMounted = true;
-
-		(async () => {
-			if (!isMounted) return;
-
-			if (errorPage) {
-				// Show alert message after failed `user` SWR hook fetch
-				errorPage
-					? setPageConfig({
-							isPage: true,
-							method: errorPage?.config?.method ?? null,
-							status: errorPage?.status ?? null
-					  })
-					: null;
-			}
-		})();
-
-		return () => {
-			isMounted = false;
-		};
+	useMemo(async () => {
+		if (errorPage) {
+			// Show alert message after failed `user` SWR hook fetch
+			errorPage
+				? setPageConfig({
+						isPage: true,
+						method: errorPage?.config?.method ?? null,
+						status: errorPage?.status ?? null
+				  })
+				: null;
+		}
 	}, [errorPage]);
 
-	useMemo(() => {
-		let isMounted = true;
-
-		(async () => {
-			if (!isMounted) return;
-
-			if (page?.data) {
-				if (page.data?.count) {
-					setPageCount(page.data.count);
-				}
+	useMemo(async () => {
+		if (page?.data) {
+			if (page.data?.count) {
+				setPageCount(page.data.count);
 			}
+		}
 
-			return { pageCount };
-		})();
-
-		return () => {
-			isMounted = false;
-		};
-	}, [page]);
+		return { pageCount };
+	}, [page, pageCount]);
 
 	return { page, errorPage, validatingPage, pageCount };
 };

@@ -103,7 +103,87 @@ const Filter = ({
 		let newPath = asPath;
 		newPath = handleRemoveUrlParameter(newPath, "page");
 
-		if (filterType === "sites") {
+		if (filterType === "links") {
+			if (filterValue === "linksWithIssues" && filterChecked) {
+				setLinksWithIssuesFilter(true);
+				setNoLinkIssuesFilter(false);
+				setAllLinksFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "status");
+
+				if (newPath.includes("?")) newPath += `&status__neq=OK`;
+				else newPath += `?status__neq=OK`;
+			} else if (filterValue === "linksWithIssues" && !filterChecked) {
+				filterQueryString?.delete("status__neq") ?? null;
+
+				if (newPath.includes("status__neq")) newPath = handleRemoveUrlParameter(newPath, "status__neq");
+
+				setLinksWithIssuesFilter(false);
+			}
+
+			if (filterValue === "noIssues" && filterChecked) {
+				setLinksWithIssuesFilter(false);
+				setNoLinkIssuesFilter(true);
+				setAllLinksFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "status__neq");
+
+				if (newPath.includes("?")) newPath += `&status=OK`;
+				else newPath += `?status=OK`;
+			} else if (filterValue === "noIssues" && !filterChecked) {
+				filterQueryString?.delete("status") ?? null;
+
+				if (newPath.includes("status")) newPath = handleRemoveUrlParameter(newPath, "status");
+
+				setNoLinkIssuesFilter(false);
+			}
+
+			if (filterValue === "internalLinks" && filterChecked) {
+				setInternalLinksFilter(true);
+				setExternalLinksFilter(false);
+				setAllLinksFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "type");
+
+				if (newPath.includes("?")) newPath += `&type=PAGE`;
+				else newPath += `?type=PAGE`;
+			} else if (filterValue === "internalLinks" && !filterChecked) {
+				filterQueryString?.delete("type") ?? null;
+
+				if (newPath.includes("type")) newPath = handleRemoveUrlParameter(newPath, "type");
+
+				setInternalLinksFilter(false);
+			}
+
+			if (filterValue === "externalLinks" && filterChecked) {
+				setExternalLinksFilter(true);
+				setInternalLinksFilter(false);
+				setAllLinksFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "type");
+
+				if (newPath.includes("?")) newPath += `&type=EXTERNAL`;
+				else newPath += `?type=EXTERNAL`;
+			} else if (filterValue === "externalLinks" && !filterChecked) {
+				filterQueryString?.delete("type") ?? null;
+
+				if (newPath.includes("type")) newPath = handleRemoveUrlParameter(newPath, "type");
+
+				setExternalLinksFilter(false);
+			}
+
+			if (filterValue === "allLinks" && filterChecked) {
+				setAllLinksFilter(true);
+				setLinksWithIssuesFilter(false);
+				setNoLinkIssuesFilter(false);
+				setExternalLinksFilter(false);
+				setInternalLinksFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "status");
+				newPath = handleRemoveUrlParameter(newPath, "status__neq");
+				newPath = handleRemoveUrlParameter(newPath, "type");
+			}
+		} else {
 			// Sites filter
 			if (filterValue === "verified" && filterChecked) {
 				setVerifiedFilter(true);
@@ -151,14 +231,60 @@ const Filter = ({
 		if (newPath.includes("?")) setPagePath(`${newPath}&`);
 		else setPagePath(`${newPath}?`);
 
+		// Mutate function here
 		await mutate(scanApiEndpoint);
+
+		// Push new path
 		push(newPath);
 	};
 
 	// Handle filters on load
 	useEffect(() => {
 		if (query) {
-			if (filterType === "sites") {
+			if (filterType === "links") {
+				const statusNeq = handleConversionStringToBoolean(query.status__neq);
+				const status = handleConversionStringToBoolean(query.status);
+				const type = handleConversionStringToBoolean(query.type);
+
+				if (statusNeq !== null) {
+					setLinksWithIssuesFilter(true);
+				} else {
+					setLinksWithIssuesFilter(false);
+				}
+
+				if (status !== null) {
+					setNoLinkIssuesFilter(true);
+				} else {
+					setNoLinkIssuesFilter(false);
+				}
+
+				if (type !== null) {
+					if (type === "PAGE") {
+						setInternalLinksFilter(true);
+						setExternalLinksFilter(false);
+					} else {
+						setInternalLinksFilter(false);
+						setExternalLinksFilter(true);
+					}
+				} else {
+					setInternalLinksFilter(false);
+					setExternalLinksFilter(false);
+				}
+
+				if (statusNeq == null && type == null && status == null) {
+					setAllLinksFilter(true);
+				} else {
+					setAllLinksFilter(false);
+				}
+
+				return {
+					noLinkIssuesFilter,
+					linksWithIssuesFilter,
+					internalLinksFilter,
+					externalLinksFilter,
+					allLinksFilter
+				};
+			} else {
 				const verified = handleConversionStringToBoolean(query.verified);
 
 				if (verified === true) {
@@ -173,7 +299,7 @@ const Filter = ({
 					setUnverifiedFilter(false);
 				}
 
-				if (!query.verified && !query.unverified) {
+				if (typeof verified !== "undefined") {
 					setAllSitesFilter(true);
 				} else {
 					setAllSitesFilter(false);
@@ -249,7 +375,7 @@ const Filter = ({
 	) : (
 		<div tw="px-4 py-5 border border-gray-300 sm:px-6 bg-white rounded-lg lg:flex lg:justify-between">
 			<div tw="-ml-4 lg:-mt-2 lg:flex items-center flex-wrap sm:flex-nowrap">
-				<Skeleton duration={2} width={50} height={16} className="my-4 ml-4 mr-1 lg:mb-0" />
+				<Skeleton duration={2} width={50} height={16} tw="my-4 ml-4 mr-1 lg:mb-0" />
 
 				{filtersArray
 					.filter(
@@ -264,8 +390,8 @@ const Filter = ({
 					.map((value, key) => (
 						<div key={key} tw="ml-4 mt-2">
 							<div tw="flex items-center space-x-2">
-								<Skeleton duration={2} width={16} height={16} className="h-4 w-4 rounded" />
-								<Skeleton duration={2} width={100} height={16} className="ml-2" />
+								<Skeleton duration={2} width={16} height={16} tw="h-4 w-4 rounded" />
+								<Skeleton duration={2} width={100} height={16} tw="ml-2" />
 							</div>
 						</div>
 					))}
@@ -285,8 +411,8 @@ const Filter = ({
 					.map((value, key) => (
 						<div key={key} tw="ml-4 mt-2">
 							<div tw="flex items-center space-x-2">
-								<Skeleton duration={2} width={16} height={16} className="h-4 w-4 rounded" />
-								<Skeleton duration={2} width={100} height={16} className="ml-2" />
+								<Skeleton duration={2} width={16} height={16} tw="h-4 w-4 rounded" />
+								<Skeleton duration={2} width={100} height={16} tw="ml-2" />
 							</div>
 						</div>
 					))}
