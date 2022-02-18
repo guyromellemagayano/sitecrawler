@@ -42,7 +42,5 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 	queryString += orderingQuery;
 	scanApiEndpoint += queryString;
 
-	console.log(scanApiEndpoint);
-
 	return { scanApiEndpoint };
 };
