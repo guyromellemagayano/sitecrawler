@@ -117,14 +117,28 @@ export const useScan = (querySid = null, options = null) => {
 		(async () => {
 			if (!isMounted) return;
 
-			// Show alert message after failed `user` SWR hook fetch
-			errorScan
-				? setScanConfig({
-						isScan: true,
-						method: errorScan?.config?.method ?? null,
-						status: errorScan?.status ?? null
-				  })
-				: null;
+			if (errorScan) {
+				// Show alert message after failed `user` SWR hook fetch
+				errorScan
+					? setScanConfig({
+							isUser: true,
+							method: errorScan?.config?.method ?? null,
+							status: errorScan?.status ?? null
+					  })
+					: null;
+			}
+		})();
+
+		return () => {
+			isMounted = false;
+		};
+	}, [errorScan]);
+
+	useMemo(() => {
+		let isMounted = true;
+
+		(async () => {
+			if (!isMounted) return;
 
 			if (scan?.data) {
 				if (scan.data?.count) {
@@ -156,7 +170,7 @@ export const useScan = (querySid = null, options = null) => {
 		return () => {
 			isMounted = false;
 		};
-	}, [scan, errorScan]);
+	}, [scan]);
 
 	return {
 		currentScan,

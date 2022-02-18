@@ -82,15 +82,15 @@ const DataTable = ({ site = null }) => {
 		previousScan,
 		handleCrawl,
 		selectedSiteRef,
-		scanResults,
-		validatingScan
-	} = useScan(siteId);
+		scanResults
+	} = useScan(siteId, {
+		revalidateOnFocus: false
+	});
 
 	// Site `stats` SWR hook
-	const { stats, linkErrors, pageErrors, imageErrors, seoErrors, totalErrors, validatingStats } = useStats(
-		siteId,
-		scanObjId
-	);
+	const { stats, totalErrors, totalImages, totalLinks, totalPages } = useStats(siteId, scanObjId, {
+		revalidateOnFocus: false
+	});
 
 	return (
 		<tr ref={selectedSiteRef}>
@@ -114,7 +114,13 @@ const DataTable = ({ site = null }) => {
 
 				<div tw="flex flex-col items-start">
 					<div>
-						{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+						{isComponentReady &&
+						user &&
+						Math.round(user?.status / 100) === 2 &&
+						!user?.data?.detail &&
+						scan &&
+						Math.round(scan?.status / 100) === 2 &&
+						!scan?.data?.detail ? (
 							<>
 								{siteVerified && currentScan == null ? (
 									<span
@@ -227,7 +233,7 @@ const DataTable = ({ site = null }) => {
 				</div>
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && scanResults ? (
 					scanResults?.length > 0 ? (
 						<span tw="space-x-2">
 							<span tw="text-sm leading-5 text-gray-500">
@@ -268,21 +274,21 @@ const DataTable = ({ site = null }) => {
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-					totalErrors ? (
-						<span css={[totalErrors > 0 ? tw`text-red-500` : tw`text-green-500`]}>{totalErrors}</span>
+					totalErrors > 0 ? (
+						<span tw="text-red-500">{totalErrors}</span>
 					) : (
-						<span tw="text-gray-500">0</span>
+						<span tw="text-green-500">{totalErrors}</span>
 					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-					stats?.data?.num_links > 0 ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && totalLinks ? (
+					totalLinks > 0 ? (
 						<Link href="/dashboard/sites/[siteId]/links" as={`/dashboard/sites/${siteId}/links`} passHref>
 							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-								{stats?.data?.num_links}
+								{totalLinks}
 							</a>
 						</Link>
 					) : (
@@ -293,11 +299,11 @@ const DataTable = ({ site = null }) => {
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-					stats?.data?.num_pages > 0 ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && totalPages ? (
+					totalPages > 0 ? (
 						<Link href="/dashboard/sites/[siteId]/pages" as={`/dashboard/sites/${siteId}/pages`} passHref>
 							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-								{stats?.data?.num_pages}
+								{totalPages}
 							</a>
 						</Link>
 					) : (
@@ -308,11 +314,11 @@ const DataTable = ({ site = null }) => {
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-					stats?.data?.num_images > 0 ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && totalImages ? (
+					totalImages > 0 ? (
 						<Link href="/dashboard/sites/[siteId]/images" as={`/dashboard/sites/${siteId}/images`} passHref>
 							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-								{stats?.data?.num_images}
+								{totalImages}
 							</a>
 						</Link>
 					) : (

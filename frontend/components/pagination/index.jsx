@@ -27,12 +27,14 @@ const DataPagination = () => {
 	const { linksPerPage, setLinksPerPage, pagePath, setPagePath } = useSiteQueries();
 	const { scanApiEndpoint } = useScanApiEndpoint(linksPerPage);
 
+	console.log(scanApiEndpoint);
+
 	// Custom context
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
 	// SWR hooks
 	const { user } = useUser();
-	const { page } = usePage(scanApiEndpoint);
+	const { page, pageCount } = usePage(scanApiEndpoint);
 
 	// Custom variables
 	const currentPage = query?.page ? parseInt(query.page) : 1;
@@ -50,9 +52,6 @@ const DataPagination = () => {
 	const previousText = t("common:previous");
 	const resultsText = t("common:results");
 	const rowsPerPageText = t("common:rowsPerPage");
-
-	// Set `pageCount` value
-	let pageCount = page?.data?.count ?? 0;
 
 	// Set `totalPages` value
 	const totalPages = Math.ceil(pageCount / linksPerPage) || 0;
@@ -128,7 +127,7 @@ const DataPagination = () => {
 						{toText}
 						<span tw="px-1 font-medium">{paginatedItems[paginatedItems.length - 1] || 0}</span>
 						{ofText}
-						<span tw="px-1 font-medium">{page?.data?.count || 0}</span>
+						<span tw="px-1 font-medium">{pageCount || 0}</span>
 						{resultsText}
 					</p>
 				</div>

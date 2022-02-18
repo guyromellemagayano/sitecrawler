@@ -1,7 +1,6 @@
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import { orderingByNameQuery, perPageQuery } from "@constants/GlobalValues";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
 
 /**
  * Custom hook that handle the scan API endpoint changes
@@ -9,7 +8,7 @@ import { useEffect } from "react";
  * @param {number} linksPerPage The number of links per page
  * @returns {string} The updated scan API endpoint
  */
-export const useScanApiEndpoint = (linksPerPage = null, filterType = null) => {
+export const useScanApiEndpoint = (linksPerPage = null) => {
 	// Custom variables
 	let scanApiEndpoint = SitesApiEndpoint + "?" + perPageQuery + linksPerPage + "&" + orderingByNameQuery + "name";
 	let queryString = "";
@@ -17,50 +16,33 @@ export const useScanApiEndpoint = (linksPerPage = null, filterType = null) => {
 	// Router
 	const { query } = useRouter();
 
-	useEffect(() => {
-		if (filterType !== null) {
-			// Sites filter
-			if (filterType === "sites") {
-				scanApiEndpoint = SitesApiEndpoint + "?" + perPageQuery + linksPerPage + "&" + orderingByNameQuery + "name";
+	const verifiedQuery = query?.verified
+		? scanApiEndpoint.includes("?")
+			? `&verified=${query.verified}`
+			: `?verified=${query.verified}`
+		: "";
 
-				console.log(scanApiEndpoint);
+	const pageQuery = query?.page ? (scanApiEndpoint.includes("?") ? `&page=${query.page}` : `?page=${query.page}`) : "";
 
-				queryString +=
-					typeof query?.verified !== "undefined" && query?.verified !== null
-						? scanApiEndpoint.includes("?")
-							? `&verified=${query.verified}`
-							: `?verified=${query.verified}`
-						: "";
-			}
-		}
-	}, [filterType, linksPerPage]);
+	const searchQuery = query?.search
+		? scanApiEndpoint.includes("?")
+			? `&search=${query.search}`
+			: `?search=${query.search}`
+		: "";
 
-	const pageQuery =
-		typeof query?.page !== "undefined" && query?.page !== null
-			? scanApiEndpoint.includes("?")
-				? `&page=${query.page}`
-				: `?page=${query.page}`
-			: null;
+	const orderingQuery = query?.ordering
+		? scanApiEndpoint.includes("?")
+			? `&ordering=${query.ordering}`
+			: `?ordering=${query.ordering}`
+		: "";
 
-	const searchQuery =
-		typeof query?.search !== "undefined" && query?.search !== null
-			? scanApiEndpoint.includes("?")
-				? `&search=${query.search}`
-				: `?search=${query.search}`
-			: null;
-
-	const orderingQuery =
-		typeof query?.ordering !== "undefined" && query?.ordering !== null
-			? scanApiEndpoint.includes("?")
-				? `&ordering=${query.ordering}`
-				: `?ordering=${query.ordering}`
-			: null;
-
-	pageQuery !== null ? (queryString += pageQuery) : null;
-	searchQuery !== null ? (queryString += searchQuery) : null;
-	orderingQuery !== null ? (queryString += orderingQuery) : null;
-
+	queryString += verifiedQuery;
+	queryString += pageQuery;
+	queryString += searchQuery;
+	queryString += orderingQuery;
 	scanApiEndpoint += queryString;
+
+	console.log(scanApiEndpoint);
 
 	return { scanApiEndpoint };
 };
