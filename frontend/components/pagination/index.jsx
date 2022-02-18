@@ -27,8 +27,6 @@ const DataPagination = () => {
 	const { linksPerPage, setLinksPerPage, pagePath, setPagePath } = useSiteQueries();
 	const { scanApiEndpoint } = useScanApiEndpoint(linksPerPage);
 
-	console.log(scanApiEndpoint);
-
 	// Custom context
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
