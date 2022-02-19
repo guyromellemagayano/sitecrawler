@@ -1,4 +1,6 @@
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
+import { SiteCrawlerAppContext } from "@pages/_app";
+import { useContext, useMemo, useState } from "react";
 import { useMainSWRConfig } from "./useMainSWRConfig";
 
 /**
@@ -9,13 +11,54 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  * @returns {object} siteId, errorSiteId, validatingSiteId
  */
 export const useSiteId = (querySid = null, options = null) => {
-	const currentEndpoint = querySid !== null && querySid > 0 ? SitesApiEndpoint + querySid + "/" : null;
+	const [siteIdVerified, setSiteIdVerified] = useState(false);
+	const [siteName, setSiteName] = useState("");
+	const [siteUrl, setSiteUrl] = useState("");
 
+	// Custom context
+	const { setConfig: setSitesConfig } = useContext(SiteCrawlerAppContext);
+
+	// Custom variables
+	const currentEndpoint =
+		querySid !== null && typeof querySid === "number" && querySid > 0 ? SitesApiEndpoint + querySid + "/" : null;
+
+	// SWR hook
 	const {
 		data: siteId,
 		error: errorSiteId,
 		isValidating: validatingSiteId
 	} = useMainSWRConfig(currentEndpoint, options);
 
-	return { siteId, errorSiteId, validatingSiteId };
+	useMemo(async () => {
+		if (errorSiteId) {
+			// Show alert message after failed `user` SWR hook fetch
+			errorSiteId
+				? setSitesConfig({
+						isSites: true,
+						method: errorSiteId?.config?.method ?? null,
+						status: errorSiteId?.status ?? null
+				  })
+				: null;
+		}
+	}, [errorSiteId]);
+
+	useMemo(async () => {
+		if (siteId?.data) {
+			if (siteId.data?.verified) {
+				setSiteIdVerified(siteId.data.verified);
+			}
+
+			if (siteId.data?.url) {
+				setSiteUrl(siteId.data.url);
+			}
+
+			if (siteId.data?.name) {
+				setSiteName(siteId.data.name);
+			}
+		}
+
+		return { siteIdVerified, siteName, siteUrl };
+	}, [siteId, siteIdVerified, siteName, siteUrl]);
+
+	return { siteId, errorSiteId, validatingSiteId, siteIdVerified, siteName, siteUrl };
 };

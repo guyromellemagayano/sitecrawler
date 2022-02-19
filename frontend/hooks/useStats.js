@@ -44,7 +44,7 @@ export const useStats = (querySid = null, scanObjId = null, options = null) => {
 			// Show alert message after failed `user` SWR hook fetch
 			errorStats
 				? setStatsConfig({
-						isUser: true,
+						isStats: true,
 						method: errorStats?.config?.method ?? null,
 						status: errorStats?.status ?? null
 				  })
@@ -84,6 +84,8 @@ export const useStats = (querySid = null, scanObjId = null, options = null) => {
 
 		return { totalImages, totalLinks, totalPages, linkErrors, pageErrors, imageErrors, seoErrors, totalErrors };
 	}, [stats, totalImages, totalLinks, totalPages, linkErrors, pageErrors, imageErrors, seoErrors, totalErrors]);
+
+	console.log(stats);
 
 	return {
 		stats,

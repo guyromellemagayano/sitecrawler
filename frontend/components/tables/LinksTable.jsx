@@ -6,6 +6,8 @@ import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { memo } from "react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import tw from "twin.macro";
 import { MemoizedLinksData } from "./LinksData";
 
@@ -61,11 +63,15 @@ const LinksTable = ({ count = 0, results = [] }) => {
 						})}
 					</tbody>
 				</table>
-			) : count === 0 && results?.length === 0 ? (
+			) : (
 				<div tw="px-4 py-5 sm:p-6 flex items-center justify-center">
-					<MemoizedLoadingMessage message={noAvailableLinks} />
+					{count === 0 && results?.length === 0 ? (
+						<MemoizedLoadingMessage message={noAvailableLinks} />
+					) : (
+						<Skeleton duration={2} width={120} height={24} />
+					)}
 				</div>
-			) : null}
+			)}
 		</section>
 	);
 };

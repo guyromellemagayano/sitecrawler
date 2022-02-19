@@ -1,5 +1,5 @@
 import { MemoizedPaginationSkeleton } from "@components/skeletons/PaginationSkeleton";
-import { MaxSitesPerPage, MaxTotalSitesLimit } from "@constants/GlobalValues";
+import { MaxSitesPerPage, MinSitesPerPage } from "@constants/GlobalValues";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import { usePage } from "@hooks/usePage";
 import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
@@ -8,6 +8,7 @@ import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
+import PropTypes from "prop-types";
 import Pagination from "rc-pagination";
 import { memo, useContext } from "react";
 import { useSWRConfig } from "swr";
@@ -15,6 +16,12 @@ import "twin.macro";
 
 /**
  * Custom function to render the `Pagination` component
+ *
+ * @param {boolean} isImages
+ * @param {boolean} isLinks
+ * @param {boolean} isOther
+ * @param {boolean} isPages
+ * @param {boolean} isSites
  */
 const DataPagination = () => {
 	// Router
@@ -32,7 +39,7 @@ const DataPagination = () => {
 
 	// SWR hooks
 	const { user } = useUser();
-	const { pageCount } = usePage(scanApiEndpoint);
+	const { page, pageCount } = usePage(scanApiEndpoint);
 
 	// Custom variables
 	const currentPage = query?.page ? parseInt(query.page) : 1;
@@ -63,20 +70,12 @@ const DataPagination = () => {
 	}
 
 	// Set updated `linksPerPageOptions` for `linksPerPage` prop
-	if (MaxSitesPerPage <= pageCount) {
-		let i = MaxSitesPerPage;
 
-		while (i <= pageCount) {
-			linksPerPageOptions.push(i);
-			i += MaxSitesPerPage;
-		}
-	} else {
-		let i = MaxTotalSitesLimit;
+	let i = MinSitesPerPage;
 
-		while (i >= pageCount) {
-			linksPerPageOptions.push(pageCount);
-			i += MaxTotalSitesLimit;
-		}
+	while (i <= MaxSitesPerPage) {
+		linksPerPageOptions.push(i);
+		i += MinSitesPerPage;
 	}
 
 	// Set `linkNumbers` array based on the `pageCount`
@@ -173,6 +172,14 @@ const DataPagination = () => {
 	) : (
 		<MemoizedPaginationSkeleton />
 	);
+};
+
+DataPagination.propTypes = {
+	isImages: PropTypes.bool,
+	isLinks: PropTypes.bool,
+	isOther: PropTypes.bool,
+	isPages: PropTypes.bool,
+	isSites: PropTypes.bool
 };
 
 export const MemoizedDataPagination = memo(DataPagination);

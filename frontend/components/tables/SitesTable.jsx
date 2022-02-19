@@ -6,15 +6,19 @@ import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { memo } from "react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import tw from "twin.macro";
 import { MemoizedSitesData } from "./SitesData";
 
 /**
  * Custom function to render the `SitesTable` component
  *
- * @param {object} sites
+ * @param {number} count
+ * @param {array} results
+ * @param {boolean} validatingSites
  */
-const SitesTable = ({ count = 0, results = [] }) => {
+const SitesTable = ({ count = 0, results = [], validatingSites = false }) => {
 	// Translations
 	const { t } = useTranslation();
 	const noAvailableSites = t("sites:noAvailableSites");
@@ -61,17 +65,23 @@ const SitesTable = ({ count = 0, results = [] }) => {
 						})}
 					</tbody>
 				</table>
-			) : count === 0 && results?.length === 0 ? (
+			) : (
 				<div tw="px-4 py-5 sm:p-6 flex items-center justify-center">
-					<MemoizedLoadingMessage message={noAvailableSites} />
+					{!validatingSites && count === 0 && results?.length === 0 ? (
+						<MemoizedLoadingMessage message={noAvailableSites} />
+					) : (
+						<Skeleton duration={2} width={120} height={24} />
+					)}
 				</div>
-			) : null}
+			)}
 		</section>
 	);
 };
 
 SitesTable.propTypes = {
-	sites: PropTypes.any
+	count: PropTypes.number,
+	results: PropTypes.array,
+	validatingSites: PropTypes.bool
 };
 
 /**

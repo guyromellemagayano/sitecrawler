@@ -1,9 +1,10 @@
 import { MemoizedBreadcrumbs } from "@components/breadcrumbs";
 import { LoginLink, SubscriptionPlansSlug } from "@constants/PageLinks";
-import { useLoading } from "@hooks/useLoading";
+import { useUser } from "@hooks/useUser";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import { memo, useEffect } from "react";
+import { memo, useContext, useEffect } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import tw from "twin.macro";
@@ -17,15 +18,17 @@ import { MemoizedFooter } from "./Footer";
  */
 const PageLayout = ({ children, pageTitle = null }) => {
 	// Router
-	const { asPath } = useRouter();
-	const router = useRouter();
+	const { asPath, prefetch } = useRouter();
 
-	// Custom hooks
-	const { isComponentReady } = useLoading();
+	// Custom context
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
+
+	// SWR hooks
+	const { user } = useUser();
 
 	useEffect(() => {
-		router.prefetch(LoginLink);
-	}, [router]);
+		prefetch(LoginLink);
+	}, []);
 
 	return (
 		<section tw="flex flex-col flex-nowrap items-start justify-start min-h-page px-12 py-8">
@@ -39,7 +42,11 @@ const PageLayout = ({ children, pageTitle = null }) => {
 							tw`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate`
 						]}
 					>
-						{isComponentReady ? pageTitle : <Skeleton duration={2} width={215} height={36} />}
+						{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+							pageTitle
+						) : (
+							<Skeleton duration={2} width={215} height={36} />
+						)}
 					</h2>
 				</div>
 

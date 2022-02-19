@@ -59,6 +59,8 @@ export const useScan = (querySid = null, options = null) => {
 	const handleCrawl = async (e) => {
 		e.preventDefault();
 
+		console.log(selectedSiteRef);
+
 		if (selectedSiteRef?.current && selectedSiteRef?.current?.contains(e.target)) {
 			const startScanSlug = "/start_scan/";
 			let endpoint = `${SitesApiEndpoint + querySid + startScanSlug}`;
@@ -116,7 +118,7 @@ export const useScan = (querySid = null, options = null) => {
 			// Show alert message after failed `user` SWR hook fetch
 			errorScan
 				? setScanConfig({
-						isUser: true,
+						isScan: true,
 						method: errorScan?.config?.method ?? null,
 						status: errorScan?.status ?? null
 				  })
@@ -140,12 +142,14 @@ export const useScan = (querySid = null, options = null) => {
 			setCurrentScan(currentScanResult);
 			setPreviousScan(previousScanResult);
 
-			if ((currentScan !== null && previousScan !== null) || (currentScan == null && previousScan !== null)) {
-				setScanObjId(previousScan.id);
-			} else if (currentScan !== null && previousScan == null) {
-				setScanObjId(currentScan.id);
+			if (
+				(currentScan == null && previousScan !== null) ||
+				(currentScan?.finished_at !== null && currentScan?.force_https == null) ||
+				(currentScan?.finished_at == null && currentScan?.force_https !== null)
+			) {
+				setScanObjId(previousScan?.id);
 			} else {
-				setScanObjId(0);
+				setScanObjId(currentScan?.id);
 			}
 		}
 

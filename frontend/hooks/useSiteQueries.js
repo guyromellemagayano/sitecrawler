@@ -1,4 +1,4 @@
-import { MaxSitesPerPage } from "@constants/GlobalValues";
+import { MinSitesPerPage } from "@constants/GlobalValues";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
@@ -11,7 +11,7 @@ import { useMemo, useState } from "react";
 export const useSiteQueries = () => {
 	const [pagePath, setPagePath] = useState("");
 	const [searchKey, setSearchKey] = useState("");
-	const [linksPerPage, setLinksPerPage] = useState(MaxSitesPerPage);
+	const [linksPerPage, setLinksPerPage] = useState(MinSitesPerPage);
 
 	// Router
 	const { asPath, query } = useRouter();

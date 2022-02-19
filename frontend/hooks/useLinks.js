@@ -40,7 +40,7 @@ export const useLinks = (endpoint = null, querySid = null, scanObjId = null, opt
 			// Show alert message after failed `user` SWR hook fetch
 			errorLinks
 				? setLinksConfig({
-						isStats: true,
+						isLinks: true,
 						method: errorLinks?.config?.method ?? null,
 						status: errorLinks?.status ?? null
 				  })

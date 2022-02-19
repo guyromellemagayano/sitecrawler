@@ -95,5 +95,8 @@
 	"status": "Status",
 	"httpCode": "HTTP Code",
 	"linkLocation": "Link Location",
-	"occurrences": "Occurrences"
+	"occurrences": "Occurrences",
+	"csvDownload": "CSV Download",
+	"downloading": "Downloading...",
+	"crawling": "Crawling..."
 }

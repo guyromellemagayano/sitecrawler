@@ -70,7 +70,7 @@ export default function SiteOverview({ siteName }) {
 	return (
 		<MemoizedLayout>
 			<NextSeo title={sitesOverviewPageTitle} />
-			<MemoizedPageLayout pageTitle={sitesOverviewPageTitle}>
+			<MemoizedPageLayout pageTitle={sitesOverviewText}>
 				<MemoizedSiteOverviewPageLayout />
 			</MemoizedPageLayout>
 		</MemoizedLayout>
