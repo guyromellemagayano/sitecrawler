@@ -279,17 +279,17 @@
 			"504GatewayTimeoutErrorResponse": "Sites post failed. Got a 504 gateway timeout error response."
 		},
 		"put": {
-			"200OkSuccessResponse": "Sites post success! Got a 200 OK success response.",
-			"201CreatedSuccessResponse": "Sites post success! Got a 201 created success response.",
-			"400BadRequestErrorResponse": "Sites post failed. Got a 400 bad request error response. Please try again.",
-			"401UnauthorizedErrorResponse": "Sites post failed. Got a 401 unauthorized error response. Please try again.",
-			"403ForbiddenErrorResponse": "Sites post failed. Got a 403 forbidden error response.",
-			"404NotFoundErrorResponse": "Sites post failed. Got a 404 not found error response.",
-			"429TooManyRequestsErrorResponse": "Sites post failed. Got a 429 too many requests error response.",
-			"500InternalServerErrorResponse": "Sites post failed. Got a 500 internal server error response.",
-			"502BadGatewayErrorResponse": "Sites post failed. Got a 502 bad gateway error response.",
-			"503ServiceUnavailableErrorResponse": "Sites post failed. Got a 503 service unavailable error response.",
-			"504GatewayTimeoutErrorResponse": "Sites post failed. Got a 504 gateway timeout error response."
+			"200OkSuccessResponse": "Sites put success! Got a 200 OK success response.",
+			"201CreatedSuccessResponse": "Sites put success! Got a 201 created success response.",
+			"400BadRequestErrorResponse": "Sites put failed. Got a 400 bad request error response. Please try again.",
+			"401UnauthorizedErrorResponse": "Sites put failed. Got a 401 unauthorized error response. Please try again.",
+			"403ForbiddenErrorResponse": "Sites put failed. Got a 403 forbidden error response.",
+			"404NotFoundErrorResponse": "Sites put failed. Got a 404 not found error response.",
+			"429TooManyRequestsErrorResponse": "Sites put failed. Got a 429 too many requests error response.",
+			"500InternalServerErrorResponse": "Sites put failed. Got a 500 internal server error response.",
+			"502BadGatewayErrorResponse": "Sites put failed. Got a 502 bad gateway error response.",
+			"503ServiceUnavailableErrorResponse": "Sites put failed. Got a 503 service unavailable error response.",
+			"504GatewayTimeoutErrorResponse": "Sites put failed. Got a 504 gateway timeout error response."
 		},
 		"patch": {
 			"200OkSuccessResponse": "Sites patch success! Got a 200 OK success response.",
@@ -382,9 +382,50 @@
 			}
 		}
 	},
-	"siteId": {},
-	"scan": {},
-	"stats": {},
+	"stats": {
+		"get": {
+			"200OkSuccessResponse": "Stats get success! Got a 200 OK success response.",
+			"201CreatedSuccessResponse": "Stats get success! Got a 201 created success response.",
+			"400BadRequestErrorResponse": "Stats get failed. Got a 400 bad request error response. Please try again.",
+			"401UnauthorizedErrorResponse": "Stats get failed. Got a 401 unauthorized error response. Please try again.",
+			"403ForbiddenErrorResponse": "Stats get failed. Got a 403 forbidden error response.",
+			"404NotFoundErrorResponse": "Stats get failed. Got a 404 not found error response.",
+			"429TooManyRequestsErrorResponse": "Stats get failed. Got a 429 too many requests error response.",
+			"500InternalServerErrorResponse": "Stats get failed. Got a 500 internal server error response.",
+			"502BadGatewayErrorResponse": "Stats get failed. Got a 502 bad gateway error response.",
+			"503ServiceUnavailableErrorResponse": "Stats get failed. Got a 503 service unavailable error response.",
+			"504GatewayTimeoutErrorResponse": "Stats get failed. Got a 504 gateway timeout error response."
+		},
+		"delete": {
+			"200OkSuccessResponse": "Stats delete success! Got a 200 OK success response.",
+			"201CreatedSuccessResponse": "Stats delete success! Got a 201 created success response.",
+			"204NoContentSuccessResponse": "Stats delete success! Got a 204 no content success response.",
+			"400BadRequestErrorResponse": "Stats delete failed. Got a 400 bad request error response. Please try again.",
+			"401UnauthorizedErrorResponse": "Stats delete failed. Got a 401 unauthorized error response. Please try again.",
+			"403ForbiddenErrorResponse": "Stats delete failed. Got a 403 forbidden error response.",
+			"404NotFoundErrorResponse": "Stats delete failed. Got a 404 not found error response.",
+			"429TooManyRequestsErrorResponse": "Stats delete failed. Got a 429 too many requests error response.",
+			"500InternalServerErrorResponse": "Stats delete failed. Got a 500 internal server error response.",
+			"502BadGatewayErrorResponse": "Stats delete failed. Got a 502 bad gateway error response.",
+			"503ServiceUnavailableErrorResponse": "Stats delete failed. Got a 503 service unavailable error response.",
+			"504GatewayTimeoutErrorResponse": "Stats delete failed. Got a 504 gateway timeout error response."
+		}
+	},
+	"scan": {
+		"get": {
+			"200OkSuccessResponse": "Scan get success! Got a 200 OK success response.",
+			"201CreatedSuccessResponse": "Scan get success! Got a 201 created success response.",
+			"400BadRequestErrorResponse": "Scan get failed. Got a 400 bad request error response. Please try again.",
+			"401UnauthorizedErrorResponse": "Scan get failed. Got a 401 unauthorized error response. Please try again.",
+			"403ForbiddenErrorResponse": "Scan get failed. Got a 403 forbidden error response.",
+			"404NotFoundErrorResponse": "Scan get failed. Got a 404 not found error response.",
+			"429TooManyRequestsErrorResponse": "Scan get failed. Got a 429 too many requests error response.",
+			"500InternalServerErrorResponse": "Scan get failed. Got a 500 internal server error response.",
+			"502BadGatewayErrorResponse": "Scan get failed. Got a 502 bad gateway error response.",
+			"503ServiceUnavailableErrorResponse": "Scan get failed. Got a 503 service unavailable error response.",
+			"504GatewayTimeoutErrorResponse": "Scan get failed. Got a 504 gateway timeout error response."
+		}
+	},
 	"pages": {
 		"get": {
 			"200OkSuccessResponse": "Pages get success! Got a 200 OK success response.",
@@ -411,6 +452,47 @@
 			"502BadGatewayErrorResponse": "Pages post failed. Got a 502 bad gateway error response.",
 			"503ServiceUnavailableErrorResponse": "Pages post failed. Got a 503 service unavailable error response.",
 			"504GatewayTimeoutErrorResponse": "Pages post failed. Got a 504 gateway timeout error response."
+		}
+	},
+	"links": {
+		"get": {
+			"200OkSuccessResponse": "Links get success! Got a 200 OK success response.",
+			"201CreatedSuccessResponse": "Links get success! Got a 201 created success response.",
+			"400BadRequestErrorResponse": "Links get failed. Got a 400 bad request error response. Please try again.",
+			"401UnauthorizedErrorResponse": "Links get failed. Got a 401 unauthorized error response. Please try again.",
+			"403ForbiddenErrorResponse": "Links get failed. Got a 403 forbidden error response.",
+			"404NotFoundErrorResponse": "Links get failed. Got a 404 not found error response.",
+			"429TooManyRequestsErrorResponse": "Links get failed. Got a 429 too many requests error response.",
+			"500InternalServerErrorResponse": "Links get failed. Got a 500 internal server error response.",
+			"502BadGatewayErrorResponse": "Links get failed. Got a 502 bad gateway error response.",
+			"503ServiceUnavailableErrorResponse": "Links get failed. Got a 503 service unavailable error response.",
+			"504GatewayTimeoutErrorResponse": "Links get failed. Got a 504 gateway timeout error response."
+		},
+		"put": {
+			"200OkSuccessResponse": "Links post success! Got a 200 OK success response.",
+			"201CreatedSuccessResponse": "Links post success! Got a 201 created success response.",
+			"400BadRequestErrorResponse": "Links post failed. Got a 400 bad request error response. Please try again.",
+			"401UnauthorizedErrorResponse": "Links post failed. Got a 401 unauthorized error response. Please try again.",
+			"403ForbiddenErrorResponse": "Links post failed. Got a 403 forbidden error response.",
+			"404NotFoundErrorResponse": "Links post failed. Got a 404 not found error response.",
+			"429TooManyRequestsErrorResponse": "Links post failed. Got a 429 too many requests error response.",
+			"500InternalServerErrorResponse": "Links post failed. Got a 500 internal server error response.",
+			"502BadGatewayErrorResponse": "Links post failed. Got a 502 bad gateway error response.",
+			"503ServiceUnavailableErrorResponse": "Links post failed. Got a 503 service unavailable error response.",
+			"504GatewayTimeoutErrorResponse": "Links post failed. Got a 504 gateway timeout error response."
+		},
+		"patch": {
+			"200OkSuccessResponse": "Links patch success! Got a 200 OK success response.",
+			"201CreatedSuccessResponse": "Links patch success! Got a 201 created success response.",
+			"400BadRequestErrorResponse": "Links patch failed. Got a 400 bad request error response. Please try again.",
+			"401UnauthorizedErrorResponse": "Links patch failed. Got a 401 unauthorized error response. Please try again.",
+			"403ForbiddenErrorResponse": "Links patch failed. Got a 403 forbidden error response.",
+			"404NotFoundErrorResponse": "Links patch failed. Got a 404 not found error response.",
+			"429TooManyRequestsErrorResponse": "Links patch failed. Got a 429 too many requests error response.",
+			"500InternalServerErrorResponse": "Links patch failed. Got a 500 internal server error response.",
+			"502BadGatewayErrorResponse": "Links patch failed. Got a 502 bad gateway error response.",
+			"503ServiceUnavailableErrorResponse": "Links patch failed. Got a 503 service unavailable error response.",
+			"504GatewayTimeoutErrorResponse": "Links patch failed. Got a 504 gateway timeout error response."
 		}
 	},
 	"team": {},

@@ -29,11 +29,13 @@ export const useNotificationMessage = () => {
 		isSignup: false,
 		isSites: false,
 		isStats: false,
+		isScan: false,
 		isPages: false,
 		isPaymentMethod: false,
 		isSubscriptions: false,
 		isSupport: false,
 		isUser: false,
+		isLinks: false,
 		isError: false,
 		isAlert: false,
 		isNotification: false,
@@ -531,6 +533,78 @@ export const useNotificationMessage = () => {
 	const pagesPost503ServiceUnavailableErrorResponse = t("alerts:pages.post.503ServiceUnavailableErrorResponse");
 	const pagesPost504GatewayTimeoutErrorResponse = t("alerts:pages.post.504GatewayTimeoutErrorResponse");
 
+	// Scan translations
+	const scanGet200OkSuccessResponse = t("alerts:scan.get.200OkSuccessResponse");
+	const scanGet201CreatedSuccessResponse = t("alerts:scan.get.201CreatedSuccessResponse");
+	const scanGet400BadRequestErrorResponse = t("alerts:scan.get.400BadRequestErrorResponse");
+	const scanGet401UnauthorizedErrorResponse = t("alerts:scan.get.401UnauthorizedErrorResponse");
+	const scanGet403ForbiddenErrorResponse = t("alerts:scan.get.403ForbiddenErrorResponse");
+	const scanGet404NotFoundErrorResponse = t("alerts:scan.get.404NotFoundErrorResponse");
+	const scanGet429TooManyRequestsErrorResponse = t("alerts:scan.get.429TooManyRequestsErrorResponse");
+	const scanGet500InternalServerErrorResponse = t("alerts:scan.get.500InternalServerErrorResponse");
+	const scanGet502BadGatewayErrorResponse = t("alerts:scan.get.502BadGatewayErrorResponse");
+	const scanGet503ServiceUnavailableErrorResponse = t("alerts:scan.get.503ServiceUnavailableErrorResponse");
+	const scanGet504GatewayTimeoutErrorResponse = t("alerts:scan.get.504GatewayTimeoutErrorResponse");
+
+	// Stats translations
+	const statsGet200OkSuccessResponse = t("alerts:stats.get.200OkSuccessResponse");
+	const statsGet201CreatedSuccessResponse = t("alerts:stats.get.201CreatedSuccessResponse");
+	const statsGet400BadRequestErrorResponse = t("alerts:stats.get.400BadRequestErrorResponse");
+	const statsGet401UnauthorizedErrorResponse = t("alerts:stats.get.401UnauthorizedErrorResponse");
+	const statsGet403ForbiddenErrorResponse = t("alerts:stats.get.403ForbiddenErrorResponse");
+	const statsGet404NotFoundErrorResponse = t("alerts:stats.get.404NotFoundErrorResponse");
+	const statsGet429TooManyRequestsErrorResponse = t("alerts:stats.get.429TooManyRequestsErrorResponse");
+	const statsGet500InternalServerErrorResponse = t("alerts:stats.get.500InternalServerErrorResponse");
+	const statsGet502BadGatewayErrorResponse = t("alerts:stats.get.502BadGatewayErrorResponse");
+	const statsGet503ServiceUnavailableErrorResponse = t("alerts:stats.get.503ServiceUnavailableErrorResponse");
+	const statsGet504GatewayTimeoutErrorResponse = t("alerts:stats.get.504GatewayTimeoutErrorResponse");
+	const statsDelete200OkSuccessResponse = t("alerts:stats.delete.200OkSuccessResponse");
+	const statsDelete201CreatedSuccessResponse = t("alerts:stats.delete.201CreatedSuccessResponse");
+	const statsDelete400BadRequestErrorResponse = t("alerts:stats.delete.400BadRequestErrorResponse");
+	const statsDelete401UnauthorizedErrorResponse = t("alerts:stats.delete.401UnauthorizedErrorResponse");
+	const statsDelete403ForbiddenErrorResponse = t("alerts:stats.delete.403ForbiddenErrorResponse");
+	const statsDelete404NotFoundErrorResponse = t("alerts:stats.delete.404NotFoundErrorResponse");
+	const statsDelete429TooManyRequestsErrorResponse = t("alerts:stats.delete.429TooManyRequestsErrorResponse");
+	const statsDelete500InternalServerErrorResponse = t("alerts:stats.delete.500InternalServerErrorResponse");
+	const statsDelete502BadGatewayErrorResponse = t("alerts:stats.delete.502BadGatewayErrorResponse");
+	const statsDelete503ServiceUnavailableErrorResponse = t("alerts:stats.delete.503ServiceUnavailableErrorResponse");
+	const statsDelete504GatewayTimeoutErrorResponse = t("alerts:stats.delete.504GatewayTimeoutErrorResponse");
+
+	// Links translations
+	const linksGet200OkSuccessResponse = t("alerts:links.get.200OkSuccessResponse");
+	const linksGet201CreatedSuccessResponse = t("alerts:links.get.201CreatedSuccessResponse");
+	const linksGet400BadRequestErrorResponse = t("alerts:links.get.400BadRequestErrorResponse");
+	const linksGet401UnauthorizedErrorResponse = t("alerts:links.get.401UnauthorizedErrorResponse");
+	const linksGet403ForbiddenErrorResponse = t("alerts:links.get.403ForbiddenErrorResponse");
+	const linksGet404NotFoundErrorResponse = t("alerts:links.get.404NotFoundErrorResponse");
+	const linksGet429TooManyRequestsErrorResponse = t("alerts:links.get.429TooManyRequestsErrorResponse");
+	const linksGet500InternalServerErrorResponse = t("alerts:links.get.500InternalServerErrorResponse");
+	const linksGet502BadGatewayErrorResponse = t("alerts:links.get.502BadGatewayErrorResponse");
+	const linksGet503ServiceUnavailableErrorResponse = t("alerts:links.get.503ServiceUnavailableErrorResponse");
+	const linksGet504GatewayTimeoutErrorResponse = t("alerts:links.get.504GatewayTimeoutErrorResponse");
+	const linksPut200OkSuccessResponse = t("alerts:links.put.200OkSuccessResponse");
+	const linksPut201CreatedSuccessResponse = t("alerts:links.put.201CreatedSuccessResponse");
+	const linksPut400BadRequestErrorResponse = t("alerts:links.put.400BadRequestErrorResponse");
+	const linksPut401UnauthorizedErrorResponse = t("alerts:links.put.401UnauthorizedErrorResponse");
+	const linksPut403ForbiddenErrorResponse = t("alerts:links.put.403ForbiddenErrorResponse");
+	const linksPut404NotFoundErrorResponse = t("alerts:links.put.404NotFoundErrorResponse");
+	const linksPut429TooManyRequestsErrorResponse = t("alerts:links.put.429TooManyRequestsErrorResponse");
+	const linksPut500InternalServerErrorResponse = t("alerts:links.put.500InternalServerErrorResponse");
+	const linksPut502BadGatewayErrorResponse = t("alerts:links.put.502BadGatewayErrorResponse");
+	const linksPut503ServiceUnavailableErrorResponse = t("alerts:links.put.503ServiceUnavailableErrorResponse");
+	const linksPut504GatewayTimeoutErrorResponse = t("alerts:links.put.504GatewayTimeoutErrorResponse");
+	const linksPatch200OkSuccessResponse = t("alerts:links.patch.200OkSuccessResponse");
+	const linksPatch201CreatedSuccessResponse = t("alerts:links.patch.201CreatedSuccessResponse");
+	const linksPatch400BadRequestErrorResponse = t("alerts:links.patch.400BadRequestErrorResponse");
+	const linksPatch401UnauthorizedErrorResponse = t("alerts:links.patch.401UnauthorizedErrorResponse");
+	const linksPatch403ForbiddenErrorResponse = t("alerts:links.patch.403ForbiddenErrorResponse");
+	const linksPatch404NotFoundErrorResponse = t("alerts:links.patch.404NotFoundErrorResponse");
+	const linksPatch429TooManyRequestsErrorResponse = t("alerts:links.patch.429TooManyRequestsErrorResponse");
+	const linksPatch500InternalServerErrorResponse = t("alerts:links.patch.500InternalServerErrorResponse");
+	const linksPatch502BadGatewayErrorResponse = t("alerts:links.patch.502BadGatewayErrorResponse");
+	const linksPatch503ServiceUnavailableErrorResponse = t("alerts:links.patch.503ServiceUnavailableErrorResponse");
+	const linksPatch504GatewayTimeoutErrorResponse = t("alerts:links.patch.504GatewayTimeoutErrorResponse");
+
 	// Fallback translations
 	const fallback200OkSuccessResponse = t("alerts:fallback.200OkSuccessResponse");
 	const fallback201CreatedSuccessResponse = t("alerts:fallback.201CreatedSuccessResponse");
@@ -553,25 +627,27 @@ export const useNotificationMessage = () => {
 
 	useEffect(() => {
 		if (config) {
-			const isLocalTimeEnabled = config?.isLocalTimeEnabled ?? false;
+			const isError = config?.isError ?? false;
+			const isLinks = config?.isLinks ?? false;
 			const isLocalTimeDisabled = config?.isLocalTimeDisabled ?? false;
+			const isLocalTimeEnabled = config?.isLocalTimeEnabled ?? false;
 			const isLogin = config?.isLogin ?? false;
 			const isLogout = config?.isLogout ?? false;
+			const isPages = config?.isPages ?? false;
 			const isPasswordChange = config?.isPasswordChange ?? false;
 			const isPasswordReset = config?.isPasswordReset ?? false;
 			const isPasswordResetConfirm = config?.isPasswordResetConfirm ?? false;
-			const isUrlInformationStep = config?.isUrlInformationStep ?? false;
-			const isVerifyUrlStep = config?.isVerifyUrlStep ?? false;
-			const isPages = config?.isPages ?? false;
+			const isPaymentMethod = config?.isPaymentMethod ?? false;
 			const isRegistration = config?.isRegistration ?? false;
+			const isScan = config?.isScan ?? false;
 			const isSignup = config?.isSignup ?? false;
 			const isSites = config?.isSites ?? false;
 			const isStats = config?.isStats ?? false;
-			const isPaymentMethod = config?.isPaymentMethod ?? false;
 			const isSubscriptions = config?.isSubscriptions ?? false;
 			const isSupport = config?.isSupport ?? false;
+			const isUrlInformationStep = config?.isUrlInformationStep ?? false;
 			const isUser = config?.isUser ?? false;
-			const isError = config?.isError ?? false;
+			const isVerifyUrlStep = config?.isVerifyUrlStep ?? false;
 			const method = config?.method ?? null;
 			const status = config?.status ?? null;
 
@@ -610,10 +686,13 @@ export const useNotificationMessage = () => {
 					isSignup ||
 					isSites ||
 					isStats ||
+					isLinks ||
+					isScan ||
 					isPaymentMethod ||
 					isSubscriptions ||
 					isSupport ||
-					isUser)
+					isUser ||
+					isError)
 			) {
 				if (isUser) {
 					let responsesArray = [];
@@ -2947,6 +3026,534 @@ export const useNotificationMessage = () => {
 
 					responsesArray.push(postResponse);
 					responsesArray.push(getResponse);
+
+					const dataMethod =
+						responsesArray?.find(
+							(datum) =>
+								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
+							(response) =>
+								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
+						) ?? null;
+
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
+						dispatch,
+						config,
+						setConfig,
+						state,
+						isSites,
+						data,
+						fallback
+					});
+				} else if (isScan) {
+					let responsesArray = [];
+
+					const getResponse = {
+						method: "GET",
+						responses: [
+							{
+								status: 200,
+								title: fallback200OkSuccessResponse,
+								message: statsGet200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								title: fallback201CreatedSuccessResponse,
+								message: statsGet201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								title: fallback400BadRequestErrorResponse,
+								message: statsGet400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
+								message: statsGet401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								title: fallback403ForbiddenErrorResponse,
+								message: statsGet403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								title: fallback404NotFoundErrorResponse,
+								message: statsGet404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
+								message: statsGet429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								title: fallback500InternalServerErrorResponse,
+								message: statsGet500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								title: fallback502BadGatewayErrorResponse,
+								message: statsGet502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
+								message: statsGet503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
+								message: statsGet504GatewayTimeoutErrorResponse,
+								isSuccess: false
+							}
+						]
+					};
+
+					responsesArray.push(getResponse);
+
+					const dataMethod =
+						responsesArray?.find(
+							(datum) =>
+								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
+							(response) =>
+								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
+						) ?? null;
+
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
+						dispatch,
+						config,
+						setConfig,
+						state,
+						isSites,
+						data,
+						fallback
+					});
+				} else if (isStats) {
+					let responsesArray = [];
+
+					const getResponse = {
+						method: "GET",
+						responses: [
+							{
+								status: 200,
+								title: fallback200OkSuccessResponse,
+								message: statsGet200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								title: fallback201CreatedSuccessResponse,
+								message: statsGet201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								title: fallback400BadRequestErrorResponse,
+								message: statsGet400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
+								message: statsGet401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								title: fallback403ForbiddenErrorResponse,
+								message: statsGet403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								title: fallback404NotFoundErrorResponse,
+								message: statsGet404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
+								message: statsGet429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								title: fallback500InternalServerErrorResponse,
+								message: statsGet500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								title: fallback502BadGatewayErrorResponse,
+								message: statsGet502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
+								message: statsGet503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
+								message: statsGet504GatewayTimeoutErrorResponse,
+								isSuccess: false
+							}
+						]
+					};
+					const deleteResponse = {
+						method: "DELETE",
+						responses: [
+							{
+								status: 200,
+								title: fallback200OkSuccessResponse,
+								message: statsDelete200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								title: fallback201CreatedSuccessResponse,
+								message: statsDelete201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								title: fallback400BadRequestErrorResponse,
+								message: statsDelete400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
+								message: statsDelete401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								title: fallback403ForbiddenErrorResponse,
+								message: statsDelete403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								title: fallback404NotFoundErrorResponse,
+								message: statsDelete404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
+								message: statsDelete429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								title: fallback500InternalServerErrorResponse,
+								message: statsDelete500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								title: fallback502BadGatewayErrorResponse,
+								message: statsDelete502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
+								message: statsDelete503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
+								message: statsDelete504GatewayTimeoutErrorResponse,
+								isSuccess: false
+							}
+						]
+					};
+
+					responsesArray.push(getResponse);
+					responsesArray.push(deleteResponse);
+
+					const dataMethod =
+						responsesArray?.find(
+							(datum) =>
+								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
+							(response) =>
+								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
+						) ?? null;
+
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
+						dispatch,
+						config,
+						setConfig,
+						state,
+						isSites,
+						data,
+						fallback
+					});
+				} else if (isLinks) {
+					let responsesArray = [];
+
+					const getResponse = {
+						method: "GET",
+						responses: [
+							{
+								status: 200,
+								title: fallback200OkSuccessResponse,
+								message: linksGet200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								title: fallback201CreatedSuccessResponse,
+								message: linksGet201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								title: fallback400BadRequestErrorResponse,
+								message: linksGet400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
+								message: linksGet401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								title: fallback403ForbiddenErrorResponse,
+								message: linksGet403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								title: fallback404NotFoundErrorResponse,
+								message: linksGet404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
+								message: linksGet429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								title: fallback500InternalServerErrorResponse,
+								message: linksGet500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								title: fallback502BadGatewayErrorResponse,
+								message: linksGet502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
+								message: linksGet503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
+								message: linksGet504GatewayTimeoutErrorResponse,
+								isSuccess: false
+							}
+						]
+					};
+					const putResponse = {
+						method: "PUT",
+						responses: [
+							{
+								status: 200,
+								title: fallback200OkSuccessResponse,
+								message: linksPut200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								title: fallback201CreatedSuccessResponse,
+								message: linksPut201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								title: fallback400BadRequestErrorResponse,
+								message: linksPut400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
+								message: linksPut401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								title: fallback403ForbiddenErrorResponse,
+								message: linksPut403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								title: fallback404NotFoundErrorResponse,
+								message: linksPut404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
+								message: linksPut429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								title: fallback500InternalServerErrorResponse,
+								message: linksPut500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								title: fallback502BadGatewayErrorResponse,
+								message: linksPut502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
+								message: linksPut503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
+								message: linksPut504GatewayTimeoutErrorResponse,
+								isSuccess: false
+							}
+						]
+					};
+					const patchResponse = {
+						method: "PATCH",
+						responses: [
+							{
+								status: 200,
+								title: fallback200OkSuccessResponse,
+								message: linksPatch200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								title: fallback201CreatedSuccessResponse,
+								message: linksPatch201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								title: fallback400BadRequestErrorResponse,
+								message: linksPatch400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
+								message: linksPatch401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								title: fallback403ForbiddenErrorResponse,
+								message: linksPatch403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								title: fallback404NotFoundErrorResponse,
+								message: linksPatch404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
+								message: linksPatch429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								title: fallback500InternalServerErrorResponse,
+								message: linksPatch500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								title: fallback502BadGatewayErrorResponse,
+								message: linksPatch502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
+								message: linksPatch503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
+								message: linksPatch504GatewayTimeoutErrorResponse,
+								isSuccess: false
+							}
+						]
+					};
+
+					responsesArray.push(getResponse);
+					responsesArray.push(putResponse);
+					responsesArray.push(patchResponse);
 
 					const dataMethod =
 						responsesArray?.find(

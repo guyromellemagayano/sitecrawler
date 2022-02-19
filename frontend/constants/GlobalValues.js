@@ -29,7 +29,8 @@ export const ModalDisplayInterval = 3500;
 export const OnErrorRetryCount = 5;
 export const NoInterval = 0;
 export const UnitAmountToRealPriceDivisor = 100;
-export const MaxSitesPerPage = 10;
+export const MinSitesPerPage = 25;
+export const MaxSitesPerPage = 100;
 export const MaxTotalSitesLimit = 100;
 export const ResetCopyStateTimeout = 500;
 

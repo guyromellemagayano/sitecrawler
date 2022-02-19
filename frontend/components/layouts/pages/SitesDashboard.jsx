@@ -1,16 +1,13 @@
-import { MemoizedFilter } from "@components/filters";
+import { MemoizedPageOption } from "@components/options/PageOption";
 import { MemoizedDataPagination } from "@components/pagination";
 import { MemoizedSitesTable } from "@components/tables/SitesTable";
-import { ExternalLinkIcon } from "@heroicons/react/outline";
 import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
 import { useSiteQueries } from "@hooks/useSiteQueries";
 import { useSites } from "@hooks/useSites";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
-import { handleConversionStringToLowercase } from "@utils/convertCase";
 import useTranslation from "next-translate/useTranslation";
 import { memo, useContext } from "react";
-import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import tw from "twin.macro";
 
@@ -32,38 +29,11 @@ const SitesDashboardPageLayout = () => {
 
 	// SWR hooks
 	const { user } = useUser();
-	const { sitesCount, sitesResults } = useSites(scanApiEndpoint);
+	const { sitesCount, sitesResults, validatingSites } = useSites(scanApiEndpoint);
 
 	return (
 		<>
-			<div tw="flex-none px-4 sm:px-6 md:px-0">
-				<div tw="flex-1 min-w-0">
-					<div tw="mt-4 mb-8 flex flex-col sm:flex-row sm:flex-wrap sm:mt-2 sm:space-x-6">
-						<div tw="mt-2 flex items-center space-x-3 text-sm text-gray-500">
-							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-								sitesCount ? (
-									<>
-										<ExternalLinkIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" aria-hidden="true" />
-										<span tw="text-sm leading-6 font-semibold text-gray-500">
-											{sitesCount > 1
-												? sitesCount + " " + handleConversionStringToLowercase(sitesText)
-												: sitesCount + " " + siteText}
-										</span>
-									</>
-								) : null
-							) : (
-								<>
-									<Skeleton duration={2} width={20} height={20} className="flex-shrink-0" />
-									<Skeleton duration={2} width={60} height={20} />
-								</>
-							)}
-						</div>
-					</div>
-
-					<MemoizedFilter isSitesFilter />
-				</div>
-			</div>
-
+			<MemoizedPageOption isSites />
 			<div
 				css={[
 					tw`flex-grow focus:outline-none px-4 pt-8 sm:px-6 md:px-0`,
@@ -103,7 +73,7 @@ const SitesDashboardPageLayout = () => {
 							]}
 						>
 							<div tw="min-w-full h-full rounded-lg border-gray-300">
-								<MemoizedSitesTable count={sitesCount} results={sitesResults} />
+								<MemoizedSitesTable count={sitesCount} results={sitesResults} validatingSites={validatingSites} />
 							</div>
 						</div>
 					</div>

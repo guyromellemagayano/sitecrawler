@@ -32,7 +32,7 @@ export const useSites = (endpoint = null, options = null) => {
 			// Show alert message after failed `user` SWR hook fetch
 			errorSites
 				? setSitesConfig({
-						isStats: true,
+						isSites: true,
 						method: errorSites?.config?.method ?? null,
 						status: errorSites?.status ?? null
 				  })

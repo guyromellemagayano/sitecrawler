@@ -243,9 +243,7 @@ const LinksData = ({ link = null }) => {
 							passHref
 						>
 							<a tw="mr-3 flex items-center outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-								<span className="truncate-link">
-									{linkDetailPages[0]?.url === linkUrl ? "/" : linkDetailPages[0]?.url}
-								</span>
+								<span tw="truncate">{linkDetailPages[0]?.url === linkUrl ? "/" : linkDetailPages[0]?.url}</span>
 								&nbsp;
 								{linkDetailPages.length - 1 > 0
 									? "+" + handleConversionStringToNumber(linkDetailPages.length - 1)
