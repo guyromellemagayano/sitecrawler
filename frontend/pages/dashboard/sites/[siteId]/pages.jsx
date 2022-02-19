@@ -70,7 +70,7 @@ export default function SitePages({ siteName }) {
 	return (
 		<MemoizedLayout>
 			<NextSeo title={sitesPagesPageTitle} />
-			<MemoizedPageLayout pageTitle={sitesPagesPageTitle}>
+			<MemoizedPageLayout pageTitle={sitesPagesText}>
 				<MemoizedSitePagesPageLayout />
 			</MemoizedPageLayout>
 		</MemoizedLayout>
