@@ -138,7 +138,7 @@ const PrimaryMenu = () => {
 																			{sitesCount}
 																		</span>
 																	) : (
-																		<span tw="flex items-center ml-3 py-1 px-3">
+																		<span tw="flex items-center px-3">
 																			<Skeleton duration={2} width={30} height={20} tw="rounded-full" />
 																		</span>
 																	)
