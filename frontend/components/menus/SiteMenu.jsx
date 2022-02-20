@@ -200,10 +200,8 @@ const SiteMenu = () => {
 																isComponentReady &&
 																user &&
 																Math.round(user?.status / 100) === 2 &&
-																!user?.data?.detail &&
-																totalPages &&
-																!validatingStats ? (
-																	totalPages > 0 ? (
+																!user?.data?.detail ? (
+																	!validatingStats && totalPages > 0 ? (
 																		<span tw="ml-auto inline-block text-xs leading-4 rounded-full py-1 px-3 bg-white text-black">
 																			{totalPages}
 																		</span>
