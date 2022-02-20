@@ -293,47 +293,31 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 
 							{!isSites ? (
 								isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-									permissions?.includes("can_see_images") &&
-									permissions?.includes("can_see_pages") &&
-									permissions?.includes("can_see_scripts") &&
-									permissions?.includes("can_see_stylesheets") ? (
-										siteIdVerified ? (
-											<button
-												type="button"
-												disabled={isDownloading}
-												css={[
-													tw`inline-flex items-center ml-2 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white`,
-													isDownloading
-														? tw`bg-gray-400 opacity-50 cursor-not-allowed`
-														: tw`bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
-												]}
-												onClick={handleCsvDownload}
-											>
-												<span tw="flex items-center space-x-2">
-													<DownloadIcon tw="w-4 h-4 text-white" />
-													<span>{isDownloading ? downloadingText : csvDownloadText}</span>
-												</span>
-											</button>
-										) : (
-											<button
-												type="button"
-												onClick={() => setIsSiteVerifyErrorModalVisible(!isSiteVerifyErrorModalVisible)}
-												tw="inline-flex items-center ml-2 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-											>
-												<span tw="flex items-center space-x-2">
-													<DownloadIcon tw="w-4 h-4 text-white" />
-													<span>{csvDownloadText}</span>
-												</span>
-											</button>
-										)
+									siteIdVerified ? (
+										<button
+											type="button"
+											disabled={isDownloading}
+											css={[
+												tw`inline-flex items-center ml-2 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white`,
+												isDownloading
+													? tw`bg-gray-400 opacity-50 cursor-not-allowed`
+													: tw`bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
+											]}
+											onClick={handleCsvDownload}
+										>
+											<span tw="flex items-center space-x-2">
+												<DownloadIcon tw="w-4 h-4 text-white" />
+												<span>{isDownloading ? downloadingText : csvDownloadText}</span>
+											</span>
+										</button>
 									) : (
 										<button
 											type="button"
-											onClick={() => setIsUpgradeErrorModalVisible(!isUpgradeErrorModalVisible)}
-											tw="inline-flex items-center ml-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white focus:outline-none bg-yellow-600 hover:bg-yellow-700 focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+											onClick={() => setIsSiteVerifyErrorModalVisible(!isSiteVerifyErrorModalVisible)}
+											tw="inline-flex items-center ml-2 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
 										>
 											<span tw="flex items-center space-x-2">
-												<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-white" />
+												<DownloadIcon tw="w-4 h-4 text-white" />
 												<span>{csvDownloadText}</span>
 											</span>
 										</button>
