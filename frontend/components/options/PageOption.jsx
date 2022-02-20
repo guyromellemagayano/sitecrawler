@@ -252,10 +252,10 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 													: () => setIsSiteVerifyErrorModalVisible(!isSiteVerifyErrorModalVisible)
 											}
 											css={[
-												tw`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white focus:outline-none`,
+												tw`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white `,
 												(isCrawlStarted && !isCrawlFinished) || isProcessing
-													? tw`bg-green-600 opacity-50 cursor-not-allowed`
-													: tw`bg-green-600 hover:bg-green-700 focus:ring-2 focus:ring-offset-2 focus:ring-green-500`
+													? tw`bg-green-400 opacity-50 cursor-not-allowed`
+													: tw`bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`
 											]}
 										>
 											<span tw="flex items-center space-x-2">
@@ -302,8 +302,10 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 												type="button"
 												disabled={isDownloading}
 												css={[
-													tw`inline-flex items-center ml-2 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`,
-													isDownloading && tw`opacity-50 bg-gray-300 cursor-not-allowed`
+													tw`inline-flex items-center ml-2 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white`,
+													isDownloading
+														? tw`bg-gray-400 opacity-50 cursor-not-allowed`
+														: tw`bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
 												]}
 												onClick={handleCsvDownload}
 											>
