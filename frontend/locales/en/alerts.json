@@ -424,6 +424,19 @@
 			"502BadGatewayErrorResponse": "Scan get failed. Got a 502 bad gateway error response.",
 			"503ServiceUnavailableErrorResponse": "Scan get failed. Got a 503 service unavailable error response.",
 			"504GatewayTimeoutErrorResponse": "Scan get failed. Got a 504 gateway timeout error response."
+		},
+		"post": {
+			"200OkSuccessResponse": "Scan post success! Got a 200 OK success response.",
+			"201CreatedSuccessResponse": "Scan post success! Got a 201 created success response.",
+			"400BadRequestErrorResponse": "Scan post failed. Got a 400 bad request error response. Please try again.",
+			"401UnauthorizedErrorResponse": "Scan post failed. Got a 401 unauthorized error response. Please try again.",
+			"403ForbiddenErrorResponse": "Scan post failed. Got a 403 forbidden error response.",
+			"404NotFoundErrorResponse": "Scan post failed. Got a 404 not found error response.",
+			"429TooManyRequestsErrorResponse": "Scan post failed. Got a 429 too many requests error response.",
+			"500InternalServerErrorResponse": "Scan post failed. Got a 500 internal server error response.",
+			"502BadGatewayErrorResponse": "Scan post failed. Got a 502 bad gateway error response.",
+			"503ServiceUnavailableErrorResponse": "Scan post failed. Got a 503 service unavailable error response.",
+			"504GatewayTimeoutErrorResponse": "Scan post failed. Got a 504 gateway timeout error response."
 		}
 	},
 	"pages": {

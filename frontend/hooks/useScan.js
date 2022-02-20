@@ -66,12 +66,12 @@ export const useScan = (querySid = null, options = null) => {
 			const startScanSlug = "/start_scan/";
 			let endpoint = `${SitesApiEndpoint + querySid + startScanSlug}`;
 
-			const currentSiteResponse = await handlePostMethod(endpoint);
-			const currentSiteResponseData = currentSiteResponse?.data ?? null;
-			const currentSiteResponseStatus = currentSiteResponse?.status ?? null;
-			const currentSiteResponseMethod = currentSiteResponse?.config?.method ?? null;
+			const currentScanResponse = await handlePostMethod(endpoint);
+			const currentScanResponseData = currentScanResponse?.data ?? null;
+			const currentScanResponseStatus = currentScanResponse?.status ?? null;
+			const currentScanResponseMethod = currentScanResponse?.config?.method ?? null;
 
-			if (currentSiteResponseData !== null && Math.round(currentSiteResponseStatus / 200) === 1) {
+			if (currentScanResponseData !== null && Math.round(currentScanResponseStatus / 200) === 1) {
 				// Set `isProcessing` state
 				setIsProcessing(false);
 
@@ -84,11 +84,9 @@ export const useScan = (querySid = null, options = null) => {
 				// Show alert message after successful `user` SWR hook fetch
 				setScanConfig({
 					isScan: true,
-					method: currentSiteResponseData?.config?.method ?? null,
-					status: currentSiteResponseData?.status ?? null
+					method: currentScanResponseData?.config?.method ?? null,
+					status: currentScanResponseData?.status ?? null
 				});
-
-				return true;
 			} else {
 				// Set `isProcessing` state
 				setIsProcessing(false);
@@ -102,13 +100,13 @@ export const useScan = (querySid = null, options = null) => {
 				// Show alert message after failed `user` SWR hook fetch
 				setScanConfig({
 					isScan: true,
-					method: currentSiteResponseData?.config?.method ?? null,
-					status: currentSiteResponseData?.status ?? null
+					method: currentScanResponseData?.config?.method ?? null,
+					status: currentScanResponseData?.status ?? null
 				});
-
-				return false;
 			}
 		}
+
+		return { isCrawlStarted, isCrawlFinished, isProcessing };
 	};
 
 	useMemo(async () => {
@@ -142,15 +140,23 @@ export const useScan = (querySid = null, options = null) => {
 			setCurrentScan(currentScanResult);
 			setPreviousScan(previousScanResult);
 
+			if (currentScan !== null) {
+				setIsCrawlStarted(true);
+				setIsCrawlFinished(false);
+			} else {
+				setIsCrawlStarted(false);
+				setIsCrawlFinished(true);
+			}
+
 			if ((currentScan !== null && previousScan !== null) || (currentScan == null && previousScan !== null)) {
-				setScanObjId(previousScan.id);
-			} else if (currentScan !== null && previousScan == null) {
-				setScanObjId(currentScan.id);
+				setScanObjId(previousScan?.id);
+			} else {
+				setScanObjId(currentScan?.id);
 			}
 		}
 
-		return { scanResults, scanCount, currentScan, previousScan, scanObjId };
-	}, [scan, scanResults, scanCount, currentScan, previousScan, scanObjId]);
+		return { scanResults, scanCount, currentScan, previousScan, scanObjId, isCrawlStarted, isCrawlFinished };
+	}, [scan, scanResults, scanCount, currentScan, previousScan, scanObjId, isCrawlStarted, isCrawlFinished]);
 
 	return {
 		currentScan,

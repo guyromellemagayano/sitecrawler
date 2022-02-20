@@ -184,11 +184,13 @@ const SiteMenu = () => {
 																!user?.data?.detail &&
 																totalLinks &&
 																!validatingStats ? (
-																	<span tw="ml-auto inline-block text-xs leading-4 rounded-full py-1 px-3 bg-white text-black">
-																		{totalLinks}
-																	</span>
+																	totalLinks > 0 ? (
+																		<span tw="ml-auto inline-block text-xs leading-4 rounded-full py-1 px-3 bg-white text-black">
+																			{totalLinks}
+																		</span>
+																	) : null
 																) : (
-																	<span tw="flex items-center px-3">
+																	<span tw="flex items-center pl-3">
 																		<Skeleton duration={2} width={30} height={20} tw="rounded-full" />
 																	</span>
 																)
@@ -201,11 +203,13 @@ const SiteMenu = () => {
 																!user?.data?.detail &&
 																totalPages &&
 																!validatingStats ? (
-																	<span tw="ml-auto inline-block text-xs leading-4 rounded-full py-1 px-3 bg-white text-black">
-																		{totalPages}
-																	</span>
+																	totalPages > 0 ? (
+																		<span tw="ml-auto inline-block text-xs leading-4 rounded-full py-1 px-3 bg-white text-black">
+																			{totalPages}
+																		</span>
+																	) : null
 																) : (
-																	<span tw="flex items-center px-3">
+																	<span tw="flex items-center pl-3">
 																		<Skeleton duration={2} width={30} height={20} tw="rounded-full" />
 																	</span>
 																)
@@ -218,11 +222,13 @@ const SiteMenu = () => {
 																!user?.data?.detail &&
 																totalImages &&
 																!validatingStats ? (
-																	<span tw="ml-auto inline-block text-xs leading-4 rounded-full py-1 px-3 bg-white text-black">
-																		{totalImages}
-																	</span>
+																	totalImages > 0 ? (
+																		<span tw="ml-auto inline-block text-xs leading-4 rounded-full py-1 px-3 bg-white text-black">
+																			{totalImages}
+																		</span>
+																	) : null
 																) : (
-																	<span tw="flex items-center px-3">
+																	<span tw="flex items-center pl-3">
 																		<Skeleton duration={2} width={30} height={20} tw="rounded-full" />
 																	</span>
 																)
