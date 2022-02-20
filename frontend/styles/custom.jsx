@@ -421,7 +421,7 @@ export const CustomTransitionStyles = styled.createGlobalStyle`
 			}
 
 			&-description {
-				${tw`text-sm font-medium leading-6 text-gray-500 mt-4 mb-3`}
+				${tw`text-sm leading-6 text-gray-500 mt-4 mb-3`}
 			}
 		}
 	}
@@ -435,7 +435,7 @@ export const CustomTransitionStyles = styled.createGlobalStyle`
 			}
 
 			&-description {
-				${tw`text-sm font-medium leading-6 text-gray-500 mt-4 mb-3`}
+				${tw`text-sm leading-6 text-gray-500 mt-4 mb-3`}
 			}
 		}
 	}
