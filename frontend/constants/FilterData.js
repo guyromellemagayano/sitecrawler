@@ -128,6 +128,11 @@ export const FilterData = () => {
 	filtersArray.push(internalLinksData);
 	filtersArray.push(externalLinksData);
 	filtersArray.push(noLinkIssuesData);
+	filtersArray.push(allSitePagesData);
+	filtersArray.push(brokenSecurityData);
+	filtersArray.push(duplicateTitlesData);
+	filtersArray.push(duplicateDescriptionsData);
+	filtersArray.push(largePageSizesData);
 
 	return {
 		filtersArray,

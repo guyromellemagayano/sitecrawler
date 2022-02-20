@@ -1,7 +1,7 @@
 import { MemoizedPageOption } from "@components/options/PageOption";
 import { MemoizedDataPagination } from "@components/pagination";
-import { MemoizedLinksTable } from "@components/tables/LinksTable";
-import { useLinks } from "@hooks/useLinks";
+import { MemoizedPagesTable } from "@components/tables/PagesTable";
+import { usePages } from "@hooks/usePages";
 import { useScan } from "@hooks/useScan";
 import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
 import { useSiteQueries } from "@hooks/useSiteQueries";
@@ -13,9 +13,9 @@ import { memo, useContext } from "react";
 import tw from "twin.macro";
 
 /**
- * Custom function to render the `SitePagePageLayout` component
+ * Custom function to render the `SitePagesPageLayout` component
  */
-const SitePagePageLayout = () => {
+const SitePagesPageLayout = () => {
 	// Custom context
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
@@ -33,15 +33,15 @@ const SitePagePageLayout = () => {
 
 	// SWR hooks
 	const { user } = useUser();
-	const { linksCount, linksResults, validatingLinks } = useLinks(scanApiEndpoint, sanitizedSiteId, scanObjId);
+	const { pagesCount, pagesResults, validatingPages } = usePages(scanApiEndpoint, sanitizedSiteId, scanObjId);
 
 	return (
 		<>
-			<MemoizedPageOption isLinks />
+			<MemoizedPageOption isPages />
 			<div
 				css={[
 					tw`flex-grow focus:outline-none px-4 pt-8 sm:px-6 md:px-0`,
-					isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && linksCount === 0
+					isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && pagesCount === 0
 						? tw`flex flex-col flex-auto items-center justify-center`
 						: null
 				]}
@@ -49,7 +49,7 @@ const SitePagePageLayout = () => {
 				<div
 					css={[
 						tw`flex-1 w-full h-full`,
-						isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && linksCount === 0
+						isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && pagesCount === 0
 							? tw`flex flex-auto`
 							: null
 					]}
@@ -61,7 +61,7 @@ const SitePagePageLayout = () => {
 								user &&
 								Math.round(user?.status / 100) === 2 &&
 								!user?.data?.detail &&
-								linksCount === 0 &&
+								pagesCount === 0 &&
 								tw`flex flex-initial`
 						]}
 					>
@@ -72,12 +72,12 @@ const SitePagePageLayout = () => {
 									user &&
 									Math.round(user?.status / 100) === 2 &&
 									!user?.data?.detail &&
-									linksCount === 0 &&
+									pagesCount === 0 &&
 									tw`flex items-center`
 							]}
 						>
 							<div tw="min-w-full h-full rounded-lg border-gray-300">
-								<MemoizedLinksTable count={linksCount} results={linksResults} validatingLinks={validatingLinks} />
+								<MemoizedPagesTable count={pagesCount} results={pagesResults} validatingPages={validatingPages} />
 							</div>
 						</div>
 					</div>
@@ -92,6 +92,6 @@ const SitePagePageLayout = () => {
 };
 
 /**
- * Memoized custom `SitePagePageLayout` component
+ * Memoized custom `SitePagesPageLayout` component
  */
-export const MemoizedSitePagePageLayout = memo(SitePagePageLayout);
+export const MemoizedSitePagesPageLayout = memo(SitePagesPageLayout);

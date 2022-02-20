@@ -34,12 +34,14 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 
 	const typeString = query?.type ? (Array.isArray(query?.type) ? query.type.join("&type=") : query.type) : "";
 
+	// Sites
 	const verifiedQuery = query?.verified
 		? scanApiEndpoint.includes("?")
 			? `&verified=${query.verified}`
 			: `?verified=${query.verified}`
 		: "";
 
+	// Links
 	const statusNeqQuery = query?.status__neq
 		? scanApiEndpoint.includes("?")
 			? `&status__neq=${query.status__neq}`
@@ -54,14 +56,24 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 
 	const typeQuery = typeString ? (scanApiEndpoint.includes("?") ? `&type=${typeString}` : `?type=${typeString}`) : "";
 
+	// Pages
+	const sizeTotalMinQuery = query?.size_total_min
+		? scanApiEndpoint.includes("?")
+			? `&size_total_min=${query.size_total_min}`
+			: `?size_total_min=${query.size_total_min}`
+		: "";
+
+	// Pagination
 	const pageQuery = query?.page ? (scanApiEndpoint.includes("?") ? `&page=${query.page}` : `?page=${query.page}`) : "";
 
+	// Search
 	const searchQuery = query?.search
 		? scanApiEndpoint.includes("?")
 			? `&search=${query.search}`
 			: `?search=${query.search}`
 		: "";
 
+	// Sorting
 	const orderingQuery = query?.ordering
 		? scanApiEndpoint.includes("?")
 			? `&ordering=${query.ordering}`
