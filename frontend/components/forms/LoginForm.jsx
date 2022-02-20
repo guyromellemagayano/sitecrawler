@@ -80,7 +80,7 @@ const LoginForm = () => {
 					setSubmitting(false);
 
 					// Mutate `login` endpoint after successful 200 OK or 201 Created response is issued
-					await mutate(LoginApiEndpoint, loginResponseData.key, false);
+					await mutate(LoginApiEndpoint, loginResponseData.key);
 
 					// Collect user data and send to Sentry
 					Sentry.configureScope((scope) =>
