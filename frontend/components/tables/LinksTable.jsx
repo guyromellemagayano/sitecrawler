@@ -14,9 +14,11 @@ import { MemoizedLinksData } from "./LinksData";
 /**
  * Custom function to render the `LinksTable` component
  *
- * @param {object} sites
+ * @param {number} count
+ * @param {array} results
+ * @param {boolean} validatingLinks
  */
-const LinksTable = ({ count = 0, results = [] }) => {
+const LinksTable = ({ count = 0, results = [], validatingLinks = false }) => {
 	// Translations
 	const { t } = useTranslation();
 	const noAvailableLinks = t("sites:noAvailableLinks");
@@ -58,18 +60,18 @@ const LinksTable = ({ count = 0, results = [] }) => {
 					</thead>
 
 					<tbody tw="relative divide-y divide-gray-200">
-						{results.map((result) => {
-							return <MemoizedLinksData key={result.id} link={result} />;
-						})}
+						{results?.map((result) => {
+							return <MemoizedLinksData key={result.id} link={result} validatingLinks={validatingLinks} />;
+						}) ?? null}
 					</tbody>
 				</table>
 			) : (
 				<div tw="px-4 py-5 sm:p-6 flex items-center justify-center">
-					{count === 0 && results?.length === 0 ? (
-						<MemoizedLoadingMessage message={noAvailableLinks} />
-					) : (
+					{validatingLinks ? (
 						<Skeleton duration={2} width={120} height={24} />
-					)}
+					) : !validatingLinks && count === 0 && results?.length === 0 ? (
+						<MemoizedLoadingMessage message={noAvailableLinks} />
+					) : null}
 				</div>
 			)}
 		</section>
@@ -77,7 +79,9 @@ const LinksTable = ({ count = 0, results = [] }) => {
 };
 
 LinksTable.propTypes = {
-	sites: PropTypes.any
+	count: PropTypes.number,
+	results: PropTypes.array,
+	validatingLinks: PropTypes.bool
 };
 
 /**

@@ -19,8 +19,9 @@ import "twin.macro";
  * Custom function to render the `LinksData` component
  *
  * @param {object} link
+ * @param {boolean} validatingLinks
  */
-const LinksData = ({ link = null }) => {
+const LinksData = ({ link = null, validatingLinks = false }) => {
 	// Site data props
 	const linkId = link?.id ?? null;
 	const linkStatus = link?.status ?? null;
@@ -91,7 +92,12 @@ const LinksData = ({ link = null }) => {
 				<div tw="flex flex-col items-start">
 					<div>
 						<>
-							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+							{isComponentReady &&
+							user &&
+							Math.round(user?.status / 100) === 2 &&
+							!user?.data?.detail &&
+							linkStatus &&
+							!validatingLinks ? (
 								<>
 									{linkStatus === "OK" && linkTlsStatus === "OK" ? (
 										<span
@@ -190,7 +196,12 @@ const LinksData = ({ link = null }) => {
 				</div>
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				linkType &&
+				!validatingLinks ? (
 					linkType === "PAGE" ? (
 						internalText
 					) : linkType === "EXTERNAL" ? (
@@ -203,7 +214,12 @@ const LinksData = ({ link = null }) => {
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				linkStatus &&
+				!validatingLinks ? (
 					linkStatus === "OK" ? (
 						<MemoizedBadge text={"OK"} isSuccess />
 					) : linkStatus === "TIMEOUT" ? (
@@ -218,51 +234,64 @@ const LinksData = ({ link = null }) => {
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-					linkHttpStatus ? (
-						Math.round(linkHttpStatus / 100) === 2 ? (
-							<span tw="text-green-500">{linkHttpStatus}</span>
-						) : Math.round(linkHttpStatus / 100) === 4 || Math.round(linkHttpStatus / 100) === 5 ? (
-							<span tw="text-red-500">{linkHttpStatus}</span>
-						) : Math.round(linkHttpStatus / 100) === 3 ? (
-							<span tw="text-yellow-500">{linkHttpStatus}</span>
-						) : (
-							<span tw="text-gray-500">{linkHttpStatus}</span>
-						)
-					) : null
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				linkHttpStatus &&
+				!validatingLinks ? (
+					Math.round(linkHttpStatus / 100) === 2 ? (
+						<span tw="text-green-500">{linkHttpStatus}</span>
+					) : Math.round(linkHttpStatus / 100) === 4 || Math.round(linkHttpStatus / 100) === 5 ? (
+						<span tw="text-red-500">{linkHttpStatus}</span>
+					) : Math.round(linkHttpStatus / 100) === 3 ? (
+						<span tw="text-yellow-500">{linkHttpStatus}</span>
+					) : (
+						<span tw="text-gray-500">{linkHttpStatus}</span>
+					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-					linkDetailPages?.length > 0 ? (
-						<Link
-							href="/dashboard/sites/[siteId]/links/[linkId]/"
-							as={`/dashboard/sites/${siteId}/links/${linkDetailId}/`}
-							passHref
-						>
-							<a tw="mr-3 flex items-center outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-								<span tw="truncate">{linkDetailPages[0]?.url === linkUrl ? "/" : linkDetailPages[0]?.url}</span>
-								&nbsp;
-								{linkDetailPages.length - 1 > 0
-									? "+" + handleConversionStringToNumber(linkDetailPages.length - 1)
-									: null}{" "}
-								{linkDetailPages.length - 1 > 1
-									? handleConversionStringToLowercase(othersText)
-									: linkDetailPages.length - 1 === 1
-									? handleConversionStringToLowercase("other")
-									: null}
-							</a>
-						</Link>
-					) : null
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				linkDetailPages?.length > 0 &&
+				!validatingLinks ? (
+					<Link
+						href="/dashboard/sites/[siteId]/links/[linkId]/"
+						as={`/dashboard/sites/${siteId}/links/${linkDetailId}/`}
+						passHref
+					>
+						<a tw="mr-3 flex items-center outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+							<span className="truncate-link">
+								{linkDetailPages[0]?.url === linkUrl ? "/" : linkDetailPages[0]?.url}
+							</span>
+							&nbsp;
+							{linkDetailPages.length - 1 > 0
+								? "+" + handleConversionStringToNumber(linkDetailPages.length - 1)
+								: null}{" "}
+							{linkDetailPages.length - 1 > 1
+								? handleConversionStringToLowercase(othersText)
+								: linkDetailPages.length - 1 === 1
+								? handleConversionStringToLowercase("other")
+								: null}
+						</a>
+					</Link>
 				) : (
 					<Skeleton duration={2} width={120} />
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-					<span tw="text-gray-500">{linkOccurrences ?? 0}</span>
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				linkOccurrences &&
+				!validatingLinks ? (
+					<span tw="text-gray-500">{linkOccurrences}</span>
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
@@ -278,9 +307,11 @@ LinksData.propTypes = {
 		occurences: PropTypes.number,
 		scan_id: PropTypes.number,
 		status: PropTypes.string,
+		tls_status: PropTypes.string,
 		type: PropTypes.string,
 		url: PropTypes.string
-	})
+	}),
+	validatingLinks: PropTypes.bool
 };
 
 /**

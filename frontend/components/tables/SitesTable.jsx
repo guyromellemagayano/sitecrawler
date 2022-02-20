@@ -60,18 +60,18 @@ const SitesTable = ({ count = 0, results = [], validatingSites = false }) => {
 					</thead>
 
 					<tbody tw="relative divide-y divide-gray-200">
-						{results.map((result) => {
-							return <MemoizedSitesData key={result.id} site={result} />;
-						})}
+						{results?.map((result) => {
+							return <MemoizedSitesData key={result.id} site={result} validatingSites={validatingSites} />;
+						}) ?? null}
 					</tbody>
 				</table>
 			) : (
 				<div tw="px-4 py-5 sm:p-6 flex items-center justify-center">
-					{!validatingSites && count === 0 && results?.length === 0 ? (
-						<MemoizedLoadingMessage message={noAvailableSites} />
-					) : (
+					{validatingSites ? (
 						<Skeleton duration={2} width={120} height={24} />
-					)}
+					) : !validatingSites && count === 0 && results?.length === 0 ? (
+						<MemoizedLoadingMessage message={noAvailableSites} />
+					) : null}
 				</div>
 			)}
 		</section>
