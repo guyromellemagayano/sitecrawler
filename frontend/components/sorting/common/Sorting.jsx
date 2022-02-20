@@ -27,51 +27,31 @@ const Sorting = ({ sortOrder = null, setSortOrder, tableContent = null, ordering
 
 	// Handle sort and ordering
 	useEffect(() => {
-		let isMounted = true;
+		if (ordering !== null) {
+			resultSlug = handleSlugFromSortKey(tableContent, ordering.replace("-", ""));
+			orderItem = handleConversionStringToCamelCase(resultSlug);
 
-		(async () => {
-			if (!isMounted) return;
-
-			if (ordering !== null) {
-				resultSlug = handleSlugFromSortKey(tableContent, ordering.replace("-", ""));
-				orderItem = handleConversionStringToCamelCase(resultSlug);
-
-				if (ordering.includes("-")) setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
-				else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
-			}
-		})();
-
-		return () => {
-			isMounted = false;
-		};
+			if (ordering.includes("-")) setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
+			else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
+		}
 	}, [ordering]);
 
 	// Handle ascending and descending onClick states
 	useEffect(() => {
-		let isMounted = true;
-
-		(async () => {
-			if (!isMounted) return;
-
-			if (ordering !== null) {
-				if (resultSlug == slug) {
-					if (ordering.includes("-")) {
-						setIsDescClicked(true);
-						setIsAscClicked(false);
-					} else {
-						setIsAscClicked(true);
-						setIsDescClicked(false);
-					}
-				} else {
-					setIsDescClicked(false);
+		if (ordering !== null) {
+			if (resultSlug == slug) {
+				if (ordering.includes("-")) {
+					setIsDescClicked(true);
 					setIsAscClicked(false);
+				} else {
+					setIsAscClicked(true);
+					setIsDescClicked(false);
 				}
+			} else {
+				setIsDescClicked(false);
+				setIsAscClicked(false);
 			}
-		})();
-
-		return () => {
-			isMounted = false;
-		};
+		}
 	}, [ordering]);
 
 	// Handle click event

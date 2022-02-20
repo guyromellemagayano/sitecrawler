@@ -114,8 +114,6 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 				isLinks ? "link" : isPages || isSeo ? "page" : isImages ? "image" : null
 			}/?format=csv${queryString}`;
 
-			console.log("Downloading...", downloadLink);
-
 			window.location.assign(downloadLink);
 		}
 

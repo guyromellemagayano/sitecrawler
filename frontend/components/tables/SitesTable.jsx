@@ -1,7 +1,6 @@
 import { MemoizedLoadingMessage } from "@components/messages/LoadingMessage";
 import { MemoizedDataSorting } from "@components/sorting/DataSorting";
 import { SitesTableLabels } from "@constants/SitesTableLabels";
-import { useSiteQueries } from "@hooks/useSiteQueries";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
@@ -27,9 +26,6 @@ const SitesTable = ({ count = 0, results = [], validatingSites = false }) => {
 	// Router
 	const { query } = useRouter();
 
-	// Custom hooks
-	const { setPagePath } = useSiteQueries();
-
 	// Sites table labels with translations
 	const labelsArray = SitesTableLabels();
 
@@ -51,7 +47,7 @@ const SitesTable = ({ count = 0, results = [], validatingSites = false }) => {
 									tw="px-6 py-3 border-b border-gray-200 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
 								>
 									<span tw="flex items-center justify-start">
-										<MemoizedDataSorting slug={label.slug} labels={labelsArray} setPagePath={setPagePath} />
+										<MemoizedDataSorting slug={label.slug} labels={labelsArray} />
 										<span tw="flex items-center">{label.label}</span>
 									</span>
 								</th>

@@ -187,15 +187,13 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 											</button>
 										) : null}
 
-										{permissions?.includes("delete_site") ? (
-											<button
-												type="button"
-												tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-red-600 hover:text-red-500 transition ease-in-out duration-150"
-												onClick={() => setIsSiteDeleteModalVisible(!isSiteDeleteModalVisible)}
-											>
-												{deleteText}
-											</button>
-										) : null}
+										<button
+											type="button"
+											tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-red-600 hover:text-red-500 transition ease-in-out duration-150"
+											onClick={() => setIsSiteDeleteModalVisible(!isSiteDeleteModalVisible)}
+										>
+											{deleteText}
+										</button>
 									</span>
 								</div>
 							</>
@@ -273,12 +271,7 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady &&
-				user &&
-				Math.round(user?.status / 100) === 2 &&
-				!user?.data?.detail &&
-				totalErrors &&
-				!validatingSites ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingSites ? (
 					totalErrors > 0 ? (
 						<span tw="text-red-500">{totalErrors}</span>
 					) : (
@@ -289,12 +282,7 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady &&
-				user &&
-				Math.round(user?.status / 100) === 2 &&
-				!user?.data?.detail &&
-				totalLinks &&
-				!validatingSites ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingSites ? (
 					totalLinks > 0 ? (
 						<Link href="/dashboard/sites/[siteId]/links" as={`/dashboard/sites/${siteId}/links`} passHref>
 							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
@@ -309,12 +297,7 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady &&
-				user &&
-				Math.round(user?.status / 100) === 2 &&
-				!user?.data?.detail &&
-				totalPages &&
-				!validatingSites ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingSites ? (
 					totalPages > 0 ? (
 						<Link href="/dashboard/sites/[siteId]/pages" as={`/dashboard/sites/${siteId}/pages`} passHref>
 							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
@@ -329,12 +312,7 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady &&
-				user &&
-				Math.round(user?.status / 100) === 2 &&
-				!user?.data?.detail &&
-				totalImages &&
-				!validatingSites ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingSites ? (
 					totalImages > 0 ? (
 						<Link href="/dashboard/sites/[siteId]/images" as={`/dashboard/sites/${siteId}/images`} passHref>
 							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
