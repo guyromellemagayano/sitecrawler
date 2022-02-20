@@ -37,13 +37,13 @@ const SiteMenu = () => {
 	// Custom context
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
-	// Sidebar menus
-	const { SiteSidebarMenus } = SidebarMenus();
-
 	// SWR hooks
 	const { user } = useUser();
 	const { scan, scanObjId } = useScan(sanitizedSiteId);
-	const { stats, totalImages, totalLinks, totalPages } = useStats(sanitizedSiteId, scanObjId);
+	const { stats, totalImages, totalLinks, totalPages, validatingStats } = useStats(sanitizedSiteId, scanObjId);
+
+	// Sidebar menus
+	const { SiteSidebarMenus } = SidebarMenus();
 
 	return (
 		<Scrollbars renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />} universal>
@@ -91,7 +91,7 @@ const SiteMenu = () => {
 														<a
 															className="group"
 															css={[
-																tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium rounded-md `,
+																tw`mt-1 flex items-center justify-between px-3 py-2 text-sm leading-5 font-medium rounded-md `,
 																asPath.includes(value2.url) &&
 																isComponentReady &&
 																user &&
@@ -108,87 +108,88 @@ const SiteMenu = () => {
 																	: tw`cursor-default`
 															]}
 														>
-															{value2.slug === "overview" ? (
-																isComponentReady &&
-																user &&
-																Math.round(user?.status / 100) === 2 &&
-																!user?.data?.detail ? (
-																	<ViewGridIcon tw="mr-3 h-6 w-5" />
-																) : (
-																	<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
-																)
-															) : value2.slug === "links" ? (
-																isComponentReady &&
-																user &&
-																Math.round(user?.status / 100) === 2 &&
-																!user?.data?.detail ? (
-																	<LinkIcon tw="mr-3 h-6 w-5" />
-																) : (
-																	<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
-																)
-															) : value2.slug === "pages" ? (
-																isComponentReady &&
-																user &&
-																Math.round(user?.status / 100) === 2 &&
-																!user?.data?.detail ? (
-																	<DocumentTextIcon tw="mr-3 h-6 w-5" />
-																) : (
-																	<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
-																)
-															) : value2.slug === "images" ? (
-																isComponentReady &&
-																user &&
-																Math.round(user?.status / 100) === 2 &&
-																!user?.data?.detail ? (
-																	<PhotographIcon tw="mr-3 h-6 w-5" />
-																) : (
-																	<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
-																)
-															) : value2.slug === "seo" ? (
-																isComponentReady &&
-																user &&
-																Math.round(user?.status / 100) === 2 &&
-																!user?.data?.detail ? (
-																	<SearchIcon tw="mr-3 h-6 w-5" />
-																) : (
-																	<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
-																)
-															) : value2.slug === "site-settings" ? (
-																isComponentReady &&
-																user &&
-																Math.round(user?.status / 100) === 2 &&
-																!user?.data?.detail ? (
-																	<CogIcon tw="mr-3 h-6 w-5" />
-																) : (
-																	<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
-																)
-															) : null}
+															<span tw="flex items-center justify-start">
+																{value2.slug === "overview" ? (
+																	isComponentReady &&
+																	user &&
+																	Math.round(user?.status / 100) === 2 &&
+																	!user?.data?.detail ? (
+																		<ViewGridIcon tw="mr-3 h-6 w-5" />
+																	) : (
+																		<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
+																	)
+																) : value2.slug === "links" ? (
+																	isComponentReady &&
+																	user &&
+																	Math.round(user?.status / 100) === 2 &&
+																	!user?.data?.detail ? (
+																		<LinkIcon tw="mr-3 h-6 w-5" />
+																	) : (
+																		<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
+																	)
+																) : value2.slug === "pages" ? (
+																	isComponentReady &&
+																	user &&
+																	Math.round(user?.status / 100) === 2 &&
+																	!user?.data?.detail ? (
+																		<DocumentTextIcon tw="mr-3 h-6 w-5" />
+																	) : (
+																		<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
+																	)
+																) : value2.slug === "images" ? (
+																	isComponentReady &&
+																	user &&
+																	Math.round(user?.status / 100) === 2 &&
+																	!user?.data?.detail ? (
+																		<PhotographIcon tw="mr-3 h-6 w-5" />
+																	) : (
+																		<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
+																	)
+																) : value2.slug === "seo" ? (
+																	isComponentReady &&
+																	user &&
+																	Math.round(user?.status / 100) === 2 &&
+																	!user?.data?.detail ? (
+																		<SearchIcon tw="mr-3 h-6 w-5" />
+																	) : (
+																		<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
+																	)
+																) : value2.slug === "site-settings" ? (
+																	isComponentReady &&
+																	user &&
+																	Math.round(user?.status / 100) === 2 &&
+																	!user?.data?.detail ? (
+																		<CogIcon tw="mr-3 h-6 w-5" />
+																	) : (
+																		<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
+																	)
+																) : null}
 
-															{value2.title ? (
-																<span>
-																	{isComponentReady &&
+																{value2.title ? (
+																	isComponentReady &&
 																	user &&
 																	Math.round(user?.status / 100) === 2 &&
 																	!user?.data?.detail ? (
 																		value2.title
 																	) : (
 																		<Skeleton duration={2} width={128} height={20} />
-																	)}
-																</span>
-															) : null}
+																	)
+																) : null}
+															</span>
 
 															{value2.slug === "links" ? (
 																isComponentReady &&
 																user &&
 																Math.round(user?.status / 100) === 2 &&
 																!user?.data?.detail &&
-																totalLinks ? (
+																totalLinks &&
+																!validatingStats ? (
 																	<span tw="ml-auto inline-block text-xs leading-4 rounded-full py-1 px-3 bg-white text-black">
 																		{totalLinks}
 																	</span>
 																) : (
-																	<span tw="flex items-center rounded-full">
-																		<Skeleton duration={2} width={30} height={20} tw="ml-3" />
+																	<span tw="flex items-center">
+																		<Skeleton duration={2} width={30} height={20} tw="ml-3 py-1 px-3 rounded-full" />
 																	</span>
 																)
 															) : null}
@@ -198,13 +199,14 @@ const SiteMenu = () => {
 																user &&
 																Math.round(user?.status / 100) === 2 &&
 																!user?.data?.detail &&
-																stats?.data?.num_pages ? (
+																totalPages &&
+																!validatingStats ? (
 																	<span tw="ml-auto inline-block text-xs leading-4 rounded-full py-1 px-3 bg-white text-black">
-																		{stats.data.num_pages}
+																		{totalPages}
 																	</span>
 																) : (
-																	<span tw="flex items-center rounded-full">
-																		<Skeleton duration={2} width={30} height={20} tw="ml-3" />
+																	<span tw="flex items-center">
+																		<Skeleton duration={2} width={30} height={20} tw="ml-3 py-1 px-3 rounded-full" />
 																	</span>
 																)
 															) : null}
@@ -214,13 +216,13 @@ const SiteMenu = () => {
 																user &&
 																Math.round(user?.status / 100) === 2 &&
 																!user?.data?.detail &&
-																stats?.data?.num_images ? (
+																totalImages ? (
 																	<span tw="ml-auto inline-block text-xs leading-4 rounded-full py-1 px-3 bg-white text-black">
-																		{stats.data.num_images}
+																		{totalImages}
 																	</span>
 																) : (
-																	<span tw="flex items-center rounded-full">
-																		<Skeleton duration={2} width={30} height={20} tw="ml-3" />
+																	<span tw="flex items-center">
+																		<Skeleton duration={2} width={30} height={20} tw="ml-3 py-1 px-3 rounded-full" />
 																	</span>
 																)
 															) : null}
