@@ -8,7 +8,6 @@ import { useSiteQueries } from "@hooks/useSiteQueries";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { handleConversionStringToNumber } from "@utils/convertCase";
-import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import { memo, useContext } from "react";
 import tw from "twin.macro";
@@ -17,11 +16,6 @@ import tw from "twin.macro";
  * Custom function to render the `SiteLinksPageLayout` component
  */
 const SiteLinksPageLayout = () => {
-	// Translations
-	const { t } = useTranslation();
-	const linkText = t("sites:link");
-	const linksText = t("sites:links");
-
 	// Custom context
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
@@ -39,9 +33,7 @@ const SiteLinksPageLayout = () => {
 
 	// SWR hooks
 	const { user } = useUser();
-	const { linksCount, linksResults } = useLinks(scanApiEndpoint, sanitizedSiteId, scanObjId);
-
-	console.log(linksResults);
+	const { linksCount, linksResults, validatingLinks } = useLinks(scanApiEndpoint, sanitizedSiteId, scanObjId);
 
 	return (
 		<>
@@ -85,7 +77,7 @@ const SiteLinksPageLayout = () => {
 							]}
 						>
 							<div tw="min-w-full h-full rounded-lg border-gray-300">
-								<MemoizedLinksTable count={linksCount} results={linksResults} />
+								<MemoizedLinksTable count={linksCount} results={linksResults} validatingLinks={validatingLinks} />
 							</div>
 						</div>
 					</div>

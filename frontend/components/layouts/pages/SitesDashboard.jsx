@@ -6,7 +6,6 @@ import { useSiteQueries } from "@hooks/useSiteQueries";
 import { useSites } from "@hooks/useSites";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
-import useTranslation from "next-translate/useTranslation";
 import { memo, useContext } from "react";
 import "react-loading-skeleton/dist/skeleton.css";
 import tw from "twin.macro";
@@ -15,11 +14,6 @@ import tw from "twin.macro";
  * Custom function to render the `SitesDashboardPageLayout` component
  */
 const SitesDashboardPageLayout = () => {
-	// Translations
-	const { t } = useTranslation();
-	const siteText = t("sites:site");
-	const sitesText = t("sites:sites");
-
 	// Custom context
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
