@@ -100,16 +100,16 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 	};
 
 	// Custom functions
-	const handleCsvDownload = async (e) => {
+	const handleCsvDownload = (e) => {
 		e.preventDefault();
 
 		const timeout = setTimeout(() => {
 			setIsDownloading(false);
 		}, RedirectInterval);
 
-		setIsDownloading(true);
+		setIsDownloading(!isDownloading);
 
-		if (isDownloading) {
+		if (!isDownloading) {
 			const downloadLink = `/api/site/${siteId}/scan/${scanObjId}/${
 				isLinks ? "link" : isPages || isSeo ? "page" : isImages ? "image" : null
 			}/?format=csv${queryString}`;
@@ -255,7 +255,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 											}
 											css={[
 												tw`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white focus:outline-none`,
-												(isCrawlStarted && !isCrawlFinished) || isDownloading
+												(isCrawlStarted && !isCrawlFinished) || isProcessing
 													? tw`bg-green-600 opacity-50 cursor-not-allowed`
 													: tw`bg-green-600 hover:bg-green-700 focus:ring-2 focus:ring-offset-2 focus:ring-green-500`
 											]}
