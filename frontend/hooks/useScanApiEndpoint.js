@@ -30,7 +30,7 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 		scanApiEndpoint += sanitizedSiteId + ScanSlug + scanObjId + SiteLinkSlug;
 	}
 
-	scanApiEndpoint += "?" + perPageQuery + linksPerPage + "&" + orderingByNameQuery + "name";
+	scanApiEndpoint += "?" + perPageQuery + linksPerPage;
 
 	const verifiedQuery = query?.verified
 		? scanApiEndpoint.includes("?")
@@ -60,7 +60,7 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 		? scanApiEndpoint.includes("?")
 			? `&ordering=${query.ordering}`
 			: `?ordering=${query.ordering}`
-		: "";
+		: "&" + orderingByNameQuery + "name";
 
 	queryString += verifiedQuery;
 	queryString += statusNeqQuery;

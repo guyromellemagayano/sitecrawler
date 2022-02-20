@@ -1,8 +1,9 @@
 import { MemoizedSorting } from "@components/sorting/common/Sorting";
-import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import { orderingByNameQuery } from "@constants/GlobalValues";
 import { handleGetSortKeyFromSlug } from "@helpers/handleGetSortKeyFromSlug";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
+import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
+import { useSiteQueries } from "@hooks/useSiteQueries";
 import { handleConversionStringToCamelCase, handleConversionStringToLowercase } from "@utils/convertCase";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
@@ -19,9 +20,8 @@ const initialOrder = {
  *
  * @param {string} slug
  * @param {array} labels
- * @param {function} setPagePath
  */
-const DataSorting = ({ slug = null, labels = null, setPagePath }) => {
+const DataSorting = ({ slug = null, labels = null }) => {
 	const [sortOrder, setSortOrder] = useState(initialOrder);
 
 	// Router
@@ -29,6 +29,9 @@ const DataSorting = ({ slug = null, labels = null, setPagePath }) => {
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
+
+	const { linksPerPage, setPagePath } = useSiteQueries();
+	const { scanApiEndpoint } = useScanApiEndpoint(linksPerPage);
 
 	// Handle sort
 	const handleSort = async (slug, dir) => {
@@ -63,7 +66,7 @@ const DataSorting = ({ slug = null, labels = null, setPagePath }) => {
 		else setPagePath(`${handleRemoveUrlParameter(newPath, "page")}?`);
 
 		// Mutate function here
-		await mutate(SitesApiEndpoint);
+		await mutate(scanApiEndpoint);
 
 		// Push new path
 		push(newPath);
@@ -87,7 +90,6 @@ const DataSorting = ({ slug = null, labels = null, setPagePath }) => {
 
 DataSorting.propTypes = {
 	labels: PropTypes.array,
-	setPagePath: PropTypes.func,
 	slug: PropTypes.string
 };
 
