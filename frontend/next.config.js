@@ -15,9 +15,6 @@ const NextConfig = {
 		locales: ["en", "fr", "nl"],
 		defaultLocale: "en"
 	},
-	experimental: {
-		removeConsole: process.env.NODE_ENV === "production" ? true : false
-	},
 	env: {
 		LOGROCKET_APP_ID: "epic-design-labs/link-app"
 	}
