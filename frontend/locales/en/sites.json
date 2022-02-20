@@ -8,6 +8,7 @@
 	"sitesDashboard": "Sites Dashboard",
 	"noAvailableSites": "No Available Sites",
 	"noAvailableLinks": "No Available Links",
+	"noAvailablePages": "No Available Pages",
 	"siteCrawlingInProcess": "Site Crawling in Process...",
 	"noAvailableData": "No Available Data",
 	"site": "Site",
@@ -42,6 +43,7 @@
 	"visitExternalSite": "Visit",
 	"resolvedStatus": "Resolve Status",
 	"resolvedTls": "Resolve TLS",
+	"markAsResolved": "Mark as Resolved",
 	"verifiedSite": "Site Verified!",
 	"deletingSite": "Deleting Site...",
 	"verifiedSiteTitle": "Site Verification Success",
@@ -98,5 +100,8 @@
 	"occurrences": "Occurrences",
 	"csvDownload": "CSV Download",
 	"downloading": "Downloading...",
-	"crawling": "Crawling..."
+	"crawling": "Crawling...",
+	"pageUrl": "Page URL",
+	"pageSize": "Page Size",
+	"SSL": "SSL"
 }
