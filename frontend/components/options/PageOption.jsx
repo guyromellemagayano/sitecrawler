@@ -1,4 +1,6 @@
 import { MemoizedFilter } from "@components/filters";
+import { MemoizedSiteVerifyErrorModal } from "@components/modals/SiteVerifyErrorModal";
+import { MemoizedUpgradeErrorModal } from "@components/modals/UpgradeErrorModal";
 import { RedirectInterval } from "@constants/GlobalValues";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ExternalLinkIcon } from "@heroicons/react/outline";
@@ -43,7 +45,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
 	// Router
-	const { query, asPath, push } = useRouter();
+	const { query, asPath } = useRouter();
 	const { siteId } = query;
 
 	// Custom variables
@@ -108,11 +110,13 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 		setIsDownloading(true);
 
 		if (isDownloading) {
-			push(
-				`/api/site/${siteId}/scan/${scanObjId}/${
-					isLinks ? "link" : isPages || isSeo ? "page" : isImages ? "image" : null
-				}/?format=csv${queryString}`
-			);
+			const downloadLink = `/api/site/${siteId}/scan/${scanObjId}/${
+				isLinks ? "link" : isPages || isSeo ? "page" : isImages ? "image" : null
+			}/?format=csv${queryString}`;
+
+			console.log("Downloading...", downloadLink);
+
+			window.location.assign(downloadLink);
 		}
 
 		return () => {
@@ -124,17 +128,17 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 		<div tw="flex-none px-4 sm:px-6 md:px-0 md:flex md:items-center md:justify-between">
 			{!isSites ? (
 				<>
-					{/* <UpgradeErrorModal
+					<MemoizedUpgradeErrorModal
 						ref={upgradeErrorModalRef}
 						showModal={isUpgradeErrorModalVisible}
 						setShowModal={setIsUpgradeErrorModalVisible}
 					/>
 
-					<SiteVerifyErrorModal
+					<MemoizedSiteVerifyErrorModal
 						ref={siteVerifyErrorModalRef}
 						showModal={isSiteVerifyErrorModalVisible}
 						setShowModal={setIsSiteVerifyErrorModalVisible}
-					/> */}
+					/>
 				</>
 			) : null}
 
@@ -251,7 +255,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 											}
 											css={[
 												tw`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white focus:outline-none`,
-												isCrawlStarted && !isCrawlFinished
+												(isCrawlStarted && !isCrawlFinished) || isDownloading
 													? tw`bg-green-600 opacity-50 cursor-not-allowed`
 													: tw`bg-green-600 hover:bg-green-700 focus:ring-2 focus:ring-offset-2 focus:ring-green-500`
 											]}

@@ -64,7 +64,7 @@ export const useMainSWRConfig = (endpoint = null, options = null) => {
 	// Custom options
 	let customOptions = { ...defaultOptions };
 
-	if (options !== null && typeof options === "object" && Object.keys(options)?.length > 0) {
+	if (options !== null) {
 		customOptions = { ...defaultOptions, ...options };
 	}
 

@@ -85,8 +85,6 @@ export const useStats = (querySid = null, scanObjId = null, options = null) => {
 		return { totalImages, totalLinks, totalPages, linkErrors, pageErrors, imageErrors, seoErrors, totalErrors };
 	}, [stats, totalImages, totalLinks, totalPages, linkErrors, pageErrors, imageErrors, seoErrors, totalErrors]);
 
-	console.log(stats);
-
 	return {
 		stats,
 		errorStats,

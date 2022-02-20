@@ -11,6 +11,7 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  */
 export const usePage = (endpoint = null, options = null) => {
 	const [pageCount, setPageCount] = useState(0);
+	const [pageResults, setPageResults] = useState([]);
 
 	// Custom context
 	const { setConfig: setPageConfig } = useContext(SiteCrawlerAppContext);
@@ -39,10 +40,14 @@ export const usePage = (endpoint = null, options = null) => {
 			if (page.data?.count) {
 				setPageCount(page.data.count);
 			}
+
+			if (page.data?.results) {
+				setPageResults(page.data.results);
+			}
 		}
 
-		return { pageCount };
-	}, [page, pageCount]);
+		return { pageCount, pageResults };
+	}, [page, pageCount, pageResults]);
 
-	return { page, errorPage, validatingPage, pageCount };
+	return { page, errorPage, validatingPage, pageCount, pageResults };
 };

@@ -323,6 +323,7 @@ export const CustomTransitionStyles = styled.createGlobalStyle`
 	.delete-user-account-modal,
 	.delete-site-modal,
 	.site-limit-reached-modal,
+	.upgrade-error-modal,
 	.show-help-modal,
 	.change-to-basic-modal,
 	.new-active-plan-modal,
@@ -340,12 +341,14 @@ export const CustomTransitionStyles = styled.createGlobalStyle`
 	.delete-user-account-modal,
 	.delete-site-modal,
 	.site-limit-reached-modal,
+	.upgrade-error-modal,
 	.show-help-modal,
 	.change-to-basic-modal,
 	.new-active-plan-modal,
 	.payment-method-modal,
 	.site-verify-modal,
-	.site-delete-modal {
+	.site-delete-modal,
+	.site-verify-error {
 		&-first-child {
 			&-enter {
 				${tw`ease-out duration-300`}
@@ -412,6 +415,20 @@ export const CustomTransitionStyles = styled.createGlobalStyle`
 	}
 
 	.site-verify-modal {
+		&-second-child {
+			&-title {
+				${tw`text-lg font-bold leading-6 text-gray-900`}
+			}
+
+			&-description {
+				${tw`text-base font-medium leading-6 text-gray-700 mt-4 mb-3`}
+			}
+		}
+	}
+
+	.upgrade-error-modal,
+	.site-limit-reached-modal,
+	.site-verify-error {
 		&-second-child {
 			&-title {
 				${tw`text-lg font-bold leading-6 text-gray-900`}

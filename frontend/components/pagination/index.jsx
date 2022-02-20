@@ -39,7 +39,7 @@ const DataPagination = () => {
 
 	// SWR hooks
 	const { user } = useUser();
-	const { page, pageCount } = usePage(scanApiEndpoint);
+	const { pageCount, pageResults } = usePage(scanApiEndpoint);
 
 	// Custom variables
 	const currentPage = query?.page ? parseInt(query.page) : 1;
@@ -61,7 +61,7 @@ const DataPagination = () => {
 	// Set `totalPages` value
 	const totalPages = Math.ceil(pageCount / linksPerPage) || 0;
 
-	// If `totalPages` is less than 1, hide pagination component
+	// If `totalPages` is less than 2, hide pagination component
 	if (totalPages < 1) return null;
 
 	// Set updated `pageNumbers` for `linksPerPage` prop
@@ -70,12 +70,20 @@ const DataPagination = () => {
 	}
 
 	// Set updated `linksPerPageOptions` for `linksPerPage` prop
+	if (pageCount <= MaxSitesPerPage) {
+		let i = pageCount;
 
-	let i = MinSitesPerPage;
+		while (i <= MinSitesPerPage) {
+			linksPerPageOptions.push(i);
+			i += MinSitesPerPage;
+		}
+	} else {
+		let i = MinSitesPerPage;
 
-	while (i <= MaxSitesPerPage) {
-		linksPerPageOptions.push(i);
-		i += MinSitesPerPage;
+		while (i <= MaxSitesPerPage) {
+			linksPerPageOptions.push(i);
+			i += MinSitesPerPage;
+		}
 	}
 
 	// Set `linkNumbers` array based on the `pageCount`
@@ -119,7 +127,12 @@ const DataPagination = () => {
 		}
 	};
 
-	return isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+	return isComponentReady &&
+		user &&
+		Math.round(user?.status / 100) === 2 &&
+		!user?.data?.detail &&
+		pageCount &&
+		pageResults?.length > 0 ? (
 		<div tw="bg-white mt-8 mb-4 py-4 lg:flex items-center justify-between align-middle">
 			<div tw="flex items-center mb-8 lg:m-0">
 				<div tw="mt-2 lg:my-0">

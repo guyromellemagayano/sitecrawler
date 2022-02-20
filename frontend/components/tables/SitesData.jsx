@@ -18,8 +18,9 @@ import tw from "twin.macro";
  * Custom function to render the `SitesData` component
  *
  * @param {object} site
+ * @param {boolean} validatingSites
  */
-const SitesData = ({ site = null }) => {
+const SitesData = ({ site = null, validatingSites = false }) => {
 	// Site data props
 	const siteId = site?.id ?? null;
 	const siteName = site?.name ?? null;
@@ -110,7 +111,11 @@ const SitesData = ({ site = null }) => {
 
 				<div tw="flex flex-col items-start">
 					<div>
-						{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+						{isComponentReady &&
+						user &&
+						Math.round(user?.status / 100) === 2 &&
+						!user?.data?.detail &&
+						!validatingSites ? (
 							<>
 								{siteVerified && currentScan == null ? (
 									<span
@@ -223,7 +228,12 @@ const SitesData = ({ site = null }) => {
 				</div>
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				scanResults &&
+				!validatingSites ? (
 					scanResults?.length > 0 ? (
 						<span tw="space-x-2">
 							<span tw="text-sm leading-5 text-gray-500">
@@ -263,7 +273,12 @@ const SitesData = ({ site = null }) => {
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				totalErrors &&
+				!validatingSites ? (
 					totalErrors > 0 ? (
 						<span tw="text-red-500">{totalErrors}</span>
 					) : (
@@ -274,7 +289,12 @@ const SitesData = ({ site = null }) => {
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				totalLinks &&
+				!validatingSites ? (
 					totalLinks > 0 ? (
 						<Link href="/dashboard/sites/[siteId]/links" as={`/dashboard/sites/${siteId}/links`} passHref>
 							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
@@ -289,7 +309,12 @@ const SitesData = ({ site = null }) => {
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				totalPages &&
+				!validatingSites ? (
 					totalPages > 0 ? (
 						<Link href="/dashboard/sites/[siteId]/pages" as={`/dashboard/sites/${siteId}/pages`} passHref>
 							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
@@ -304,7 +329,12 @@ const SitesData = ({ site = null }) => {
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				totalImages &&
+				!validatingSites ? (
 					totalImages > 0 ? (
 						<Link href="/dashboard/sites/[siteId]/images" as={`/dashboard/sites/${siteId}/images`} passHref>
 							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
@@ -325,11 +355,13 @@ const SitesData = ({ site = null }) => {
 SitesData.propTypes = {
 	site: PropTypes.shape({
 		id: PropTypes.number,
+		last_finished_scan_id: PropTypes.number,
 		name: PropTypes.string,
 		url: PropTypes.string,
 		verification_id: PropTypes.string,
 		verified: PropTypes.bool
-	})
+	}),
+	validatingSites: PropTypes.bool
 };
 
 /**

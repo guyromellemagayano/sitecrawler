@@ -59,7 +59,8 @@ export const useScan = (querySid = null, options = null) => {
 	const handleCrawl = async (e) => {
 		e.preventDefault();
 
-		console.log(selectedSiteRef);
+		// Set `isProcessing` state
+		setIsProcessing(true);
 
 		if (selectedSiteRef?.current && selectedSiteRef?.current?.contains(e.target)) {
 			const startScanSlug = "/start_scan/";
@@ -69,9 +70,6 @@ export const useScan = (querySid = null, options = null) => {
 			const currentSiteResponseData = currentSiteResponse?.data ?? null;
 			const currentSiteResponseStatus = currentSiteResponse?.status ?? null;
 			const currentSiteResponseMethod = currentSiteResponse?.config?.method ?? null;
-
-			// Set `isProcessing` state
-			setIsProcessing(true);
 
 			if (currentSiteResponseData !== null && Math.round(currentSiteResponseStatus / 200) === 1) {
 				// Set `isProcessing` state
@@ -85,7 +83,7 @@ export const useScan = (querySid = null, options = null) => {
 
 				// Show alert message after successful `user` SWR hook fetch
 				setScanConfig({
-					isUser: true,
+					isScan: true,
 					method: currentSiteResponseData?.config?.method ?? null,
 					status: currentSiteResponseData?.status ?? null
 				});
@@ -103,7 +101,7 @@ export const useScan = (querySid = null, options = null) => {
 
 				// Show alert message after failed `user` SWR hook fetch
 				setScanConfig({
-					isUser: true,
+					isScan: true,
 					method: currentSiteResponseData?.config?.method ?? null,
 					status: currentSiteResponseData?.status ?? null
 				});
@@ -136,20 +134,18 @@ export const useScan = (querySid = null, options = null) => {
 				setScanResults(scan.data.results);
 			}
 
-			let previousScanResult = scanResults?.find((result) => result.finished_at !== null) ?? null;
-			let currentScanResult = scanResults?.find((result) => result.finished_at == null) ?? null;
+			let previousScanResult =
+				scanResults?.find((result) => result.finished_at !== null && result.force_https !== null) ?? null;
+			let currentScanResult =
+				scanResults?.find((result) => result.finished_at == null && result.force_https == null) ?? null;
 
 			setCurrentScan(currentScanResult);
 			setPreviousScan(previousScanResult);
 
-			if (
-				(currentScan == null && previousScan !== null) ||
-				(currentScan?.finished_at !== null && currentScan?.force_https == null) ||
-				(currentScan?.finished_at == null && currentScan?.force_https !== null)
-			) {
-				setScanObjId(previousScan?.id);
-			} else {
-				setScanObjId(currentScan?.id);
+			if ((currentScan !== null && previousScan !== null) || (currentScan == null && previousScan !== null)) {
+				setScanObjId(previousScan.id);
+			} else if (currentScan !== null && previousScan == null) {
+				setScanObjId(currentScan.id);
 			}
 		}
 

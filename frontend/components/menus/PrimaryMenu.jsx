@@ -5,6 +5,7 @@ import { AddNewSiteSlug, DashboardSitesLink, SitesSlug } from "@constants/PageLi
 import { SidebarMenus } from "@constants/SidebarMenus";
 import { DocumentReportIcon, ExternalLinkIcon } from "@heroicons/react/outline";
 import { ArrowLeftIcon } from "@heroicons/react/solid";
+import { useSites } from "@hooks/useSites";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
@@ -32,6 +33,7 @@ const PrimaryMenu = () => {
 
 	// SWR hooks
 	const { user } = useUser();
+	const { sitesCount, validatingSites } = useSites();
 
 	// Sidebar menus
 	const { PrimarySidebarMenus } = SidebarMenus();
@@ -70,7 +72,7 @@ const PrimaryMenu = () => {
 															<a
 																className="group"
 																css={[
-																	tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium rounded-md `,
+																	tw`mt-1 flex items-center justify-between  px-3 py-2 text-sm leading-5 font-medium rounded-md `,
 																	asPath.includes(value2.url) &&
 																	isComponentReady &&
 																	user &&
@@ -90,37 +92,56 @@ const PrimaryMenu = () => {
 																		: tw`cursor-default`
 																]}
 															>
+																<span tw="flex items-center justify-start">
+																	{value2.slug === "sites" ? (
+																		isComponentReady &&
+																		user &&
+																		Math.round(user?.status / 100) === 2 &&
+																		!user?.data?.detail ? (
+																			<ExternalLinkIcon tw="mr-3 h-6 w-5" />
+																		) : (
+																			<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
+																		)
+																	) : value2.slug === "audit-logs" ? (
+																		isComponentReady &&
+																		user &&
+																		Math.round(user?.status / 100) === 2 &&
+																		!user?.data?.detail ? (
+																			<DocumentReportIcon tw="mr-3 h-6 w-5" />
+																		) : (
+																			<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
+																		)
+																	) : null}
+
+																	{value2.title ? (
+																		<span>
+																			{isComponentReady &&
+																			user &&
+																			Math.round(user?.status / 100) === 2 &&
+																			!user?.data?.detail ? (
+																				value2.title
+																			) : (
+																				<Skeleton duration={2} width={128} height={20} />
+																			)}
+																		</span>
+																	) : null}
+																</span>
+
 																{value2.slug === "sites" ? (
 																	isComponentReady &&
 																	user &&
 																	Math.round(user?.status / 100) === 2 &&
-																	!user?.data?.detail ? (
-																		<ExternalLinkIcon tw="mr-3 h-6 w-5" />
+																	!user?.data?.detail &&
+																	sitesCount &&
+																	!validatingSites ? (
+																		<span tw="ml-auto inline-block text-xs leading-4 rounded-full py-1 px-3 bg-white text-black">
+																			{sitesCount}
+																		</span>
 																	) : (
-																		<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
+																		<span tw="flex items-center">
+																			<Skeleton duration={2} width={30} height={20} tw="ml-3 py-1 px-3 rounded-full" />
+																		</span>
 																	)
-																) : value2.slug === "audit-logs" ? (
-																	isComponentReady &&
-																	user &&
-																	Math.round(user?.status / 100) === 2 &&
-																	!user?.data?.detail ? (
-																		<DocumentReportIcon tw="mr-3 h-6 w-5" />
-																	) : (
-																		<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
-																	)
-																) : null}
-
-																{value2.title ? (
-																	<span>
-																		{isComponentReady &&
-																		user &&
-																		Math.round(user?.status / 100) === 2 &&
-																		!user?.data?.detail ? (
-																			value2.title
-																		) : (
-																			<Skeleton duration={2} width={128} height={20} />
-																		)}
-																	</span>
 																) : null}
 															</a>
 														</Link>
