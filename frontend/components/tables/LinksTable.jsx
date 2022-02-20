@@ -21,7 +21,6 @@ const LinksTable = ({ count = 0, results = [], validatingLinks = false }) => {
 	// Translations
 	const { t } = useTranslation();
 	const noAvailableLinks = t("sites:noAvailableLinks");
-	const loaderMessage = t("common:loaderMessage");
 
 	// Router
 	const { query } = useRouter();

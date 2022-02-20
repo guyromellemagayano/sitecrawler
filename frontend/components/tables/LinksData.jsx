@@ -41,8 +41,7 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 
 	// Translations
 	const { t } = useTranslation();
-	const resolvedStatusText = t("sites:resolvedStatus");
-	const resolvedTlsText = t("sites:resolvedTls");
+	const markAsResolvedText = t("sites:markAsResolved");
 	const visitExternalSiteText = t("sites:visitExternalSite");
 	const goToSiteOverviewText = t("sites:goToSiteOverview");
 	const internalText = t("sites:internal");
@@ -149,21 +148,13 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 												{visitExternalSiteText}
 											</a>
 
-											{/* <button
-											type="button"
-											tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-green-600 hover:text-green-500 transition ease-in-out duration-150"
-											onClick={() => {}}
-										>
-											{resolvedStatusText}
-										</button> */}
-
-											{/* <button
-											type="button"
-											tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-green-600 hover:text-green-500 transition ease-in-out duration-150"
-											onClick={() => {}}
-										>
-											{resolvedTlsText}
-										</button> */}
+											<button
+												type="button"
+												tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-green-600 hover:text-green-500 transition ease-in-out duration-150"
+												onClick={() => {}}
+											>
+												{markAsResolvedText}
+											</button>
 										</span>
 									</div>
 								</>
