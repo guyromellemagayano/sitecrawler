@@ -16,7 +16,7 @@ export const LinksTableLabels = () => {
 	const statusTableLabel = { label: status, slug: "status", key: "status" };
 	const httpCodeTableLabel = { label: httpCode, slug: "http-code", key: "http_status" };
 	const linkLocationTableLabel = { label: linkLocation };
-	const occurrencesTableLabel = { label: occurrences, slug: "occurrences", key: "occurrences" };
+	const occurrencesTableLabel = { label: occurrences, slug: "occurrences", key: "occurences" };
 
 	labelsArray.push(linkUrlTableLabel);
 	labelsArray.push(urlTypeTableLabel);
