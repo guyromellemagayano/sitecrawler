@@ -71,8 +71,6 @@ export const useScan = (querySid = null, options = null) => {
 			const currentScanResponseStatus = currentScanResponse?.status ?? null;
 			const currentScanResponseMethod = currentScanResponse?.config?.method ?? null;
 
-			console.log(currentScanResponseData, currentScanResponseStatus, currentScanResponseMethod);
-
 			if (currentScanResponseData !== null && Math.round(currentScanResponseStatus / 200) === 1) {
 				// Set `isProcessing` state
 				setIsProcessing(false);
