@@ -32,7 +32,7 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 
 	scanApiEndpoint += "?" + perPageQuery + linksPerPage;
 
-	const typeString = Array.isArray(query?.type) ? query.type.join("&type=") : query.type;
+	const typeString = query?.type ? (Array.isArray(query?.type) ? query.type.join("&type=") : query.type) : "";
 
 	const verifiedQuery = query?.verified
 		? scanApiEndpoint.includes("?")
@@ -52,7 +52,7 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 			: `?status=${query.status}`
 		: "";
 
-	const typeQuery = query?.type ? (scanApiEndpoint.includes("?") ? `&type=${typeString}` : `?type=${typeString}`) : "";
+	const typeQuery = typeString ? (scanApiEndpoint.includes("?") ? `&type=${typeString}` : `?type=${typeString}`) : "";
 
 	const pageQuery = query?.page ? (scanApiEndpoint.includes("?") ? `&page=${query.page}` : `?page=${query.page}`) : "";
 
