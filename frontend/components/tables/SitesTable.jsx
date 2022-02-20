@@ -21,7 +21,6 @@ const SitesTable = ({ count = 0, results = [], validatingSites = false }) => {
 	// Translations
 	const { t } = useTranslation();
 	const noAvailableSites = t("sites:noAvailableSites");
-	const loaderMessage = t("common:loaderMessage");
 
 	// Router
 	const { query } = useRouter();

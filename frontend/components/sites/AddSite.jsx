@@ -49,22 +49,12 @@ const AddSite = ({ handleOpenSidebar }) => {
 	const { sitesCount } = useSites();
 
 	useMemo(() => {
-		let isMounted = true;
+		// Handle `hasSiteLimitReached` value
+		if (maxSiteLimit && sitesCount) {
+			setHasSiteLimitReached(sitesCount >= maxSiteLimit);
+		}
 
-		(async () => {
-			if (!isMounted) return;
-
-			// Handle `hasSiteLimitReached` value
-			if (maxSiteLimit && sitesCount) {
-				setHasSiteLimitReached(sitesCount >= maxSiteLimit);
-			}
-
-			return hasSiteLimitReached;
-		})();
-
-		return () => {
-			isMounted = false;
-		};
+		return hasSiteLimitReached;
 	}, [sitesCount, maxSiteLimit]);
 
 	// Custom hooks
@@ -96,9 +86,11 @@ const AddSite = ({ handleOpenSidebar }) => {
 		if (newPath.includes("?")) setPagePath(`${newPath}&`);
 		else setPagePath(`${newPath}?`);
 
+		// Push new path
 		push(newPath);
 
-		return await mutate(scanApiEndpoint);
+		// Mutate function here
+		mutate(scanApiEndpoint);
 	};
 
 	// Handle `onClick` event on <Link> element
