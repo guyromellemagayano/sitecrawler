@@ -405,7 +405,7 @@ export const CustomTransitionStyles = styled.createGlobalStyle`
 	.show-help-modal {
 		&-second-child {
 			&-title {
-				${tw`text-lg font-bold leading-6 text-gray-900`}
+				${tw`text-lg leading-6 font-medium text-gray-900`}
 			}
 
 			&-description {
@@ -417,11 +417,11 @@ export const CustomTransitionStyles = styled.createGlobalStyle`
 	.site-verify-modal {
 		&-second-child {
 			&-title {
-				${tw`text-lg font-bold leading-6 text-gray-900`}
+				${tw`text-lg leading-6 font-medium text-gray-900`}
 			}
 
 			&-description {
-				${tw`text-base font-medium leading-6 text-gray-700 mt-4 mb-3`}
+				${tw`text-sm font-medium leading-6 text-gray-500 mt-4 mb-3`}
 			}
 		}
 	}
@@ -431,11 +431,11 @@ export const CustomTransitionStyles = styled.createGlobalStyle`
 	.site-verify-error {
 		&-second-child {
 			&-title {
-				${tw`text-lg font-bold leading-6 text-gray-900`}
+				${tw`text-lg leading-6 font-medium text-gray-900`}
 			}
 
 			&-description {
-				${tw`text-base font-medium leading-6 text-gray-700 mt-4 mb-3`}
+				${tw`text-sm font-medium leading-6 text-gray-500 mt-4 mb-3`}
 			}
 		}
 	}
