@@ -1,6 +1,6 @@
 import useTranslation from "next-translate/useTranslation";
 
-export const LinksTableLabels = () => {
+export const PagesTableLabels = () => {
 	const { t } = useTranslation("sites");
 	const pageUrl = t("pageUrl");
 	const pageSize = t("pageSize");

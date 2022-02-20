@@ -241,7 +241,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 					{!isSites ? (
 						<div tw="mt-4 flex md:mt-0 md:ml-4">
 							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-								permissions?.includes("can_start_scan") ? (
+								permissions.includes("can_start_scan") ? (
 									siteIdVerified ? (
 										<button
 											type="button"

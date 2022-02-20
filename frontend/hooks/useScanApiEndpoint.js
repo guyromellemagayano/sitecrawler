@@ -59,8 +59,44 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 	// Pages
 	const sizeTotalMinQuery = query?.size_total_min
 		? scanApiEndpoint.includes("?")
-			? `&size_total_min=${query.size_total_min}`
-			: `?size_total_min=${query.size_total_min}`
+			? `&size_total_min=1048576`
+			: `?size_total_min=1048576`
+		: "";
+
+	const sizeTotalMaxQuery = query?.size_total_max
+		? scanApiEndpoint.includes("?")
+			? `&size_total_max=1048575`
+			: `?size_total_max=1048575`
+		: "";
+
+	const tlsTotalQuery = query?.tls_total
+		? query.tls_total === "true"
+			? scanApiEndpoint.includes("?")
+				? `&tls_total=true`
+				: `?tls_total=true`
+			: scanApiEndpoint.includes("?")
+			? `&tls_total=false`
+			: `?tls_total=false`
+		: "";
+
+	const hasDuplicatedTitleQuery = query?.has_duplicated_title
+		? query.has_duplicated_title
+			? scanApiEndpoint.includes("?")
+				? `&has_duplicated_title=true`
+				: `?has_duplicated_title=true`
+			: scanApiEndpoint.includes("?")
+			? `&has_duplicated_title=false`
+			: `?has_duplicated_title=false`
+		: "";
+
+	const hasDuplicatedDescriptionQuery = query?.has_duplicated_description
+		? query.has_duplicated_description
+			? scanApiEndpoint.includes("?")
+				? `&has_duplicated_description=true`
+				: `?has_duplicated_description=true`
+			: scanApiEndpoint.includes("?")
+			? `&has_duplicated_description=false`
+			: `?has_duplicated_description=false`
 		: "";
 
 	// Pagination
@@ -84,6 +120,11 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 	queryString += statusNeqQuery;
 	queryString += statusQuery;
 	queryString += typeQuery;
+	queryString += sizeTotalMinQuery;
+	queryString += sizeTotalMaxQuery;
+	queryString += tlsTotalQuery;
+	queryString += hasDuplicatedTitleQuery;
+	queryString += hasDuplicatedDescriptionQuery;
 	queryString += pageQuery;
 	queryString += searchQuery;
 	queryString += orderingQuery;
