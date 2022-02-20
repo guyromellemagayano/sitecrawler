@@ -1,3 +1,4 @@
+import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import { FilterData } from "@constants/FilterData";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
@@ -232,7 +233,7 @@ const Filter = ({
 		else setPagePath(`${newPath}?`);
 
 		// Mutate function here
-		await mutate(scanApiEndpoint);
+		await mutate(SitesApiEndpoint);
 
 		// Push new path
 		push(newPath);
