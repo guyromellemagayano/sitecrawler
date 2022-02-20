@@ -9,7 +9,7 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  * @param {number} querySid
  * @param {number} scanObjId
  * @param {object} options
- * @returns {object} links, errorLinks, validatingLinks
+ * @returns {object} links, errorLinks, validatingLinks, linksResults, linksCount
  */
 export const useLinks = (endpoint = null, querySid = null, scanObjId = null, options = null) => {
 	const [linksCount, setLinksCount] = useState(0);
