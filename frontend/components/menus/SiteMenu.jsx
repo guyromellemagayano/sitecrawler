@@ -181,10 +181,8 @@ const SiteMenu = () => {
 																isComponentReady &&
 																user &&
 																Math.round(user?.status / 100) === 2 &&
-																!user?.data?.detail &&
-																totalLinks &&
-																!validatingStats ? (
-																	totalLinks > 0 ? (
+																!user?.data?.detail ? (
+																	!validatingStats && totalLinks > 0 ? (
 																		<span tw="ml-auto inline-block text-xs leading-4 rounded-full py-1 px-3 bg-white text-black">
 																			{totalLinks}
 																		</span>
@@ -217,10 +215,8 @@ const SiteMenu = () => {
 																isComponentReady &&
 																user &&
 																Math.round(user?.status / 100) === 2 &&
-																!user?.data?.detail &&
-																totalImages &&
-																!validatingStats ? (
-																	totalImages > 0 ? (
+																!user?.data?.detail ? (
+																	!validatingStats && totalImages > 0 ? (
 																		<span tw="ml-auto inline-block text-xs leading-4 rounded-full py-1 px-3 bg-white text-black">
 																			{totalImages}
 																		</span>
