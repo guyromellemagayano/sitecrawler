@@ -103,6 +103,8 @@ const DataPagination = () => {
 
 	// Handle table rows per page change
 	const handleRowsPerPageChange = async (e) => {
+		e.preventDefault();
+
 		const countValue = parseInt(e.target.value);
 
 		let newPath = asPath;
@@ -122,8 +124,11 @@ const DataPagination = () => {
 			if (newPath.includes("?")) setPagePath(`${newPath}&`);
 			else setPagePath(`${newPath}?`);
 
-			await mutate(scanApiEndpoint);
+			// Push new path
 			push(newPath);
+
+			// Mutate function here
+			mutate(scanApiEndpoint);
 		}
 	};
 

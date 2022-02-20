@@ -88,7 +88,7 @@ const TimestampSettingsForm = () => {
 													});
 												}
 
-												await mutate(
+												mutate(
 													UserApiEndpoint,
 													{
 														...user,
@@ -104,7 +104,7 @@ const TimestampSettingsForm = () => {
 													status: timestampSettingsResponseStatus
 												});
 
-												await mutate(UserApiEndpoint);
+												mutate(UserApiEndpoint);
 											}
 										})();
 									}}
