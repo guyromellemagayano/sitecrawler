@@ -259,7 +259,7 @@ const Filter = ({
 				}
 
 				if (type !== null) {
-					if (type === "PAGE") {
+					if (type == "PAGE") {
 						setInternalLinksFilter(true);
 						setExternalLinksFilter(false);
 					} else {
