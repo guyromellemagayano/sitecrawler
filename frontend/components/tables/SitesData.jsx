@@ -187,13 +187,15 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 											</button>
 										) : null}
 
-										<button
-											type="button"
-											tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-red-600 hover:text-red-500 transition ease-in-out duration-150"
-											onClick={() => setIsSiteDeleteModalVisible(!isSiteDeleteModalVisible)}
-										>
-											{deleteText}
-										</button>
+										{permissions?.includes("delete_site") ? (
+											<button
+												type="button"
+												tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-red-600 hover:text-red-500 transition ease-in-out duration-150"
+												onClick={() => setIsSiteDeleteModalVisible(!isSiteDeleteModalVisible)}
+											>
+												{deleteText}
+											</button>
+										) : null}
 									</span>
 								</div>
 							</>
