@@ -21,7 +21,6 @@ export const useMainSWRConfig = (endpoint = null, options = null) => {
 	// Default options
 	const defaultOptions = {
 		errorRetryCount: OnErrorRetryCount,
-		refreshInterval: RevalidationInterval,
 		onSuccess: (data, key) => {
 			// If the user is not authenticated, redirect to the login page, otherwise redirect to the dashboard
 			if (key === UserApiEndpoint) {
