@@ -545,6 +545,17 @@ export const useNotificationMessage = () => {
 	const scanGet502BadGatewayErrorResponse = t("alerts:scan.get.502BadGatewayErrorResponse");
 	const scanGet503ServiceUnavailableErrorResponse = t("alerts:scan.get.503ServiceUnavailableErrorResponse");
 	const scanGet504GatewayTimeoutErrorResponse = t("alerts:scan.get.504GatewayTimeoutErrorResponse");
+	const scanPost200OkSuccessResponse = t("alerts:scan.post.200OkSuccessResponse");
+	const scanPost201CreatedSuccessResponse = t("alerts:scan.post.201CreatedSuccessResponse");
+	const scanPost400BadRequestErrorResponse = t("alerts:scan.post.400BadRequestErrorResponse");
+	const scanPost401UnauthorizedErrorResponse = t("alerts:scan.post.401UnauthorizedErrorResponse");
+	const scanPost403ForbiddenErrorResponse = t("alerts:scan.post.403ForbiddenErrorResponse");
+	const scanPost404NotFoundErrorResponse = t("alerts:scan.post.404NotFoundErrorResponse");
+	const scanPost429TooManyRequestsErrorResponse = t("alerts:scan.post.429TooManyRequestsErrorResponse");
+	const scanPost500InternalServerErrorResponse = t("alerts:scan.post.500InternalServerErrorResponse");
+	const scanPost502BadGatewayErrorResponse = t("alerts:scan.post.502BadGatewayErrorResponse");
+	const scanPost503ServiceUnavailableErrorResponse = t("alerts:scan.post.503ServiceUnavailableErrorResponse");
+	const scanPost504GatewayTimeoutErrorResponse = t("alerts:scan.post.504GatewayTimeoutErrorResponse");
 
 	// Stats translations
 	const statsGet200OkSuccessResponse = t("alerts:stats.get.200OkSuccessResponse");
@@ -3063,73 +3074,145 @@ export const useNotificationMessage = () => {
 							{
 								status: 200,
 								title: fallback200OkSuccessResponse,
-								message: statsGet200OkSuccessResponse,
+								message: scanGet200OkSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 201,
 								title: fallback201CreatedSuccessResponse,
-								message: statsGet201CreatedSuccessResponse,
+								message: scanGet201CreatedSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 400,
 								title: fallback400BadRequestErrorResponse,
-								message: statsGet400BadRequestErrorResponse,
+								message: scanGet400BadRequestErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 401,
 								title: fallback401UnauthorizedErrorResponse,
-								message: statsGet401UnauthorizedErrorResponse,
+								message: scanGet401UnauthorizedErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 403,
 								title: fallback403ForbiddenErrorResponse,
-								message: statsGet403ForbiddenErrorResponse,
+								message: scanGet403ForbiddenErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 404,
 								title: fallback404NotFoundErrorResponse,
-								message: statsGet404NotFoundErrorResponse,
+								message: scanGet404NotFoundErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 429,
 								title: fallback429TooManyRequestsErrorResponse,
-								message: statsGet429TooManyRequestsErrorResponse,
+								message: scanGet429TooManyRequestsErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 500,
 								title: fallback500InternalServerErrorResponse,
-								message: statsGet500InternalServerErrorResponse,
+								message: scanGet500InternalServerErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 502,
 								title: fallback502BadGatewayErrorResponse,
-								message: statsGet502BadGatewayErrorResponse,
+								message: scanGet502BadGatewayErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 503,
 								title: fallback503ServiceUnavailableErrorResponse,
-								message: statsGet503ServiceUnavailableErrorResponse,
+								message: scanGet503ServiceUnavailableErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 504,
 								title: fallback504GatewayTimeoutErrorResponse,
-								message: statsGet504GatewayTimeoutErrorResponse,
+								message: scanGet504GatewayTimeoutErrorResponse,
+								isSuccess: false
+							}
+						]
+					};
+					const postResponse = {
+						method: "POST",
+						responses: [
+							{
+								status: 200,
+								title: fallback200OkSuccessResponse,
+								message: scanPost200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								title: fallback201CreatedSuccessResponse,
+								message: scanPost201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								title: fallback400BadRequestErrorResponse,
+								message: scanPost400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
+								message: scanPost401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								title: fallback403ForbiddenErrorResponse,
+								message: scanPost403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								title: fallback404NotFoundErrorResponse,
+								message: scanPost404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
+								message: scanPost429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								title: fallback500InternalServerErrorResponse,
+								message: scanPost500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								title: fallback502BadGatewayErrorResponse,
+								message: scanPost502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
+								message: scanPost503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
+								message: scanPost504GatewayTimeoutErrorResponse,
 								isSuccess: false
 							}
 						]
 					};
 
 					responsesArray.push(getResponse);
+					responsesArray.push(postResponse);
 
 					const dataMethod =
 						responsesArray?.find(
