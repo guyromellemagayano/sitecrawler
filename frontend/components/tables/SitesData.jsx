@@ -8,8 +8,9 @@ import { SiteCrawlerAppContext } from "@pages/_app";
 import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import { memo, useContext } from "react";
+import { memo, useContext, useEffect } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import tw from "twin.macro";
@@ -41,6 +42,9 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 
 	// Custom context
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
+
+	// Router
+	const { prefetch } = useRouter();
 
 	// SWR hooks
 	const { user, disableLocalTime, permissions } = useUser();
@@ -88,6 +92,10 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 
 	// Site `stats` SWR hook
 	const { stats, totalErrors, totalImages, totalLinks, totalPages } = useStats(siteId, scanObjId);
+
+	useEffect(() => {
+		prefetch(`/dashboard/sites/${siteId}/overview`);
+	}, [siteId]);
 
 	return (
 		<tr ref={selectedSiteRef}>
