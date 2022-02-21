@@ -246,11 +246,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 										<button
 											type="button"
 											disabled={(isCrawlStarted && !isCrawlFinished) || isProcessing}
-											onClick={
-												siteIdVerified
-													? handleCrawl
-													: () => setIsSiteVerifyErrorModalVisible(!isSiteVerifyErrorModalVisible)
-											}
+											onClick={handleCrawl}
 											css={[
 												tw`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white `,
 												(isCrawlStarted && !isCrawlFinished) || isProcessing
@@ -263,7 +259,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 												<span>{isProcessing || (isCrawlStarted && !isCrawlFinished) ? crawlingText : crawlText}</span>
 											</span>
 										</button>
-									) : (
+									) : !siteIdVerified ? (
 										<button
 											type="button"
 											onClick={() => setIsSiteVerifyErrorModalVisible(!isSiteVerifyErrorModalVisible)}
@@ -274,7 +270,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 												<span>{crawlText}</span>
 											</span>
 										</button>
-									)
+									) : null
 								) : (
 									<button
 										type="button"
@@ -310,7 +306,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 												<span>{isDownloading ? downloadingText : csvDownloadText}</span>
 											</span>
 										</button>
-									) : (
+									) : !siteIdVerified ? (
 										<button
 											type="button"
 											onClick={() => setIsSiteVerifyErrorModalVisible(!isSiteVerifyErrorModalVisible)}
@@ -321,7 +317,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 												<span>{csvDownloadText}</span>
 											</span>
 										</button>
-									)
+									) : null
 								) : (
 									<Skeleton duration={2} width={150} height={40} tw="ml-2" />
 								)
@@ -330,7 +326,13 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 					) : null}
 				</div>
 
-				{isLinks ? <MemoizedFilter isSitesLinksFilter /> : <MemoizedFilter isSitesFilter />}
+				{isLinks ? (
+					<MemoizedFilter isSitesLinksFilter />
+				) : isPages ? (
+					<MemoizedFilter isSitesPagesFilter />
+				) : (
+					<MemoizedFilter isSitesFilter />
+				)}
 			</div>
 		</div>
 	);

@@ -25,6 +25,7 @@
 	"totalPages": "Total Pages",
 	"totalImages": "Total Images",
 	"addNewSite": "Add New Site",
+	"addNewSiteMessage": "Get started by adding a new site.",
 	"searchSites": "Search Sites...",
 	"searchNotAvailable": "Search Not Available",
 	"siteAdditionProgress": "Site Addition Progress",
@@ -103,5 +104,5 @@
 	"crawling": "Crawling...",
 	"pageUrl": "Page URL",
 	"pageSize": "Page Size",
-	"SSL": "SSL"
+	"ssl": "SSL"
 }
