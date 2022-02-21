@@ -94,7 +94,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 	};
 
 	// Handle `onClick` event on <Link> element
-	const handleOnClick = (e) => {
+	const handleRouterOnClick = (e) => {
 		e.preventDefault();
 
 		if (!asPath.includes(AddNewSiteSlug)) {
@@ -163,7 +163,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 							<a
 								role="button"
 								tabIndex="0"
-								onClick={handleOnClick}
+								onClick={handleRouterOnClick}
 								aria-hidden="true"
 								css={[
 									tw`border border-transparent cursor-pointer flex font-medium items-center justify-center leading-4 px-4 py-2 rounded-md text-sm text-white w-full`,
