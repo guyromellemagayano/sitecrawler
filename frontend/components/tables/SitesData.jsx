@@ -146,10 +146,7 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 												passHref
 												replace
 											>
-												<a
-													type="button"
-													tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150"
-												>
+												<a tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
 													{goToSiteOverviewText}
 												</a>
 											</Link>
