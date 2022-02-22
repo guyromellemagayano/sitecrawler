@@ -37,7 +37,7 @@ const SettingsMenu = () => {
 	const { user } = useUser();
 
 	return (
-		<Scrollbars renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />} universal>
+		<Scrollbars autoHide renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />} universal>
 			<div tw="flex flex-col h-full py-4 lg:py-8">
 				<div tw="flex items-center flex-shrink-0 flex-row px-3 mb-0">
 					<Link href={DashboardSitesLink} passHref>

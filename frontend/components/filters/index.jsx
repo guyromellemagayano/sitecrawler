@@ -4,7 +4,11 @@ import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
 import { useSiteQueries } from "@hooks/useSiteQueries";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
-import { handleConversionStringToBoolean } from "@utils/convertCase";
+import {
+	handleConversionStringToBoolean,
+	handleConversionStringToLowercase,
+	handleConversionStringToNumber
+} from "@utils/convertCase";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import { memo, useContext, useEffect } from "react";
@@ -15,13 +19,21 @@ import "twin.macro";
 
 /**
  * Custom function to render the `Filter` component
+ *
+ * @param {boolean} isSitesFilter
+ * @param {boolean} isSitesLinksFilter
+ * @param {boolean} isSitesPagesFilter
+ * @param {boolean} isSitesImagesFilter
+ * @param {boolean} isSitesSeoFilter
+ * @param {boolean} isValidating
  */
 const Filter = ({
 	isSitesFilter = false,
 	isSitesLinksFilter = false,
 	isSitesPagesFilter = false,
 	isSitesImagesFilter = false,
-	isSitesSeoFilter = false
+	isSitesSeoFilter = false,
+	isValidating
 }) => {
 	// Translations
 	const { t } = useTranslation("filters");
@@ -42,22 +54,28 @@ const Filter = ({
 		setExternalLinksFilter,
 		internalLinksFilter,
 		setInternalLinksFilter,
+		nonWebLinksFilter,
+		setNonWebLinksFilter,
 		linksWithIssuesFilter,
 		setLinksWithIssuesFilter,
 		noLinkIssuesFilter,
 		setNoLinkIssuesFilter,
 		allPagesFilter,
 		setAllPagesFilter,
-		brokenSecurityFilter,
-		setBrokenSecurityFilter,
-		duplicateDescriptionsFilter,
-		setDuplicateDescriptionsFilter,
-		duplicateTitlesFilter,
-		setDuplicateTitlesFilter,
-		largePageSizesFilter,
-		setLargePageSizesFilter,
-		noPageIssuesFilter,
-		setNoPageIssuesFilter
+		nonOkLinksFilter,
+		setNonOkLinksFilter,
+		nonOkImagesFilter,
+		setNonOkImagesFilter,
+		nonOkScriptsFilter,
+		setNonOkScriptsFilter,
+		nonOkStylesheetsFilter,
+		setNonOkStylesheetsFilter,
+		unsecuredImagesFilter,
+		setUnsecuredImagesFilter,
+		unsecuredScriptsFilter,
+		setUnsecuredScriptsFilter,
+		unsecuredStylesheetsFilter,
+		setUnsecuredStylesheetsFilter
 	} = FilterData();
 
 	// Custom context
@@ -106,6 +124,9 @@ const Filter = ({
 		if (filterType === "links") {
 			if (filterValue === "linksWithIssues" && filterChecked) {
 				setLinksWithIssuesFilter(true);
+				setInternalLinksFilter(false);
+				setExternalLinksFilter(false);
+				setNonWebLinksFilter(false);
 				setNoLinkIssuesFilter(false);
 				setAllLinksFilter(false);
 
@@ -123,6 +144,9 @@ const Filter = ({
 
 			if (filterValue === "noIssues" && filterChecked) {
 				setLinksWithIssuesFilter(false);
+				setInternalLinksFilter(false);
+				setExternalLinksFilter(false);
+				setNonWebLinksFilter(false);
 				setNoLinkIssuesFilter(true);
 				setAllLinksFilter(false);
 
@@ -141,6 +165,7 @@ const Filter = ({
 			if (filterValue === "internalLinks" && filterChecked) {
 				setInternalLinksFilter(true);
 				setExternalLinksFilter(false);
+				setNonWebLinksFilter(false);
 				setAllLinksFilter(false);
 
 				newPath = handleRemoveUrlParameter(newPath, "type");
@@ -156,8 +181,9 @@ const Filter = ({
 			}
 
 			if (filterValue === "externalLinks" && filterChecked) {
-				setExternalLinksFilter(true);
 				setInternalLinksFilter(false);
+				setExternalLinksFilter(true);
+				setNonWebLinksFilter(false);
 				setAllLinksFilter(false);
 
 				newPath = handleRemoveUrlParameter(newPath, "type");
@@ -170,6 +196,24 @@ const Filter = ({
 				if (newPath.includes("type")) newPath = handleRemoveUrlParameter(newPath, "type");
 
 				setExternalLinksFilter(false);
+			}
+
+			if (filterValue === "nonWebLinks" && filterChecked) {
+				setNonWebLinksFilter(true);
+				setInternalLinksFilter(false);
+				setExternalLinksFilter(false);
+				setAllLinksFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "type");
+
+				if (newPath.includes("?")) newPath += `&type=NON_WEB`;
+				else newPath += `?type=NON_WEB`;
+			} else if (filterValue === "nonWebLinks" && !filterChecked) {
+				filterQueryString?.delete("type") ?? null;
+
+				if (newPath.includes("type")) newPath = handleRemoveUrlParameter(newPath, "type");
+
+				setNonWebLinksFilter(false);
 			}
 
 			if (filterValue === "allLinks" && filterChecked) {
@@ -259,16 +303,25 @@ const Filter = ({
 				}
 
 				if (type !== null) {
-					if (type == "PAGE") {
+					const sanitizedTypeQuery = handleConversionStringToLowercase(type);
+
+					if (sanitizedTypeQuery === "page") {
 						setInternalLinksFilter(true);
 						setExternalLinksFilter(false);
-					} else {
+						setNonWebLinksFilter(false);
+					} else if (sanitizedTypeQuery === "external") {
 						setInternalLinksFilter(false);
 						setExternalLinksFilter(true);
+						setNonWebLinksFilter(false);
+					} else {
+						setInternalLinksFilter(false);
+						setExternalLinksFilter(false);
+						setNonWebLinksFilter(true);
 					}
 				} else {
 					setInternalLinksFilter(false);
 					setExternalLinksFilter(false);
+					setNonWebLinksFilter(false);
 				}
 
 				if (statusNeq == null && type == null && status == null) {
@@ -284,6 +337,35 @@ const Filter = ({
 					externalLinksFilter,
 					allLinksFilter
 				};
+			} else if (filterType === "pages") {
+				const numNonOkLinks = handleConversionStringToNumber(query.num_non_ok_links);
+				const numNonOkImages = handleConversionStringToNumber(query.num_non_ok_images);
+				const numNonOkScripts = handleConversionStringToNumber(query.num_non_ok_scripts);
+				const numNonOkStylesheets = handleConversionStringToNumber(query.num_non_ok_stylesheets);
+
+				if (numNonOkLinks !== null) {
+					setNonOkLinksFilter(true);
+				} else {
+					setNonOkLinksFilter(false);
+				}
+
+				if (numNonOkImages !== null) {
+					setNonOkImagesFilter(true);
+				} else {
+					setNonOkImagesFilter(false);
+				}
+
+				if (numNonOkScripts !== null) {
+					setNonOkScriptsFilter(true);
+				} else {
+					setNonOkScriptsFilter(false);
+				}
+
+				if (numNonOkStylesheets !== null) {
+					setNonOkStylesheetsFilter(true);
+				} else {
+					setNonOkStylesheetsFilter(false);
+				}
 			} else {
 				const verified = handleConversionStringToBoolean(query.verified);
 
@@ -314,7 +396,7 @@ const Filter = ({
 		}
 	}, [query]);
 
-	return isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+	return isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !isValidating ? (
 		<form tw="px-4 py-5 border border-gray-300 sm:px-6 bg-white rounded-lg lg:flex lg:justify-between">
 			<div tw="-ml-4 lg:-mt-2 lg:flex items-center flex-wrap sm:flex-nowrap">
 				<h4 tw="ml-4 mb-4 lg:mb-0 mt-2 mr-1 leading-4 font-semibold text-gray-600">{filterText}</h4>

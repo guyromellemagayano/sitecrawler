@@ -135,7 +135,7 @@ const ConfirmEmailPageLayout = () => {
 
 	return (
 		<div tw="bg-gray-50 overflow-auto h-screen">
-			<Scrollbars universal>
+			<Scrollbars autoHide universal>
 				<div tw="flex flex-col justify-center h-full">
 					<div tw="relative py-12 sm:px-6 lg:px-8">
 						<MemoizedLogoLabel isConfirmEmail />
