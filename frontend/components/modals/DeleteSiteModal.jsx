@@ -58,7 +58,7 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 
 		if (siteDeleteResponseData !== null && Math.round(siteDeleteResponseStatus / 200) === 1) {
 			// Mutate `sites` endpoint after successful 200 OK or 201 Created response is issued
-			await mutate(SitesApiEndpoint, false);
+			mutate(SitesApiEndpoint);
 
 			// Show alert message after successful 200 OK or 201 Created response is issued
 			setConfig({

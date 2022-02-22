@@ -1,4 +1,3 @@
-import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import { FilterData } from "@constants/FilterData";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
@@ -232,11 +231,11 @@ const Filter = ({
 		if (newPath.includes("?")) setPagePath(`${newPath}&`);
 		else setPagePath(`${newPath}?`);
 
-		// Mutate function here
-		await mutate(SitesApiEndpoint);
-
 		// Push new path
 		push(newPath);
+
+		// Mutate function here
+		mutate(scanApiEndpoint);
 	};
 
 	// Handle filters on load
@@ -260,7 +259,7 @@ const Filter = ({
 				}
 
 				if (type !== null) {
-					if (type === "PAGE") {
+					if (type == "PAGE") {
 						setInternalLinksFilter(true);
 						setExternalLinksFilter(false);
 					} else {

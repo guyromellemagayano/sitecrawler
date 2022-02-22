@@ -241,16 +241,12 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 					{!isSites ? (
 						<div tw="mt-4 flex md:mt-0 md:ml-4">
 							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-								permissions?.includes("can_start_scan") ? (
+								permissions.includes("can_start_scan") ? (
 									siteIdVerified ? (
 										<button
 											type="button"
 											disabled={(isCrawlStarted && !isCrawlFinished) || isProcessing}
-											onClick={
-												siteIdVerified
-													? handleCrawl
-													: () => setIsSiteVerifyErrorModalVisible(!isSiteVerifyErrorModalVisible)
-											}
+											onClick={handleCrawl}
 											css={[
 												tw`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white `,
 												(isCrawlStarted && !isCrawlFinished) || isProcessing
@@ -263,7 +259,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 												<span>{isProcessing || (isCrawlStarted && !isCrawlFinished) ? crawlingText : crawlText}</span>
 											</span>
 										</button>
-									) : (
+									) : !siteIdVerified ? (
 										<button
 											type="button"
 											onClick={() => setIsSiteVerifyErrorModalVisible(!isSiteVerifyErrorModalVisible)}
@@ -274,7 +270,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 												<span>{crawlText}</span>
 											</span>
 										</button>
-									)
+									) : null
 								) : (
 									<button
 										type="button"
@@ -293,51 +289,35 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 
 							{!isSites ? (
 								isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-									permissions?.includes("can_see_images") &&
-									permissions?.includes("can_see_pages") &&
-									permissions?.includes("can_see_scripts") &&
-									permissions?.includes("can_see_stylesheets") ? (
-										siteIdVerified ? (
-											<button
-												type="button"
-												disabled={isDownloading}
-												css={[
-													tw`inline-flex items-center ml-2 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white`,
-													isDownloading
-														? tw`bg-gray-400 opacity-50 cursor-not-allowed`
-														: tw`bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
-												]}
-												onClick={handleCsvDownload}
-											>
-												<span tw="flex items-center space-x-2">
-													<DownloadIcon tw="w-4 h-4 text-white" />
-													<span>{isDownloading ? downloadingText : csvDownloadText}</span>
-												</span>
-											</button>
-										) : (
-											<button
-												type="button"
-												onClick={() => setIsSiteVerifyErrorModalVisible(!isSiteVerifyErrorModalVisible)}
-												tw="inline-flex items-center ml-2 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-											>
-												<span tw="flex items-center space-x-2">
-													<DownloadIcon tw="w-4 h-4 text-white" />
-													<span>{csvDownloadText}</span>
-												</span>
-											</button>
-										)
-									) : (
+									siteIdVerified ? (
 										<button
 											type="button"
-											onClick={() => setIsUpgradeErrorModalVisible(!isUpgradeErrorModalVisible)}
-											tw="inline-flex items-center ml-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white focus:outline-none bg-yellow-600 hover:bg-yellow-700 focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+											disabled={isDownloading}
+											css={[
+												tw`inline-flex items-center ml-2 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white`,
+												isDownloading
+													? tw`bg-gray-400 opacity-50 cursor-not-allowed`
+													: tw`bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
+											]}
+											onClick={handleCsvDownload}
 										>
 											<span tw="flex items-center space-x-2">
-												<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-white" />
+												<DownloadIcon tw="w-4 h-4 text-white" />
+												<span>{isDownloading ? downloadingText : csvDownloadText}</span>
+											</span>
+										</button>
+									) : !siteIdVerified ? (
+										<button
+											type="button"
+											onClick={() => setIsSiteVerifyErrorModalVisible(!isSiteVerifyErrorModalVisible)}
+											tw="inline-flex items-center ml-2 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+										>
+											<span tw="flex items-center space-x-2">
+												<DownloadIcon tw="w-4 h-4 text-white" />
 												<span>{csvDownloadText}</span>
 											</span>
 										</button>
-									)
+									) : null
 								) : (
 									<Skeleton duration={2} width={150} height={40} tw="ml-2" />
 								)
@@ -346,7 +326,13 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 					) : null}
 				</div>
 
-				{isLinks ? <MemoizedFilter isSitesLinksFilter /> : <MemoizedFilter isSitesFilter />}
+				{isLinks ? (
+					<MemoizedFilter isSitesLinksFilter />
+				) : isPages ? (
+					<MemoizedFilter isSitesPagesFilter />
+				) : (
+					<MemoizedFilter isSitesFilter />
+				)}
 			</div>
 		</div>
 	);

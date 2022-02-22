@@ -49,22 +49,12 @@ const AddSite = ({ handleOpenSidebar }) => {
 	const { sitesCount } = useSites();
 
 	useMemo(() => {
-		let isMounted = true;
+		// Handle `hasSiteLimitReached` value
+		if (maxSiteLimit && sitesCount) {
+			setHasSiteLimitReached(sitesCount >= maxSiteLimit);
+		}
 
-		(async () => {
-			if (!isMounted) return;
-
-			// Handle `hasSiteLimitReached` value
-			if (maxSiteLimit && sitesCount) {
-				setHasSiteLimitReached(sitesCount >= maxSiteLimit);
-			}
-
-			return hasSiteLimitReached;
-		})();
-
-		return () => {
-			isMounted = false;
-		};
+		return hasSiteLimitReached;
 	}, [sitesCount, maxSiteLimit]);
 
 	// Custom hooks
@@ -96,13 +86,15 @@ const AddSite = ({ handleOpenSidebar }) => {
 		if (newPath.includes("?")) setPagePath(`${newPath}&`);
 		else setPagePath(`${newPath}?`);
 
+		// Push new path
 		push(newPath);
 
-		return await mutate(scanApiEndpoint);
+		// Mutate function here
+		mutate(scanApiEndpoint);
 	};
 
 	// Handle `onClick` event on <Link> element
-	const handleOnClick = (e) => {
+	const handleRouterOnClick = (e) => {
 		e.preventDefault();
 
 		if (!asPath.includes(AddNewSiteSlug)) {
@@ -171,7 +163,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 							<a
 								role="button"
 								tabIndex="0"
-								onClick={handleOnClick}
+								onClick={handleRouterOnClick}
 								aria-hidden="true"
 								css={[
 									tw`border border-transparent cursor-pointer flex font-medium items-center justify-center leading-4 px-4 py-2 rounded-md text-sm text-white w-full`,

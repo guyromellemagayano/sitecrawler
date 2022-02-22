@@ -1,42 +1,48 @@
 import { MemoizedLoadingMessage } from "@components/messages/LoadingMessage";
 import { MemoizedDataSorting } from "@components/sorting/DataSorting";
 import { MemoizedEmptyState } from "@components/states/EmptyState";
-import { SitesTableLabels } from "@constants/SitesTableLabels";
+import { PagesTableLabels } from "@constants/PagesTableLabels";
+import { useUser } from "@hooks/useUser";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { memo } from "react";
+import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import tw from "twin.macro";
-import { MemoizedSitesData } from "./SitesData";
+import { MemoizedPagesData } from "./PagesData";
 
 /**
- * Custom function to render the `SitesTable` component
+ * Custom function to render the `PagesTable` component
  *
  * @param {number} count
  * @param {array} results
- * @param {boolean} validatingSites
+ * @param {boolean} validatingPages
  */
-const SitesTable = ({ count = 0, results = [], validatingSites = false }) => {
+const PagesTable = ({ count = 0, results = [], validatingPages = false }) => {
 	// Translations
 	const { t } = useTranslation();
-	const noAvailableSites = t("sites:noAvailableSites");
-	const loaderMessage = t("common:loaderMessage");
+	const noAvailablePages = t("sites:noAvailablePages");
 
 	// Router
 	const { query } = useRouter();
 
+	// SWR hooks
+	const { permissions } = useUser();
+
 	// Sites table labels with translations
-	const labelsArray = SitesTableLabels();
+	const labelsArray = PagesTableLabels();
 
 	return (
 		<section
 			css={[
 				tw`flex flex-col w-full min-h-full h-full`,
-				!validatingSites && count > 0 && results?.length > 0 ? tw`justify-start` : tw`justify-center`
+				permissions.includes("can_see_pages") && count > 0 && results?.length > 0
+					? tw`justify-start`
+					: tw`justify-center`
 			]}
 		>
-			{!validatingSites ? (
+			{permissions.includes("can_see_pages") ? (
 				count > 0 && results?.length > 0 ? (
 					<table tw="relative w-full">
 						<thead>
@@ -58,31 +64,35 @@ const SitesTable = ({ count = 0, results = [], validatingSites = false }) => {
 
 						<tbody tw="relative divide-y divide-gray-200">
 							{results?.map((result) => {
-								return <MemoizedSitesData key={result.id} site={result} validatingSites={validatingSites} />;
+								return <MemoizedPagesData key={result.id} page={result} validatingPages={validatingPages} />;
 							}) ?? null}
 						</tbody>
 					</table>
-				) : count === 0 && results?.length === 0 ? (
+				) : (
 					<div tw="px-4 py-5 sm:p-6 flex items-center justify-center">
-						<MemoizedEmptyState />
+						{validatingPages ? (
+							<Skeleton duration={2} width={120} height={24} />
+						) : !validatingPages && count === 0 && results?.length === 0 ? (
+							<MemoizedLoadingMessage message={noAvailablePages} />
+						) : null}
 					</div>
-				) : null
+				)
 			) : (
 				<div tw="px-4 py-5 sm:p-6 flex items-center justify-center">
-					<MemoizedLoadingMessage message={loaderMessage} />
+					<MemoizedEmptyState />
 				</div>
 			)}
 		</section>
 	);
 };
 
-SitesTable.propTypes = {
+PagesTable.propTypes = {
 	count: PropTypes.number,
 	results: PropTypes.array,
-	validatingSites: PropTypes.bool
+	validatingPages: PropTypes.bool
 };
 
 /**
- * Memoized custom `SitesTable` component
+ * Memoized custom `PagesTable` component
  */
-export const MemoizedSitesTable = memo(SitesTable);
+export const MemoizedPagesTable = memo(PagesTable);

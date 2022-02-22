@@ -1,5 +1,4 @@
 import { MemoizedSorting } from "@components/sorting/common/Sorting";
-import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import { orderingByNameQuery } from "@constants/GlobalValues";
 import { handleGetSortKeyFromSlug } from "@helpers/handleGetSortKeyFromSlug";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
@@ -66,11 +65,11 @@ const DataSorting = ({ slug = null, labels = null }) => {
 		if (newPath.includes("?")) setPagePath(`${handleRemoveUrlParameter(newPath, "page")}&`);
 		else setPagePath(`${handleRemoveUrlParameter(newPath, "page")}?`);
 
-		// Mutate function here
-		await mutate(SitesApiEndpoint);
-
 		// Push new path
 		push(newPath);
+
+		// Mutate function here
+		mutate(scanApiEndpoint);
 	};
 
 	return slug ? (

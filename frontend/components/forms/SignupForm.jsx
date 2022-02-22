@@ -89,7 +89,7 @@ const SignupForm = () => {
 					resetForm({ values: "" });
 
 					// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-					await mutate(UserApiEndpoint);
+					mutate(UserApiEndpoint);
 
 					// Show alert message after successful 200 OK or 201 Created response is issued
 					setConfig({

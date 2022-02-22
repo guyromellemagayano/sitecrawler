@@ -68,7 +68,7 @@ const SubscriptionPlansPageLayout = () => {
 			Math.round(currentSubscriptionResponseStatus / 200) === 1
 		) {
 			// Mutate `currentSubscription` endpoint after successful 200 OK or 201 Created response is issued
-			await mutate(CurrentSubscriptionApiEndpoint);
+			mutate(CurrentSubscriptionApiEndpoint);
 
 			if (
 				!errorSubscriptions &&
@@ -112,7 +112,7 @@ const SubscriptionPlansPageLayout = () => {
 			if (currentSubscriptionResponseData !== null && Math.round(currentSubscriptionResponseStatus / 200) === 1) {
 				if (currentSubscriptionResponseDataStatus === "PAID") {
 					// Mutate `currentSubscription` endpoint after successful 200 OK or 201 Created response is issued
-					await mutate(CurrentSubscriptionApiEndpoint);
+					mutate(CurrentSubscriptionApiEndpoint);
 
 					const cancelAtCurrentSubscription = currentSubscriptionResponse?.cancel_at ?? null;
 
@@ -130,7 +130,7 @@ const SubscriptionPlansPageLayout = () => {
 						setLoadingAgencySemiAnnually(false);
 
 						// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-						await mutate(UserApiEndpoint);
+						mutate(UserApiEndpoint);
 
 						// Show alert message after successful 200 OK or 201 Created response is issued
 						setConfig({

@@ -13,7 +13,7 @@ import { handleConversionStringToNumber } from "@utils/convertCase";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { memo, useContext } from "react";
+import { memo, useContext, useEffect } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -28,7 +28,7 @@ const SiteMenu = () => {
 	const appLogo = t("appLogo");
 
 	// Router
-	const { asPath, pathname, query } = useRouter();
+	const { asPath, pathname, query, prefetch } = useRouter();
 	const { siteId } = query;
 
 	// Custom variables
@@ -44,6 +44,11 @@ const SiteMenu = () => {
 
 	// Sidebar menus
 	const { SiteSidebarMenus } = SidebarMenus();
+
+	// Prefetch page
+	useEffect(() => {
+		prefetch(`/dashboard/sites/${siteId}/overview`);
+	}, []);
 
 	return (
 		<Scrollbars renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />} universal>
@@ -181,10 +186,8 @@ const SiteMenu = () => {
 																isComponentReady &&
 																user &&
 																Math.round(user?.status / 100) === 2 &&
-																!user?.data?.detail &&
-																totalLinks &&
-																!validatingStats ? (
-																	totalLinks > 0 ? (
+																!user?.data?.detail ? (
+																	!validatingStats && totalLinks > 0 ? (
 																		<span tw="ml-auto inline-block text-xs leading-4 rounded-full py-1 px-3 bg-white text-black">
 																			{totalLinks}
 																		</span>
@@ -200,10 +203,8 @@ const SiteMenu = () => {
 																isComponentReady &&
 																user &&
 																Math.round(user?.status / 100) === 2 &&
-																!user?.data?.detail &&
-																totalPages &&
-																!validatingStats ? (
-																	totalPages > 0 ? (
+																!user?.data?.detail ? (
+																	!validatingStats && totalPages > 0 ? (
 																		<span tw="ml-auto inline-block text-xs leading-4 rounded-full py-1 px-3 bg-white text-black">
 																			{totalPages}
 																		</span>
@@ -219,10 +220,8 @@ const SiteMenu = () => {
 																isComponentReady &&
 																user &&
 																Math.round(user?.status / 100) === 2 &&
-																!user?.data?.detail &&
-																totalImages &&
-																!validatingStats ? (
-																	totalImages > 0 ? (
+																!user?.data?.detail ? (
+																	!validatingStats && totalImages > 0 ? (
 																		<span tw="ml-auto inline-block text-xs leading-4 rounded-full py-1 px-3 bg-white text-black">
 																			{totalImages}
 																		</span>

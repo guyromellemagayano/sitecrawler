@@ -55,7 +55,7 @@ const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 
 		if (deleteUserAccountResponseData !== null && Math.round(deleteUserAccountResponseStatus / 200) === 1) {
 			// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-			await mutate(UserApiEndpoint);
+			mutate(UserApiEndpoint);
 
 			// Show alert message after successful 200 OK or 201 Created response is issued
 			setConfig({

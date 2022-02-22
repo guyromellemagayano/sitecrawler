@@ -113,7 +113,7 @@ const PersonalSettingsForm = () => {
 					});
 
 					// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-					await mutate(UserApiEndpoint);
+					mutate(UserApiEndpoint);
 				} else {
 					// Disable submission as soon as 200 OK or 201 Created response was not issued
 					setSubmitting(false);

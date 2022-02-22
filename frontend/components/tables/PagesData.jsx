@@ -9,28 +9,27 @@ import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import PropTypes from "prop-types";
 import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import "twin.macro";
 
 /**
- * Custom function to render the `LinksData` component
+ * Custom function to render the `PagesData` component
  *
  * @param {object} link
  * @param {boolean} validatingLinks
  */
-const LinksData = ({ link = null, validatingLinks = false }) => {
+const PagesData = ({ page = null, validatingLinks = false }) => {
 	// Site data props
-	const linkId = link?.id ?? null;
-	const linkStatus = link?.status ?? null;
-	const linkType = link?.type ?? null;
-	const linkUrl = link?.url ?? null;
-	const linkHttpStatus = link?.http_status ?? null;
-	const linkTlsStatus = link?.tls_status ?? null;
-	const linkOccurrences = link?.occurences ?? null;
-	const linkScanId = link?.scan_id ?? null;
+	const linkId = page?.id ?? null;
+	const linkStatus = page?.status ?? null;
+	const linkType = page?.type ?? null;
+	const linkUrl = page?.url ?? null;
+	const linkHttpStatus = page?.http_status ?? null;
+	const linkTlsStatus = page?.tls_status ?? null;
+	const linkOccurrences = page?.occurences ?? null;
+	const linkScanId = page?.scan_id ?? null;
 
 	// Router
 	const { query } = useRouter();
@@ -41,7 +40,8 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 
 	// Translations
 	const { t } = useTranslation();
-	const markAsResolvedText = t("sites:markAsResolved");
+	const resolvedStatusText = t("sites:resolvedStatus");
+	const resolvedTlsText = t("sites:resolvedTls");
 	const visitExternalSiteText = t("sites:visitExternalSite");
 	const goToSiteOverviewText = t("sites:goToSiteOverview");
 	const internalText = t("sites:internal");
@@ -147,14 +147,6 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 											>
 												{visitExternalSiteText}
 											</a>
-
-											<button
-												type="button"
-												tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-green-600 hover:text-green-500 transition ease-in-out duration-150"
-												onClick={() => {}}
-											>
-												{markAsResolvedText}
-											</button>
 										</span>
 									</div>
 								</>
@@ -291,21 +283,7 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 	);
 };
 
-LinksData.propTypes = {
-	link: PropTypes.shape({
-		http_status: PropTypes.number,
-		id: PropTypes.number,
-		occurences: PropTypes.number,
-		scan_id: PropTypes.number,
-		status: PropTypes.string,
-		tls_status: PropTypes.string,
-		type: PropTypes.string,
-		url: PropTypes.string
-	}),
-	validatingLinks: PropTypes.bool
-};
-
 /**
- * Memoized custom `LinksData` component
+ * Memoized custom `PagesData` component
  */
-export const MemoizedLinksData = memo(LinksData);
+export const MemoizedPagesData = memo(PagesData);

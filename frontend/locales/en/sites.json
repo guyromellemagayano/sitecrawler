@@ -8,6 +8,7 @@
 	"sitesDashboard": "Sites Dashboard",
 	"noAvailableSites": "No Available Sites",
 	"noAvailableLinks": "No Available Links",
+	"noAvailablePages": "No Available Pages",
 	"siteCrawlingInProcess": "Site Crawling in Process...",
 	"noAvailableData": "No Available Data",
 	"site": "Site",
@@ -24,6 +25,7 @@
 	"totalPages": "Total Pages",
 	"totalImages": "Total Images",
 	"addNewSite": "Add New Site",
+	"addNewSiteMessage": "Get started by adding a new site.",
 	"searchSites": "Search Sites...",
 	"searchNotAvailable": "Search Not Available",
 	"siteAdditionProgress": "Site Addition Progress",
@@ -42,6 +44,7 @@
 	"visitExternalSite": "Visit",
 	"resolvedStatus": "Resolve Status",
 	"resolvedTls": "Resolve TLS",
+	"markAsResolved": "Resolve",
 	"verifiedSite": "Site Verified!",
 	"deletingSite": "Deleting Site...",
 	"verifiedSiteTitle": "Site Verification Success",
@@ -98,5 +101,8 @@
 	"occurrences": "Occurrences",
 	"csvDownload": "CSV Download",
 	"downloading": "Downloading...",
-	"crawling": "Crawling..."
+	"crawling": "Crawling...",
+	"pageUrl": "Page URL",
+	"pageSize": "Page Size",
+	"ssl": "SSL"
 }

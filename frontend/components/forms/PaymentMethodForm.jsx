@@ -149,7 +149,7 @@ const PaymentMethodForm = ({
 					setLoading(false);
 
 					// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-					await mutate(DefaultPaymentMethodApiEndpoint);
+					mutate(DefaultPaymentMethodApiEndpoint);
 
 					if (asPath.includes(SubscriptionPlansSlug)) {
 						// Show alert message after successful 200 OK or 201 Created response is issued

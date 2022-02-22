@@ -1,7 +1,7 @@
 import { MemoizedAlert } from "@components/alerts";
 import { MemoizedNotification } from "@components/notifications";
 import { MemoizedAddSite } from "@components/sites/AddSite";
-import { DashboardSitesLink, DashboardSlug, LoginLink } from "@constants/PageLinks";
+import { DashboardSitesLink, DashboardSlug } from "@constants/PageLinks";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { useRouter } from "next/router";
@@ -17,9 +17,6 @@ import { MemoizedSidebarLayout } from "./components/Sidebar";
  * @param {any} children
  */
 export const DashboardLayout = ({ children }) => {
-	// Router
-	const { prefetch } = useRouter();
-
 	// Custom context
 	const { state } = useContext(SiteCrawlerAppContext);
 
@@ -29,11 +26,6 @@ export const DashboardLayout = ({ children }) => {
 		isComponentVisible: isDashboardLayoutComponentVisible,
 		setIsComponentVisible: setIsDashboardLayoutComponentVisible
 	} = useComponentVisible(false);
-
-	useEffect(() => {
-		// Prefetch sites page for faster loading
-		prefetch(LoginLink);
-	}, []);
 
 	return (
 		<>
