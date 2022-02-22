@@ -11,7 +11,6 @@ import {
 	SiteLinksSlug,
 	SiteOverviewSlug,
 	SitePagesSlug,
-	SiteSeoSlug,
 	SubscriptionPlansSettingsLink
 } from "@constants/PageLinks";
 import useTranslation from "next-translate/useTranslation";
@@ -36,7 +35,6 @@ export const SidebarMenus = () => {
 	const pages = t("pages");
 	const profileSettings = t("profileSettings");
 	const reports = t("reports");
-	const seo = t("seo");
 	const settings = t("settings");
 	const sites = t("sites");
 	const siteSelection = t("siteSelection");
@@ -100,8 +98,7 @@ export const SidebarMenus = () => {
 		links: [
 			{ title: links, slug: "links", url: SiteLinksSlug },
 			{ title: pages, slug: "pages", url: SitePagesSlug },
-			{ title: images, slug: "images", url: SiteImagesSlug },
-			{ title: seo, slug: "seo", url: SiteSeoSlug }
+			{ title: images, slug: "images", url: SiteImagesSlug }
 		]
 	};
 

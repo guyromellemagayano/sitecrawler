@@ -6,7 +6,6 @@ export const SiteLinksSlug = "/links/";
 export const SiteOverviewSlug = "/overview/";
 export const SitePageSlug = "/page/";
 export const SitePagesSlug = "/pages/";
-export const SiteSeoSlug = "/seo/";
 export const UptimeSlug = "/uptime/";
 export const ConfirmSlug = "/confirm/";
 
