@@ -250,8 +250,8 @@ const Filter = ({
 				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
 				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
 
-				if (newPath.includes("?")) newPath += `&tls_status`;
-				else newPath += `?tls_status`;
+				if (newPath.includes("?")) newPath += `&tls_status=true`;
+				else newPath += `?tls_status=true`;
 			} else if (filterValue === "tlsStatus" && !filterChecked) {
 				filterQueryString?.delete("tls_status") ?? null;
 
@@ -271,8 +271,8 @@ const Filter = ({
 				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
 				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
 
-				if (newPath.includes("?")) newPath += `&tls_images`;
-				else newPath += `?tls_images`;
+				if (newPath.includes("?")) newPath += `&tls_images=true`;
+				else newPath += `?tls_images=true`;
 			} else if (filterValue === "imagesTlsStatus" && !filterChecked) {
 				filterQueryString?.delete("tls_images") ?? null;
 
@@ -292,8 +292,8 @@ const Filter = ({
 				newPath = handleRemoveUrlParameter(newPath, "tls_images");
 				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
 
-				if (newPath.includes("?")) newPath += `&tls_scripts`;
-				else newPath += `?tls_scripts`;
+				if (newPath.includes("?")) newPath += `&tls_scripts=true`;
+				else newPath += `?tls_scripts=true`;
 			} else if (filterValue === "scriptsTlsStatus" && !filterChecked) {
 				filterQueryString?.delete("tls_scripts") ?? null;
 
@@ -313,8 +313,8 @@ const Filter = ({
 				newPath = handleRemoveUrlParameter(newPath, "tls_images");
 				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
 
-				if (newPath.includes("?")) newPath += `&tls_stylesheets`;
-				else newPath += `?tls_stylesheets`;
+				if (newPath.includes("?")) newPath += `&tls_stylesheets=true`;
+				else newPath += `?tls_stylesheets=true`;
 			} else if (filterValue === "stylesheetsTlsStatus" && !filterChecked) {
 				filterQueryString?.delete("tls_stylesheets") ?? null;
 
@@ -387,7 +387,7 @@ const Filter = ({
 		push(newPath);
 
 		// Mutate function here
-		mutate(scanApiEndpoint);
+		mutate(scanApiEndpoint, false);
 	};
 
 	// Handle filters on load
