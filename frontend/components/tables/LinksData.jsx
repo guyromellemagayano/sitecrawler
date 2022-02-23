@@ -296,12 +296,13 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 
 LinksData.propTypes = {
 	link: PropTypes.shape({
-		http_status: PropTypes.number,
+		http_status: PropTypes.string,
 		id: PropTypes.number,
 		occurences: PropTypes.number,
-		scan_id: PropTypes.number,
+		resolved_status: PropTypes.string,
+		resolved_tls: PropTypes.string,
 		status: PropTypes.string,
-		tls_status: PropTypes.string,
+		tls_status: PropTypes.bool,
 		type: PropTypes.string,
 		url: PropTypes.string
 	}),
