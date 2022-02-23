@@ -30,7 +30,8 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 	const linkHttpStatus = link?.http_status ?? null;
 	const linkTlsStatus = link?.tls_status ?? null;
 	const linkOccurrences = link?.occurences ?? null;
-	const linkScanId = link?.scan_id ?? null;
+	const linkResolvedStatus = link?.resolved_status ?? "";
+	const linkResolvedTls = link?.resolved_tls ?? "";
 
 	// Router
 	const { query } = useRouter();
@@ -48,6 +49,7 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 	const externalText = t("sites:external");
 	const otherText = t("sites:other");
 	const othersText = t("sites:others");
+	const nonWebText = t("sites:nonWeb");
 
 	// Custom context
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
@@ -90,33 +92,33 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 			<td tw="flex-none p-4 whitespace-nowrap">
 				<div tw="flex flex-col items-start">
 					<div>
-						<>
+						<div>
 							{isComponentReady &&
 							user &&
 							Math.round(user?.status / 100) === 2 &&
 							!user?.data?.detail &&
-							linkStatus &&
 							!validatingLinks ? (
 								<>
 									{linkStatus === "OK" && linkTlsStatus === "OK" ? (
 										<span
-											aria-label="OK"
+											aria-label="Ok"
 											tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-green-400"
-										></span>
-									) : linkStatus === "HTTP_ERROR" && linkTlsStatus === "ERROR" ? (
-										<span
-											aria-label="HTTP_ERROR"
-											tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-red-400"
 										></span>
 									) : linkStatus === "TIMEOUT" ? (
 										<span
-											aria-label="TIMEOUT"
+											aria-label="Timeout"
 											tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-yellow-400"
 										></span>
 									) : (
 										<span
-											aria-label="OTHER ERROR"
-											tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-blue-400"
+											aria-label={
+												linkStatus === "HTTP_ERROR" && linkTlsStatus === "ERROR"
+													? "HTTP Error"
+													: linkStatus === "TOO MANY REDIRECTS"
+													? "Too Many Redirects"
+													: "Other Error"
+											}
+											tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-red-400"
 										></span>
 									)}
 
@@ -148,13 +150,15 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 												{visitExternalSiteText}
 											</a>
 
-											<button
-												type="button"
-												tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-green-600 hover:text-green-500 transition ease-in-out duration-150"
-												onClick={() => {}}
-											>
-												{markAsResolvedText}
-											</button>
+											{linkStatus !== "OK" ? (
+												<button
+													type="button"
+													tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-green-600 hover:text-green-500 transition ease-in-out duration-150"
+													onClick={() => {}}
+												>
+													{markAsResolvedText}
+												</button>
+											) : null}
 										</span>
 									</div>
 								</>
@@ -182,21 +186,18 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 									</div>
 								</span>
 							)}
-						</>
+						</div>
 					</div>
 				</div>
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady &&
-				user &&
-				Math.round(user?.status / 100) === 2 &&
-				!user?.data?.detail &&
-				linkType &&
-				!validatingLinks ? (
+			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5">
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingLinks ? (
 					linkType === "PAGE" ? (
 						internalText
 					) : linkType === "EXTERNAL" ? (
 						externalText
+					) : linkType === "NON_WEB" ? (
+						nonWebText
 					) : (
 						otherText
 					)
@@ -205,32 +206,22 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady &&
-				user &&
-				Math.round(user?.status / 100) === 2 &&
-				!user?.data?.detail &&
-				linkStatus &&
-				!validatingLinks ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingLinks ? (
 					linkStatus === "OK" ? (
-						<MemoizedBadge text={"OK"} isSuccess />
+						<MemoizedBadge text="OK" isSuccess />
 					) : linkStatus === "TIMEOUT" ? (
-						<MemoizedBadge text={"TIMEOUT"} isWarning />
+						<MemoizedBadge text="TIMEOUT" isWarning />
 					) : linkStatus === "HTTP_ERROR" ? (
 						<MemoizedBadge text={`${linkHttpStatus} HTTP ERROR`} isDanger />
 					) : (
-						<MemoizedBadge text={"OTHER ERROR"} />
+						<MemoizedBadge text="OTHER ERROR" isDanger />
 					)
 				) : (
 					<Skeleton duration={2} width={150} />
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady &&
-				user &&
-				Math.round(user?.status / 100) === 2 &&
-				!user?.data?.detail &&
-				linkHttpStatus &&
-				!validatingLinks ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingLinks ? (
 					Math.round(linkHttpStatus / 100) === 2 ? (
 						<span tw="text-green-500">{linkHttpStatus}</span>
 					) : Math.round(linkHttpStatus / 100) === 4 || Math.round(linkHttpStatus / 100) === 5 ? (
@@ -245,46 +236,58 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady &&
-				user &&
-				Math.round(user?.status / 100) === 2 &&
-				!user?.data?.detail &&
-				linkDetailPages?.length > 0 &&
-				!validatingLinks ? (
-					<Link
-						href="/dashboard/sites/[siteId]/links/[linkId]/"
-						as={`/dashboard/sites/${siteId}/links/${linkDetailId}/`}
-						passHref
-					>
-						<a tw="mr-3 flex items-center outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-							<span className="truncate-link">
-								{linkDetailPages[0]?.url === linkUrl ? "/" : linkDetailPages[0]?.url}
-							</span>
-							&nbsp;
-							{linkDetailPages.length - 1 > 0
-								? "+" + handleConversionStringToNumber(linkDetailPages.length - 1)
-								: null}{" "}
-							{linkDetailPages.length - 1 > 1
-								? handleConversionStringToLowercase(othersText)
-								: linkDetailPages.length - 1 === 1
-								? handleConversionStringToLowercase("other")
-								: null}
-						</a>
-					</Link>
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingLinks ? (
+					linkDetailPages?.length > 0 ? (
+						<Link
+							href="/dashboard/sites/[siteId]/links/[linkId]/"
+							as={`/dashboard/sites/${sanitizedSiteId}/links/${linkDetailId}/`}
+							passHref
+						>
+							<a tw="mr-3 flex items-center outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+								<span className="truncate-link">
+									{linkDetailPages[0]?.url === linkUrl ? "/" : linkDetailPages[0]?.url}
+								</span>
+								&nbsp;
+								{linkDetailPages.length - 1 > 0
+									? "+" + handleConversionStringToNumber(linkDetailPages.length - 1)
+									: null}{" "}
+								{linkDetailPages.length - 1 > 1
+									? handleConversionStringToLowercase(othersText)
+									: linkDetailPages.length - 1 === 1
+									? handleConversionStringToLowercase("other")
+									: null}
+							</a>
+						</Link>
+					) : null
 				) : (
 					<Skeleton duration={2} width={120} />
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady &&
-				user &&
-				Math.round(user?.status / 100) === 2 &&
-				!user?.data?.detail &&
-				linkOccurrences &&
-				!validatingLinks ? (
-					<span tw="text-gray-500">{linkOccurrences}</span>
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingLinks ? (
+					linkOccurrences ? (
+						<span tw="text-gray-500">{linkOccurrences}</span>
+					) : null
 				) : (
 					<Skeleton duration={2} width={45} />
+				)}
+			</td>
+			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingLinks ? (
+					linkResolvedStatus ? (
+						<span tw="text-gray-500">{linkResolvedStatus}</span>
+					) : null
+				) : (
+					<Skeleton duration={2} width={75} />
+				)}
+			</td>
+			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingLinks ? (
+					linkResolvedTls ? (
+						<span tw="text-gray-500">{linkResolvedTls}</span>
+					) : null
+				) : (
+					<Skeleton duration={2} width={75} />
 				)}
 			</td>
 		</tr>
