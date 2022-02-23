@@ -132,21 +132,17 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 
 	return (
 		<div tw="flex-none px-4 sm:px-6 md:px-0 md:flex md:items-center md:justify-between">
-			{!isSites ? (
-				<>
-					<MemoizedUpgradeErrorModal
-						ref={upgradeErrorModalRef}
-						showModal={isUpgradeErrorModalVisible}
-						setShowModal={setIsUpgradeErrorModalVisible}
-					/>
+			<MemoizedUpgradeErrorModal
+				ref={upgradeErrorModalRef}
+				showModal={isUpgradeErrorModalVisible}
+				setShowModal={setIsUpgradeErrorModalVisible}
+			/>
 
-					<MemoizedSiteVerifyErrorModal
-						ref={siteVerifyErrorModalRef}
-						showModal={isSiteVerifyErrorModalVisible}
-						setShowModal={setIsSiteVerifyErrorModalVisible}
-					/>
-				</>
-			) : null}
+			<MemoizedSiteVerifyErrorModal
+				ref={siteVerifyErrorModalRef}
+				showModal={isSiteVerifyErrorModalVisible}
+				setShowModal={setIsSiteVerifyErrorModalVisible}
+			/>
 
 			<div ref={selectedSiteRef} tw="flex-1 min-w-0">
 				<div tw="mt-4 mb-8 flex flex-col sm:flex-row sm:flex-wrap sm:mt-2 sm:space-x-6 md:justify-between">

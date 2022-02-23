@@ -103,7 +103,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 	};
 
 	return (
-		<div tw="flex-1 xl:px-12 xl:py-4 flex justify-between relative z-20 flex-shrink-0 bg-white overflow-hidden w-full max-w-screen-2xl mx-auto">
+		<div tw="flex-1 xl:px-12 xl:py-4 flex justify-between relative z-20 flex-shrink-0 overflow-hidden w-full max-w-screen-2xl mx-auto">
 			<MemoizedSiteLimitReachedModal ref={ref} showModal={isComponentVisible} setShowModal={setIsComponentVisible} />
 
 			<div tw="flex-1 flex">
