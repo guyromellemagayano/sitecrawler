@@ -4,11 +4,7 @@ import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
 import { useSiteQueries } from "@hooks/useSiteQueries";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
-import {
-	handleConversionStringToBoolean,
-	handleConversionStringToLowercase,
-	handleConversionStringToNumber
-} from "@utils/convertCase";
+import { handleConversionStringToBoolean } from "@utils/convertCase";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import { memo, useContext, useEffect } from "react";
@@ -32,8 +28,7 @@ const Filter = ({
 	isSitesLinksFilter = false,
 	isSitesPagesFilter = false,
 	isSitesImagesFilter = false,
-	isSitesSeoFilter = false,
-	isValidating
+	isSitesSeoFilter = false
 }) => {
 	// Translations
 	const { t } = useTranslation("filters");
@@ -62,20 +57,42 @@ const Filter = ({
 		setNoLinkIssuesFilter,
 		allPagesFilter,
 		setAllPagesFilter,
+		okLinksFilter,
+		setOkLinksFilter,
 		nonOkLinksFilter,
 		setNonOkLinksFilter,
+		okImagesFilter,
+		setOkImagesFilter,
 		nonOkImagesFilter,
 		setNonOkImagesFilter,
+		okScriptsFilter,
+		setOkScriptsFilter,
 		nonOkScriptsFilter,
 		setNonOkScriptsFilter,
+		okStylesheetsFilter,
+		setOkStylesheetsFilter,
 		nonOkStylesheetsFilter,
 		setNonOkStylesheetsFilter,
+		securedImagesFilter,
+		setSecuredImagesFilter,
 		unsecuredImagesFilter,
 		setUnsecuredImagesFilter,
+		securedScriptsFilter,
+		setSecuredScriptsFilter,
 		unsecuredScriptsFilter,
 		setUnsecuredScriptsFilter,
+		securedStylesheetsFilter,
+		setSecuredStylesheetsFilter,
 		unsecuredStylesheetsFilter,
-		setUnsecuredStylesheetsFilter
+		setUnsecuredStylesheetsFilter,
+		tlsStatusFilter,
+		setTlsStatusFilter,
+		imagesTlsStatusFilter,
+		setImagesTlsStatusFilter,
+		scriptsTlsStatusFilter,
+		setScriptsTlsStatusFilter,
+		stylesheetsTlsStatusFilter,
+		setStylesheetsTlsStatusFilter
 	} = FilterData();
 
 	// Custom context
@@ -102,21 +119,15 @@ const Filter = ({
 		: isSitesSeoFilter
 		? "seo"
 		: null;
-	let filterQueryString = "";
 
 	// Custom hooks
 	const { linksPerPage, setPagePath } = useSiteQueries();
-	const { scanApiEndpoint } = useScanApiEndpoint(linksPerPage);
-
-	// Instantiate the query string
-	useEffect(() => {
-		filterQueryString = new URLSearchParams(location.search);
-	});
+	const { scanApiEndpoint, filterQueryString } = useScanApiEndpoint(linksPerPage);
 
 	// Handle filter URLs
-	const handleFilterUrl = async (e) => {
-		const filterValue = e?.target?.value;
-		const filterChecked = e?.target?.checked;
+	const handleFilterUrl = (e) => {
+		const filterValue = e.target.value;
+		const filterChecked = e.target.checked;
 
 		let newPath = asPath;
 		newPath = handleRemoveUrlParameter(newPath, "page");
@@ -142,7 +153,7 @@ const Filter = ({
 				setLinksWithIssuesFilter(false);
 			}
 
-			if (filterValue === "noIssues" && filterChecked) {
+			if (filterValue === "noLinkIssues" && filterChecked) {
 				setLinksWithIssuesFilter(false);
 				setInternalLinksFilter(false);
 				setExternalLinksFilter(false);
@@ -154,7 +165,7 @@ const Filter = ({
 
 				if (newPath.includes("?")) newPath += `&status=OK`;
 				else newPath += `?status=OK`;
-			} else if (filterValue === "noIssues" && !filterChecked) {
+			} else if (filterValue === "noLinkIssues" && !filterChecked) {
 				filterQueryString?.delete("status") ?? null;
 
 				if (newPath.includes("status")) newPath = handleRemoveUrlParameter(newPath, "status");
@@ -227,6 +238,104 @@ const Filter = ({
 				newPath = handleRemoveUrlParameter(newPath, "status__neq");
 				newPath = handleRemoveUrlParameter(newPath, "type");
 			}
+		} else if (filterType === "pages") {
+			if (filterValue === "tlsStatus" && filterChecked) {
+				setAllPagesFilter(false);
+				setTlsStatusFilter(true);
+				setImagesTlsStatusFilter(false);
+				setScriptsTlsStatusFilter(false);
+				setStylesheetsTlsStatusFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "tls_images=true");
+				newPath = handleRemoveUrlParameter(newPath, "tls_scripts=true");
+				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets=true");
+
+				if (newPath.includes("?")) newPath += `&tls_status=true`;
+				else newPath += `?tls_status=true`;
+			} else if (filterValue === "tlsStatus" && !filterChecked) {
+				filterQueryString?.delete("tls_status=true") ?? null;
+
+				if (newPath.includes("tls_status=true")) newPath = handleRemoveUrlParameter(newPath, "tls_status=true");
+
+				setTlsStatusFilter(false);
+			}
+
+			if (filterValue === "imagesTlsStatus" && filterChecked) {
+				setAllPagesFilter(false);
+				setTlsStatusFilter(false);
+				setImagesTlsStatusFilter(true);
+				setScriptsTlsStatusFilter(false);
+				setStylesheetsTlsStatusFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "tls_status=true");
+				newPath = handleRemoveUrlParameter(newPath, "tls_scripts=true");
+				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets=true");
+
+				if (newPath.includes("?")) newPath += `&tls_images=true`;
+				else newPath += `?tls_images=true`;
+			} else if (filterValue === "imagesTlsStatus" && !filterChecked) {
+				filterQueryString?.delete("tls_images=true") ?? null;
+
+				if (newPath.includes("tls_images=true")) newPath = handleRemoveUrlParameter(newPath, "tls_images=true");
+
+				setImagesTlsStatusFilter(false);
+			}
+
+			if (filterValue === "scriptsTlsStatus" && filterChecked) {
+				setAllPagesFilter(false);
+				setTlsStatusFilter(false);
+				setImagesTlsStatusFilter(false);
+				setScriptsTlsStatusFilter(true);
+				setStylesheetsTlsStatusFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "tls_status=true");
+				newPath = handleRemoveUrlParameter(newPath, "tls_images=true");
+				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets=true");
+
+				if (newPath.includes("?")) newPath += `&tls_scripts=true`;
+				else newPath += `?tls_scripts=true`;
+			} else if (filterValue === "scriptsTlsStatus" && !filterChecked) {
+				filterQueryString?.delete("tls_scripts=true") ?? null;
+
+				if (newPath.includes("tls_scripts=true")) newPath = handleRemoveUrlParameter(newPath, "tls_scripts=true");
+
+				setScriptsTlsStatusFilter(false);
+			}
+
+			if (filterValue === "stylesheetsTlsStatus" && filterChecked) {
+				setAllPagesFilter(false);
+				setTlsStatusFilter(false);
+				setImagesTlsStatusFilter(false);
+				setScriptsTlsStatusFilter(false);
+				setStylesheetsTlsStatusFilter(true);
+
+				newPath = handleRemoveUrlParameter(newPath, "tls_status=true");
+				newPath = handleRemoveUrlParameter(newPath, "tls_images=true");
+				newPath = handleRemoveUrlParameter(newPath, "tls_scripts=true");
+
+				if (newPath.includes("?")) newPath += `&tls_stylesheets=true`;
+				else newPath += `?tls_stylesheets=true`;
+			} else if (filterValue === "stylesheetsTlsStatus" && !filterChecked) {
+				filterQueryString?.delete("tls_stylesheets=true") ?? null;
+
+				if (newPath.includes("tls_stylesheets=true"))
+					newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets=true");
+
+				setStylesheetsTlsStatusFilter(false);
+			}
+
+			if (filterValue === "allPages" && filterChecked) {
+				setAllPagesFilter(true);
+				setTlsStatusFilter(false);
+				setImagesTlsStatusFilter(false);
+				setScriptsTlsStatusFilter(false);
+				setStylesheetsTlsStatusFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "tls_status=true");
+				newPath = handleRemoveUrlParameter(newPath, "tls_images=true");
+				newPath = handleRemoveUrlParameter(newPath, "tls_scripts=true");
+				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets=true");
+			}
 		} else {
 			// Sites filter
 			if (filterValue === "verified" && filterChecked) {
@@ -234,7 +343,7 @@ const Filter = ({
 				setUnverifiedFilter(false);
 				setAllSitesFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "verified");
+				newPath = handleRemoveUrlParameter(newPath, "verified=false");
 
 				if (newPath.includes("?")) newPath += `&verified=true`;
 				else newPath += `?verified=true`;
@@ -251,7 +360,7 @@ const Filter = ({
 				setUnverifiedFilter(true);
 				setAllSitesFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "verified");
+				newPath = handleRemoveUrlParameter(newPath, "verified=true");
 
 				if (newPath.includes("?")) newPath += `&verified=false`;
 				else newPath += `?verified=false`;
@@ -284,47 +393,49 @@ const Filter = ({
 
 	// Handle filters on load
 	useEffect(() => {
-		if (query) {
+		if (filterQueryString) {
 			if (filterType === "links") {
-				const statusNeq = handleConversionStringToBoolean(query.status__neq);
-				const status = handleConversionStringToBoolean(query.status);
-				const type = handleConversionStringToBoolean(query.type);
-
-				if (statusNeq !== null) {
+				if (filterQueryString.has("status__neq=OK")) {
 					setLinksWithIssuesFilter(true);
 				} else {
 					setLinksWithIssuesFilter(false);
 				}
 
-				if (status !== null) {
+				if (filterQueryString.has("status=OK")) {
 					setNoLinkIssuesFilter(true);
 				} else {
 					setNoLinkIssuesFilter(false);
 				}
 
-				if (type !== null) {
-					const sanitizedTypeQuery = handleConversionStringToLowercase(type);
-
-					if (sanitizedTypeQuery === "page") {
-						setInternalLinksFilter(true);
-						setExternalLinksFilter(false);
-						setNonWebLinksFilter(false);
-					} else if (sanitizedTypeQuery === "external") {
-						setInternalLinksFilter(false);
-						setExternalLinksFilter(true);
-						setNonWebLinksFilter(false);
-					} else {
-						setInternalLinksFilter(false);
-						setExternalLinksFilter(false);
-						setNonWebLinksFilter(true);
-					}
+				if (filterQueryString.has("type") === "PAGE") {
+					setInternalLinksFilter(true);
 				} else {
 					setInternalLinksFilter(false);
+				}
+
+				if (filterQueryString.has("type") === "EXTERNAL") {
+					setExternalLinksFilter(true);
+				} else {
 					setExternalLinksFilter(false);
+				}
+
+				if (filterQueryString.has("type") === "EXTERNALOTHER") {
+					setExternalLinksFilter(true);
+				} else {
+					setExternalLinksFilter(false);
+				}
+
+				if (filterQueryString.has("type") === "NON_WEB") {
+					setNonWebLinksFilter(true);
+				} else {
 					setNonWebLinksFilter(false);
 				}
 
-				if (statusNeq == null && type == null && status == null) {
+				if (
+					!filterQueryString.has("type") &&
+					!filterQueryString.has("status") &&
+					!filterQueryString.has("status__neq")
+				) {
 					setAllLinksFilter(true);
 				} else {
 					setAllLinksFilter(false);
@@ -335,53 +446,68 @@ const Filter = ({
 					linksWithIssuesFilter,
 					internalLinksFilter,
 					externalLinksFilter,
+					nonWebLinksFilter,
 					allLinksFilter
 				};
 			} else if (filterType === "pages") {
-				const numNonOkLinks = handleConversionStringToNumber(query.num_non_ok_links);
-				const numNonOkImages = handleConversionStringToNumber(query.num_non_ok_images);
-				const numNonOkScripts = handleConversionStringToNumber(query.num_non_ok_scripts);
-				const numNonOkStylesheets = handleConversionStringToNumber(query.num_non_ok_stylesheets);
-
-				if (numNonOkLinks !== null) {
-					setNonOkLinksFilter(true);
+				if (filterQueryString.has("tls_status")) {
+					setTlsStatusFilter(true);
 				} else {
-					setNonOkLinksFilter(false);
+					setTlsStatusFilter(false);
 				}
 
-				if (numNonOkImages !== null) {
-					setNonOkImagesFilter(true);
+				if (filterQueryString.has("tls_images")) {
+					setImagesTlsStatusFilter(true);
 				} else {
-					setNonOkImagesFilter(false);
+					setImagesTlsStatusFilter(false);
 				}
 
-				if (numNonOkScripts !== null) {
-					setNonOkScriptsFilter(true);
+				if (filterQueryString.has("tls_scripts")) {
+					setScriptsTlsStatusFilter(true);
 				} else {
-					setNonOkScriptsFilter(false);
+					setScriptsTlsStatusFilter(false);
 				}
 
-				if (numNonOkStylesheets !== null) {
-					setNonOkStylesheetsFilter(true);
+				if (filterQueryString.has("tls_stylesheets")) {
+					setStylesheetsTlsStatusFilter(true);
 				} else {
-					setNonOkStylesheetsFilter(false);
+					setStylesheetsTlsStatusFilter(false);
 				}
+
+				if (
+					!filterQueryString.has("tls_status") &&
+					!filterQueryString.has("tls_images") &&
+					!filterQueryString.has("tls_scripts") &&
+					!filterQueryString.has("tls_stylesheets")
+				) {
+					setAllPagesFilter(true);
+				} else {
+					setAllPagesFilter(false);
+				}
+
+				return {
+					tlsStatusFilter,
+					imagesTlsStatusFilter,
+					scriptsTlsStatusFilter,
+					stylesheetsTlsStatusFilter,
+					allPagesFilter
+				};
 			} else {
 				const verified = handleConversionStringToBoolean(query.verified);
 
-				if (verified === true) {
+				if (filterQueryString.has("verified=true")) {
 					setVerifiedFilter(true);
 				} else {
 					setVerifiedFilter(false);
 				}
 
-				if (verified === false) {
+				if (filterQueryString.has("verified=false")) {
 					setUnverifiedFilter(true);
 				} else {
 					setUnverifiedFilter(false);
 				}
 
-				if (typeof verified !== "undefined") {
+				if (!filterQueryString.has("verified")) {
 					setAllSitesFilter(true);
 				} else {
 					setAllSitesFilter(false);
@@ -394,9 +520,9 @@ const Filter = ({
 				};
 			}
 		}
-	}, [query]);
+	}, []);
 
-	return isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !isValidating ? (
+	return isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 		<form tw="px-4 py-5 border border-gray-300 sm:px-6 bg-white rounded-lg lg:flex lg:justify-between">
 			<div tw="-ml-4 lg:-mt-2 lg:flex items-center flex-wrap sm:flex-nowrap">
 				<h4 tw="ml-4 mb-4 lg:mb-0 mt-2 mr-1 leading-4 font-semibold text-gray-600">{filterText}</h4>
