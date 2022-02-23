@@ -17,13 +17,9 @@ import "twin.macro";
 /**
  * Custom function to render the `Pagination` component
  *
- * @param {boolean} isImages
- * @param {boolean} isLinks
- * @param {boolean} isOther
- * @param {boolean} isPages
- * @param {boolean} isSites
+ * @param {boolean} isValidating
  */
-const DataPagination = () => {
+const DataPagination = ({ isValidating = false }) => {
 	// Router
 	const { asPath, query, push } = useRouter();
 
@@ -137,7 +133,8 @@ const DataPagination = () => {
 		Math.round(user?.status / 100) === 2 &&
 		!user?.data?.detail &&
 		pageCount &&
-		pageResults?.length > 0 ? (
+		pageResults?.length > 0 &&
+		!isValidating ? (
 		<div tw="bg-white mt-8 mb-4 py-4 lg:flex items-center justify-between align-middle">
 			<div tw="flex items-center mb-8 lg:m-0">
 				<div tw="mt-2 lg:my-0">
