@@ -35,10 +35,10 @@ const SitesTable = ({ count = 0, results = [], validatingSites = false }) => {
 			<section
 				css={[
 					tw`flex flex-col w-full min-h-full h-full`,
-					!validatingSites && count > 0 && results?.length > 0 ? tw`justify-start` : tw`justify-center`
+					count > 0 && results?.length > 0 ? tw`justify-start` : tw`justify-center`
 				]}
 			>
-				{!validatingSites && count > 0 && results ? (
+				{count > 0 && results ? (
 					count > 0 && results?.length > 0 ? (
 						<table tw="relative w-full">
 							<thead>

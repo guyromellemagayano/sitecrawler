@@ -39,7 +39,6 @@ const PagesTable = ({ count = 0, results = [], validatingPages = false }) => {
 			<section
 				css={[
 					tw`flex flex-col w-full min-h-full h-full`,
-					!validatingPages &&
 					permissions.includes("can_see_pages") &&
 					permissions.includes("can_see_scripts") &&
 					permissions.includes("can_see_stylesheets") &&
@@ -49,7 +48,7 @@ const PagesTable = ({ count = 0, results = [], validatingPages = false }) => {
 						: tw`justify-center`
 				]}
 			>
-				{!validatingPages && permissions?.length > 0 ? (
+				{permissions?.length > 0 ? (
 					permissions.includes("can_see_pages") &&
 					permissions.includes("can_see_scripts") &&
 					permissions.includes("can_see_stylesheets") &&
