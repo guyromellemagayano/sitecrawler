@@ -246,16 +246,16 @@ const Filter = ({
 				setScriptsTlsStatusFilter(false);
 				setStylesheetsTlsStatusFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "tls_images=true");
-				newPath = handleRemoveUrlParameter(newPath, "tls_scripts=true");
-				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets=true");
+				newPath = handleRemoveUrlParameter(newPath, "tls_images");
+				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
+				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
 
-				if (newPath.includes("?")) newPath += `&tls_status=true`;
-				else newPath += `?tls_status=true`;
+				if (newPath.includes("?")) newPath += `&tls_status`;
+				else newPath += `?tls_status`;
 			} else if (filterValue === "tlsStatus" && !filterChecked) {
-				filterQueryString?.delete("tls_status=true") ?? null;
+				filterQueryString?.delete("tls_status") ?? null;
 
-				if (newPath.includes("tls_status=true")) newPath = handleRemoveUrlParameter(newPath, "tls_status=true");
+				if (newPath.includes("tls_status")) newPath = handleRemoveUrlParameter(newPath, "tls_status");
 
 				setTlsStatusFilter(false);
 			}
@@ -267,16 +267,16 @@ const Filter = ({
 				setScriptsTlsStatusFilter(false);
 				setStylesheetsTlsStatusFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "tls_status=true");
-				newPath = handleRemoveUrlParameter(newPath, "tls_scripts=true");
-				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets=true");
+				newPath = handleRemoveUrlParameter(newPath, "tls_status");
+				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
+				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
 
-				if (newPath.includes("?")) newPath += `&tls_images=true`;
-				else newPath += `?tls_images=true`;
+				if (newPath.includes("?")) newPath += `&tls_images`;
+				else newPath += `?tls_images`;
 			} else if (filterValue === "imagesTlsStatus" && !filterChecked) {
-				filterQueryString?.delete("tls_images=true") ?? null;
+				filterQueryString?.delete("tls_images") ?? null;
 
-				if (newPath.includes("tls_images=true")) newPath = handleRemoveUrlParameter(newPath, "tls_images=true");
+				if (newPath.includes("tls_images")) newPath = handleRemoveUrlParameter(newPath, "tls_images");
 
 				setImagesTlsStatusFilter(false);
 			}
@@ -288,16 +288,16 @@ const Filter = ({
 				setScriptsTlsStatusFilter(true);
 				setStylesheetsTlsStatusFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "tls_status=true");
-				newPath = handleRemoveUrlParameter(newPath, "tls_images=true");
-				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets=true");
+				newPath = handleRemoveUrlParameter(newPath, "tls_status");
+				newPath = handleRemoveUrlParameter(newPath, "tls_images");
+				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
 
-				if (newPath.includes("?")) newPath += `&tls_scripts=true`;
-				else newPath += `?tls_scripts=true`;
+				if (newPath.includes("?")) newPath += `&tls_scripts`;
+				else newPath += `?tls_scripts`;
 			} else if (filterValue === "scriptsTlsStatus" && !filterChecked) {
-				filterQueryString?.delete("tls_scripts=true") ?? null;
+				filterQueryString?.delete("tls_scripts") ?? null;
 
-				if (newPath.includes("tls_scripts=true")) newPath = handleRemoveUrlParameter(newPath, "tls_scripts=true");
+				if (newPath.includes("tls_scripts")) newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
 
 				setScriptsTlsStatusFilter(false);
 			}
@@ -309,17 +309,16 @@ const Filter = ({
 				setScriptsTlsStatusFilter(false);
 				setStylesheetsTlsStatusFilter(true);
 
-				newPath = handleRemoveUrlParameter(newPath, "tls_status=true");
-				newPath = handleRemoveUrlParameter(newPath, "tls_images=true");
-				newPath = handleRemoveUrlParameter(newPath, "tls_scripts=true");
+				newPath = handleRemoveUrlParameter(newPath, "tls_status");
+				newPath = handleRemoveUrlParameter(newPath, "tls_images");
+				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
 
-				if (newPath.includes("?")) newPath += `&tls_stylesheets=true`;
-				else newPath += `?tls_stylesheets=true`;
+				if (newPath.includes("?")) newPath += `&tls_stylesheets`;
+				else newPath += `?tls_stylesheets`;
 			} else if (filterValue === "stylesheetsTlsStatus" && !filterChecked) {
-				filterQueryString?.delete("tls_stylesheets=true") ?? null;
+				filterQueryString?.delete("tls_stylesheets") ?? null;
 
-				if (newPath.includes("tls_stylesheets=true"))
-					newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets=true");
+				if (newPath.includes("tls_stylesheets")) newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
 
 				setStylesheetsTlsStatusFilter(false);
 			}
@@ -331,10 +330,10 @@ const Filter = ({
 				setScriptsTlsStatusFilter(false);
 				setStylesheetsTlsStatusFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "tls_status=true");
-				newPath = handleRemoveUrlParameter(newPath, "tls_images=true");
-				newPath = handleRemoveUrlParameter(newPath, "tls_scripts=true");
-				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets=true");
+				newPath = handleRemoveUrlParameter(newPath, "tls_status");
+				newPath = handleRemoveUrlParameter(newPath, "tls_images");
+				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
+				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
 			}
 		} else {
 			// Sites filter
@@ -345,8 +344,8 @@ const Filter = ({
 
 				newPath = handleRemoveUrlParameter(newPath, "verified=false");
 
-				if (newPath.includes("?")) newPath += `&verified=true`;
-				else newPath += `?verified=true`;
+				if (newPath.includes("?")) newPath += `&verified`;
+				else newPath += `?verified`;
 			} else if (filterValue === "verified" && !filterChecked) {
 				filterQueryString?.delete("verified") ?? null;
 
@@ -360,7 +359,7 @@ const Filter = ({
 				setUnverifiedFilter(true);
 				setAllSitesFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "verified=true");
+				newPath = handleRemoveUrlParameter(newPath, "verified");
 
 				if (newPath.includes("?")) newPath += `&verified=false`;
 				else newPath += `?verified=false`;
