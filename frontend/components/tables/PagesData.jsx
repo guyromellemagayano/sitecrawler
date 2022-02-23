@@ -11,6 +11,7 @@ import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import PropTypes from "prop-types";
 import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -533,6 +534,47 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 			</td>
 		</tr>
 	);
+};
+
+PagesData.propTypes = {
+	page: PropTypes.shape({
+		id: PropTypes.number,
+		num_images: PropTypes.number,
+		num_links: PropTypes.number,
+		num_non_ok_images: PropTypes.number,
+		num_non_ok_links: PropTypes.number,
+		num_non_ok_scripts: PropTypes.number,
+		num_non_ok_stylesheets: PropTypes.number,
+		num_non_tls_images: PropTypes.number,
+		num_non_tls_scripts: PropTypes.number,
+		num_non_tls_stylesheets: PropTypes.number,
+		num_ok_images: PropTypes.number,
+		num_ok_links: PropTypes.number,
+		num_ok_scripts: PropTypes.number,
+		num_ok_stylesheets: PropTypes.number,
+		num_scripts: PropTypes.number,
+		num_stylesheets: PropTypes.number,
+		num_tls_images: PropTypes.number,
+		num_tls_scripts: PropTypes.number,
+		num_tls_stylesheets: PropTypes.number,
+		resolved_duplicate_description: PropTypes.bool,
+		resolved_duplicate_title: PropTypes.bool,
+		resolved_missing_description: PropTypes.bool,
+		resolved_missing_h1_first: PropTypes.bool,
+		resolved_missing_h1_second: PropTypes.bool,
+		resolved_missing_h2_first: PropTypes.bool,
+		resolved_missing_h2_second: PropTypes.bool,
+		resolved_missing_title: PropTypes.bool,
+		resolved_size: PropTypes.bool,
+		resolved_tls: PropTypes.bool,
+		size_total: PropTypes.number,
+		tls_images: PropTypes.bool,
+		tls_scripts: PropTypes.bool,
+		tls_status: PropTypes.bool,
+		tls_stylesheets: PropTypes.bool,
+		url: PropTypes.string
+	}),
+	validatingPages: PropTypes.bool
 };
 
 /**
