@@ -34,10 +34,10 @@ const LinksTable = ({ count = 0, results = [], validatingLinks = false }) => {
 			<section
 				css={[
 					tw`flex flex-col w-full min-h-full h-full`,
-					!validatingLinks && count > 0 && results?.length > 0 ? tw`justify-start` : tw`justify-center`
+					count > 0 && results?.length > 0 ? tw`justify-start` : tw`justify-center`
 				]}
 			>
-				{!validatingLinks && count && results ? (
+				{count && results ? (
 					count > 0 && results?.length > 0 ? (
 						<table tw="relative w-full">
 							<thead>
@@ -62,7 +62,7 @@ const LinksTable = ({ count = 0, results = [], validatingLinks = false }) => {
 								}) ?? null}
 							</tbody>
 						</table>
-					) : !validatingLinks && count === 0 && results?.length === 0 ? (
+					) : count === 0 && results?.length === 0 ? (
 						<div tw="px-4 py-5 sm:p-6 flex items-center justify-center">
 							<MemoizedLoadingMessage message={noAvailableLinks} />
 						</div>
