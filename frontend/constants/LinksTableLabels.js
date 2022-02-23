@@ -8,6 +8,9 @@ export const LinksTableLabels = () => {
 	const httpCode = t("httpCode");
 	const linkLocation = t("linkLocation");
 	const occurrences = t("occurrences");
+	const errorMessage = t("errorMessage");
+	const statusResolved = t("statusResolved");
+	const tlsResolved = t("tlsResolved");
 
 	const labelsArray = [];
 
@@ -17,6 +20,8 @@ export const LinksTableLabels = () => {
 	const httpCodeTableLabel = { label: httpCode, slug: "http-code", key: "http_status" };
 	const linkLocationTableLabel = { label: linkLocation };
 	const occurrencesTableLabel = { label: occurrences, slug: "occurrences", key: "occurences" };
+	const statusResolvedTableLabel = { label: statusResolved };
+	const tlsResolvedTableLabel = { label: tlsResolved };
 
 	labelsArray.push(linkUrlTableLabel);
 	labelsArray.push(urlTypeTableLabel);
@@ -24,6 +29,8 @@ export const LinksTableLabels = () => {
 	labelsArray.push(httpCodeTableLabel);
 	labelsArray.push(linkLocationTableLabel);
 	labelsArray.push(occurrencesTableLabel);
+	labelsArray.push(statusResolvedTableLabel);
+	labelsArray.push(tlsResolvedTableLabel);
 
 	return labelsArray;
 };
