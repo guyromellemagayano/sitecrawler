@@ -3,10 +3,11 @@ import { MemoizedSiteVerifyErrorModal } from "@components/modals/SiteVerifyError
 import { MemoizedUpgradeErrorModal } from "@components/modals/UpgradeErrorModal";
 import { RedirectInterval } from "@constants/GlobalValues";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { ExternalLinkIcon } from "@heroicons/react/outline";
-import { DownloadIcon, GlobeIcon, LinkIcon } from "@heroicons/react/solid";
+import { DocumentTextIcon, ExternalLinkIcon, LinkIcon } from "@heroicons/react/outline";
+import { DownloadIcon, GlobeIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useLinks } from "@hooks/useLinks";
+import { usePages } from "@hooks/usePages";
 import { useScan } from "@hooks/useScan";
 import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
 import { useSiteId } from "@hooks/useSiteId";
@@ -25,8 +26,13 @@ import tw from "twin.macro";
 
 /**
  * Custom function to render the `PageOption` component
+ *
+ * @param {boolean} isImages
+ * @param {boolean} isLinks
+ * @param {boolean} isPages
+ * @param {boolean} isSites
  */
-const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo = false, isSites = false }) => {
+const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSites = false }) => {
 	const [isDownloading, setIsDownloading] = useState(false);
 
 	// Translations
@@ -35,6 +41,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 	const linksText = t("sites:links");
 	const siteText = t("sites:site");
 	const sitesText = t("sites:sites");
+	const pagesText = t("sites:pages");
 	const csvDownloadText = t("sites:csvDownload");
 	const crawlingText = t("sites:crawling");
 	const crawlText = t("sites:crawlSite");
@@ -68,9 +75,10 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 
 	// SWR hooks
 	const { user, disableLocalTime, permissions } = useUser();
-	const { sitesCount, sitesResults } = useSites(scanApiEndpoint);
 	const { siteIdVerified, siteName, siteUrl } = useSiteId(sanitizedSiteId);
-	const { linksCount, linksResults } = useLinks(scanApiEndpoint, sanitizedSiteId, scanObjId);
+	const { sitesCount, sitesResults, validatingSites } = useSites(scanApiEndpoint);
+	const { linksCount, linksResults, validatingLinks } = useLinks(scanApiEndpoint, sanitizedSiteId, scanObjId);
+	const { pagesCount, pagesResultsm, validatingPages } = usePages(scanApiEndpoint, sanitizedSiteId, scanObjId);
 
 	// Custom hooks
 	const {
@@ -111,7 +119,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 
 		if (!isDownloading) {
 			const downloadLink = `/api/site/${siteId}/scan/${scanObjId}/${
-				isLinks ? "link" : isPages || isSeo ? "page" : isImages ? "image" : null
+				isLinks ? "link" : isPages ? "page" : isImages ? "image" : null
 			}/?format=csv${queryString}`;
 
 			window.location.assign(downloadLink);
@@ -146,7 +154,11 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 						{!isSites ? (
 							<>
 								<div tw="flex items-center space-x-2 text-sm text-gray-500">
-									{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+									{isComponentReady &&
+									user &&
+									Math.round(user?.status / 100) === 2 &&
+									!user?.data?.detail &&
+									(!validatingLinks || !validatingPages) ? (
 										<>
 											<GlobeIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" aria-hidden="true" />
 											<span tw="text-sm leading-6 font-semibold text-gray-500">
@@ -171,7 +183,11 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 								</div>
 
 								<div tw="flex items-center space-x-2 text-sm text-gray-500">
-									{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+									{isComponentReady &&
+									user &&
+									Math.round(user?.status / 100) === 2 &&
+									!user?.data?.detail &&
+									(!validatingSites || !validatingLinks || !validatingPages) ? (
 										<>
 											<FontAwesomeIcon
 												icon={["fas", "spider"]}
@@ -209,8 +225,12 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 						) : null}
 
 						<div tw="flex items-center space-x-2 text-sm text-gray-500">
-							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-								linksCount ? (
+							{isComponentReady &&
+							user &&
+							Math.round(user?.status / 100) === 2 &&
+							!user?.data?.detail &&
+							(!validatingSites || !validatingLinks || !validatingPages) ? (
+								isLinks && linksCount ? (
 									<>
 										<LinkIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" aria-hidden="true" />
 										<span tw="text-sm leading-6 text-gray-500">
@@ -219,13 +239,22 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 												: linksCount + " " + linkText}
 										</span>
 									</>
-								) : sitesCount ? (
+								) : isSites && sitesCount ? (
 									<>
 										<ExternalLinkIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" aria-hidden="true" />
 										<span tw="text-sm leading-6 text-gray-500">
 											{sitesCount > 1
 												? sitesCount + " " + handleConversionStringToLowercase(sitesText)
 												: sitesCount + " " + siteText}
+										</span>
+									</>
+								) : isPages && pagesCount ? (
+									<>
+										<DocumentTextIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" aria-hidden="true" />
+										<span tw="text-sm leading-6 text-gray-500">
+											{pagesCount > 1
+												? pagesCount + " " + handleConversionStringToLowercase(pagesText)
+												: pagesCount + " " + siteText}
 										</span>
 									</>
 								) : null
@@ -240,7 +269,11 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 
 					{!isSites ? (
 						<div tw="mt-4 flex md:mt-0 md:ml-4">
-							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+							{isComponentReady &&
+							user &&
+							Math.round(user?.status / 100) === 2 &&
+							!user?.data?.detail &&
+							(!validatingLinks || !validatingPages) ? (
 								permissions.includes("can_start_scan") ? (
 									siteIdVerified ? (
 										<button
@@ -288,7 +321,11 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSeo 
 							)}
 
 							{!isSites ? (
-								isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+								isComponentReady &&
+								user &&
+								Math.round(user?.status / 100) === 2 &&
+								!user?.data?.detail &&
+								(!validatingLinks || !validatingPages) ? (
 									siteIdVerified ? (
 										<button
 											type="button"
