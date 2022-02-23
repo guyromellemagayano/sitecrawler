@@ -85,7 +85,7 @@ const SiteLinksPageLayout = () => {
 			</div>
 
 			<div tw="flex-none">
-				<MemoizedDataPagination />
+				<MemoizedDataPagination isValidating={validatingLinks} />
 			</div>
 		</>
 	);

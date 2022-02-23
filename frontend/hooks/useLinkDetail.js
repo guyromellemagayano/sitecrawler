@@ -30,9 +30,10 @@ export const useLinkDetail = (querySid = null, scanObjId = null, linkId = null, 
 		linkId !== null &&
 		typeof linkId === "number" &&
 		linkId > 0
-			? SitesApiEndpoint + querySid + ScanSlug + scanObjId + SiteLinkSlug + linkId
+			? SitesApiEndpoint + querySid + ScanSlug + scanObjId + SiteLinkSlug + linkId + "/"
 			: null;
 
+	// SWR hook
 	const {
 		data: linkDetail,
 		error: errorLinkDetail,

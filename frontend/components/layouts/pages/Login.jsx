@@ -26,7 +26,7 @@ const LoginPageLayout = () => {
 	return (
 		<>
 			<NextSeo title={loginText} />
-			<Scrollbars universal>
+			<Scrollbars autoHide universal>
 				<section tw="h-screen bg-gray-50 flex flex-col justify-center relative overflow-auto py-12 sm:px-6 lg:px-8">
 					<div tw="mx-auto max-w-screen-xl">
 						<div tw="lg:grid lg:grid-cols-12 lg:gap-8">

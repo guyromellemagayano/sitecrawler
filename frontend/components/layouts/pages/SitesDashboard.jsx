@@ -75,7 +75,7 @@ const SitesDashboardPageLayout = () => {
 			</div>
 
 			<div tw="flex-none">
-				<MemoizedDataPagination />
+				<MemoizedDataPagination isValidating={validatingSites} />
 			</div>
 		</>
 	);

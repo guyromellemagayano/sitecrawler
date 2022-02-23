@@ -1,6 +1,6 @@
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import { orderingByNameQuery, perPageQuery } from "@constants/GlobalValues";
-import { ScanSlug, SiteLinkSlug, SiteLinksSlug } from "@constants/PageLinks";
+import { ScanSlug, SiteLinkSlug, SiteLinksSlug, SitePageSlug, SitePagesSlug } from "@constants/PageLinks";
 import { handleConversionStringToNumber } from "@utils/convertCase";
 import { useRouter } from "next/router";
 import { useScan } from "./useScan";
@@ -25,14 +25,21 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 	// Custom variables
 	let scanApiEndpoint = SitesApiEndpoint;
 	let queryString = "";
+	let filterQueryString = "";
 
 	if (asPath.includes(SiteLinksSlug)) {
 		scanApiEndpoint += sanitizedSiteId + ScanSlug + scanObjId + SiteLinkSlug;
+	} else if (asPath.includes(SitePagesSlug)) {
+		scanApiEndpoint += sanitizedSiteId + ScanSlug + scanObjId + SitePageSlug;
 	}
 
 	scanApiEndpoint += "?" + perPageQuery + linksPerPage;
 
 	const typeString = query?.type ? (Array.isArray(query?.type) ? query.type.join("&type=") : query.type) : "";
+
+	if (typeof window !== "undefined") {
+		filterQueryString = new URLSearchParams(window.location.search);
+	}
 
 	// Sites
 	const verifiedQuery = query?.verified
@@ -57,46 +64,28 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 	const typeQuery = typeString ? (scanApiEndpoint.includes("?") ? `&type=${typeString}` : `?type=${typeString}`) : "";
 
 	// Pages
-	const sizeTotalMinQuery = query?.size_total_min
+	const tlsStatusQuery = query?.tls_status
 		? scanApiEndpoint.includes("?")
-			? `&size_total_min=1048576`
-			: `?size_total_min=1048576`
+			? `&tls_status=${query.tls_status}`
+			: `?tls_status=${query.tls_status}`
 		: "";
 
-	const sizeTotalMaxQuery = query?.size_total_max
+	const tlsStatusImagesQuery = query?.tls_images
 		? scanApiEndpoint.includes("?")
-			? `&size_total_max=1048575`
-			: `?size_total_max=1048575`
+			? `&status=${query.tls_images}`
+			: `?status=${query.tls_images}`
 		: "";
 
-	const tlsTotalQuery = query?.tls_total
-		? query.tls_total === "true"
-			? scanApiEndpoint.includes("?")
-				? `&tls_total=true`
-				: `?tls_total=true`
-			: scanApiEndpoint.includes("?")
-			? `&tls_total=false`
-			: `?tls_total=false`
+	const tlsStatusScriptsQuery = query?.tls_scripts
+		? scanApiEndpoint.includes("?")
+			? `&status=${query.tls_scripts}`
+			: `?status=${query.tls_scripts}`
 		: "";
 
-	const hasDuplicatedTitleQuery = query?.has_duplicated_title
-		? query.has_duplicated_title
-			? scanApiEndpoint.includes("?")
-				? `&has_duplicated_title=true`
-				: `?has_duplicated_title=true`
-			: scanApiEndpoint.includes("?")
-			? `&has_duplicated_title=false`
-			: `?has_duplicated_title=false`
-		: "";
-
-	const hasDuplicatedDescriptionQuery = query?.has_duplicated_description
-		? query.has_duplicated_description
-			? scanApiEndpoint.includes("?")
-				? `&has_duplicated_description=true`
-				: `?has_duplicated_description=true`
-			: scanApiEndpoint.includes("?")
-			? `&has_duplicated_description=false`
-			: `?has_duplicated_description=false`
+	const tlsStatusStylesheetsQuery = query?.tls_stylesheets
+		? scanApiEndpoint.includes("?")
+			? `&status=${query.tls_stylesheets}`
+			: `?status=${query.tls_stylesheets}`
 		: "";
 
 	// Pagination
@@ -120,16 +109,15 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 	queryString += statusNeqQuery;
 	queryString += statusQuery;
 	queryString += typeQuery;
-	queryString += sizeTotalMinQuery;
-	queryString += sizeTotalMaxQuery;
-	queryString += tlsTotalQuery;
-	queryString += hasDuplicatedTitleQuery;
-	queryString += hasDuplicatedDescriptionQuery;
+	queryString += tlsStatusQuery;
+	queryString += tlsStatusImagesQuery;
+	queryString += tlsStatusScriptsQuery;
+	queryString += tlsStatusStylesheetsQuery;
 	queryString += pageQuery;
 	queryString += searchQuery;
 	queryString += orderingQuery;
 
 	scanApiEndpoint += queryString;
 
-	return { scanApiEndpoint, queryString };
+	return { scanApiEndpoint, queryString, filterQueryString };
 };

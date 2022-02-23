@@ -19,7 +19,7 @@ const RegistrationPageLayout = () => {
 
 	return (
 		<div tw="bg-gray-50 overflow-auto h-screen">
-			<Scrollbars universal>
+			<Scrollbars autoHide universal>
 				<section tw="h-screen bg-gray-50 flex flex-col justify-center relative overflow-auto py-12 sm:px-6 lg:px-8">
 					<div tw="mx-auto max-w-screen-xl">
 						<div tw="relative my-8 sm:my-16 md:my-20 lg:my-24">

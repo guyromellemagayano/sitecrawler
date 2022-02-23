@@ -233,12 +233,7 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 				</div>
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5">
-				{isComponentReady &&
-				user &&
-				Math.round(user?.status / 100) === 2 &&
-				!user?.data?.detail &&
-				scanResults &&
-				!validatingSites ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingSites ? (
 					scanResults?.length > 0 ? (
 						<span tw="space-x-2">
 							<span tw="text-sm leading-5 text-gray-500">

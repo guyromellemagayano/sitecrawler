@@ -34,10 +34,6 @@ export const CustomGlobalStyles = styled.createGlobalStyle`
 				${tw`max-w-xs`}
 			}
 		}
-
-		.min-width-adjust {
-			min-width: 20rem;
-		}
 	}
 
 	@media only screen and (max-width: 1400px) {
@@ -71,14 +67,11 @@ export const CustomGlobalStyles = styled.createGlobalStyle`
 			${tw`truncate`}
 		}
 
-		&-link {
-			max-width: 15rem;
-		}
-
 		&-profile-text {
 			max-width: 12rem;
 		}
 
+		&-link,
 		&-breadcrumbs {
 			max-width: 30rem;
 		}

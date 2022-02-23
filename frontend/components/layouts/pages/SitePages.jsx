@@ -32,16 +32,31 @@ const SitePagesPageLayout = () => {
 	const { scanApiEndpoint } = useScanApiEndpoint(linksPerPage);
 
 	// SWR hooks
-	const { user } = useUser();
+	const { user, permissions } = useUser();
 	const { pagesCount, pagesResults, validatingPages } = usePages(scanApiEndpoint, sanitizedSiteId, scanObjId);
 
 	return (
 		<>
-			<MemoizedPageOption isPages />
+			{isComponentReady &&
+			user &&
+			Math.round(user?.status / 100) === 2 &&
+			!user?.data?.detail &&
+			permissions.includes("can_see_pages") &&
+			permissions.includes("can_see_scripts") &&
+			permissions.includes("can_see_stylesheets") ? (
+				<MemoizedPageOption isPages />
+			) : null}
 			<div
 				css={[
 					tw`flex-grow focus:outline-none px-4 pt-8 sm:px-6 md:px-0`,
-					isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && pagesCount === 0
+					isComponentReady &&
+					user &&
+					Math.round(user?.status / 100) === 2 &&
+					!user?.data?.detail &&
+					permissions.includes("can_see_pages") &&
+					permissions.includes("can_see_scripts") &&
+					permissions.includes("can_see_stylesheets") &&
+					pagesCount === 0
 						? tw`flex flex-col flex-auto items-center justify-center`
 						: null
 				]}
@@ -49,7 +64,14 @@ const SitePagesPageLayout = () => {
 				<div
 					css={[
 						tw`flex-1 w-full h-full`,
-						isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && pagesCount === 0
+						isComponentReady &&
+						user &&
+						Math.round(user?.status / 100) === 2 &&
+						!user?.data?.detail &&
+						permissions.includes("can_see_pages") &&
+						permissions.includes("can_see_scripts") &&
+						permissions.includes("can_see_stylesheets") &&
+						pagesCount === 0
 							? tw`flex flex-auto`
 							: null
 					]}
@@ -61,6 +83,9 @@ const SitePagesPageLayout = () => {
 								user &&
 								Math.round(user?.status / 100) === 2 &&
 								!user?.data?.detail &&
+								permissions.includes("can_see_pages") &&
+								permissions.includes("can_see_scripts") &&
+								permissions.includes("can_see_stylesheets") &&
 								pagesCount === 0 &&
 								tw`flex flex-initial`
 						]}
@@ -72,6 +97,9 @@ const SitePagesPageLayout = () => {
 									user &&
 									Math.round(user?.status / 100) === 2 &&
 									!user?.data?.detail &&
+									permissions.includes("can_see_pages") &&
+									permissions.includes("can_see_scripts") &&
+									permissions.includes("can_see_stylesheets") &&
 									pagesCount === 0 &&
 									tw`flex items-center`
 							]}
@@ -84,9 +112,17 @@ const SitePagesPageLayout = () => {
 				</div>
 			</div>
 
-			<div tw="flex-none">
-				<MemoizedDataPagination />
-			</div>
+			{isComponentReady &&
+			user &&
+			Math.round(user?.status / 100) === 2 &&
+			!user?.data?.detail &&
+			permissions.includes("can_see_pages") &&
+			permissions.includes("can_see_scripts") &&
+			permissions.includes("can_see_stylesheets") ? (
+				<div tw="flex-none">
+					<MemoizedDataPagination isValidating={validatingPages} />
+				</div>
+			) : null}
 		</>
 	);
 };
