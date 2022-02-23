@@ -67,7 +67,7 @@ export const DashboardLayout = ({ children }) => {
 						</div>
 
 						<div tw="flex-1">
-							<Scrollbars universal>
+							<Scrollbars autoHide universal>
 								<div tw="absolute w-full h-full max-w-screen-2xl mx-auto left-0 right-0">
 									<div tw="flex flex-col h-full">{children}</div>
 								</div>
