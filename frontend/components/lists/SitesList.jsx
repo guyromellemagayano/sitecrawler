@@ -44,7 +44,7 @@ const SitesList = ({ isOpen = false }) => {
 			aria-labelledby="listbox-label"
 			tw="pt-2 h-48 text-base leading-6 overflow-auto focus:outline-none sm:text-sm sm:leading-5"
 		>
-			<Scrollbars universal>
+			<Scrollbars autoHide universal>
 				{sites.data.results.map((value) => (
 					<MemoizedSiteList key={value.id} data={value} />
 				))}
