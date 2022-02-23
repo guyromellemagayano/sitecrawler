@@ -322,7 +322,8 @@ export const CustomTransitionStyles = styled.createGlobalStyle`
 	.new-active-plan-modal,
 	.payment-method-modal,
 	.site-verify-modal,
-	.site-delete-modal {
+	.site-delete-modal,
+	.site-verify-error-modal {
 		&-dialog {
 			${tw`fixed z-50 inset-0 overflow-y-auto`}
 			&-overlay {
@@ -341,7 +342,7 @@ export const CustomTransitionStyles = styled.createGlobalStyle`
 	.payment-method-modal,
 	.site-verify-modal,
 	.site-delete-modal,
-	.site-verify-error {
+	.site-verify-error-modal {
 		&-first-child {
 			&-enter {
 				${tw`ease-out duration-300`}
@@ -421,7 +422,7 @@ export const CustomTransitionStyles = styled.createGlobalStyle`
 
 	.upgrade-error-modal,
 	.site-limit-reached-modal,
-	.site-verify-error {
+	.site-verify-error-modal {
 		&-second-child {
 			&-title {
 				${tw`text-lg font-medium text-gray-900`}
