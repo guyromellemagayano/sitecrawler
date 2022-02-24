@@ -254,7 +254,7 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 								{linkDetailPages.length - 1 > 1
 									? handleConversionStringToLowercase(othersText)
 									: linkDetailPages.length - 1 === 1
-									? handleConversionStringToLowercase("other")
+									? handleConversionStringToLowercase(otherText)
 									: null}
 							</a>
 						</Link>
