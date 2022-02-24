@@ -317,6 +317,7 @@ export const CustomTransitionStyles = styled.createGlobalStyle`
 	.delete-site-modal,
 	.site-limit-reached-modal,
 	.upgrade-error-modal,
+	.not-allowed-feature-modal,
 	.show-help-modal,
 	.change-to-basic-modal,
 	.new-active-plan-modal,
@@ -336,6 +337,7 @@ export const CustomTransitionStyles = styled.createGlobalStyle`
 	.delete-site-modal,
 	.site-limit-reached-modal,
 	.upgrade-error-modal,
+	.not-allowed-feature-modal,
 	.show-help-modal,
 	.change-to-basic-modal,
 	.new-active-plan-modal,
@@ -421,6 +423,7 @@ export const CustomTransitionStyles = styled.createGlobalStyle`
 	}
 
 	.upgrade-error-modal,
+	.not-allowed-feature-modal,
 	.site-limit-reached-modal,
 	.site-verify-error-modal {
 		&-second-child {

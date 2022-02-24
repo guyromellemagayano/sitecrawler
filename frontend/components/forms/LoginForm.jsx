@@ -91,13 +91,6 @@ const LoginForm = () => {
 						})
 					);
 
-					// Show alert message after successful 200 OK or 201 Created response is issued
-					setConfig({
-						isLogin: true,
-						method: loginResponseMethod,
-						status: loginResponseStatus
-					});
-
 					// Redirect to sites dashboard page after successful 200 OK response is established
 					if (!isSubmitting) {
 						setTimeout(() => {
