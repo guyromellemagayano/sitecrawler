@@ -31,7 +31,7 @@ const SitesTable = ({ count = 0, results = [], validatingSites = false }) => {
 	const labelsArray = SitesTableLabels();
 
 	return (
-		<Scrollbars autoHide universal>
+		<Scrollbars autoHide renderThumbHorizontal={(props) => <div {...props} />} universal>
 			<section
 				css={[
 					tw`flex flex-col w-full min-h-full h-full`,
