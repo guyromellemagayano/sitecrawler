@@ -1,4 +1,5 @@
 import { MemoizedMobileSidebarButton } from "@components/buttons/MobileSidebarButton";
+import { MemoizedNotAllowedFeatureModal } from "@components/modals/NotAllowedFeatureModal";
 import { MemoizedSiteLimitReachedModal } from "@components/modals/SiteLimitReachedModal";
 import { AddNewSiteLink, AddNewSiteSlug } from "@constants/PageLinks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -28,12 +29,14 @@ import tw from "twin.macro";
  */
 const AddSite = ({ handleOpenSidebar }) => {
 	const [hasSiteLimitReached, setHasSiteLimitReached] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 
 	// Translations
-	const { t } = useTranslation("sites");
-	const addNewSite = t("addNewSite");
-	const searchSites = t("searchSites");
-	const searchNotAvailable = t("searchNotAvailable");
+	const { t } = useTranslation();
+	const addNewSite = t("sites:addNewSite");
+	const searchSites = t("sites:searchSites");
+	const searchNotAvailable = t("sites:searchNotAvailable");
+	const loaderMessage = t("common:loaderMessage");
 
 	// Router
 	const { asPath, push } = useRouter();
@@ -58,7 +61,16 @@ const AddSite = ({ handleOpenSidebar }) => {
 	}, [sitesCount, maxSiteLimit]);
 
 	// Custom hooks
-	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
+	const {
+		ref: siteLimitReachedModalRef,
+		isComponentVisible: isSiteLimitReachedModalVisible,
+		setIsComponentVisible: setIsSiteLimitReachedModalVisible
+	} = useComponentVisible(false);
+	const {
+		ref: NotAllowedFeatureModalRef,
+		isComponentVisible: isNotAllowedFeatureModalVisible,
+		setIsComponentVisible: setIsNotAllowedFeatureModalVisible
+	} = useComponentVisible(false);
 
 	// Helper functions
 	const { searchKey, setSearchKey, linksPerPage, setPagePath } = useSiteQueries();
@@ -97,14 +109,34 @@ const AddSite = ({ handleOpenSidebar }) => {
 	const handleRouterOnClick = (e) => {
 		e.preventDefault();
 
-		if (!asPath.includes(AddNewSiteSlug)) {
-			push(AddNewSiteLink + "?step=1&edit=false&verified=false");
-		} else return null;
+		asPath.includes(AddNewSiteSlug)
+			? setIsNotAllowedFeatureModalVisible(!isNotAllowedFeatureModalVisible)
+			: () => {
+					setIsLoading(!isLoading);
+
+					if (!asPath.includes(AddNewSiteSlug)) {
+						push(AddNewSiteLink + "?step=1&edit=false&verified=false");
+
+						return () => {
+							setIsLoading(!isLoading);
+						};
+					} else return null;
+			  };
 	};
 
 	return (
 		<div tw="flex-1 xl:px-12 xl:py-4 flex justify-between relative z-20 flex-shrink-0 overflow-hidden w-full max-w-screen-2xl mx-auto">
-			<MemoizedSiteLimitReachedModal ref={ref} showModal={isComponentVisible} setShowModal={setIsComponentVisible} />
+			<MemoizedSiteLimitReachedModal
+				ref={siteLimitReachedModalRef}
+				showModal={isSiteLimitReachedModalVisible}
+				setShowModal={setIsSiteLimitReachedModalVisible}
+			/>
+
+			<MemoizedNotAllowedFeatureModal
+				ref={NotAllowedFeatureModalRef}
+				showModal={isNotAllowedFeatureModalVisible}
+				setShowModal={setIsNotAllowedFeatureModalVisible}
+			/>
 
 			<div tw="flex-1 flex">
 				<MemoizedMobileSidebarButton handleOpenSidebar={handleOpenSidebar} />
@@ -168,13 +200,19 @@ const AddSite = ({ handleOpenSidebar }) => {
 								css={[
 									tw`border border-transparent cursor-pointer flex font-medium items-center justify-center leading-4 px-4 py-2 rounded-md text-sm text-white w-full`,
 									asPath.includes(AddNewSiteSlug)
-										? tw`opacity-50 bg-gray-300 cursor-not-allowed`
+										? tw`active:bg-red-700 bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 hover:bg-red-700`
 										: tw`active:bg-green-700 bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 hover:bg-green-700`
 								]}
 							>
 								<span tw="flex items-center space-x-2">
-									<PlusIcon tw="mr-2 h-4 w-4 text-white" />
-									{addNewSite}
+									{isLoading ? (
+										loaderMessage
+									) : (
+										<>
+											<PlusIcon tw="mr-2 h-4 w-4 text-white" />
+											{addNewSite}
+										</>
+									)}
 								</span>
 							</a>
 						</Link>

@@ -42,6 +42,8 @@
 	"requiredField": "Required field",
 	"siteFeatureNotAvailableMessage": "The feature you are trying to use is not available on your current plan. Subscribe to our Pro or Agency plans so you can use them at any time.",
 	"siteFeatureNotAvailableTitle": "Site Feature Not Available",
+	"notAllowedFeatureMessage": "The feature you are trying to use is not allowed on this page.",
+	"notAllowedFeatureTitle": "Site Feature Not Allowed",
 	"siteLogoAltMessage": "SiteCrawler App Logo",
 	"submitting": "Submitting...",
 	"support": "Support",
