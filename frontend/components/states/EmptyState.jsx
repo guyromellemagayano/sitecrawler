@@ -47,7 +47,7 @@ const EmptyState = () => {
 				{asPath !== DashboardSitesLink ? siteFeatureNotAvailableMessageText : addNewSiteMessageText}
 			</p>
 			<div tw="mt-6">
-				<Link href="/" passHref>
+				<Link href={SubscriptionPlansSettingsLink} passHref>
 					<a
 						role="button"
 						tabIndex="0"
