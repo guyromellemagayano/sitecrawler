@@ -4,7 +4,7 @@ import { MemoizedUpgradeErrorModal } from "@components/modals/UpgradeErrorModal"
 import { RedirectInterval } from "@constants/GlobalValues";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DocumentTextIcon, ExternalLinkIcon, LinkIcon } from "@heroicons/react/outline";
-import { DownloadIcon, GlobeIcon } from "@heroicons/react/solid";
+import { DownloadIcon, GlobeIcon, XCircleIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useLinks } from "@hooks/useLinks";
 import { usePages } from "@hooks/usePages";
@@ -303,7 +303,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 											tw="inline-flex items-center ml-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white focus:outline-none bg-red-600 hover:bg-red-700 focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
 										>
 											<span tw="flex items-center space-x-2">
-												<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-white" />
+												<XCircleIcon tw="w-4 h-4 text-white" />
 												<span>{crawlText}</span>
 											</span>
 										</button>
@@ -354,7 +354,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 											tw="inline-flex items-center ml-2 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
 										>
 											<span tw="flex items-center space-x-2">
-												<DownloadIcon tw="w-4 h-4 text-white" />
+												<XCircleIcon tw="w-4 h-4 text-white" />
 												<span>{csvDownloadText}</span>
 											</span>
 										</button>
