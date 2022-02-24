@@ -72,9 +72,6 @@ export const useScan = (querySid = null, options = null) => {
 			const currentScanResponseMethod = currentScanResponse?.config?.method ?? null;
 
 			if (currentScanResponseData !== null && Math.round(currentScanResponseStatus / 200) === 1) {
-				// Set `isProcessing` state
-				setIsProcessing(false);
-
 				// Set `isCrawlStarted` state
 				setIsCrawlStarted(true);
 
