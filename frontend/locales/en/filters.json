@@ -27,5 +27,6 @@
 	"tlsStatus": "TLS Status",
 	"imagesTlsStatus": "Images TLS Status",
 	"scriptsTlsStatus": "Scripts TLS Status",
-	"stylesheetsTlsStatus": "Stylesheets TLS Status"
+	"stylesheetsTlsStatus": "Stylesheets TLS Status",
+	"urlType": "URL Type"
 }
