@@ -274,7 +274,11 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 							Math.round(user?.status / 100) === 2 &&
 							!user?.data?.detail &&
 							(!validatingLinks || !validatingPages) ? (
-								permissions.includes("can_start_scan") ? (
+								permissions.includes("can_start_scan") &&
+								permissions.includes("can_see_pages") &&
+								permissions.includes("can_see_scripts") &&
+								permissions.includes("can_see_stylesheets") &&
+								permissions.includes("can_see_images") ? (
 									siteIdVerified ? (
 										<button
 											type="button"
@@ -283,7 +287,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 											css={[
 												tw`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white `,
 												(isCrawlStarted && !isCrawlFinished) || isProcessing
-													? tw`bg-green-400 opacity-50 cursor-not-allowed`
+													? tw`opacity-50 cursor-not-allowed`
 													: tw`bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`
 											]}
 										>
@@ -333,7 +337,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 											css={[
 												tw`inline-flex items-center ml-2 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white`,
 												isDownloading
-													? tw`bg-gray-400 opacity-50 cursor-not-allowed`
+													? tw`opacity-50 cursor-not-allowed`
 													: tw`bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
 											]}
 											onClick={handleCsvDownload}
