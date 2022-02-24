@@ -183,7 +183,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 						<button
 							type="button"
 							tw="active:bg-yellow-700 bg-yellow-600 border border-transparent cursor-pointer flex focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 font-medium hover:bg-yellow-700 items-center justify-center leading-4 px-4 py-2 rounded-md text-sm text-white w-full"
-							onClick={() => setIsComponentVisible(!isComponentVisible)}
+							onClick={() => setIsSiteLimitReachedModalVisible(!isSiteLimitReachedModalVisible)}
 						>
 							<span tw="flex items-center space-x-2">
 								<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-white" />
