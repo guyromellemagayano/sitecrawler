@@ -1,10 +1,13 @@
 import { MemoizedBadge } from "@components/badges";
+import { MemoizedSiteDanagerIcon } from "@components/icons/SiteDangerIcon";
+import { MemoizedSiteSuccessIcon } from "@components/icons/SiteSuccessIcon";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useLinkDetail } from "@hooks/useLinkDetail";
 import { useScan } from "@hooks/useScan";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
-import { handleConversionStringToLowercase, handleConversionStringToNumber } from "@utils/convertCase";
+import { handleConversionStringToNumber } from "@utils/convertCase";
+import bytes from "bytes";
 import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
@@ -16,22 +19,25 @@ import "react-loading-skeleton/dist/skeleton.css";
 import "twin.macro";
 
 /**
- * Custom function to render the `LinksData` component
+ * Custom function to render the `ImagesData` component
  *
  * @param {object} link
- * @param {boolean} validatingLinks
+ * @param {boolean} validatingImages
  */
-const LinksData = ({ link = null, validatingLinks = false }) => {
+const ImagesData = ({ image = null, validatingImages = false }) => {
 	// Site data props
-	const linkId = link?.id ?? null;
-	const linkStatus = link?.status ?? null;
-	const linkType = link?.type ?? null;
-	const linkUrl = link?.url ?? null;
-	const linkHttpStatus = link?.http_status ?? null;
-	const linkTlsStatus = link?.tls_status ?? null;
-	const linkOccurrences = link?.occurences ?? null;
-	const linkResolvedStatus = link?.resolved_status ?? "";
-	const linkResolvedTls = link?.resolved_tls ?? "";
+	const imageId = image?.id ?? null;
+	const imageType = image?.type ?? null;
+	const imageStatus = image?.status ?? null;
+	const imageUrl = image?.url ?? null;
+	const imageHttpStatus = image?.http_status ?? null;
+	const imageSize = image?.size ?? null;
+	const imageOccurences = image?.occurences ?? null;
+	const imageTlsStatus = image?.tls_status ?? null;
+	const imageMissingAlts = image?.missing_alts ?? null;
+	const imageResolvedStatus = image?.resolved_status ?? null;
+	const imageResolvedMissingAlts = image?.resolved_missing_alts ?? null;
+	const imageResolvedTls = image?.resolved_tls ?? null;
 
 	// Router
 	const { query } = useRouter();
@@ -57,7 +63,7 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 	// SWR hooks
 	const { user, disableLocalTime, permissions } = useUser();
 	const { scanObjId, selectedSiteRef } = useScan(sanitizedSiteId);
-	const { linkDetail, linkDetailId, linkDetailPages } = useLinkDetail(sanitizedSiteId, scanObjId, linkId);
+	const { linkDetail, linkDetailId, linkDetailPages } = useLinkDetail(sanitizedSiteId, scanObjId, imageId);
 
 	// Custom hooks
 	const {
@@ -97,14 +103,14 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 							user &&
 							Math.round(user?.status / 100) === 2 &&
 							!user?.data?.detail &&
-							!validatingLinks ? (
+							!validatingImages ? (
 								<>
-									{linkStatus === "OK" && linkTlsStatus === "OK" ? (
+									{imageStatus === "OK" && imageTlsStatus === "OK" ? (
 										<span
 											aria-label="Ok"
 											tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-green-400"
 										></span>
-									) : linkStatus === "TIMEOUT" ? (
+									) : imageStatus === "TIMEOUT" ? (
 										<span
 											aria-label="Timeout"
 											tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-yellow-400"
@@ -112,9 +118,9 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 									) : (
 										<span
 											aria-label={
-												linkStatus === "HTTP_ERROR" && linkTlsStatus === "ERROR"
+												imageStatus === "HTTP_ERROR" && imageTlsStatus === "ERROR"
 													? "HTTP Error"
-													: linkStatus === "TOO MANY REDIRECTS"
+													: imageStatus === "TOO MANY REDIRECTS"
 													? "Too Many Redirects"
 													: "Other Error"
 											}
@@ -124,7 +130,7 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 
 									<div tw="inline-flex flex-col justify-start items-start">
 										<span tw="flex items-center justify-start text-sm leading-6 font-semibold text-gray-500">
-											<p className="truncate-link">{linkUrl}</p>
+											<p className="truncate-link">{imageUrl}</p>
 										</span>
 										<span tw="flex space-x-2 justify-start text-sm leading-5 text-gray-500">
 											<Link
@@ -141,7 +147,7 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 											</Link>
 
 											<a
-												href={linkUrl}
+												href={imageUrl}
 												tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150"
 												title={visitExternalSiteText}
 												target="_blank"
@@ -150,7 +156,7 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 												{visitExternalSiteText}
 											</a>
 
-											{linkStatus !== "OK" ? (
+											{imageStatus !== "OK" ? (
 												<button
 													type="button"
 													tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-green-600 hover:text-green-500 transition ease-in-out duration-150"
@@ -191,12 +197,16 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 				</div>
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingLinks ? (
-					linkType === "PAGE" ? (
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				!validatingImages ? (
+					imageType === "PAGE" ? (
 						internalText
-					) : linkType === "EXTERNAL" ? (
+					) : imageType === "EXTERNAL" ? (
 						externalText
-					) : linkType === "NON_WEB" ? (
+					) : imageType === "NON_WEB" ? (
 						nonWebText
 					) : (
 						otherText
@@ -206,13 +216,17 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingLinks ? (
-					linkStatus === "OK" ? (
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				!validatingImages ? (
+					imageStatus === "OK" ? (
 						<MemoizedBadge text="OK" isSuccess />
-					) : linkStatus === "TIMEOUT" ? (
+					) : imageStatus === "TIMEOUT" ? (
 						<MemoizedBadge text="TIMEOUT" isWarning />
-					) : linkStatus === "HTTP_ERROR" ? (
-						<MemoizedBadge text={`${linkHttpStatus} HTTP ERROR`} isDanger />
+					) : imageStatus === "HTTP_ERROR" ? (
+						<MemoizedBadge text={`${imageHttpStatus} HTTP ERROR`} isDanger />
 					) : (
 						<MemoizedBadge text="OTHER ERROR" isDanger />
 					)
@@ -221,70 +235,127 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingLinks ? (
-					Math.round(linkHttpStatus / 100) === 2 ? (
-						<span tw="text-green-500">{linkHttpStatus}</span>
-					) : Math.round(linkHttpStatus / 100) === 4 || Math.round(linkHttpStatus / 100) === 5 ? (
-						<span tw="text-red-500">{linkHttpStatus}</span>
-					) : Math.round(linkHttpStatus / 100) === 3 ? (
-						<span tw="text-yellow-500">{linkHttpStatus}</span>
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				!validatingImages ? (
+					imageTlsStatus ? (
+						<MemoizedSiteSuccessIcon />
+					) : !imageTlsStatus ? (
+						<MemoizedSiteDanagerIcon />
+					) : null
+				) : (
+					<Skeleton duration={2} width={150} />
+				)}
+			</td>
+			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				!validatingImages ? (
+					Math.round(imageHttpStatus / 100) === 2 ? (
+						<span tw="text-green-500">{imageHttpStatus}</span>
+					) : Math.round(imageHttpStatus / 100) === 4 || Math.round(imageHttpStatus / 100) === 5 ? (
+						<span tw="text-red-500">{imageHttpStatus}</span>
+					) : Math.round(imageHttpStatus / 100) === 3 ? (
+						<span tw="text-yellow-500">{imageHttpStatus}</span>
 					) : (
-						<span tw="text-gray-500">{linkHttpStatus}</span>
+						<span tw="text-gray-500">{imageHttpStatus}</span>
 					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingLinks ? (
-					linkDetailPages?.length > 0 ? (
-						<Link
-							href="/dashboard/sites/[siteId]/links/[linkId]/"
-							as={`/dashboard/sites/${sanitizedSiteId}/links/${linkDetailId}/`}
-							passHref
-						>
-							<a tw="mr-3 flex items-center outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-								<span className="truncate-link">
-									{linkDetailPages[0]?.url === linkUrl ? "/" : linkDetailPages[0]?.url}
-								</span>
-								&nbsp;
-								{linkDetailPages.length - 1 > 0
-									? "+" + handleConversionStringToNumber(linkDetailPages.length - 1)
-									: null}{" "}
-								{linkDetailPages.length - 1 > 1
-									? handleConversionStringToLowercase(othersText)
-									: linkDetailPages.length - 1 === 1
-									? handleConversionStringToLowercase(otherText)
-									: null}
-							</a>
-						</Link>
-					) : null
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				!validatingImages ? (
+					<span tw="text-gray-500">
+						{imageSize > 0
+							? bytes(imageSize, {
+									thousandsSeparator: " ",
+									unitSeparator: " "
+							  })
+							: 0}
+					</span>
 				) : (
-					<Skeleton duration={2} width={120} />
+					<Skeleton duration={2} width={45} />
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingLinks ? (
-					linkOccurrences ? (
-						<span tw="text-gray-500">{linkOccurrences}</span>
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				!validatingImages ? (
+					imageOccurences ? (
+						<span tw="text-gray-500">{imageOccurences}</span>
 					) : null
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingLinks ? (
-					linkResolvedStatus ? (
-						<span tw="text-gray-500">{linkResolvedStatus}</span>
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				!validatingImages ? (
+					<span tw="text-gray-500">{imageOccurences > 0 ? imageOccurences : 0}</span>
+				) : (
+					<Skeleton duration={2} width={45} />
+				)}
+			</td>
+			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				!validatingImages ? (
+					<span tw="text-gray-500">{imageMissingAlts > 0 ? imageMissingAlts : 0}</span>
+				) : (
+					<Skeleton duration={2} width={45} />
+				)}
+			</td>
+
+			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				!validatingImages ? (
+					imageResolvedStatus ? (
+						<span tw="text-gray-500">{imageResolvedStatus}</span>
 					) : null
 				) : (
 					<Skeleton duration={2} width={75} />
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingLinks ? (
-					linkResolvedTls ? (
-						<span tw="text-gray-500">{linkResolvedTls}</span>
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				!validatingImages ? (
+					imageResolvedMissingAlts ? (
+						<span tw="text-gray-500">{imageResolvedMissingAlts}</span>
+					) : null
+				) : (
+					<Skeleton duration={2} width={75} />
+				)}
+			</td>
+			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				!validatingImages ? (
+					imageResolvedTls ? (
+						<span tw="text-gray-500">{imageResolvedTls}</span>
 					) : null
 				) : (
 					<Skeleton duration={2} width={75} />
@@ -294,22 +365,25 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 	);
 };
 
-LinksData.propTypes = {
-	link: PropTypes.shape({
+ImagesData.propTypes = {
+	image: PropTypes.shape({
 		http_status: PropTypes.string,
 		id: PropTypes.number,
+		missing_alts: PropTypes.number,
 		occurences: PropTypes.number,
-		resolved_status: PropTypes.string,
-		resolved_tls: PropTypes.string,
+		resolved_missing_alts: PropTypes.bool,
+		resolved_status: PropTypes.bool,
+		resolved_tls: PropTypes.bool,
+		size: PropTypes.number,
 		status: PropTypes.string,
 		tls_status: PropTypes.bool,
 		type: PropTypes.string,
 		url: PropTypes.string
 	}),
-	validatingLinks: PropTypes.bool
+	validatingImages: PropTypes.bool
 };
 
 /**
- * Memoized custom `LinksData` component
+ * Memoized custom `ImagesData` component
  */
-export const MemoizedLinksData = memo(LinksData);
+export const MemoizedImagesData = memo(ImagesData);

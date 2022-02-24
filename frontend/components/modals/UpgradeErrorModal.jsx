@@ -1,6 +1,6 @@
 import { SubscriptionPlansSettingsLink } from "@constants/PageLinks";
 import { Dialog, Transition } from "@headlessui/react";
-import { ExclamationIcon } from "@heroicons/react/solid";
+import { ExclamationIcon, ViewBoardsIcon } from "@heroicons/react/solid";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { forwardRef, Fragment, memo } from "react";
@@ -71,6 +71,7 @@ const UpgradeErrorModal = ({ showModal = false, setShowModal }, ref) => {
 								<span tw="flex w-full rounded-md shadow-sm sm:w-auto">
 									<Link href={SubscriptionPlansSettingsLink} passHref>
 										<a tw="cursor-pointer w-full mt-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+											<ViewBoardsIcon tw="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
 											{upgradePlanText}
 										</a>
 									</Link>

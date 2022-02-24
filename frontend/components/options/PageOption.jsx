@@ -1,4 +1,4 @@
-import { MemoizedFilter } from "@components/filters";
+// import { MemoizedFilter } from "@components/filters";
 import { MemoizedSiteVerifyErrorModal } from "@components/modals/SiteVerifyErrorModal";
 import { MemoizedUpgradeErrorModal } from "@components/modals/UpgradeErrorModal";
 import { RedirectInterval } from "@constants/GlobalValues";
@@ -132,17 +132,21 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 
 	return (
 		<div tw="flex-none px-4 sm:px-6 md:px-0 md:flex md:items-center md:justify-between">
-			<MemoizedUpgradeErrorModal
-				ref={upgradeErrorModalRef}
-				showModal={isUpgradeErrorModalVisible}
-				setShowModal={setIsUpgradeErrorModalVisible}
-			/>
+			{!isSites ? (
+				<>
+					<MemoizedUpgradeErrorModal
+						ref={upgradeErrorModalRef}
+						showModal={isUpgradeErrorModalVisible}
+						setShowModal={setIsUpgradeErrorModalVisible}
+					/>
 
-			<MemoizedSiteVerifyErrorModal
-				ref={siteVerifyErrorModalRef}
-				showModal={isSiteVerifyErrorModalVisible}
-				setShowModal={setIsSiteVerifyErrorModalVisible}
-			/>
+					<MemoizedSiteVerifyErrorModal
+						ref={siteVerifyErrorModalRef}
+						showModal={isSiteVerifyErrorModalVisible}
+						setShowModal={setIsSiteVerifyErrorModalVisible}
+					/>
+				</>
+			) : null}
 
 			<div ref={selectedSiteRef} tw="flex-1 min-w-0">
 				<div tw="mt-4 mb-8 flex flex-col sm:flex-row sm:flex-wrap sm:mt-2 sm:space-x-6 md:justify-between">
@@ -359,13 +363,15 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 					) : null}
 				</div>
 
-				{isLinks ? (
+				{/* {isLinks ? (
 					<MemoizedFilter isSitesLinksFilter />
 				) : isPages ? (
 					<MemoizedFilter isSitesPagesFilter />
+				) : isImages ? (
+					<MemoizedFilter isSitesImagesFilter />
 				) : (
 					<MemoizedFilter isSitesFilter />
-				)}
+				)} */}
 			</div>
 		</div>
 	);

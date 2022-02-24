@@ -30,6 +30,9 @@ export const FilterData = () => {
 	const [unsecuredScriptsFilter, setUnsecuredScriptsFilter] = useState(false);
 	const [securedStylesheetsFilter, setSecuredStylesheetsFilter] = useState(false);
 	const [unsecuredStylesheetsFilter, setUnsecuredStylesheetsFilter] = useState(false);
+	const [allImagesFilter, setAllImagesFilter] = useState(false);
+	const [urlTypeFilter, setUrlTypeFilter] = useState(false);
+	const [httpStatusFilter, setHttpStatusFilter] = useState(false);
 
 	// Translations
 	const { t } = useTranslation("filters");
@@ -61,6 +64,7 @@ export const FilterData = () => {
 	const unsecuredScriptsText = t("unsecuredScripts");
 	const securedStylesheetsText = t("securedStylesheets");
 	const unsecuredStylesheetsText = t("unsecuredStylesheets");
+	const urlTypeText = t("urlType");
 
 	const filtersArray = [];
 
