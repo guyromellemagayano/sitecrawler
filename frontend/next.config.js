@@ -17,6 +17,35 @@ const NextConfig = {
 	},
 	env: {
 		LOGROCKET_APP_ID: "epic-design-labs/link-app"
+	},
+	async redirects() {
+		return [
+			{
+				source: "/login",
+				destination: "/",
+				permanent: false
+			},
+			{
+				source: "/dashboard/settings",
+				destination: "/dashboard/settings/profile",
+				permanent: false
+			},
+			{
+				source: "/dashboard/site",
+				destination: "/dashboard/sites",
+				permanent: false
+			},
+			{
+				source: "/dashboard/site/:siteId",
+				destination: "/dashboard/sites/:siteId/overview",
+				permanent: false
+			},
+			{
+				source: "/dashboard/sites/:siteId",
+				destination: "/dashboard/sites/:siteId/overview",
+				permanent: false
+			}
+		];
 	}
 };
 
