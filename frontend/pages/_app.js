@@ -1,4 +1,3 @@
-import ProgressBar from "@components/progress-bar";
 import AppSeo from "@constants/AppSeo";
 import { ComponentReadyInterval } from "@constants/GlobalValues";
 import { isProd } from "@constants/ServerEnv";
@@ -76,7 +75,6 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 		>
 			<GlobalStyles />
 			<DefaultSeo {...AppSeo} />
-			<ProgressBar />
 			<Component {...pageProps} err={err} />
 		</SiteCrawlerAppContext.Provider>
 	);
