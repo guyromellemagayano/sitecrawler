@@ -24,6 +24,9 @@ const NextConfig = {
 		styledComponents: true,
 		removeConsole: true
 	},
+	experimental: {
+		outputStandalone: true
+	},
 	async redirects() {
 		return [
 			{
