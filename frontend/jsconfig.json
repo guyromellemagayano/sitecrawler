@@ -3,6 +3,7 @@
 		"baseUrl": ".",
 		"experimentalDecorators": true,
 		"jsxImportSource": "react",
+		"resolveJsonModule": true,
 		"paths": {
 			"@components/*": ["./components/*"],
 			"@constants/*": ["./constants/*"],
