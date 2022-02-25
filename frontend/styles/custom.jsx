@@ -1,10 +1,10 @@
-import * as styled from "styled-components";
+import { createGlobalStyle } from "styled-components";
 import tw from "twin.macro";
 
 /**
  * Custom global styles
  */
-export const CustomGlobalStyles = styled.createGlobalStyle`
+export const CustomGlobalStyles = createGlobalStyle`
 	body {
 		${tw`antialiased`}
 	}
@@ -86,7 +86,7 @@ export const CustomGlobalStyles = styled.createGlobalStyle`
 /**
  * Custom vendor styles
  */
-export const CustomVendorStyles = styled.createGlobalStyle`
+export const CustomVendorStyles = createGlobalStyle`
 	.rc-pagination {
 		${tw`flex text-gray-500`}
 
@@ -205,7 +205,7 @@ export const CustomVendorStyles = styled.createGlobalStyle`
 /**
  * Custom transition styles
  */
-export const CustomTransitionStyles = styled.createGlobalStyle`
+export const CustomTransitionStyles = createGlobalStyle`
 	.mobile-sidebar {
 		&-first-child {
 			&-enter {

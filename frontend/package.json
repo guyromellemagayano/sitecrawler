@@ -23,7 +23,15 @@
 	"babelMacros": {
 		"twin": {
 			"preset": "styled-components",
-			"sassyPseudo": true
+			"sassyPseudo": true,
+			"styled": {
+				"import": "default",
+				"from": "styled-components"
+			},
+			"css": {
+				"import": "default",
+				"from": "styled-components"
+			}
 		}
 	},
 	"keywords": [
