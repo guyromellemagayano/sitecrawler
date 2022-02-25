@@ -1,12 +1,12 @@
 import { handleUnitAmountToRealPrice } from "@helpers/handleUnitAmountToRealPrice";
 import { CheckIcon } from "@heroicons/react/solid";
 import { useCurrentSubscription } from "@hooks/useCurrentSubscription";
+import { classNames } from "@utils/classNames";
 import { handleConversionStringToLowercase } from "@utils/convertCase";
 import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
 import { memo, useCallback, useEffect, useState } from "react";
-import tw from "twin.macro";
 
 /**
  * Custom function to render the `SemiAnnualPlans` component
@@ -83,57 +83,57 @@ const SemiAnnualPlans = ({
 	}, [handleCurrentSubscription]);
 
 	return planName === "pro" ? (
-		<div tw="mt-10 max-w-lg mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-start-3 lg:col-end-6 lg:row-start-1 lg:row-end-4">
-			<div tw="relative z-20 rounded-lg shadow-xl">
-				<div tw="pointer-events-none absolute inset-0 rounded-lg border border-indigo-600"></div>
-				<div tw="absolute inset-x-0 top-0 transform translate-y-px">
-					<div tw="flex justify-center transform -translate-y-1/2">
-						<span tw="inline-flex rounded-full bg-indigo-600 px-4 py-1 text-sm leading-5 font-semibold tracking-wider uppercase text-white">
+		<div className="mx-auto mt-10 max-w-lg lg:col-start-3 lg:col-end-6 lg:row-start-1 lg:row-end-4 lg:mx-0 lg:mt-0 lg:max-w-none">
+			<div className="relative z-20 rounded-lg shadow-xl">
+				<div className="pointer-events-none absolute inset-0 rounded-lg border border-indigo-600"></div>
+				<div className="absolute inset-x-0 top-0 translate-y-px transform">
+					<div className="flex -translate-y-1/2 transform justify-center">
+						<span className="inline-flex rounded-full bg-indigo-600 px-4 py-1 text-sm font-semibold uppercase leading-5 tracking-wider text-white">
 							{subscriptionPlansMostPopular}
 						</span>
 					</div>
 				</div>
-				<div tw="bg-white rounded-t-lg px-6 pt-12 pb-10">
+				<div className="rounded-t-lg bg-white px-6 pt-12 pb-10">
 					<div>
-						<h3 tw="text-center text-3xl leading-9 font-semibold text-gray-900 sm:-mx-6" id="tier-growth">
+						<h3 className="text-center text-3xl font-semibold leading-9 text-gray-900 sm:-mx-6" id="tier-growth">
 							{planNameTitle}
-							<span tw="text-red-400">*</span>
+							<span className="text-red-400">*</span>
 						</h3>
-						<div tw="mt-4 flex items-center justify-center">
-							<span tw="px-3 flex items-start text-6xl leading-none tracking-tight text-gray-900 sm:text-6xl">
-								<span tw="mt-2 mr-2 text-4xl font-medium">$</span>
-								<span tw="font-bold">{planPrice}</span>
+						<div className="mt-4 flex items-center justify-center">
+							<span className="flex items-start px-3 text-6xl leading-none tracking-tight text-gray-900 sm:text-6xl">
+								<span className="mt-2 mr-2 text-4xl font-medium">$</span>
+								<span className="font-bold">{planPrice}</span>
 							</span>
-							<span tw="text-2xl leading-8 font-medium text-gray-500">{"/" + subscriptionPlansMonthly}</span>
+							<span className="text-2xl font-medium leading-8 text-gray-500">{"/" + subscriptionPlansMonthly}</span>
 						</div>
 					</div>
 				</div>
-				<div tw="border-t border-gray-300 rounded-b-lg pt-10 pb-8 px-6 bg-white sm:px-10 sm:py-10">
+				<div className="rounded-b-lg border-t border-gray-300 bg-white px-6 pt-10 pb-8 sm:px-10 sm:py-10">
 					<ul>
 						{planFeatures?.map((val2, key) => {
 							return (
-								<li key={key} tw="flex items-start my-3">
-									<div tw="flex-shrink-0">
-										<CheckIcon tw="h-6 w-6 text-green-500" />
+								<li key={key} className="my-3 flex items-start">
+									<div className="flex-shrink-0">
+										<CheckIcon className="h-6 w-6 text-green-500" />
 									</div>
-									<p tw="ml-3 text-base leading-6 font-medium text-gray-500">{val2}</p>
+									<p className="ml-3 text-base font-medium leading-6 text-gray-500">{val2}</p>
 								</li>
 							);
 						}) ?? null}
 					</ul>
-					<div tw="mt-10">
-						<div css={[tw`rounded-lg`, planId === currentSubscriptionId ? tw`shadow-none` : tw`shadow-sm`]}>
+					<div className="mt-10">
+						<div className={classNames("rounded-lg", planId === currentSubscriptionId ? "shadow-none" : "shadow-sm")}>
 							{planId === currentSubscriptionId &&
 							currentSubscriptionStatus === "PAID" &&
 							currentSubscriptionCancelAt !== null ? (
-								<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
-									<span tw="px-2 py-5 text-gray-600 text-center">
-										<p tw="text-sm font-medium">{subscriptionPlansEndsOn}</p>
-										<p tw="text-xs text-gray-500">
+								<div className="relative flex flex-row flex-wrap justify-center text-sm leading-5">
+									<span className="px-2 py-5 text-center text-gray-600">
+										<p className="text-sm font-medium">{subscriptionPlansEndsOn}</p>
+										<p className="text-xs text-gray-500">
 											{!disableLocalTime
 												? dayjs(currentSubscriptionCancelAt).calendar(null, calendarStrings)
 												: dayjs.utc(currentSubscriptionCancelAt).calendar(null, calendarStrings)}
-											<span tw="ml-1 font-medium">({!disableLocalTime ? dayjs.tz.guess() : "UTC"})</span>
+											<span className="ml-1 font-medium">({!disableLocalTime ? dayjs.tz.guess() : "UTC"})</span>
 										</p>
 									</span>
 								</div>
@@ -142,14 +142,14 @@ const SemiAnnualPlans = ({
 							<button
 								type="button"
 								disabled={planId === currentSubscriptionId ? true : false}
-								css={[
-									tw`block w-full text-center rounded-lg border px-6 py-4 text-lg leading-6 font-medium border-transparent text-white focus:outline-none focus:ring-2 focus:ring-offset-2`,
+								className={classNames(
+									"block w-full rounded-lg border border-transparent px-6 py-4 text-center text-lg font-medium leading-6 text-white focus:outline-none focus:ring-2 focus:ring-offset-2",
 									planId === currentSubscriptionId
 										? loadingProSemiAnnually
-											? tw`opacity-50 cursor-not-allowed bg-indigo-600`
-											: tw`cursor-default text-indigo-600 border-indigo-700`
-										: tw`cursor-pointer bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500`
-								]}
+											? "cursor-not-allowed bg-indigo-600 opacity-50"
+											: "cursor-default border-indigo-700 text-indigo-600"
+										: "cursor-pointer bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500"
+								)}
 								onClick={() => {
 									setPlanId(planId);
 									setPlanName(planName);
@@ -168,50 +168,52 @@ const SemiAnnualPlans = ({
 			</div>
 		</div>
 	) : planName === "agency" ? (
-		<div tw="mt-10 mx-auto max-w-md lg:m-0 lg:max-w-none lg:col-start-6 lg:col-end-8 lg:row-start-2 lg:row-end-3">
-			<div tw="h-full flex flex-col rounded-lg shadow-lg overflow-hidden lg:rounded-none lg:rounded-r-lg border">
-				<div tw="flex-1 flex flex-col">
-					<div tw="bg-white px-6 py-10">
+		<div className="mx-auto mt-10 max-w-md lg:col-start-6 lg:col-end-8 lg:row-start-2 lg:row-end-3 lg:m-0 lg:max-w-none">
+			<div className="flex h-full flex-col overflow-hidden rounded-lg border shadow-lg lg:rounded-none lg:rounded-r-lg">
+				<div className="flex flex-1 flex-col">
+					<div className="bg-white px-6 py-10">
 						<div>
-							<h3 tw="text-center text-2xl leading-8 font-medium text-gray-900" id="tier-scale">
+							<h3 className="text-center text-2xl font-medium leading-8 text-gray-900" id="tier-scale">
 								{planNameTitle}
-								<span tw="text-red-400">*</span>
+								<span className="text-red-400">*</span>
 							</h3>
-							<div tw="mt-4 flex items-center justify-center">
-								<span tw="px-3 flex items-start text-6xl leading-none tracking-tight text-gray-900">
-									<span tw="mt-2 mr-2 text-4xl font-medium">$</span>
-									<span tw="font-bold">{planPrice}</span>
+							<div className="mt-4 flex items-center justify-center">
+								<span className="flex items-start px-3 text-6xl leading-none tracking-tight text-gray-900">
+									<span className="mt-2 mr-2 text-4xl font-medium">$</span>
+									<span className="font-bold">{planPrice}</span>
 								</span>
-								<span tw="text-xl leading-7 font-medium text-gray-500">{"/" + subscriptionPlansMonthly}</span>
+								<span className="text-xl font-medium leading-7 text-gray-500">{"/" + subscriptionPlansMonthly}</span>
 							</div>
 						</div>
 					</div>
-					<div tw="flex-1 flex flex-col justify-between border-t border-gray-300 p-6 bg-white sm:p-10 lg:p-6 xl:p-10">
+					<div className="flex flex-1 flex-col justify-between border-t border-gray-300 bg-white p-6 sm:p-10 lg:p-6 xl:p-10">
 						<ul>
 							{planFeatures?.map((val2, key) => {
 								return (
-									<li key={key} tw="flex items-start my-3">
-										<div tw="flex-shrink-0">
-											<CheckIcon tw="h-6 w-6 text-green-500" />
+									<li key={key} className="my-3 flex items-start">
+										<div className="flex-shrink-0">
+											<CheckIcon className="h-6 w-6 text-green-500" />
 										</div>
-										<p tw="ml-3 text-base leading-6 font-medium text-gray-500">{val2}</p>
+										<p className="ml-3 text-base font-medium leading-6 text-gray-500">{val2}</p>
 									</li>
 								);
 							})}
 						</ul>
-						<div tw="mt-8">
-							<div css={[tw`rounded-lg`, data?.id == currentSubscription?.id ? tw`shadow-none` : tw`shadow-sm`]}>
+						<div className="mt-8">
+							<div
+								className={classNames("rounded-lg", data?.id == currentSubscription?.id ? "shadow-none" : "shadow-sm")}
+							>
 								{planId === currentSubscriptionId &&
 								currentSubscriptionStatus === "PAID" &&
 								currentSubscriptionCancelAt !== null ? (
-									<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
-										<span tw="px-2 py-5 text-gray-600 text-center">
-											<p tw="text-sm font-medium">{subscriptionPlansEndsOn}</p>
-											<p tw="text-xs text-gray-500">
+									<div className="relative flex flex-row flex-wrap justify-center text-sm leading-5">
+										<span className="px-2 py-5 text-center text-gray-600">
+											<p className="text-sm font-medium">{subscriptionPlansEndsOn}</p>
+											<p className="text-xs text-gray-500">
 												{!disableLocalTime
 													? dayjs(currentSubscriptionCancelAt).calendar(null, calendarStrings)
 													: dayjs.utc(currentSubscriptionCancelAt).calendar(null, calendarStrings)}
-												<span tw="ml-1 font-medium">({!disableLocalTime ? dayjs.tz.guess() : "UTC"})</span>
+												<span className="ml-1 font-medium">({!disableLocalTime ? dayjs.tz.guess() : "UTC"})</span>
 											</p>
 										</span>
 									</div>
@@ -220,14 +222,14 @@ const SemiAnnualPlans = ({
 								<button
 									type="button"
 									disabled={planId === currentSubscriptionId ? true : false}
-									css={[
-										tw`block w-full text-center rounded-lg border px-6 py-4 text-lg leading-6 font-medium border-transparent text-white focus:outline-none focus:ring-2 focus:ring-offset-2`,
+									className={classNames(
+										"block w-full rounded-lg border border-transparent px-6 py-4 text-center text-lg font-medium leading-6 text-white focus:outline-none focus:ring-2 focus:ring-offset-2",
 										planId === currentSubscriptionId
 											? loadingAgencySemiAnnually
-												? tw`opacity-50 cursor-not-allowed bg-indigo-600`
-												: tw`cursor-default text-indigo-600 border-indigo-700`
-											: tw`cursor-pointer bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500`
-									]}
+												? "cursor-not-allowed bg-indigo-600 opacity-50"
+												: "cursor-default border-indigo-700 text-indigo-600"
+											: "cursor-pointer bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500"
+									)}
 									onClick={() => {
 										setPlanId(planId);
 										setPlanName(planName);

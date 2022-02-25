@@ -11,6 +11,7 @@ import { useSiteQueries } from "@hooks/useSiteQueries";
 import { useSites } from "@hooks/useSites";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
+import { classNames } from "@utils/classNames";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -20,7 +21,6 @@ import { isBrowser } from "react-device-detect";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useSWRConfig } from "swr";
-import tw from "twin.macro";
 
 /**
  * Custom function to render the `AddSite` component
@@ -125,7 +125,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 	};
 
 	return (
-		<div tw="flex-1 xl:px-12 xl:py-4 flex justify-between relative z-20 flex-shrink-0 overflow-hidden w-full max-w-screen-2xl mx-auto">
+		<div className="relative z-20 mx-auto flex w-full max-w-screen-2xl flex-1 flex-shrink-0 justify-between overflow-hidden xl:px-12 xl:py-4">
 			<MemoizedSiteLimitReachedModal
 				ref={siteLimitReachedModalRef}
 				showModal={isSiteLimitReachedModalVisible}
@@ -138,19 +138,19 @@ const AddSite = ({ handleOpenSidebar }) => {
 				setShowModal={setIsNotAllowedFeatureModalVisible}
 			/>
 
-			<div tw="flex-1 flex">
+			<div className="flex flex-1">
 				<MemoizedMobileSidebarButton handleOpenSidebar={handleOpenSidebar} />
 
-				<div tw="w-full flex items-center ml-4 lg:ml-0">
+				<div className="ml-4 flex w-full items-center lg:ml-0">
 					{isBrowser ? (
 						<>
-							<label htmlFor="searchSites" tw="sr-only">
+							<label htmlFor="searchSites" className="sr-only">
 								{searchSites}
 							</label>
-							<div tw="relative w-full text-gray-400 focus-within:text-gray-600 flex items-center ">
-								<div tw="absolute inset-y-0 left-0 flex items-center pointer-events-none">
+							<div className="relative flex w-full items-center text-gray-400 focus-within:text-gray-600">
+								<div className="pointer-events-none absolute inset-y-0 left-0 flex items-center">
 									{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-										<SearchIcon tw="h-5 w-5 text-gray-400" />
+										<SearchIcon className="h-5 w-5 text-gray-400" />
 									) : (
 										<Skeleton duration={2} width={20} height={20} />
 									)}
@@ -161,13 +161,13 @@ const AddSite = ({ handleOpenSidebar }) => {
 											type="search"
 											name="search-sites"
 											id="searchSites"
-											tw="block w-full h-full pl-8 pr-3 py-2 border-transparent text-gray-900  focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm"
+											className="block h-full w-full border-transparent py-2 pl-8 pr-3 text-gray-900  focus:border-transparent focus:placeholder-gray-400 focus:outline-none focus:ring-0 sm:text-sm"
 											placeholder={searchSites}
 											onKeyUp={useHandleSiteSearch}
 											defaultValue={searchKey}
 										/>
 									) : (
-										<p tw="flex-1 sm:text-sm placeholder-gray-500 pl-8">{searchNotAvailable}</p>
+										<p className="flex-1 pl-8 placeholder-gray-500 sm:text-sm">{searchNotAvailable}</p>
 									)
 								) : (
 									<Skeleton duration={2} width={320} height={20} />
@@ -177,16 +177,16 @@ const AddSite = ({ handleOpenSidebar }) => {
 					) : null}
 				</div>
 			</div>
-			<div tw="ml-4 p-4 xl:p-0 flex items-center lg:ml-6 space-x-2">
+			<div className="ml-4 flex items-center space-x-2 p-4 lg:ml-6 xl:p-0">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					hasSiteLimitReached ? (
 						<button
 							type="button"
-							tw="active:bg-yellow-700 bg-yellow-600 border border-transparent cursor-pointer flex focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 font-medium hover:bg-yellow-700 items-center justify-center leading-4 px-4 py-2 rounded-md text-sm text-white w-full"
+							className="flex w-full cursor-pointer items-center justify-center rounded-md border border-transparent bg-yellow-600 px-4 py-2 text-sm font-medium leading-4 text-white hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 active:bg-yellow-700"
 							onClick={() => setIsSiteLimitReachedModalVisible(!isSiteLimitReachedModalVisible)}
 						>
-							<span tw="flex items-center space-x-2">
-								<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-white" />
+							<span className="flex items-center space-x-2">
+								<FontAwesomeIcon icon={["fas", "crown"]} className="h-4 w-4 text-white" />
 								<span>{addNewSite}</span>
 							</span>
 						</button>
@@ -197,19 +197,19 @@ const AddSite = ({ handleOpenSidebar }) => {
 								tabIndex="0"
 								onClick={handleRouterOnClick}
 								aria-hidden="true"
-								css={[
-									tw`border border-transparent cursor-pointer flex font-medium items-center justify-center leading-4 px-4 py-2 rounded-md text-sm text-white w-full`,
+								className={classNames(
+									"flex w-full cursor-pointer items-center justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium leading-4 text-white",
 									asPath.includes(AddNewSiteSlug)
-										? tw`active:bg-red-700 bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 hover:bg-red-700`
-										: tw`active:bg-green-700 bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 hover:bg-green-700`
-								]}
+										? "bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 active:bg-red-700"
+										: "bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 active:bg-green-700"
+								)}
 							>
-								<span tw="flex items-center space-x-2">
+								<span className="flex items-center space-x-2">
 									{isLoading ? (
 										loaderMessage
 									) : (
 										<>
-											<PlusIcon tw="mr-2 h-4 w-4 text-white" />
+											<PlusIcon className="mr-2 h-4 w-4 text-white" />
 											{addNewSite}
 										</>
 									)}

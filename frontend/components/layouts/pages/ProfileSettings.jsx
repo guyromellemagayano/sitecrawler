@@ -2,14 +2,13 @@ import { MemoizedDeleteUserAccountSettings } from "@components/settings/DeleteUs
 import { MemoizedPasswordSettings } from "@components/settings/PasswordSettings";
 import { MemoizedPersonalSettings } from "@components/settings/PersonalSettings";
 import { memo } from "react";
-import "twin.macro";
 
 /**
  * Custom function to render the `ProfileSettingsPageLayout` component
  */
 const ProfileSettingsPageLayout = () => {
 	return (
-		<div tw="py-4 grid grid-cols-1 w-full xl:max-w-md gap-6">
+		<div className="grid w-full grid-cols-1 gap-6 py-4 xl:max-w-md">
 			<MemoizedPersonalSettings />
 			<MemoizedPasswordSettings />
 			<MemoizedDeleteUserAccountSettings />

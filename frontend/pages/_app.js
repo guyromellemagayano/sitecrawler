@@ -5,14 +5,13 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { useNotificationMessage } from "@hooks/useNotificationMessage";
-import GlobalStyles from "@styles/global";
+import "@styles/globals.css";
 import LogRocket from "logrocket";
 import setupLogRocketReact from "logrocket-react";
 import { DefaultSeo } from "next-seo";
 import { useRouter } from "next/router";
 import { createContext, useEffect, useState } from "react";
 import { useSWRConfig } from "swr";
-import "twin.macro";
 
 // Font Awesome
 library.add(fab);
@@ -73,7 +72,6 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 				state
 			}}
 		>
-			<GlobalStyles />
 			<DefaultSeo {...AppSeo} />
 			<Component {...pageProps} err={err} />
 		</SiteCrawlerAppContext.Provider>

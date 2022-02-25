@@ -1,7 +1,6 @@
 import Image from "next/image";
 import PropTypes from "prop-types";
 import { memo } from "react";
-import "twin.macro";
 
 /**
  * Custom function to render the `AppLogo` component

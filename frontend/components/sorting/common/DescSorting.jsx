@@ -1,9 +1,9 @@
 import { ChevronDownIcon } from "@heroicons/react/solid";
+import { classNames } from "@utils/classNames";
 import { forwardRef, memo, useEffect } from "react";
-import tw from "twin.macro";
 
 /**
- * Custom function to render the `DescSorting` component
+ * Custom function to render the "DescSorting" component
  *
  * @param {function} handleClickEvent
  * @param {boolean} isDescClicked
@@ -19,14 +19,16 @@ const DescSorting = ({ handleClickEvent, isDescClicked, setIsDescClicked }, ref)
 	}, [isDescClicked]);
 
 	return (
-		<button ref={ref} tw="focus:outline-none" onClick={() => setIsDescClicked(!isDescClicked)}>
-			<ChevronDownIcon css={[tw`w-5 h-5 inline-block`, isDescClicked ? tw`text-gray-500` : tw`text-gray-300`]} />
+		<button ref={ref} className="focus:outline-none" onClick={() => setIsDescClicked(!isDescClicked)}>
+			<ChevronDownIcon
+				className={classNames("inline-block h-5 w-5", isDescClicked ? "text-gray-500" : "text-gray-300")}
+			/>
 		</button>
 	);
 };
 
 /**
- * Memoized custom `DescSorting` component
+ * Memoized custom "DescSorting" component
  */
 const ForwardRefDescSorting = forwardRef(DescSorting);
 export const MemoizedDescSorting = memo(ForwardRefDescSorting);

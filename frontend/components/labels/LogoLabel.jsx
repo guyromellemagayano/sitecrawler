@@ -3,7 +3,6 @@ import { NoAuthAppLogo } from "@constants/GlobalValues";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
 import { memo } from "react";
-import "twin.macro";
 
 /**
  * Custom function to render the `LogoLabel` component
@@ -34,9 +33,9 @@ const LogoLabel = ({
 	const isConfirmEmailText = t("isConfirmEmail");
 
 	return (
-		<div tw="sm:mx-auto sm:w-full sm:max-w-md flex justify-center items-center flex-col">
+		<div className="flex flex-col items-center justify-center sm:mx-auto sm:w-full sm:max-w-md">
 			{!isLogin ? <SiteLogoDark width={NoAuthAppLogo.width} height={NoAuthAppLogo.height} /> : null}
-			<h2 tw="mt-12 mb-6 text-center text-3xl leading-9 font-extrabold text-gray-900">
+			<h2 className="mt-12 mb-6 text-center text-3xl font-extrabold leading-9 text-gray-900">
 				{isLogin
 					? isLoginText
 					: isSignUp

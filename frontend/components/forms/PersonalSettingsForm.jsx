@@ -2,13 +2,13 @@ import { UserApiEndpoint } from "@constants/ApiEndpoints";
 import { handlePatchMethod } from "@helpers/handleHttpMethods";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
+import { classNames } from "@utils/classNames";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
 import { memo, useContext, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useSWRConfig } from "swr";
-import tw from "twin.macro";
 import * as Yup from "yup";
 
 /**
@@ -128,17 +128,17 @@ const PersonalSettingsForm = () => {
 			}}
 		>
 			{({ errors, handleBlur, handleSubmit, isSubmitting, touched, values }) => (
-				<form tw="space-y-8 divide-y divide-gray-200" onSubmit={handleSubmit}>
-					<div tw="mt-6 grid grid-cols-1 gap-y-6 gap-x-4">
-						<div tw="sm:col-span-1">
-							<label htmlFor="firstname" tw="block text-sm font-medium leading-5 text-gray-700">
+				<form className="space-y-8 divide-y divide-gray-200" onSubmit={handleSubmit}>
+					<div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4">
+						<div className="sm:col-span-1">
+							<label htmlFor="firstname" className="block text-sm font-medium leading-5 text-gray-700">
 								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 									firstName
 								) : (
 									<Skeleton duration={2} width={150} height={20} />
 								)}
 							</label>
-							<div tw="mt-1 relative rounded-md shadow-sm">
+							<div className="relative mt-1 rounded-md shadow-sm">
 								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 									<input
 										type="text"
@@ -146,11 +146,11 @@ const PersonalSettingsForm = () => {
 										value={values.firstname}
 										name="firstname"
 										disabled={isSubmitting || disableForm}
-										css={[
-											tw`focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm`,
-											(isSubmitting || disableForm) && tw`opacity-50 bg-gray-300 cursor-not-allowed`,
-											errors.firstname ? tw`border-red-300` : tw`border-gray-300`
-										]}
+										className={classNames(
+											"block w-full rounded-md focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+											(isSubmitting || disableForm) && "cursor-not-allowed bg-gray-300 opacity-50",
+											errors.firstname ? "border-red-300" : "border-gray-300"
+										)}
 										aria-describedby="firstname"
 										onChange={handleFirstNameInputChange}
 										onBlur={handleBlur}
@@ -161,19 +161,21 @@ const PersonalSettingsForm = () => {
 							</div>
 
 							{errors.firstname || touched.firstname ? (
-								<span tw="block mt-2 text-xs leading-5 text-red-700">{errors.firstname || touched.firstname}</span>
+								<span className="mt-2 block text-xs leading-5 text-red-700">
+									{errors.firstname || touched.firstname}
+								</span>
 							) : null}
 						</div>
 
-						<div tw="sm:col-span-1">
-							<label htmlFor="lastname" tw="block text-sm font-medium leading-5 text-gray-700">
+						<div className="sm:col-span-1">
+							<label htmlFor="lastname" className="block text-sm font-medium leading-5 text-gray-700">
 								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 									lastName
 								) : (
 									<Skeleton duration={2} width={150} height={20} />
 								)}
 							</label>
-							<div tw="mt-1 relative rounded-md shadow-sm">
+							<div className="relative mt-1 rounded-md shadow-sm">
 								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 									<input
 										type="text"
@@ -181,11 +183,11 @@ const PersonalSettingsForm = () => {
 										value={values.lastname}
 										name="lastname"
 										disabled={isSubmitting || disableForm}
-										css={[
-											tw`focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm`,
-											(isSubmitting || disableForm) && tw`opacity-50 bg-gray-300 cursor-not-allowed`,
-											errors.lastname ? tw`border-red-300` : tw`border-gray-300`
-										]}
+										className={classNames(
+											"block w-full rounded-md focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+											(isSubmitting || disableForm) && "cursor-not-allowed bg-gray-300 opacity-50",
+											errors.lastname ? "border-red-300" : "border-gray-300"
+										)}
 										aria-describedby="lastname"
 										onChange={handleLastNameInputChange}
 										onBlur={handleBlur}
@@ -196,19 +198,19 @@ const PersonalSettingsForm = () => {
 							</div>
 
 							{errors.lastname || touched.lastname ? (
-								<span tw="block mt-2 text-xs leading-5 text-red-700">{errors.lastname || touched.lastname}</span>
+								<span className="mt-2 block text-xs leading-5 text-red-700">{errors.lastname || touched.lastname}</span>
 							) : null}
 						</div>
 
-						<div tw="sm:col-span-1">
-							<label htmlFor="username" tw="block text-sm font-medium leading-5 text-gray-700">
+						<div className="sm:col-span-1">
+							<label htmlFor="username" className="block text-sm font-medium leading-5 text-gray-700">
 								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 									userName
 								) : (
 									<Skeleton duration={2} width={150} height={20} />
 								)}
 							</label>
-							<div tw="mt-1 relative flex rounded-md shadow-sm">
+							<div className="relative mt-1 flex rounded-md shadow-sm">
 								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 									<input
 										type="text"
@@ -216,11 +218,11 @@ const PersonalSettingsForm = () => {
 										value={values.username}
 										name="username"
 										disabled={isSubmitting || disableForm}
-										css={[
-											tw`focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm`,
-											(isSubmitting || disableForm) && tw`opacity-50 bg-gray-300 cursor-not-allowed`,
-											errors.username ? tw`border-red-300` : tw`border-gray-300`
-										]}
+										className={classNames(
+											"block w-full rounded-md focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+											(isSubmitting || disableForm) && "cursor-not-allowed bg-gray-300 opacity-50",
+											errors.username ? "border-red-300" : "border-gray-300"
+										)}
 										aria-describedby="username"
 										onChange={handleUserNameInputChange}
 										onBlur={handleBlur}
@@ -231,26 +233,26 @@ const PersonalSettingsForm = () => {
 							</div>
 
 							{errors.username || touched.username ? (
-								<span tw="block mt-2 text-xs leading-5 text-red-700">{errors.username || touched.username}</span>
+								<span className="mt-2 block text-xs leading-5 text-red-700">{errors.username || touched.username}</span>
 							) : null}
 						</div>
 
-						<div tw="sm:col-span-1">
-							<label htmlFor="email" tw="block text-sm font-medium leading-5 text-gray-700">
+						<div className="sm:col-span-1">
+							<label htmlFor="email" className="block text-sm font-medium leading-5 text-gray-700">
 								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 									emailAddress
 								) : (
 									<Skeleton duration={2} width={150} height={20} />
 								)}
 							</label>
-							<div tw="mt-1 rounded-md shadow-sm">
+							<div className="mt-1 rounded-md shadow-sm">
 								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 									<input
 										id="email"
 										type="email"
 										value={values.email}
 										disabled={true}
-										tw="focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm border-gray-300 opacity-50 bg-gray-300 cursor-not-allowed"
+										className="block w-full cursor-not-allowed rounded-md border-gray-300 bg-gray-300 opacity-50 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 										aria-describedby="email"
 										onChange={handleEmailInputChange}
 									/>
@@ -260,21 +262,21 @@ const PersonalSettingsForm = () => {
 							</div>
 						</div>
 
-						<div tw="sm:col-span-1">
-							<div tw="flex justify-between flex-col sm:flex-row md:flex-col lg:flex-row">
-								<div tw="flex justify-start order-1 sm:flex-row sm:flex-initial sm:w-auto sm:mr-1 lg:order-1 lg:w-full">
-									<span tw="inline-flex">
+						<div className="sm:col-span-1">
+							<div className="flex flex-col justify-between sm:flex-row md:flex-col lg:flex-row">
+								<div className="order-1 flex justify-start sm:mr-1 sm:w-auto sm:flex-initial sm:flex-row lg:order-1 lg:w-full">
+									<span className="inline-flex">
 										{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 											!disableForm ? (
 												<button
 													type="submit"
 													disabled={isSubmitting || Object.keys(errors).length > 0}
-													css={[
-														tw`w-full mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600`,
+													className={classNames(
+														"relative mt-3 mr-3 inline-flex w-full items-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-sm font-medium leading-5 text-white sm:mt-0",
 														isSubmitting || Object.keys(errors).length > 0
-															? tw`opacity-50 cursor-not-allowed`
-															: tw`hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`
-													]}
+															? "cursor-not-allowed opacity-50"
+															: "hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+													)}
 												>
 													{isSubmitting ? saving : !disableForm ? saveChanges : update}
 												</button>
@@ -282,12 +284,12 @@ const PersonalSettingsForm = () => {
 												<button
 													type="button"
 													disabled={isSubmitting || Object.keys(errors).length > 0}
-													css={[
-														tw`w-full mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600`,
+													className={classNames(
+														"relative mt-3 mr-3 inline-flex w-full items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium leading-5 text-white sm:mt-0",
 														isSubmitting || Object.keys(errors).length > 0
-															? tw`opacity-50 cursor-not-allowed`
-															: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
-													]}
+															? "cursor-not-allowed opacity-50"
+															: "hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+													)}
 													onClick={() => setDisableForm(!disableForm)}
 												>
 													{isSubmitting ? saving : !disableForm ? saveChanges : update}
@@ -298,7 +300,7 @@ const PersonalSettingsForm = () => {
 												duration={2}
 												width={82.39}
 												height={38}
-												tw="w-full mt-3 mr-3 sm:mt-0 inline-flex items-center px-4 py-2"
+												className="mt-3 mr-3 inline-flex w-full items-center px-4 py-2 sm:mt-0"
 											/>
 										)}
 									</span>

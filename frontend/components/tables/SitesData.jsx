@@ -5,6 +5,7 @@ import { useScan } from "@hooks/useScan";
 import { useStats } from "@hooks/useStats";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
+import { classNames } from "@utils/classNames";
 import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
@@ -13,7 +14,6 @@ import PropTypes from "prop-types";
 import { memo, useContext, useEffect } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import tw from "twin.macro";
 
 /**
  * Custom function to render the `SitesData` component
@@ -99,7 +99,7 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 
 	return (
 		<tr ref={selectedSiteRef}>
-			<td tw="flex-none p-4 whitespace-nowrap">
+			<td className="flex-none whitespace-nowrap p-4">
 				<MemoizedSiteVerifyModal
 					setShowModal={setIsSiteVerifyModalVisible}
 					showModal={isSiteVerifyModalVisible}
@@ -117,7 +117,7 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 					siteId={siteId}
 				/>
 
-				<div tw="flex flex-col items-start">
+				<div className="flex flex-col items-start">
 					<div>
 						{isComponentReady &&
 						user &&
@@ -128,25 +128,25 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 								{siteVerified && currentScan == null ? (
 									<span
 										aria-label="Verified"
-										tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-green-400"
+										className="relative -left-3 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-green-400 leading-5"
 									></span>
 								) : siteVerified && currentScan !== null ? (
 									<span
 										aria-label="Recrawling in Process"
-										tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-yellow-400"
+										className="relative -left-3 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-yellow-400 leading-5"
 									></span>
 								) : (
 									<span
 										aria-label="Not Verified"
-										tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-red-400"
+										className="relative -left-3 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-red-400 leading-5"
 									></span>
 								)}
 
-								<div tw="inline-flex flex-col justify-start items-start">
-									<span tw="flex items-center justify-start text-sm leading-6 font-semibold text-gray-500">
+								<div className="inline-flex flex-col items-start justify-start">
+									<span className="flex items-center justify-start text-sm font-semibold leading-6 text-gray-500">
 										<p className="truncate-link">{siteName}</p>
 									</span>
-									<span tw="flex space-x-2 justify-start text-sm leading-5 text-gray-500">
+									<span className="flex justify-start space-x-2 text-sm leading-5 text-gray-500">
 										{scanCount > 0 ? (
 											<Link
 												href="/dashboard/sites/[siteId]/overview"
@@ -154,14 +154,14 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 												passHref
 												replace
 											>
-												<a tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+												<a className="flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-indigo-600 transition duration-150 ease-in-out hover:text-indigo-500 focus:outline-none">
 													{goToSiteOverviewText}
 												</a>
 											</Link>
 										) : null}
 										<a
 											href={siteUrl}
-											tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150"
+											className="flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-gray-600 transition duration-150 ease-in-out hover:text-gray-500 focus:outline-none"
 											title={visitExternalSiteText}
 											target="_blank"
 											rel="noreferrer"
@@ -172,10 +172,10 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 										{!siteVerified ? (
 											<button
 												type="button"
-												css={[
-													tw`cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-yellow-600 hover:text-yellow-500 transition ease-in-out duration-150`,
-													scanCount > 0 && tw`ml-3`
-												]}
+												className={classNames(
+													"flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-yellow-600 transition duration-150 ease-in-out hover:text-yellow-500 focus:outline-none",
+													scanCount > 0 && "ml-3"
+												)}
 												onClick={() => setIsSiteVerifyModalVisible(!isSiteVerifyModalVisible)}
 											>
 												{verifySiteText}
@@ -185,7 +185,7 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 										{siteVerified && permissions.includes("can_start_scan") ? (
 											<button
 												type="button"
-												tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-green-600 hover:text-green-500 transition ease-in-out duration-150"
+												className="ml-3 flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-green-600 transition duration-150 ease-in-out hover:text-green-500 focus:outline-none"
 												onClick={handleCrawl}
 											>
 												{crawlSiteText}
@@ -195,7 +195,7 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 										{permissions.includes("delete_site") ? (
 											<button
 												type="button"
-												tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-red-600 hover:text-red-500 transition ease-in-out duration-150"
+												className="ml-3 flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-red-600 transition duration-150 ease-in-out hover:text-red-500 focus:outline-none"
 												onClick={() => setIsSiteDeleteModalVisible(!isSiteDeleteModalVisible)}
 											>
 												{deleteText}
@@ -205,7 +205,7 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 								</div>
 							</>
 						) : (
-							<span tw="relative -left-3 flex items-start py-2 space-x-3">
+							<span className="relative -left-3 flex items-start space-x-3 py-2">
 								<Skeleton
 									duration={2}
 									width={9}
@@ -213,13 +213,13 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 									circle={true}
 									className="relative -left-3 top-4 block flex-shrink-0"
 								/>
-								<div tw="inline-flex flex-col justify-start items-start">
+								<div className="inline-flex flex-col items-start justify-start">
 									<Skeleton
 										duration={2}
 										width={150}
 										className="relative -left-3 inline-flex flex-col items-start justify-start"
 									/>
-									<span tw="flex flex-row justify-start text-sm leading-5 text-gray-500 space-x-3">
+									<span className="flex flex-row justify-start space-x-3 text-sm leading-5 text-gray-500">
 										<Skeleton duration={2} width={63} />
 										<Skeleton duration={2} width={63} />
 										<Skeleton duration={2} width={63} />
@@ -232,11 +232,11 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 					</div>
 				</div>
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5">
+			<td className="whitespace-nowrap px-6 py-4 text-sm leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingSites ? (
 					scanResults?.length > 0 ? (
-						<span tw="space-x-2">
-							<span tw="text-sm leading-5 text-gray-500">
+						<span className="space-x-2">
+							<span className="text-sm leading-5 text-gray-500">
 								{scanCount > 1 ? (
 									!disableLocalTime ? (
 										dayjs(currentScan !== null ? previousScan?.finished_at : previousScan?.finished_at).calendar(
@@ -249,7 +249,7 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 											.calendar(null, calendarStrings)
 									)
 								) : scanCount === 1 && currentScan !== null ? (
-									<span tw="text-sm leading-5 text-gray-500">{siteCrawlingInProcessText}</span>
+									<span className="text-sm leading-5 text-gray-500">{siteCrawlingInProcessText}</span>
 								) : !disableLocalTime ? (
 									dayjs(previousScan?.finished_at).calendar(null, calendarStrings)
 								) : (
@@ -258,71 +258,71 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 							</span>
 
 							{scanCount > 1 ? (
-								<span tw="text-sm leading-5 font-medium text-gray-500">
+								<span className="text-sm font-medium leading-5 text-gray-500">
 									({!disableLocalTime ? dayjs.tz.guess() : "UTC"})
 								</span>
 							) : null}
 						</span>
 					) : (
-						<span tw="space-x-2">
-							<span tw="text-sm leading-5 text-gray-500">{notYetCrawledText}</span>
+						<span className="space-x-2">
+							<span className="text-sm leading-5 text-gray-500">{notYetCrawledText}</span>
 						</span>
 					)
 				) : (
 					<Skeleton duration={2} width={176.7} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingSites ? (
 					totalErrors > 0 ? (
-						<span tw="text-red-500">{totalErrors}</span>
+						<span className="text-red-500">{totalErrors}</span>
 					) : (
-						<span tw="text-green-500">{totalErrors}</span>
+						<span className="text-green-500">{totalErrors}</span>
 					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingSites ? (
 					totalLinks > 0 ? (
 						<Link href="/dashboard/sites/[siteId]/links" as={`/dashboard/sites/${siteId}/links`} passHref>
-							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+							<a className="cursor-pointer text-sm font-semibold leading-6 text-indigo-600 transition duration-150 ease-in-out hover:text-indigo-500">
 								{totalLinks}
 							</a>
 						</Link>
 					) : (
-						<span tw="text-gray-500">0</span>
+						<span className="text-gray-500">0</span>
 					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingSites ? (
 					totalPages > 0 ? (
 						<Link href="/dashboard/sites/[siteId]/pages" as={`/dashboard/sites/${siteId}/pages`} passHref>
-							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+							<a className="cursor-pointer text-sm font-semibold leading-6 text-indigo-600 transition duration-150 ease-in-out hover:text-indigo-500">
 								{totalPages}
 							</a>
 						</Link>
 					) : (
-						<span tw="text-gray-500">0</span>
+						<span className="text-gray-500">0</span>
 					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingSites ? (
 					totalImages > 0 ? (
 						<Link href="/dashboard/sites/[siteId]/images" as={`/dashboard/sites/${siteId}/images`} passHref>
-							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+							<a className="cursor-pointer text-sm font-semibold leading-6 text-indigo-600 transition duration-150 ease-in-out hover:text-indigo-500">
 								{totalImages}
 							</a>
 						</Link>
 					) : (
-						<span tw="text-gray-500">0</span>
+						<span className="text-gray-500">0</span>
 					)
 				) : (
 					<Skeleton duration={2} width={45} />

@@ -10,7 +10,6 @@ import PropTypes from "prop-types";
 import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import "twin.macro";
 
 /**
  * Custom function to render the `ComingSoonPageLayout` component
@@ -55,15 +54,15 @@ const Breadcrumbs = ({
 			: null;
 
 	return (
-		<nav tw="flex-none w-full pt-4 pb-8 border-b border-gray-200" aria-label="Breadcrumb">
-			<ol tw="flex items-center space-x-4">
+		<nav className="w-full flex-none border-b border-gray-200 pt-4 pb-8" aria-label="Breadcrumb">
+			<ol className="flex items-center space-x-4">
 				<li>
 					<div>
 						{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 							<Link href={isOther && siteId == null ? DashboardSitesLink : sitesIdOverviewPageLink} passHref>
-								<a tw="text-gray-400 hover:text-gray-500">
-									<HomeIcon tw="flex-shrink-0 h-5 w-5" />
-									<span tw="sr-only">{home}</span>
+								<a className="text-gray-400 hover:text-gray-500">
+									<HomeIcon className="h-5 w-5 flex-shrink-0" />
+									<span className="sr-only">{home}</span>
 								</a>
 							</Link>
 						) : (
@@ -72,9 +71,9 @@ const Breadcrumbs = ({
 					</div>
 				</li>
 				<li>
-					<div tw="flex items-center">
+					<div className="flex items-center">
 						{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-							<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
+							<ChevronRightIcon className="h-5 w-5 flex-shrink-0 text-gray-400" />
 						) : (
 							<Skeleton duration={2} width={20} height={20} />
 						)}
@@ -84,12 +83,12 @@ const Breadcrumbs = ({
 								isSites ? (
 									isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 										<Link href={DashboardSitesLink} passHref>
-											<a aria-current="page" tw="cursor-pointer ml-4 text-sm text-gray-700">
+											<a aria-current="page" className="ml-4 cursor-pointer text-sm text-gray-700">
 												{pageTitle}
 											</a>
 										</Link>
 									) : (
-										<Skeleton duration={2} width={128} height={20} tw="ml-4" />
+										<Skeleton duration={2} width={128} height={20} className="ml-4" />
 									)
 								) : isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 									<Link
@@ -101,15 +100,15 @@ const Breadcrumbs = ({
 										}`}
 										passHref
 									>
-										<a aria-current="page" tw="cursor-pointer ml-4 text-sm text-gray-700">
+										<a aria-current="page" className="ml-4 cursor-pointer text-sm text-gray-700">
 											{pageTitle}
 										</a>
 									</Link>
 								) : (
-									<Skeleton duration={2} width={128} height={20} tw="ml-4" />
+									<Skeleton duration={2} width={128} height={20} className="ml-4" />
 								)
 							) : (
-								<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
+								<p aria-current="page" className="ml-4 cursor-default text-sm font-medium text-gray-700">
 									{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 										pageTitle
 									) : (
@@ -124,18 +123,18 @@ const Breadcrumbs = ({
 				{pageDetailTitle !== null && pageDetailTitle !== "" ? (
 					isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 						<li>
-							<div tw="flex items-center">
-								<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
-								<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
+							<div className="flex items-center">
+								<ChevronRightIcon className="h-5 w-5 flex-shrink-0 text-gray-400" />
+								<p aria-current="page" className="ml-4 cursor-default text-sm font-medium text-gray-700">
 									{pageDetailTitle}
 								</p>
 							</div>
 						</li>
 					) : (
 						<li>
-							<div tw="flex items-center">
-								<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
-								<Skeleton duration={2} width={128} height={20} tw="ml-4" />
+							<div className="flex items-center">
+								<ChevronRightIcon className="h-5 w-5 flex-shrink-0 text-gray-400" />
+								<Skeleton duration={2} width={128} height={20} className="ml-4" />
 							</div>
 						</li>
 					)

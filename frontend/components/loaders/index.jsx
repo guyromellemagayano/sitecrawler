@@ -1,13 +1,12 @@
 import { MemoizedLoadingMessage } from "@components/messages/LoadingMessage";
 import { memo } from "react";
-import "twin.macro";
 
 /**
  * Custom function to render the `Loader` component
  */
 const Loader = ({ message = null }) => {
 	return (
-		<main tw="flex justify-center items-center h-screen">
+		<main className="flex h-screen items-center justify-center">
 			<MemoizedLoadingMessage message={message} />
 		</main>
 	);

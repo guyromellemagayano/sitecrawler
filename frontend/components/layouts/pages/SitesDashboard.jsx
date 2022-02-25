@@ -6,9 +6,9 @@ import { useSiteQueries } from "@hooks/useSiteQueries";
 import { useSites } from "@hooks/useSites";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
+import { classNames } from "@utils/classNames";
 import { memo, useContext } from "react";
 import "react-loading-skeleton/dist/skeleton.css";
-import tw from "twin.macro";
 
 /**
  * Custom function to render the `SitesDashboardPageLayout` component
@@ -29,44 +29,44 @@ const SitesDashboardPageLayout = () => {
 		<>
 			<MemoizedPageOption isSites />
 			<div
-				css={[
-					tw`flex-grow focus:outline-none px-4 pt-8 sm:px-6 md:px-0`,
+				className={classNames(
+					"flex-grow px-4 pt-8 focus:outline-none sm:px-6 md:px-0",
 					isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && sitesCount === 0
-						? tw`flex flex-col flex-auto items-center justify-center`
+						? "flex flex-auto flex-col items-center justify-center"
 						: null
-				]}
+				)}
 			>
 				<div
-					css={[
-						tw`flex-1 w-full h-full`,
+					className={classNames(
+						"h-full w-full flex-1",
 						isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && sitesCount === 0
-							? tw`flex flex-auto`
+							? "flex flex-auto"
 							: null
-					]}
+					)}
 				>
 					<div
-						css={[
-							tw`flex-1 w-full h-full`,
+						className={classNames(
+							"h-full w-full flex-1",
 							isComponentReady &&
 								user &&
 								Math.round(user?.status / 100) === 2 &&
 								!user?.data?.detail &&
 								sitesCount === 0 &&
-								tw`flex flex-initial`
-						]}
+								"flex flex-initial"
+						)}
 					>
 						<div
-							css={[
-								tw`flex-1 w-full h-full py-2`,
+							className={classNames(
+								"h-full w-full flex-1 py-2",
 								isComponentReady &&
 									user &&
 									Math.round(user?.status / 100) === 2 &&
 									!user?.data?.detail &&
 									sitesCount === 0 &&
-									tw`flex items-center`
-							]}
+									"flex items-center"
+							)}
 						>
-							<div tw="min-w-full h-full rounded-lg border-gray-300">
+							<div className="h-full min-w-full rounded-lg border-gray-300">
 								<MemoizedSitesTable count={sitesCount} results={sitesResults} validatingSites={validatingSites} />
 							</div>
 						</div>
@@ -74,7 +74,7 @@ const SitesDashboardPageLayout = () => {
 				</div>
 			</div>
 
-			<div tw="flex-none">
+			<div className="flex-none">
 				<MemoizedDataPagination isValidating={validatingSites} />
 			</div>
 		</>

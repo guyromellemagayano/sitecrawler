@@ -2,12 +2,12 @@ import { MemoizedBreadcrumbs } from "@components/breadcrumbs";
 import { LoginLink, SubscriptionPlansSlug } from "@constants/PageLinks";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
+import { classNames } from "@utils/classNames";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { memo, useContext, useEffect } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import tw from "twin.macro";
 import { MemoizedFooter } from "./Footer";
 
 /**
@@ -31,16 +31,16 @@ const PageLayout = ({ children, pageTitle = null }) => {
 	}, []);
 
 	return (
-		<section tw="flex flex-col flex-nowrap items-start justify-start min-h-page px-12 py-8">
+		<section className="flex min-h-page flex-col flex-nowrap items-start justify-start px-12 py-8">
 			<MemoizedBreadcrumbs isOther pageTitle={pageTitle} />
 
-			<div tw="flex-grow flex flex-col flex-nowrap w-full">
-				<div tw="w-full pt-12 pb-4">
+			<div className="flex w-full flex-grow flex-col flex-nowrap">
+				<div className="w-full pt-12 pb-4">
 					<h2
-						css={[
-							asPath.includes(SubscriptionPlansSlug) ? tw`text-center` : null,
-							tw`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate`
-						]}
+						className={classNames(
+							asPath.includes(SubscriptionPlansSlug) ? "text-center" : null,
+							"text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl"
+						)}
 					>
 						{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 							pageTitle

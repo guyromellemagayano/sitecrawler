@@ -1,6 +1,6 @@
 import { ChevronUpIcon } from "@heroicons/react/solid";
+import { classNames } from "@utils/classNames";
 import { forwardRef, memo, useEffect } from "react";
-import tw from "twin.macro";
 
 /**
  * Custom function to render the `AscSorting` component
@@ -19,8 +19,8 @@ const AscSorting = ({ handleClickEvent, isAscClicked, setIsAscClicked }, ref) =>
 	}, [isAscClicked]);
 
 	return (
-		<button ref={ref} tw="focus:outline-none" onClick={() => setIsAscClicked(!isAscClicked)}>
-			<ChevronUpIcon css={[tw`w-5 h-5 inline-block`, isAscClicked ? tw`text-gray-500` : tw`text-gray-300`]} />
+		<button ref={ref} className="focus:outline-none" onClick={() => setIsAscClicked(!isAscClicked)}>
+			<ChevronUpIcon className={classNames("inline-block h-5 w-5", isAscClicked ? "text-gray-500" : "text-gray-300")} />
 		</button>
 	);
 };

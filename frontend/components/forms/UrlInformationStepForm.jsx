@@ -14,7 +14,6 @@ import { memo, useContext, useMemo, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import stringSimilarity from "string-similarity";
-import tw from "twin.macro";
 import * as Yup from "yup";
 
 /**
@@ -65,7 +64,7 @@ const UrlInformationStepForm = (props) => {
 		let isMounted = true;
 
 		if (isMounted) {
-			// Update `editMode` state when `edit` prop changes
+			// Update "editMode" state when "edit" prop changes
 			if (edit && step === 1 && sid && !verified) {
 				setEditMode(edit);
 			}
@@ -304,17 +303,17 @@ const UrlInformationStepForm = (props) => {
 			}}
 		>
 			{({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
-				<form tw="space-y-8 divide-y divide-gray-200" onSubmit={handleSubmit}>
-					<div tw="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-						<div tw="sm:col-span-3">
-							<label htmlFor="sitename" tw="block text-sm font-medium leading-5 text-gray-700">
+				<form className="space-y-8 divide-y divide-gray-200" onSubmit={handleSubmit}>
+					<div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+						<div className="sm:col-span-3">
+							<label htmlFor="sitename" className="block text-sm font-medium leading-5 text-gray-700">
 								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 									formSiteNameLabel
 								) : (
 									<Skeleton duration={2} width={150} height={20} />
 								)}
 							</label>
-							<div tw="my-1">
+							<div className="my-1">
 								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 									<input
 										id="sitename"
@@ -322,10 +321,10 @@ const UrlInformationStepForm = (props) => {
 										name="sitename"
 										disabled={isSubmitting}
 										placeholder={formSiteNamePlaceholder}
-										css={[
-											tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
-											isSubmitting || disableForm ? tw`opacity-50 bg-gray-300 cursor-not-allowed` : null,
-											errors.sitename && touched.sitename ? tw`border-red-300` : tw`border-gray-300`
+										className={[
+											"block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+											isSubmitting || disableForm ? "cursor-not-allowed bg-gray-300 opacity-50" : null,
+											errors.sitename && touched.sitename ? "border-red-300" : "border-gray-300"
 										]}
 										aria-describedby="sitename"
 										onChange={handleChange}
@@ -337,31 +336,33 @@ const UrlInformationStepForm = (props) => {
 								)}
 
 								{errors.sitename || touched.sitename ? (
-									<span tw="block mt-2 text-xs leading-5 text-red-700">{errors.sitename && touched.sitename}</span>
+									<span className="mt-2 block text-xs leading-5 text-red-700">
+										{errors.sitename && touched.sitename}
+									</span>
 								) : null}
 							</div>
 						</div>
-						<div tw="sm:col-span-3">
-							<label htmlFor="siteurl" tw="block text-sm font-medium leading-5 text-gray-700">
+						<div className="sm:col-span-3">
+							<label htmlFor="siteurl" className="block text-sm font-medium leading-5 text-gray-700">
 								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 									formSiteUrlLabel
 								) : (
 									<Skeleton duration={2} width={150} height={20} />
 								)}
 							</label>
-							<div tw="mt-1 relative rounded-md shadow-sm">
+							<div className="relative mt-1 rounded-md shadow-sm">
 								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 									<>
-										<span tw="absolute inset-y-0 left-0 flex items-center">
-											<label htmlFor="siteurlprotocol" tw="sr-only">
+										<span className="absolute inset-y-0 left-0 flex items-center">
+											<label htmlFor="siteurlprotocol" className="sr-only">
 												{formSiteUrlProtocol}
 											</label>
 											<select
 												id="siteurlprotocol"
 												name="siteurlprotocol"
-												css={[
-													tw`focus:ring-indigo-500 focus:border-indigo-500 h-full py-0 pl-3 pr-7 border-transparent bg-transparent sm:text-sm rounded-md`,
-													editMode ? tw`opacity-50 bg-gray-300 cursor-not-allowed` : null
+												className={[
+													"h-full rounded-md border-transparent bg-transparent py-0 pl-3 pr-7 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+													editMode ? "cursor-not-allowed bg-gray-300 opacity-50" : null
 												]}
 												disabled={isSubmitting || editMode}
 												onChange={handleChange}
@@ -378,12 +379,12 @@ const UrlInformationStepForm = (props) => {
 											type="text"
 											name="siteurl"
 											disabled={isSubmitting || editMode}
-											css={[
-												tw`focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-24 sm:text-sm border-gray-300 rounded-md`,
+											className={[
+												"block w-full rounded-md border-gray-300 pl-24 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
 												editMode || disableForm || isSubmitting
-													? tw`opacity-50 bg-gray-300 cursor-not-allowed text-gray-500`
+													? "cursor-not-allowed bg-gray-300 text-gray-500 opacity-50"
 													: null,
-												!disableForm && (errors.siteurl || touched.siteurl) ? tw`border-red-300` : tw`border-gray-300`
+												!disableForm && (errors.siteurl || touched.siteurl) ? "border-red-300" : "border-gray-300"
 											]}
 											placeholder={formSiteUrlPlaceholder}
 											aria-describedby="siteurl"
@@ -398,22 +399,22 @@ const UrlInformationStepForm = (props) => {
 							</div>
 
 							{errors.siteurl || touched.siteurl ? (
-								<span tw="block mt-2 text-xs leading-5 text-red-700">{errors.siteurl || touched.siteurl}</span>
+								<span className="mt-2 block text-xs leading-5 text-red-700">{errors.siteurl || touched.siteurl}</span>
 							) : null}
 						</div>
-						<div tw="sm:col-span-6">
-							<div tw="flex justify-start">
+						<div className="sm:col-span-6">
+							<div className="flex justify-start">
 								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 									<button
 										type="submit"
 										disabled={
 											isSubmitting || disableForm || Object.keys(errors).length > 0 || !urlRegex.test(values.siteurl)
 										}
-										css={[
-											tw`mt-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600`,
+										className={[
+											"relative mt-3 inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium leading-5 text-white sm:mt-0",
 											isSubmitting || disableForm || Object.keys(errors).length > 0 || !urlRegex.test(values.siteurl)
-												? tw`opacity-50 bg-indigo-300 cursor-not-allowed`
-												: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
+												? "cursor-not-allowed bg-indigo-300 opacity-50"
+												: "hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 										]}
 									>
 										{isSubmitting ? submitting : !edit ? proceedToStep2 : updateSiteDetail}
@@ -423,7 +424,7 @@ const UrlInformationStepForm = (props) => {
 										duration={2}
 										width={82.39}
 										height={38}
-										tw="w-full mt-3 mr-3 sm:mt-0 inline-flex items-center px-4 py-2"
+										className="mt-3 mr-3 inline-flex w-full items-center px-4 py-2 sm:mt-0"
 									/>
 								)}
 							</div>

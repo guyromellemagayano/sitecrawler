@@ -4,7 +4,6 @@ import { CheckCircleIcon, XCircleIcon, XIcon } from "@heroicons/react/outline";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
 import { Fragment, memo, useEffect, useState } from "react";
-import "twin.macro";
 
 /**
  * Custom function to render the `Notification` component
@@ -42,23 +41,27 @@ const Notification = ({ responseTitle = null, responseText = null, isSuccess = f
 			leaveFrom="notifications-leave-from"
 			leaveTo="notifications-leave-to"
 		>
-			<div tw="w-full max-w-sm bg-white origin-top rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden p-4 mx-4">
-				<div tw="flex items-start">
-					<div tw="flex-shrink-0">
-						{isSuccess ? <CheckCircleIcon tw="h-5 w-5 text-green-400" /> : <XCircleIcon tw="h-5 w-5 text-red-400" />}
+			<div className="pointer-events-auto mx-4 w-full max-w-sm origin-top overflow-hidden rounded-lg bg-white p-4 ring-1 ring-black ring-opacity-5">
+				<div className="flex items-start">
+					<div className="flex-shrink-0">
+						{isSuccess ? (
+							<CheckCircleIcon className="h-5 w-5 text-green-400" />
+						) : (
+							<XCircleIcon className="h-5 w-5 text-red-400" />
+						)}
 					</div>
-					<div tw="ml-3 w-0 flex-1 pt-0.5">
-						<p tw="text-sm font-medium text-gray-900">{responseTitle}</p>
-						<p tw="mt-1 text-sm text-gray-500">{responseText}</p>
+					<div className="ml-3 w-0 flex-1 pt-0.5">
+						<p className="text-sm font-medium text-gray-900">{responseTitle}</p>
+						<p className="mt-1 text-sm text-gray-500">{responseText}</p>
 					</div>
-					<div tw="ml-4 flex-shrink-0 flex">
+					<div className="ml-4 flex flex-shrink-0">
 						<button
 							type="button"
-							tw="bg-white rounded-md inline-flex text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+							className="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 							onClick={() => setIsOpen(false)}
 						>
-							<span tw="sr-only">{dismiss}</span>
-							<XIcon tw="h-4 w-4" />
+							<span className="sr-only">{dismiss}</span>
+							<XIcon className="h-4 w-4" />
 						</button>
 					</div>
 				</div>

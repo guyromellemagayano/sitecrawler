@@ -1,6 +1,5 @@
 import PropTypes from "prop-types";
 import { memo } from "react";
-import "twin.macro";
 
 /**
  * Custom function to render the `TableSkeletonEntries` component
@@ -14,7 +13,7 @@ const TableSkeletonEntries = ({ str = null, limit = null }) => {
 		}
 
 		return strArray.map((value, key) => (
-			<tr tw="w-full" key={key}>
+			<tr className="w-full" key={key}>
 				{value}
 			</tr>
 		));

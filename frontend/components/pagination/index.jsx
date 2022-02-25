@@ -12,7 +12,6 @@ import PropTypes from "prop-types";
 import Pagination from "rc-pagination";
 import { memo, useContext } from "react";
 import { useSWRConfig } from "swr";
-import "twin.macro";
 
 /**
  * Custom function to render the `Pagination` component
@@ -135,16 +134,16 @@ const DataPagination = ({ isValidating = false }) => {
 		pageCount &&
 		pageResults?.length > 0 &&
 		!isValidating ? (
-		<div tw="bg-white mt-8 mb-4 py-4 lg:flex items-center justify-between align-middle">
-			<div tw="flex items-center mb-8 lg:m-0">
-				<div tw="mt-2 lg:my-0">
-					<p tw="text-center lg:text-left text-sm leading-5 text-gray-500">
+		<div className="mt-8 mb-4 items-center justify-between bg-white py-4 align-middle lg:flex">
+			<div className="mb-8 flex items-center lg:m-0">
+				<div className="mt-2 lg:my-0">
+					<p className="text-center text-sm leading-5 text-gray-500 lg:text-left">
 						{showingText}
-						<span tw="px-1 font-medium">{paginatedItems[0] || 0}</span>
+						<span className="px-1 font-medium">{paginatedItems[0] || 0}</span>
 						{toText}
-						<span tw="px-1 font-medium">{paginatedItems[paginatedItems.length - 1] || 0}</span>
+						<span className="px-1 font-medium">{paginatedItems[paginatedItems.length - 1] || 0}</span>
 						{ofText}
-						<span tw="px-1 font-medium">{pageCount || 0}</span>
+						<span className="px-1 font-medium">{pageCount || 0}</span>
 						{resultsText}
 					</p>
 				</div>
@@ -165,13 +164,15 @@ const DataPagination = ({ isValidating = false }) => {
 				nextIcon={nextText}
 			/>
 
-			<div tw="flex items-center mt-4 lg:m-0">
-				<h1 tw="-mt-px pr-4 inline-flex items-center text-sm leading-5 font-normal text-gray-500">{rowsPerPageText}</h1>
+			<div className="mt-4 flex items-center lg:m-0">
+				<h1 className="-mt-px inline-flex items-center pr-4 text-sm font-normal leading-5 text-gray-500">
+					{rowsPerPageText}
+				</h1>
 				<div>
 					<select
 						onChange={handleRowsPerPageChange}
 						value={linksPerPage}
-						tw="block w-full pl-3 pr-10 py-2 text-base leading-6 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md sm:leading-5"
+						className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base leading-6 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm sm:leading-5"
 					>
 						{linksPerPageOptions.map((val, key) => {
 							return (

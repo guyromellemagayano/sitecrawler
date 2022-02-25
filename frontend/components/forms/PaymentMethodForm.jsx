@@ -7,13 +7,13 @@ import { useLoading } from "@hooks/useLoading";
 import { useNotificationMessage } from "@hooks/useNotificationMessage";
 import { usePaymentMethods } from "@hooks/usePaymentMethods";
 import { CardCvcElement, CardExpiryElement, CardNumberElement, useElements, useStripe } from "@stripe/react-stripe-js";
+import { classNames } from "@utils/classNames";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import { memo, useCallback, useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useSWRConfig } from "swr";
-import tw from "twin.macro";
 
 /**
  * Custom function to render the `PaymentMethodForm` component
@@ -183,129 +183,136 @@ const PaymentMethodForm = ({
 	};
 
 	return (
-		<form tw="space-y-8 divide-y divide-gray-200" onSubmit={handleAddNewCardInformation}>
-			<div tw="mt-6 grid grid-cols-1 gap-y-6 gap-x-4">
+		<form className="space-y-8 divide-y divide-gray-200" onSubmit={handleAddNewCardInformation}>
+			<div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4">
 				{!disableForm ? (
 					<>
-						<div tw="sm:col-span-1">
-							<div tw="space-y-1 flex flex-col justify-start">
+						<div className="sm:col-span-1">
+							<div className="flex flex-col justify-start space-y-1">
 								{!enablePaymentOptions && isComponentReady ? (
-									<label htmlFor="card-number" tw="inline-block text-sm text-left font-medium leading-5 text-gray-700">
+									<label
+										htmlFor="card-number"
+										className="inline-block text-left text-sm font-medium leading-5 text-gray-700"
+									>
 										{cardNumber}
 									</label>
 								) : (
-									<label htmlFor="card-number" tw="block">
+									<label htmlFor="card-number" className="block">
 										<Skeleton duration={2} width={150} height={20} />
 									</label>
 								)}
 
 								{!enablePaymentOptions && isComponentReady ? (
-									<div tw="mt-1 relative rounded-md shadow-sm">
+									<div className="relative mt-1 rounded-md shadow-sm">
 										<span
-											css={[
-												tw`py-3 px-3.5 appearance-none border border-gray-500 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm`,
-												loading && tw`opacity-50 bg-gray-300 cursor-not-allowed`,
-												errorCardNumber ? tw`border-red-300` : tw`border-gray-300`
-											]}
+											className={classNames(
+												"block w-full appearance-none rounded-md border border-gray-500 py-3 px-3.5 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+												loading && "cursor-not-allowed bg-gray-300 opacity-50",
+												errorCardNumber ? "border-red-300" : "border-gray-300"
+											)}
 										>
 											<CardNumberElement />
 										</span>
 									</div>
 								) : (
-									<div tw="mt-1">
+									<div className="mt-1">
 										<Skeleton duration={2} width={360} height={38} />
 									</div>
 								)}
 							</div>
 
-							{errorCardNumber ? <span tw="block mt-2 text-xs leading-5 text-red-700">{errorCardNumber}</span> : null}
+							{errorCardNumber ? (
+								<span className="mt-2 block text-xs leading-5 text-red-700">{errorCardNumber}</span>
+							) : null}
 						</div>
 
-						<div tw="sm:col-span-1">
-							<div tw="space-y-1 flex flex-col justify-start">
+						<div className="sm:col-span-1">
+							<div className="flex flex-col justify-start space-y-1">
 								{!enablePaymentOptions && isComponentReady ? (
 									<label
 										htmlFor="expiration-date"
-										tw="inline-block text-sm text-left font-medium leading-5 text-gray-700"
+										className="inline-block text-left text-sm font-medium leading-5 text-gray-700"
 									>
 										{expirationDate}
 									</label>
 								) : (
-									<label htmlFor="expiration-date" tw="block">
+									<label htmlFor="expiration-date" className="block">
 										<Skeleton duration={2} width={150} height={20} />
 									</label>
 								)}
 
 								{!enablePaymentOptions && isComponentReady ? (
-									<div tw="mt-1 relative rounded-md shadow-sm">
+									<div className="relative mt-1 rounded-md shadow-sm">
 										<span
-											css={[
-												tw`py-3 px-3.5 appearance-none border border-gray-500 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm`,
-												loading && tw`opacity-50 bg-gray-300 cursor-not-allowed`,
-												errorCardExpiry ? tw`border-red-300` : tw`border-gray-300`
-											]}
+											className={classNames(
+												"block w-full appearance-none rounded-md border border-gray-500 py-3 px-3.5 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+												loading && "cursor-not-allowed bg-gray-300 opacity-50",
+												errorCardExpiry ? "border-red-300" : "border-gray-300"
+											)}
 										>
 											<CardExpiryElement />
 										</span>
 									</div>
 								) : (
-									<div tw="mt-1">
+									<div className="mt-1">
 										<Skeleton duration={2} width={360} height={38} />
 									</div>
 								)}
 							</div>
 
-							{errorCardExpiry ? <span tw="block mt-2 text-xs leading-5 text-red-700">{errorCardExpiry}</span> : null}
+							{errorCardExpiry ? (
+								<span className="mt-2 block text-xs leading-5 text-red-700">{errorCardExpiry}</span>
+							) : null}
 						</div>
 
-						<div tw="sm:col-span-1">
-							<div tw="space-y-1 flex flex-col justify-start">
+						<div className="sm:col-span-1">
+							<div className="flex flex-col justify-start space-y-1">
 								{!enablePaymentOptions && isComponentReady ? (
-									<label htmlFor="cvc" tw="inline-block text-sm text-left font-medium leading-5 text-gray-700">
+									<label htmlFor="cvc" className="inline-block text-left text-sm font-medium leading-5 text-gray-700">
 										{cvc}
 									</label>
 								) : (
-									<label htmlFor="cvc" tw="block">
+									<label htmlFor="cvc" className="block">
 										<Skeleton duration={2} width={150} height={20} />
 									</label>
 								)}
 
 								{!enablePaymentOptions && isComponentReady ? (
-									<div tw="mt-1 relative rounded-md shadow-sm">
+									<div className="relative mt-1 rounded-md shadow-sm">
 										<span
-											css={[
-												tw`py-3 px-3.5 appearance-none border border-gray-500 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm`,
-												loading && tw`opacity-50 bg-gray-300 cursor-not-allowed`,
-												errorCardCvc ? tw`border-red-300` : tw`border-gray-300`
-											]}
+											className={classNames(
+												"block w-full appearance-none rounded-md border border-gray-500 py-3 px-3.5 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+												loading && "cursor-not-allowed bg-gray-300 opacity-50",
+												errorCardCvc ? "border-red-300" : "border-gray-300"
+											)}
 										>
 											<CardCvcElement />
 										</span>
 									</div>
 								) : (
-									<div tw="mt-1">
+									<div className="mt-1">
 										<Skeleton duration={2} width={360} height={38} />
 									</div>
 								)}
 							</div>
 
-							{errorCardCvc ? <span tw="block mt-2 text-xs leading-5 text-red-700">{errorCardCvc}</span> : null}
+							{errorCardCvc ? <span className="mt-2 block text-xs leading-5 text-red-700">{errorCardCvc}</span> : null}
 						</div>
 
-						<div tw="sm:col-span-1">
-							<div tw="flex justify-between flex-col sm:flex-row md:flex-col lg:flex-row">
-								<div tw="flex justify-start order-1 sm:flex-row sm:flex-initial sm:w-auto sm:mr-1 lg:order-1 lg:w-full">
-									<span tw="inline-flex">
+						<div className="sm:col-span-1">
+							<div className="flex flex-col justify-between sm:flex-row md:flex-col lg:flex-row">
+								<div className="order-1 flex justify-start sm:mr-1 sm:w-auto sm:flex-initial sm:flex-row lg:order-1 lg:w-full">
+									<span className="inline-flex">
 										{!enablePaymentOptions && isComponentReady ? (
 											<button
 												type="submit"
 												disabled={loading}
-												css={[
-													tw`w-full mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600`,
+												className={classNames(
+													"relative mt-3 mr-3 inline-flex w-full items-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-sm font-medium leading-5 text-white sm:mt-0",
 													loading
-														? tw`opacity-50 cursor-not-allowed`
-														: tw`hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`
-												]}
+														? "cursor-not-allowed opacity-50"
+														: "hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+												)}
 											>
 												{loading ? saving : saveChanges}
 											</button>
@@ -314,7 +321,7 @@ const PaymentMethodForm = ({
 												duration={2}
 												width={82.39}
 												height={38}
-												tw="w-full mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2"
+												className="relative mt-3 mr-3 inline-flex w-full items-center px-4 py-2 sm:mt-0"
 											/>
 										)}
 									</span>
@@ -324,32 +331,32 @@ const PaymentMethodForm = ({
 					</>
 				) : (
 					<>
-						<div tw="sm:col-span-1">
-							<div tw="space-y-1 flex flex-col justify-start">
+						<div className="sm:col-span-1">
+							<div className="flex flex-col justify-start space-y-1">
 								{isComponentReady ? (
-									<label htmlFor="email" tw="inline-block text-sm text-left font-medium leading-5 text-gray-700">
+									<label htmlFor="email" className="inline-block text-left text-sm font-medium leading-5 text-gray-700">
 										{subscriptionPlansDefaultCard}
 									</label>
 								) : (
-									<label htmlFor="email" tw="block">
+									<label htmlFor="email" className="block">
 										<Skeleton duration={2} width={150} height={20} />
 									</label>
 								)}
 
 								{isComponentReady ? (
-									<div tw="mt-1 relative rounded-md shadow-sm">
-										<div tw="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-											<CreditCardIcon tw="h-5 w-5 text-gray-400" />
+									<div className="relative mt-1 rounded-md shadow-sm">
+										<div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+											<CreditCardIcon className="h-5 w-5 text-gray-400" />
 										</div>
 
 										<input
 											type="text"
 											disabled={disableForm}
 											id="cardinformation"
-											css={[
-												tw`pl-10 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm border-gray-300`,
-												disableForm && tw`opacity-50 bg-gray-300 cursor-not-allowed`
-											]}
+											className={classNames(
+												"block w-full rounded-md border-gray-300 pl-10 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+												disableForm && "cursor-not-allowed bg-gray-300 opacity-50"
+											)}
 											placeholder={loadingCardInformation}
 											value={
 												currentPaymentMethod && Object.keys(currentPaymentMethod).length > 0
@@ -364,27 +371,27 @@ const PaymentMethodForm = ({
 										/>
 									</div>
 								) : (
-									<div tw="mt-1">
+									<div className="mt-1">
 										<Skeleton duration={2} width={360} height={38} />
 									</div>
 								)}
 							</div>
 						</div>
 
-						<div tw="sm:col-span-1">
-							<div tw="flex justify-between flex-col sm:flex-row md:flex-col lg:flex-row">
-								<div tw="flex justify-start order-1 sm:flex-row sm:flex-initial sm:w-auto sm:mr-1 lg:order-1 lg:w-full">
+						<div className="sm:col-span-1">
+							<div className="flex flex-col justify-between sm:flex-row md:flex-col lg:flex-row">
+								<div className="order-1 flex justify-start sm:mr-1 sm:w-auto sm:flex-initial sm:flex-row lg:order-1 lg:w-full">
 									{asPath.includes(BillingSlug) ? (
 										isComponentReady ? (
 											<button
 												type="button"
 												disabled={loading}
-												css={[
-													tw`w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white sm:w-auto sm:text-sm`,
+												className={classNames(
+													"inline-flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm sm:w-auto sm:text-sm",
 													loading
-														? tw`opacity-50 cursor-not-allowed`
-														: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
-												]}
+														? "cursor-not-allowed opacity-50"
+														: "hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+												)}
 												onClick={() => setDisableForm(!disableForm)}
 											>
 												{currentPaymentMethod && Object.keys(currentPaymentMethod).length > 0 ? update : addCard}
@@ -394,7 +401,7 @@ const PaymentMethodForm = ({
 												duration={2}
 												width={82.39}
 												height={38}
-												tw="w-full mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2"
+												className="relative mt-3 mr-3 inline-flex w-full items-center px-4 py-2 sm:mt-0"
 											/>
 										)
 									) : asPath.includes(SubscriptionPlansSlug) ? (
@@ -403,12 +410,12 @@ const PaymentMethodForm = ({
 												<button
 													type="button"
 													disabled={!currentPaymentMethod?.card || isProcessingPayment}
-													css={[
-														tw`inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white sm:w-auto sm:text-sm`,
+													className={classNames(
+														"inline-flex w-full justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-base font-medium text-white shadow-sm sm:w-auto sm:text-sm",
 														!currentPaymentMethod?.card || isProcessingPayment
-															? tw`opacity-50 cursor-not-allowed`
-															: tw`hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`
-													]}
+															? "cursor-not-allowed opacity-50"
+															: "hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+													)}
 													onClick={
 														currentPaymentMethod?.card?.length > 0 && currentPaymentMethod?.id?.length > 0
 															? handlePlanSelect(planId, planName, currentPaymentMethod?.id ?? null)
@@ -422,19 +429,19 @@ const PaymentMethodForm = ({
 													duration={2}
 													width={82.39}
 													height={38}
-													tw="w-full mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2"
+													className="relative mt-3 mr-3 inline-flex w-full items-center px-4 py-2 sm:mt-0"
 												/>
 											)
 										) : isComponentReady ? (
 											<button
 												type="button"
 												disabled={loading}
-												css={[
-													tw`w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white sm:w-auto sm:text-sm`,
+												className={classNames(
+													"inline-flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm sm:w-auto sm:text-sm",
 													loading
-														? tw`opacity-50 cursor-not-allowed`
-														: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
-												]}
+														? "cursor-not-allowed opacity-50"
+														: "hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+												)}
 												onClick={() => setDisableForm(!disableForm)}
 											>
 												{currentPaymentMethod && Object.keys(currentPaymentMethod).length > 0 ? update : addCard}
@@ -444,7 +451,7 @@ const PaymentMethodForm = ({
 												duration={2}
 												width={82.39}
 												height={38}
-												tw="w-full mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2"
+												className="relative mt-3 mr-3 inline-flex w-full items-center px-4 py-2 sm:mt-0"
 											/>
 										)
 									) : null}

@@ -11,7 +11,6 @@ import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
 import { memo, useContext } from "react";
 import PasswordStrengthBar from "react-password-strength-bar";
-import tw from "twin.macro";
 import * as Yup from "yup";
 
 /**
@@ -115,20 +114,20 @@ const RegistrationForm = () => {
 		>
 			{({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
 				<form onSubmit={handleSubmit}>
-					<div tw="mt-1">
-						<label htmlFor="firstname" tw="block text-sm font-medium text-gray-700">
+					<div className="mt-1">
+						<label htmlFor="firstname" className="block text-sm font-medium text-gray-700">
 							{firstName}
 						</label>
-						<div tw="mt-1 rounded-md">
+						<div className="mt-1 rounded-md">
 							<input
 								id="firstname"
 								type="text"
 								name="firstname"
 								disabled={isSubmitting}
 								css={[
-									tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
-									isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
-									errors.firstname ? tw`border-red-300` : tw`border-gray-300`
+									"shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md",
+									isSubmitting && "opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none",
+									errors.firstname ? "border-red-300" : "border-gray-300"
 								]}
 								aria-describedby="firstname"
 								onChange={handleChange}
@@ -138,24 +137,24 @@ const RegistrationForm = () => {
 						</div>
 
 						{errors.firstname || touched.firstname ? (
-							<span tw="block mt-2 text-xs leading-5 text-red-700">{errors.firstname || touched.firstname}</span>
+							<span className="mt-2 block text-xs leading-5 text-red-700">{errors.firstname || touched.firstname}</span>
 						) : null}
 					</div>
 
-					<div tw="mt-6">
-						<label htmlFor="lastname" tw="block text-sm font-medium text-gray-700">
+					<div className="mt-6">
+						<label htmlFor="lastname" className="block text-sm font-medium text-gray-700">
 							{lastName}
 						</label>
-						<div tw="mt-1 rounded-md">
+						<div className="mt-1 rounded-md">
 							<input
 								id="lastname"
 								type="text"
 								name="lastname"
 								disabled={isSubmitting}
 								css={[
-									tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
-									isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
-									errors.lastname ? tw`border-red-300` : tw`border-gray-300`
+									"shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md",
+									isSubmitting && "opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none",
+									errors.lastname ? "border-red-300" : "border-gray-300"
 								]}
 								aria-describedby="lastname"
 								onChange={handleChange}
@@ -165,24 +164,24 @@ const RegistrationForm = () => {
 						</div>
 
 						{errors.lastname || touched.lastname ? (
-							<span tw="block mt-2 text-xs leading-5 text-red-700">{errors.lastname || touched.lastname}</span>
+							<span className="mt-2 block text-xs leading-5 text-red-700">{errors.lastname || touched.lastname}</span>
 						) : null}
 					</div>
 
-					<div tw="mt-6">
-						<label htmlFor="username" tw="block text-sm font-medium text-gray-700">
+					<div className="mt-6">
+						<label htmlFor="username" className="block text-sm font-medium text-gray-700">
 							{username}
 						</label>
-						<div tw="mt-1 rounded-md">
+						<div className="mt-1 rounded-md">
 							<input
 								id="username"
 								type="text"
 								name="username"
 								disabled={isSubmitting}
 								css={[
-									tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
-									isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
-									errors.username ? tw`border-red-300` : tw`border-gray-300`
+									"shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md",
+									isSubmitting && "opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none",
+									errors.username ? "border-red-300" : "border-gray-300"
 								]}
 								aria-describedby="username"
 								onChange={handleChange}
@@ -192,24 +191,24 @@ const RegistrationForm = () => {
 						</div>
 
 						{errors.username || touched.username ? (
-							<span tw="block mt-2 text-xs leading-5 text-red-700">{errors.username || touched.username}</span>
+							<span className="mt-2 block text-xs leading-5 text-red-700">{errors.username || touched.username}</span>
 						) : null}
 					</div>
 
-					<div tw="mt-6">
-						<label htmlFor="email" tw="block text-sm font-medium text-gray-700">
+					<div className="mt-6">
+						<label htmlFor="email" className="block text-sm font-medium text-gray-700">
 							{emailAddress}
 						</label>
-						<div tw="mt-1 rounded-md">
+						<div className="mt-1 rounded-md">
 							<input
 								id="email"
 								type="email"
 								name="email"
 								disabled={isSubmitting}
 								css={[
-									tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
-									isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none `,
-									errors.email ? tw`border-red-300` : tw`border-gray-300`
+									"shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md",
+									isSubmitting && "opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none ",
+									errors.email ? "border-red-300" : "border-gray-300"
 								]}
 								aria-describedby="email"
 								onChange={handleChange}
@@ -219,24 +218,24 @@ const RegistrationForm = () => {
 						</div>
 
 						{errors.email || touched.email ? (
-							<span tw="block mt-2 text-xs leading-5 text-red-700">{errors.email || touched.email}</span>
+							<span className="mt-2 block text-xs leading-5 text-red-700">{errors.email || touched.email}</span>
 						) : null}
 					</div>
 
-					<div tw="mt-6">
-						<label htmlFor="password" tw="block text-sm font-medium text-gray-700">
+					<div className="mt-6">
+						<label htmlFor="password" className="block text-sm font-medium text-gray-700">
 							{password}
 						</label>
-						<div tw="mt-1 rounded-md">
+						<div className="mt-1 rounded-md">
 							<input
 								id="password1"
 								type="password"
 								name="password1"
 								disabled={isSubmitting}
 								css={[
-									tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
-									isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
-									errors.password1 ? tw`border-red-300` : tw`border-gray-300`
+									"shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md",
+									isSubmitting && "opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none",
+									errors.password1 ? "border-red-300" : "border-gray-300"
 								]}
 								aria-describedby="password1"
 								onChange={handleChange}
@@ -247,24 +246,24 @@ const RegistrationForm = () => {
 						<PasswordStrengthBar password={values.password1} />
 
 						{errors.password1 || touched.password1 ? (
-							<span tw="block mt-2 text-xs leading-5 text-red-700">{errors.password1 || touched.password1}</span>
+							<span className="mt-2 block text-xs leading-5 text-red-700">{errors.password1 || touched.password1}</span>
 						) : null}
 					</div>
 
-					<div tw="mt-6">
-						<label htmlFor="password" tw="block text-sm font-medium text-gray-700">
+					<div className="mt-6">
+						<label htmlFor="password" className="block text-sm font-medium text-gray-700">
 							{repeatPassword}
 						</label>
-						<div tw="mt-1 rounded-md">
+						<div className="mt-1 rounded-md">
 							<input
 								id="password2"
 								type="password"
 								name="password2"
 								disabled={isSubmitting}
 								css={[
-									tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md sm:leading-5`,
-									isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
-									errors.password2 ? tw`border-red-300` : tw`border-gray-300`
+									"shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md sm:leading-5",
+									isSubmitting && "opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none",
+									errors.password2 ? "border-red-300" : "border-gray-300"
 								]}
 								aria-describedby="password2"
 								onChange={handleChange}
@@ -274,20 +273,20 @@ const RegistrationForm = () => {
 						</div>
 
 						{errors.password2 || touched.password2 ? (
-							<span tw="block mt-2 text-xs leading-5 text-red-700">{errors.password2 || touched.password2}</span>
+							<span className="mt-2 block text-xs leading-5 text-red-700">{errors.password2 || touched.password2}</span>
 						) : null}
 					</div>
 
-					<div tw="mt-6">
-						<span tw="block w-full rounded-md shadow-sm">
+					<div className="mt-6">
+						<span className="block w-full rounded-md shadow-sm">
 							<button
 								type="submit"
 								disabled={isSubmitting}
 								css={[
-									tw`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600`,
+									"w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600",
 									isSubmitting
-										? tw`opacity-50 bg-indigo-300 cursor-not-allowed pointer-events-none`
-										: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
+										? "opacity-50 bg-indigo-300 cursor-not-allowed pointer-events-none"
+										: "hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 								]}
 							>
 								{isSubmitting ? submitting : createAccount}

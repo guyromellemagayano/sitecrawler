@@ -2,14 +2,14 @@ import { MemoizedDeleteUserAccountModal } from "@components/modals/DeleteUserAcc
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
+import { classNames } from "@utils/classNames";
 import useTranslation from "next-translate/useTranslation";
 import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import tw from "twin.macro";
 
 /**
- * Custom function to render the `DeleteUserAccountSettings` component
+ * Custom function to render the "DeleteUserAccountSettings" component
  */
 const DeleteUserAccountSettings = () => {
 	// Translations
@@ -31,10 +31,10 @@ const DeleteUserAccountSettings = () => {
 	} = useComponentVisible(false);
 
 	return (
-		<div tw="pb-12">
+		<div className="pb-12">
 			<MemoizedDeleteUserAccountModal ref={showModalRef} showModal={showModal} setShowModal={setShowModal} />
 
-			<h5 tw="text-xl leading-6 font-bold text-gray-900">
+			<h5 className="text-xl font-bold leading-6 text-gray-900">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					deleteUserAccountModalRequestTitle
 				) : (
@@ -42,26 +42,26 @@ const DeleteUserAccountSettings = () => {
 				)}
 			</h5>
 
-			<div tw="max-w-full lg:max-w-3xl pt-0 pb-2 mt-6">
-				<div tw="flex justify-start">
-					<span tw="inline-flex rounded-md shadow-sm">
+			<div className="mt-6 max-w-full pt-0 pb-2 lg:max-w-3xl">
+				<div className="flex justify-start">
+					<span className="inline-flex rounded-md shadow-sm">
 						{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 							<button
 								type="button"
 								disabled={showModal}
 								id="user-account-delete-modal-button"
-								css={[
-									tw`cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-red-600 text-sm leading-5 font-medium text-white shadow-sm sm:text-sm sm:leading-5 transition ease-in-out duration-150`,
+								className={classNames(
+									"inline-flex w-full cursor-pointer justify-center rounded-md border border-gray-300 bg-red-600 px-4 py-2 text-sm font-medium leading-5 text-white shadow-sm transition duration-150 ease-in-out sm:text-sm sm:leading-5",
 									showModal
-										? tw`opacity-50 cursor-not-allowed`
-										: tw`hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 active:bg-red-700`
-								]}
+										? "cursor-not-allowed opacity-50"
+										: "hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 active:bg-red-700"
+								)}
 								onClick={() => setShowModal(!showModal)}
 							>
 								{request}
 							</button>
 						) : (
-							<Skeleton duration={2} width={78} height={38} tw="w-full px-4 py-2 inline-flex" />
+							<Skeleton duration={2} width={78} height={38} className="inline-flex w-full px-4 py-2" />
 						)}
 					</span>
 				</div>

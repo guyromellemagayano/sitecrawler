@@ -1,6 +1,5 @@
 import PropTypes from "prop-types";
 import { memo } from "react";
-import tw from "twin.macro";
 
 /**
  * Custom function to render the `Badge` component
@@ -14,14 +13,14 @@ const Badge = ({ isDanger = false, isSuccess = false, isWarning = false, text = 
 	return (
 		<span
 			css={[
-				tw`px-2 inline-flex text-xs leading-5 font-semibold rounded-full`,
+				"px-2 inline-flex text-xs leading-5 font-semibold rounded-full",
 				isDanger
-					? tw`bg-red-100 text-red-800`
+					? "bg-red-100 text-red-800"
 					: isSuccess
-					? tw`bg-green-100 text-green-800`
+					? "bg-green-100 text-green-800"
 					: isWarning
-					? tw`bg-yellow-100 text-yellow-800`
-					: tw`bg-blue-100 text-blue-800`
+					? "bg-yellow-100 text-yellow-800"
+					: "bg-blue-100 text-blue-800"
 			]}
 		>
 			{text}

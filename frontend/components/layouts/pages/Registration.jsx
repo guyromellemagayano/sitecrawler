@@ -5,7 +5,6 @@ import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { memo } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
-import "twin.macro";
 
 /**
  * Custom function to render the `RegistrationPageLayout` component
@@ -18,27 +17,27 @@ const RegistrationPageLayout = () => {
 	const isLogin = t("common:isLogin");
 
 	return (
-		<div tw="bg-gray-50 overflow-auto h-screen">
+		<div className="h-screen overflow-auto bg-gray-50">
 			<Scrollbars autoHide universal>
-				<section tw="h-screen bg-gray-50 flex flex-col justify-center relative overflow-auto py-12 sm:px-6 lg:px-8">
-					<div tw="mx-auto max-w-screen-xl">
-						<div tw="relative my-8 sm:my-16 md:my-20 lg:my-24">
+				<section className="relative flex h-screen flex-col justify-center overflow-auto bg-gray-50 py-12 sm:px-6 lg:px-8">
+					<div className="mx-auto max-w-screen-xl">
+						<div className="relative my-8 sm:my-16 md:my-20 lg:my-24">
 							<MemoizedLogoLabel isSignUp />
 
-							<div tw="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-								<div tw="bg-white mt-8 py-8 px-4 shadow-xl rounded-lg sm:px-10">
+							<div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+								<div className="mt-8 rounded-lg bg-white py-8 px-4 shadow-xl sm:px-10">
 									<MemoizedRegistrationForm />
 								</div>
 
-								<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
-									<span tw="text-center px-2 py-5 text-gray-500">{agreeTermsPrivacyPolicy}</span>
+								<div className="relative flex flex-row flex-wrap justify-center text-sm leading-5">
+									<span className="px-2 py-5 text-center text-gray-500">{agreeTermsPrivacyPolicy}</span>
 								</div>
 
-								<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
-									<span tw="p-2 text-gray-500">
+								<div className="relative flex flex-row flex-wrap justify-center text-sm leading-5">
+									<span className="p-2 text-gray-500">
 										{alreadyHaveAccount}&nbsp;
 										<Link href={LoginLink} passHref>
-											<a tw="font-medium text-indigo-600 cursor-pointer hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150">
+											<a className="cursor-pointer font-medium text-indigo-600 transition duration-150 ease-in-out hover:text-indigo-500 focus:underline focus:outline-none">
 												{isLogin}
 											</a>
 										</Link>

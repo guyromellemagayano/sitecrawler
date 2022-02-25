@@ -7,10 +7,10 @@ import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
 import { useSiteQueries } from "@hooks/useSiteQueries";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
+import { classNames } from "@utils/classNames";
 import { handleConversionStringToNumber } from "@utils/convertCase";
 import { useRouter } from "next/router";
 import { memo, useContext } from "react";
-import tw from "twin.macro";
 
 /**
  * Custom function to render the `SitePagesPageLayout` component
@@ -47,24 +47,9 @@ const SitePagesPageLayout = () => {
 				<MemoizedPageOption isPages />
 			) : null}
 			<div
-				css={[
-					tw`flex-grow focus:outline-none px-4 pt-8 sm:px-6 md:px-0`,
+				className={classNames(
+					"flex-grow px-4 pt-8 focus:outline-none sm:px-6 md:px-0",
 					isComponentReady &&
-					user &&
-					Math.round(user?.status / 100) === 2 &&
-					!user?.data?.detail &&
-					permissions.includes("can_see_pages") &&
-					permissions.includes("can_see_scripts") &&
-					permissions.includes("can_see_stylesheets") &&
-					pagesCount === 0
-						? tw`flex flex-col flex-auto items-center justify-center`
-						: null
-				]}
-			>
-				<div
-					css={[
-						tw`flex-1 w-full h-full`,
-						isComponentReady &&
 						user &&
 						Math.round(user?.status / 100) === 2 &&
 						!user?.data?.detail &&
@@ -72,13 +57,28 @@ const SitePagesPageLayout = () => {
 						permissions.includes("can_see_scripts") &&
 						permissions.includes("can_see_stylesheets") &&
 						pagesCount === 0
-							? tw`flex flex-auto`
+						? "flex flex-auto flex-col items-center justify-center"
+						: null
+				)}
+			>
+				<div
+					className={classNames(
+						"h-full w-full flex-1",
+						isComponentReady &&
+							user &&
+							Math.round(user?.status / 100) === 2 &&
+							!user?.data?.detail &&
+							permissions.includes("can_see_pages") &&
+							permissions.includes("can_see_scripts") &&
+							permissions.includes("can_see_stylesheets") &&
+							pagesCount === 0
+							? "flex flex-auto"
 							: null
-					]}
+					)}
 				>
 					<div
-						css={[
-							tw`flex-1 w-full h-full`,
+						className={classNames(
+							"h-full w-full flex-1",
 							isComponentReady &&
 								user &&
 								Math.round(user?.status / 100) === 2 &&
@@ -87,12 +87,12 @@ const SitePagesPageLayout = () => {
 								permissions.includes("can_see_scripts") &&
 								permissions.includes("can_see_stylesheets") &&
 								pagesCount === 0 &&
-								tw`flex flex-initial`
-						]}
+								"flex flex-initial"
+						)}
 					>
 						<div
-							css={[
-								tw`flex-1 w-full h-full py-2`,
+							className={classNames(
+								"h-full w-full flex-1 py-2",
 								isComponentReady &&
 									user &&
 									Math.round(user?.status / 100) === 2 &&
@@ -101,10 +101,10 @@ const SitePagesPageLayout = () => {
 									permissions.includes("can_see_scripts") &&
 									permissions.includes("can_see_stylesheets") &&
 									pagesCount === 0 &&
-									tw`flex items-center`
-							]}
+									"flex items-center"
+							)}
 						>
-							<div tw="min-w-full h-full rounded-lg border-gray-300">
+							<div className="h-full min-w-full rounded-lg border-gray-300">
 								<MemoizedPagesTable count={pagesCount} results={pagesResults} validatingPages={validatingPages} />
 							</div>
 						</div>
@@ -119,7 +119,7 @@ const SitePagesPageLayout = () => {
 			permissions.includes("can_see_pages") &&
 			permissions.includes("can_see_scripts") &&
 			permissions.includes("can_see_stylesheets") ? (
-				<div tw="flex-none">
+				<div className="flex-none">
 					<MemoizedDataPagination isValidating={validatingPages} />
 				</div>
 			) : null}

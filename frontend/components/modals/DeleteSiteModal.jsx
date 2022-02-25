@@ -5,11 +5,11 @@ import { Dialog, Transition } from "@headlessui/react";
 import { handleDeleteMethod } from "@helpers/handleHttpMethods";
 import { XCircleIcon } from "@heroicons/react/outline";
 import { useNotificationMessage } from "@hooks/useNotificationMessage";
+import { classNames } from "@utils/classNames";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import { forwardRef, Fragment, memo, useState } from "react";
 import { useSWRConfig } from "swr";
-import tw from "twin.macro";
 
 /**
  * Custom function to render the `DeleteSiteModal` component
@@ -57,7 +57,7 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 		const siteDeleteResponseMethod = siteDeleteResponse?.config?.method ?? null;
 
 		if (siteDeleteResponseData !== null && Math.round(siteDeleteResponseStatus / 200) === 1) {
-			// Mutate `sites` endpoint after successful 200 OK or 201 Created response is issued
+			// Mutate "sites" endpoint after successful 200 OK or 201 Created response is issued
 			mutate(SitesApiEndpoint);
 
 			// Show alert message after successful 200 OK or 201 Created response is issued
@@ -96,7 +96,7 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 				initialFocus={ref}
 				onClose={!disableDeleteSite ? setShowModal : () => {}}
 			>
-				<div tw="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+				<div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
 					<Transition.Child
 						as={Fragment}
 						enter="site-delete-modal-first-child-enter"
@@ -110,7 +110,7 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 					</Transition.Child>
 
 					{/* This element is to trick the browser into centering the modal contents. */}
-					<span tw="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
+					<span className="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">
 						&#8203;
 					</span>
 
@@ -123,22 +123,22 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 						leaveFrom="site-delete-modal-second-child-leave-from"
 						leaveTo="site-delete-modal-second-child-leave-to"
 					>
-						<div tw="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
-							<div tw="sm:flex sm:items-start">
-								<div tw="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-									<XCircleIcon tw="h-6 w-6 text-red-600" />
+						<div className="inline-block transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6 sm:align-middle">
+							<div className="sm:flex sm:items-start">
+								<div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+									<XCircleIcon className="h-6 w-6 text-red-600" />
 								</div>
-								<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+								<div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
 									<Dialog.Title as="h3" className="text-lg font-bold leading-6 text-gray-900">
 										{deleteSiteHeadlineText}
 									</Dialog.Title>
 
-									<div tw="mt-2">
-										<p tw="text-sm leading-5 text-gray-500">{deleteSiteSubheadingText}</p>
+									<div className="mt-2">
+										<p className="text-sm leading-5 text-gray-500">{deleteSiteSubheadingText}</p>
 
 										{state?.responses?.length > 0 ? (
-											<div tw="block my-5">
-												<div tw="flex justify-center sm:justify-start">
+											<div className="my-5 block">
+												<div className="flex justify-center sm:justify-start">
 													{state.responses.map((value, key) => {
 														// Alert Messsages
 														const responseText = value?.responseText ?? null;
@@ -147,10 +147,10 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 														return (
 															<h3
 																key={key}
-																css={[
-																	tw`text-sm leading-5 font-medium break-words`,
-																	isSuccess ? tw`text-green-800` : tw`text-red-800`
-																]}
+																className={classNames(
+																	"break-words text-sm font-medium leading-5",
+																	isSuccess ? "text-green-800" : "text-red-800"
+																)}
 															>
 																{responseText}
 															</h3>
@@ -163,18 +163,18 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 								</div>
 							</div>
 
-							<div tw="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-								<span tw="flex w-full rounded-md shadow-sm sm:w-auto">
+							<div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+								<span className="flex w-full rounded-md shadow-sm sm:w-auto">
 									<button
 										type="button"
 										tabIndex="0"
 										disabled={disableDeleteSite}
-										css={[
-											tw`cursor-pointer w-full mt-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-red-600 `,
+										className={classNames(
+											"relative mt-3 inline-flex w-full cursor-pointer items-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium leading-5 text-white sm:mt-0 ",
 											disableDeleteSite
-												? tw`opacity-50 cursor-not-allowed`
-												: tw`hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 active:bg-red-700`
-										]}
+												? "cursor-not-allowed opacity-50"
+												: "hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 active:bg-red-700"
+										)}
 										aria-label="Delete Site"
 										onClick={handleSiteDeletion}
 									>
@@ -182,16 +182,16 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 									</button>
 								</span>
 
-								<span tw="mt-3 flex w-full sm:mt-0 sm:w-auto">
+								<span className="mt-3 flex w-full sm:mt-0 sm:w-auto">
 									<button
 										type="button"
 										disabled={disableDeleteSite}
-										css={[
-											tw`cursor-pointer inline-flex justify-center w-full mr-3 rounded-md border border-gray-300 px-4 py-2 shadow-sm text-sm font-medium  text-gray-700 bg-white `,
+										className={classNames(
+											"mr-3 inline-flex w-full cursor-pointer justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium  text-gray-700 shadow-sm ",
 											disableDeleteSite
-												? tw`opacity-50 cursor-not-allowed`
-												: tw`hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
-										]}
+												? "cursor-not-allowed opacity-50"
+												: "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+										)}
 										onClick={() => setShowModal(false)}
 									>
 										{closeText}
@@ -207,7 +207,7 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 };
 
 /**
- * Memoized custom `DeleteSiteModal` component
+ * Memoized custom "DeleteSiteModal" component
  */
 const ForwardRefDeleteSiteModal = forwardRef(DeleteSiteModal);
 export const MemoizedDeleteSiteModal = memo(ForwardRefDeleteSiteModal);

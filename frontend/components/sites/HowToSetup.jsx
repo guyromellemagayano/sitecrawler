@@ -2,12 +2,12 @@ import { MemoizedHowToSetupSkeleton } from "@components/skeletons/HowToSetupSkel
 import { HowToSetupData } from "@constants/HowToSetup";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
+import { classNames } from "@utils/classNames";
 import useTranslation from "next-translate/useTranslation";
 import { memo, useContext, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import ReactPlayer from "react-player/lazy";
-import tw from "twin.macro";
 
 /**
  * Custom function to render the `HowToSetup` component
@@ -28,19 +28,19 @@ const HowToSetup = () => {
 	const { user } = useUser();
 
 	return isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-		<div tw="flex-auto">
-			<div tw="w-full xl:flex-grow-0 xl:flex-none xl:max-w-screen-sm">
-				<div tw="relative py-6 px-4 sm:px-6 lg:px-8 lg:py-0">
-					<div tw="max-w-7xl w-full mx-auto">
-						<div tw="text-center mb-10">
-							<h3 tw="text-2xl leading-9 tracking-tight font-bold text-gray-900 sm:text-3xl sm:leading-10">
+		<div className="flex-auto">
+			<div className="w-full xl:max-w-screen-sm xl:flex-none xl:flex-grow-0">
+				<div className="relative py-6 px-4 sm:px-6 lg:px-8 lg:py-0">
+					<div className="mx-auto w-full max-w-7xl">
+						<div className="mb-10 text-center">
+							<h3 className="text-2xl font-bold leading-9 tracking-tight text-gray-900 sm:text-3xl sm:leading-10">
 								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 									howToSetupHeadline
 								) : (
 									<Skeleton duration={2} width={120} height={30} />
 								)}
 							</h3>
-							<p tw="mt-3 max-w-2xl mx-auto text-base leading-6 text-gray-500 sm:mt-4">
+							<p className="mx-auto mt-3 max-w-2xl text-base leading-6 text-gray-500 sm:mt-4">
 								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 									howToSetupSubheadline
 								) : (
@@ -48,7 +48,7 @@ const HowToSetup = () => {
 								)}
 							</p>
 						</div>
-						<div tw="relative mx-auto w-full rounded-lg lg:max-w-md mb-8">
+						<div className="relative mx-auto mb-8 w-full rounded-lg lg:max-w-md">
 							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 								HowToSetupData.map(({ id, video }, key) => {
 									return tabActive === id ? (
@@ -60,7 +60,7 @@ const HowToSetup = () => {
 							)}
 						</div>
 						<div>
-							<div tw="sm:hidden">
+							<div className="sm:hidden">
 								<label htmlFor="tabs" className="sr-only">
 									{tabSrOnly}
 								</label>
@@ -69,7 +69,7 @@ const HowToSetup = () => {
 										id="tabs"
 										name="tabs"
 										aria-label="Selected tab"
-										tw="block w-full focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md space-x-3"
+										className="block w-full space-x-3 rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
 									>
 										{HowToSetupData.map(({ title, defaultValue }) => {
 											return (
@@ -80,15 +80,15 @@ const HowToSetup = () => {
 										})}
 									</select>
 								) : (
-									<div tw="block w-full space-x-3">
+									<div className="block w-full space-x-3">
 										{HowToSetupData.map(({ title }) => {
 											return <Skeleton key={title} duration={2} width={100} height={30} />;
 										})}
 									</div>
 								)}
 							</div>
-							<div tw="hidden sm:block">
-								<nav tw="flex justify-center space-x-3">
+							<div className="hidden sm:block">
+								<nav className="flex justify-center space-x-3">
 									{HowToSetupData.map(({ title, id }, key) =>
 										isComponentReady ? (
 											<TabItem
@@ -110,12 +110,15 @@ const HowToSetup = () => {
 			</div>
 		</div>
 	) : (
-		<div tw="flex-auto">
+		<div className="flex-auto">
 			<MemoizedHowToSetupSkeleton />
 		</div>
 	);
 };
 
+/**
+ * Custom function to render the `TabItem` component
+ */
 const TabItem = ({
 	id = "",
 	title = "",
@@ -125,13 +128,13 @@ const TabItem = ({
 	return (
 		<a
 			href="#"
-			css={[
-				tw`font-medium text-sm leading-5 rounded-md`,
+			className={classNames(
+				"rounded-md text-sm font-medium leading-5",
 				isTabActive
-					? tw`text-white bg-indigo-600 focus:outline-none focus:bg-indigo-600`
-					: tw`text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700 focus:bg-gray-100`,
-				id !== 1 ? tw`ml-2 px-3 py-2` : tw`px-3 py-2`
-			]}
+					? "bg-indigo-600 text-white focus:bg-indigo-600 focus:outline-none"
+					: "text-gray-500 hover:text-gray-700 focus:bg-gray-100 focus:text-gray-700 focus:outline-none",
+				id !== 1 ? "ml-2 px-3 py-2" : "px-3 py-2"
+			)}
 			aria-current="page"
 			onClick={onItemClicked}
 		>
@@ -140,4 +143,7 @@ const TabItem = ({
 	);
 };
 
+/**
+ * Memoized custom `HowToSetup` component
+ */
 export const MemoizedHowToSetup = memo(HowToSetup);

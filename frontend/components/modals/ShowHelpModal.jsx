@@ -4,7 +4,6 @@ import { ClipboardIcon, QuestionMarkCircleIcon } from "@heroicons/react/solid";
 import useTranslation from "next-translate/useTranslation";
 import { forwardRef, Fragment, memo, useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import "twin.macro";
 
 /**
  * Custom function to render the `ShowHelpModal` component
@@ -78,7 +77,7 @@ const ShowHelpModal = ({ siteData = null, showModal = false, setShowModal }, ref
 				initialFocus={ref}
 				onClose={!copied ? setShowModal : () => {}}
 			>
-				<div tw="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+				<div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
 					<Transition.Child
 						enter="show-help-modal-first-child-enter"
 						enterFrom="show-help-modal-first-child-enter-from"
@@ -91,7 +90,7 @@ const ShowHelpModal = ({ siteData = null, showModal = false, setShowModal }, ref
 					</Transition.Child>
 
 					{/* This element is to trick the browser into centering the modal contents. */}
-					<span tw="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
+					<span className="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">
 						&#8203;
 					</span>
 
@@ -104,50 +103,50 @@ const ShowHelpModal = ({ siteData = null, showModal = false, setShowModal }, ref
 						leaveFrom="show-help-modal-second-child-leave-from"
 						leaveTo="show-help-modal-second-child-leave-to"
 					>
-						<div tw="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
-							<div tw="sm:flex sm:items-start">
-								<div tw="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full sm:mx-0 sm:h-10 sm:w-10 bg-yellow-100">
-									<QuestionMarkCircleIcon tw="h-6 w-6 text-yellow-600" />
+						<div className="inline-block transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6 sm:align-middle">
+							<div className="sm:flex sm:items-start">
+								<div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-yellow-100 sm:mx-0 sm:h-10 sm:w-10">
+									<QuestionMarkCircleIcon className="h-6 w-6 text-yellow-600" />
 								</div>
-								<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+								<div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
 									<Dialog.Title as="h3" className="show-help-modal-second-child-title">
 										{notSure}
 									</Dialog.Title>
 
-									<div tw="mt-2">
+									<div className="mt-2">
 										<Dialog.Description as="p" className="show-help-modal-second-child-description">
 											{doTheFollowing}
 										</Dialog.Description>
 
-										<ol tw="mt-8 mb-3 text-left list-decimal space-y-3">
-											<li tw="ml-4 text-sm leading-6 text-gray-800">
+										<ol className="mt-8 mb-3 list-decimal space-y-3 text-left">
+											<li className="ml-4 text-sm leading-6 text-gray-800">
 												{clickCopyToClipboard}
-												<br tw="mb-2" />
+												<br className="mb-2" />
 												<textarea
 													disabled={true}
 													name="verify_site_instructions"
 													id="instructions"
-													tw="h-56 resize-none block w-full p-3 pb-0 mb-3 text-gray-400 focus:ring-indigo-500 focus:border-indigo-500 rounded-md sm:text-sm border-gray-300"
+													className="mb-3 block h-56 w-full resize-none rounded-md border-gray-300 p-3 pb-0 text-gray-400 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 													value={instructionHtmlText}
 													onChange={handleTextareaChange}
 												></textarea>
 												<CopyToClipboard onCopy={handleInputCopy} text={instructionHtmlText}>
-													<button tw="space-x-2 cursor-pointer justify-center w-full inline-flex items-center shadow-sm px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
-														<ClipboardIcon tw="h-5 w-5 text-gray-400" />
+													<button className="inline-flex w-full cursor-pointer items-center justify-center space-x-2 rounded-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+														<ClipboardIcon className="h-5 w-5 text-gray-400" />
 														<span>{copied ? copiedText : copyText}</span>
 													</button>
 												</CopyToClipboard>
 											</li>
-											<li tw="ml-4 text-sm leading-6 text-gray-800">{pasteContents}</li>
+											<li className="ml-4 text-sm leading-6 text-gray-800">{pasteContents}</li>
 										</ol>
 									</div>
 								</div>
 							</div>
 
-							<div tw="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+							<div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
 								<button
 									type="button"
-									tw="cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm text-sm font-medium  text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+									className="inline-flex w-full cursor-pointer justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium  text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 									onClick={() => setShowModal(!showModal)}
 								>
 									{closeText}

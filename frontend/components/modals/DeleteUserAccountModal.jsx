@@ -6,14 +6,14 @@ import { handleDeleteMethod } from "@helpers/handleHttpMethods";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/outline";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
+import { classNames } from "@utils/classNames";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import { forwardRef, Fragment, memo, useContext, useMemo, useState } from "react";
 import { useSWRConfig } from "swr";
-import tw from "twin.macro";
 
 /**
- * Custom function to render the `DeleteUserAccountModal` component
+ * Custom function to render the "DeleteUserAccountModal" component
  *
  * @param {boolean} showModal
  * @param {function} setShowModal
@@ -45,7 +45,7 @@ const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 	const handleUserDeletion = async (e) => {
 		e.preventDefault();
 
-		// Disable the `DeleteUserAccountModal` component
+		// Disable the "DeleteUserAccountModal" component
 		setDisableDeleteUser(true);
 
 		const deleteUserAccountResponse = await handleDeleteMethod(userIdApiEndpoint);
@@ -54,7 +54,7 @@ const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 		const deleteUserAccountResponseMethod = deleteUserAccountResponse?.config?.method ?? null;
 
 		if (deleteUserAccountResponseData !== null && Math.round(deleteUserAccountResponseStatus / 200) === 1) {
-			// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
+			// Mutate "user" endpoint after successful 200 OK or 201 Created response is issued
 			mutate(UserApiEndpoint);
 
 			// Show alert message after successful 200 OK or 201 Created response is issued
@@ -115,7 +115,7 @@ const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 				initialFocus={ref}
 				onClose={!disableDeleteUser ? setShowModal : () => {}}
 			>
-				<div tw="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+				<div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
 					<Transition.Child
 						enter="delete-user-account-modal-first-child-enter"
 						enterFrom="delete-user-account-modal-first-child-enter-from"
@@ -128,7 +128,7 @@ const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 					</Transition.Child>
 
 					{/* This element is to trick the browser into centering the modal contents. */}
-					<span tw="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
+					<span className="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">
 						&#8203;
 					</span>
 
@@ -150,27 +150,27 @@ const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 							return (
 								<div
 									key={key}
-									tw="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6"
+									className="inline-block transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6 sm:align-middle"
 								>
-									<div tw="sm:flex sm:items-start">
+									<div className="sm:flex sm:items-start">
 										<div
-											css={[
-												tw`mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full sm:mx-0 sm:h-10 sm:w-10`,
-												isSuccess ? tw`bg-green-100` : tw`bg-red-100`
-											]}
+											className={classNames(
+												"mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full sm:mx-0 sm:h-10 sm:w-10",
+												isSuccess ? "bg-green-100" : "bg-red-100"
+											)}
 										>
 											{isSuccess ? (
-												<CheckCircleIcon tw="h-6 w-6 text-green-600" />
+												<CheckCircleIcon className="h-6 w-6 text-green-600" />
 											) : (
-												<XCircleIcon tw="h-6 w-6 text-red-600" />
+												<XCircleIcon className="h-6 w-6 text-red-600" />
 											)}
 										</div>
-										<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+										<div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
 											<Dialog.Title as="h3" className="delete-user-account-modal-second-child-title">
 												{responseTitle}
 											</Dialog.Title>
 
-											<div tw="mt-2">
+											<div className="mt-2">
 												<Dialog.Description as="p" className="delete-user-account-modal-second-child-description">
 													{responseText}
 												</Dialog.Description>
@@ -179,18 +179,18 @@ const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 									</div>
 
 									{!hideButtons ? (
-										<div tw="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-											<span tw="flex w-full rounded-md shadow-sm sm:w-auto">
+										<div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+											<span className="flex w-full rounded-md shadow-sm sm:w-auto">
 												{!isSuccess ? null : (
 													<button
 														type="button"
 														disabled={disableDeleteUser}
-														css={[
-															tw`cursor-pointer w-full mt-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-red-600`,
+														className={classNames(
+															"relative mt-3 inline-flex w-full cursor-pointer items-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium leading-5 text-white sm:mt-0",
 															disableDeleteUser
-																? tw`opacity-50 cursor-not-allowed`
-																: tw`hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 active:bg-red-700`
-														]}
+																? "cursor-not-allowed opacity-50"
+																: "hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 active:bg-red-700"
+														)}
 														aria-label="Delete User"
 														onClick={handleUserDeletion}
 													>
@@ -201,12 +201,12 @@ const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 												<button
 													type="button"
 													disabled={disableDeleteUser}
-													css={[
-														tw`cursor-pointer inline-flex justify-center w-full mr-3 rounded-md border border-gray-300 px-4 py-2 shadow-sm text-sm font-medium  text-gray-700 bg-white `,
+													className={classNames(
+														"mr-3 inline-flex w-full cursor-pointer justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium  text-gray-700 shadow-sm ",
 														disableDeleteUser
-															? tw`opacity-50 cursor-not-allowed`
-															: tw`hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
-													]}
+															? "cursor-not-allowed opacity-50"
+															: "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+													)}
 													onClick={() => setShowModal(false)}
 												>
 													{!isSuccess ? close : cancel}
@@ -225,7 +225,7 @@ const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 };
 
 /**
- * Memoized custom `DeleteUserAccountModal` component
+ * Memoized custom "DeleteUserAccountModal" component
  */
 const ForwardRefDeleteUserAccountModal = forwardRef(DeleteUserAccountModal);
 export const MemoizedDeleteUserAccountModal = memo(ForwardRefDeleteUserAccountModal);

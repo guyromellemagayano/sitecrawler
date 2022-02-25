@@ -9,7 +9,7 @@ import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useSWRConfig } from "swr";
-import "twin.macro";
+
 
 export default function Logout() {
 	// Router

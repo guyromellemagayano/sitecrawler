@@ -4,13 +4,13 @@ import { FormPasswordMaxChars, FormPasswordMinChars, RedirectInterval } from "@c
 import { ConfirmSlug, DashboardSitesLink } from "@constants/PageLinks";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
 import { SiteCrawlerAppContext } from "@pages/_app";
+import { classNames } from "@utils/classNames";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import { memo, useCallback, useContext, useEffect, useState } from "react";
 import PasswordStrengthBar from "react-password-strength-bar";
 import { useSWRConfig } from "swr";
-import tw from "twin.macro";
 import * as Yup from "yup";
 
 /**
@@ -39,7 +39,7 @@ const SignupForm = () => {
 	// Custom context
 	const { setConfig } = useContext(SiteCrawlerAppContext);
 
-	// Set the `uid` and `token` from the URL query parameters
+	// Set the "uid" and "token" from the URL query parameters
 	const handleUid = useCallback(async () => {
 		const hasKeyProperty = query?.hasOwnProperty("id") ? true : false;
 
@@ -88,7 +88,7 @@ const SignupForm = () => {
 					setSubmitting(false);
 					resetForm({ values: "" });
 
-					// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
+					// Mutate "user" endpoint after successful 200 OK or 201 Created response is issued
 					mutate(UserApiEndpoint);
 
 					// Show alert message after successful 200 OK or 201 Created response is issued
@@ -118,21 +118,21 @@ const SignupForm = () => {
 		>
 			{({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
 				<form onSubmit={handleSubmit}>
-					<div tw="mt-1">
-						<label htmlFor="password" tw="block text-sm font-medium leading-5 text-gray-700">
+					<div className="mt-1">
+						<label htmlFor="password" className="block text-sm font-medium leading-5 text-gray-700">
 							{password}
 						</label>
-						<div tw="mt-1">
+						<div className="mt-1">
 							<input
 								id="password"
 								type="password"
 								name="password"
 								disabled={isSubmitting}
-								css={[
-									tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm`,
-									isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed`,
-									errors.password ? tw`border-red-300` : tw`border-gray-300`
-								]}
+								className={classNames(
+									"block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+									isSubmitting && "cursor-not-allowed bg-gray-300 opacity-50",
+									errors.password ? "border-red-300" : "border-gray-300"
+								)}
 								aria-describedby="password"
 								onChange={handleChange}
 								onBlur={handleBlur}
@@ -142,25 +142,25 @@ const SignupForm = () => {
 						</div>
 
 						{errors.password || touched.password ? (
-							<span tw="block mt-2 text-xs leading-5 text-red-700">{errors.password || touched.password}</span>
+							<span className="mt-2 block text-xs leading-5 text-red-700">{errors.password || touched.password}</span>
 						) : null}
 					</div>
 
-					<div tw="mt-6">
-						<label htmlFor="repeatPassword" tw="block text-sm font-medium leading-5 text-gray-700">
+					<div className="mt-6">
+						<label htmlFor="repeatPassword" className="block text-sm font-medium leading-5 text-gray-700">
 							{repeatPassword}
 						</label>
-						<div tw="mt-1">
+						<div className="mt-1">
 							<input
 								id="repeatPassword"
 								type="password"
 								name="repeatPassword"
 								disabled={isSubmitting}
-								css={[
-									tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm`,
-									isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed`,
-									errors.repeatPassword ? tw`border-red-300` : tw`border-gray-300`
-								]}
+								className={classNames(
+									"block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+									isSubmitting && "cursor-not-allowed bg-gray-300 opacity-50",
+									errors.repeatPassword ? "border-red-300" : "border-gray-300"
+								)}
 								aria-describedby="repeatPassword"
 								onChange={handleChange}
 								onBlur={handleBlur}
@@ -169,23 +169,23 @@ const SignupForm = () => {
 						</div>
 
 						{errors.repeatPassword || touched.repeatPassword ? (
-							<span tw="block mt-2 text-xs leading-5 text-red-700">
+							<span className="mt-2 block text-xs leading-5 text-red-700">
 								{errors.repeatPassword || touched.repeatPassword}
 							</span>
 						) : null}
 					</div>
 
-					<div tw="mt-6">
-						<span tw="block w-full rounded-md shadow-sm">
+					<div className="mt-6">
+						<span className="block w-full rounded-md shadow-sm">
 							<button
 								type="submit"
 								disabled={isSubmitting}
-								css={[
-									tw`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600`,
+								className={classNames(
+									"flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm",
 									isSubmitting
-										? tw`opacity-50 bg-indigo-300 cursor-not-allowed pointer-events-none`
-										: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
-								]}
+										? "pointer-events-none cursor-not-allowed bg-indigo-300 opacity-50"
+										: "hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+								)}
 							>
 								{isSubmitting ? submitting : completeSignup}
 							</button>
