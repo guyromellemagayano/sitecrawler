@@ -85,8 +85,8 @@ const SubscriptionPlansPricing = ({
 							tabIndex="0"
 							onClick={() => setTogglePaymentPeriod(!togglePaymentPeriod)}
 							aria-checked={togglePaymentPeriod}
-							css={classNames(
-								"relative inline-flex items-center flex-shrink-0 h-6 w-12 mx-auto border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring",
+							className={classNames(
+								"relative mx-auto inline-flex h-6 w-12 flex-shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring",
 								togglePaymentPeriod ? "bg-indigo-600" : "bg-gray-200"
 							)}
 						>
@@ -94,8 +94,8 @@ const SubscriptionPlansPricing = ({
 								aria-hidden="true"
 								role="button"
 								tabIndex="0"
-								css={classNames(
-									"inline-block h-5 w-5 rounded-full bg-white shadow transform transition ease-in-out duration-200",
+								className={classNames(
+									"inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ease-in-out",
 									togglePaymentPeriod ? "translate-x-6" : "translate-x-0"
 								)}
 							/>

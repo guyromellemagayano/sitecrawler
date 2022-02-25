@@ -1,3 +1,4 @@
+import { classNames } from "@utils/classNames";
 import PropTypes from "prop-types";
 import { memo } from "react";
 
@@ -12,8 +13,8 @@ import { memo } from "react";
 const Badge = ({ isDanger = false, isSuccess = false, isWarning = false, text = null }) => {
 	return (
 		<span
-			css={[
-				"px-2 inline-flex text-xs leading-5 font-semibold rounded-full",
+			className={classNames(
+				"inline-flex rounded-full px-2 text-xs font-semibold leading-5",
 				isDanger
 					? "bg-red-100 text-red-800"
 					: isSuccess
@@ -21,7 +22,7 @@ const Badge = ({ isDanger = false, isSuccess = false, isWarning = false, text = 
 					: isWarning
 					? "bg-yellow-100 text-yellow-800"
 					: "bg-blue-100 text-blue-800"
-			]}
+			)}
 		>
 			{text}
 		</span>

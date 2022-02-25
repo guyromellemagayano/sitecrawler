@@ -10,7 +10,6 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useSWRConfig } from "swr";
 
-
 export default function Logout() {
 	// Router
 	const { asPath, push } = useRouter();
