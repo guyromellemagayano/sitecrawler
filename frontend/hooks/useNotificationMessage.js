@@ -2,7 +2,6 @@ import { handleNotificationMessages } from "@helpers/handleNotificationMessages"
 import { handleConversionStringToLowercase, handleConversionStringToNumber } from "@utils/convertCase";
 import useTranslation from "next-translate/useTranslation";
 import { useEffect, useReducer, useState } from "react";
-import "twin.macro";
 
 const messagesReducer = (state, action) => {
 	return {
