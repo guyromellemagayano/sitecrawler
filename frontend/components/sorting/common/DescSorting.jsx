@@ -1,5 +1,5 @@
 import { ChevronDownIcon } from "@heroicons/react/solid";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import { forwardRef, memo, useEffect } from "react";
 
 /**
@@ -21,7 +21,7 @@ const DescSorting = ({ handleClickEvent, isDescClicked, setIsDescClicked }, ref)
 	return (
 		<button ref={ref} className="focus:outline-none" onClick={() => setIsDescClicked(!isDescClicked)}>
 			<ChevronDownIcon
-				className={classNames("inline-block h-5 w-5", isDescClicked ? "text-gray-500" : "text-gray-300")}
+				className={classnames("inline-block h-5 w-5", isDescClicked ? "text-gray-500" : "text-gray-300")}
 			/>
 		</button>
 	);

@@ -7,7 +7,7 @@ import { GlobeIcon } from "@heroicons/react/outline";
 import { ArrowLeftIcon, CreditCardIcon, SupportIcon, UserCircleIcon, ViewBoardsIcon } from "@heroicons/react/solid";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -42,7 +42,7 @@ const SettingsMenu = () => {
 				<div className="mb-0 flex flex-shrink-0 flex-row items-center px-3">
 					<Link href={DashboardSitesLink} passHref>
 						<a
-							className={classNames(
+							className={classnames(
 								"block w-full p-1",
 								isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail
 									? "cursor-pointer"
@@ -75,7 +75,7 @@ const SettingsMenu = () => {
 												return value2.slug !== "go-back-to-sites" && value2.slug !== "logout" ? (
 													<Link key={index2} href={value2.url} passHref>
 														<a
-															className={classNames(
+															className={classnames(
 																"group mt-1 flex items-center rounded-md px-3 py-2 text-sm font-medium leading-5",
 																asPath.includes(value2.url) &&
 																	isComponentReady &&
@@ -166,7 +166,7 @@ const SettingsMenu = () => {
 												) : value2.slug !== "logout" ? (
 													<Link key={index} href={value2.url} passHref>
 														<a
-															className={classNames(
+															className={classnames(
 																"group mt-1 flex items-center rounded-md py-2 text-sm font-medium leading-5 text-gray-400 hover:text-gray-100 focus:text-white focus:outline-none",
 																isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail
 																	? "cursor-pointer"

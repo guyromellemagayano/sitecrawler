@@ -4,7 +4,7 @@ import { SidebarMenus } from "@constants/SidebarMenus";
 import { Transition } from "@headlessui/react";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import PropTypes from "prop-types";
@@ -47,7 +47,7 @@ const ProfileMenuDropdown = ({ isComponentVisible = false }) => {
 					<div className="py-1">
 						<span className="group my-1 flex items-center justify-between px-4 py-2">
 							<span
-								className={classNames(
+								className={classnames(
 									"text-sm font-medium leading-5",
 									group.name === Basic ? "text-green-800" : group.name === Pro ? "text-blue-800" : "text-red-800"
 								)}
@@ -67,7 +67,7 @@ const ProfileMenuDropdown = ({ isComponentVisible = false }) => {
 								group.name === Basic || group.name === Pro ? (
 									<Link href={SubscriptionPlansSettingsLink} passHref>
 										<a
-											className={classNames(
+											className={classnames(
 												"inline-flex cursor-pointer items-center rounded px-2 py-1 text-xs font-medium leading-4 transition duration-150 ease-in-out hover:text-white",
 												group.name === Basic
 													? "bg-green-200 text-green-800 hover:bg-green-600"

@@ -11,7 +11,7 @@ import { useSiteQueries } from "@hooks/useSiteQueries";
 import { useSites } from "@hooks/useSites";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -197,7 +197,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 								tabIndex="0"
 								onClick={handleRouterOnClick}
 								aria-hidden="true"
-								className={classNames(
+								className={classnames(
 									"flex w-full cursor-pointer items-center justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium leading-4 text-white",
 									asPath.includes(AddNewSiteSlug)
 										? "bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 active:bg-red-700"

@@ -6,7 +6,7 @@ import { useSiteQueries } from "@hooks/useSiteQueries";
 import { useSites } from "@hooks/useSites";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import { memo, useContext } from "react";
 import "react-loading-skeleton/dist/skeleton.css";
 
@@ -29,7 +29,7 @@ const SitesDashboardPageLayout = () => {
 		<>
 			<MemoizedPageOption isSites />
 			<div
-				className={classNames(
+				className={classnames(
 					"flex-grow px-4 pt-8 focus:outline-none sm:px-6 md:px-0",
 					isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && sitesCount === 0
 						? "flex flex-auto flex-col items-center justify-center"
@@ -37,7 +37,7 @@ const SitesDashboardPageLayout = () => {
 				)}
 			>
 				<div
-					className={classNames(
+					className={classnames(
 						"h-full w-full flex-1",
 						isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && sitesCount === 0
 							? "flex flex-auto"
@@ -45,7 +45,7 @@ const SitesDashboardPageLayout = () => {
 					)}
 				>
 					<div
-						className={classNames(
+						className={classnames(
 							"h-full w-full flex-1",
 							isComponentReady &&
 								user &&
@@ -56,7 +56,7 @@ const SitesDashboardPageLayout = () => {
 						)}
 					>
 						<div
-							className={classNames(
+							className={classnames(
 								"h-full w-full flex-1 py-2",
 								isComponentReady &&
 									user &&

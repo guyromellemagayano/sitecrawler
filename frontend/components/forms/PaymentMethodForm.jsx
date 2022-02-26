@@ -7,7 +7,7 @@ import { useLoading } from "@hooks/useLoading";
 import { useNotificationMessage } from "@hooks/useNotificationMessage";
 import { usePaymentMethods } from "@hooks/usePaymentMethods";
 import { CardCvcElement, CardExpiryElement, CardNumberElement, useElements, useStripe } from "@stripe/react-stripe-js";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import { memo, useCallback, useEffect, useState } from "react";
@@ -205,7 +205,7 @@ const PaymentMethodForm = ({
 								{!enablePaymentOptions && isComponentReady ? (
 									<div className="relative mt-1 rounded-md shadow-sm">
 										<span
-											className={classNames(
+											className={classnames(
 												"block w-full appearance-none rounded-md border border-gray-500 py-3 px-3.5 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
 												loading && "cursor-not-allowed bg-gray-300 opacity-50",
 												errorCardNumber ? "border-red-300" : "border-gray-300"
@@ -244,7 +244,7 @@ const PaymentMethodForm = ({
 								{!enablePaymentOptions && isComponentReady ? (
 									<div className="relative mt-1 rounded-md shadow-sm">
 										<span
-											className={classNames(
+											className={classnames(
 												"block w-full appearance-none rounded-md border border-gray-500 py-3 px-3.5 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
 												loading && "cursor-not-allowed bg-gray-300 opacity-50",
 												errorCardExpiry ? "border-red-300" : "border-gray-300"
@@ -280,7 +280,7 @@ const PaymentMethodForm = ({
 								{!enablePaymentOptions && isComponentReady ? (
 									<div className="relative mt-1 rounded-md shadow-sm">
 										<span
-											className={classNames(
+											className={classnames(
 												"block w-full appearance-none rounded-md border border-gray-500 py-3 px-3.5 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
 												loading && "cursor-not-allowed bg-gray-300 opacity-50",
 												errorCardCvc ? "border-red-300" : "border-gray-300"
@@ -307,7 +307,7 @@ const PaymentMethodForm = ({
 											<button
 												type="submit"
 												disabled={loading}
-												className={classNames(
+												className={classnames(
 													"relative mt-3 mr-3 inline-flex w-full items-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-sm font-medium leading-5 text-white sm:mt-0",
 													loading
 														? "cursor-not-allowed opacity-50"
@@ -353,7 +353,7 @@ const PaymentMethodForm = ({
 											type="text"
 											disabled={disableForm}
 											id="cardinformation"
-											className={classNames(
+											className={classnames(
 												"block w-full rounded-md border-gray-300 pl-10 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
 												disableForm && "cursor-not-allowed bg-gray-300 opacity-50"
 											)}
@@ -386,7 +386,7 @@ const PaymentMethodForm = ({
 											<button
 												type="button"
 												disabled={loading}
-												className={classNames(
+												className={classnames(
 													"inline-flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm sm:w-auto sm:text-sm",
 													loading
 														? "cursor-not-allowed opacity-50"
@@ -410,7 +410,7 @@ const PaymentMethodForm = ({
 												<button
 													type="button"
 													disabled={!currentPaymentMethod?.card || isProcessingPayment}
-													className={classNames(
+													className={classnames(
 														"inline-flex w-full justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-base font-medium text-white shadow-sm sm:w-auto sm:text-sm",
 														!currentPaymentMethod?.card || isProcessingPayment
 															? "cursor-not-allowed opacity-50"
@@ -436,7 +436,7 @@ const PaymentMethodForm = ({
 											<button
 												type="button"
 												disabled={loading}
-												className={classNames(
+												className={classnames(
 													"inline-flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm sm:w-auto sm:text-sm",
 													loading
 														? "cursor-not-allowed opacity-50"

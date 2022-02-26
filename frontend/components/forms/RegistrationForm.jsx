@@ -7,7 +7,7 @@ import {
 } from "@constants/GlobalValues";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
 import { SiteCrawlerAppContext } from "@pages/_app";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
 import { memo, useContext } from "react";
@@ -125,7 +125,7 @@ const RegistrationForm = () => {
 								type="text"
 								name="firstname"
 								disabled={isSubmitting}
-								className={classNames(
+								className={classnames(
 									"block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
 									isSubmitting && "pointer-events-none cursor-not-allowed bg-gray-300 opacity-50",
 									errors.firstname ? "border-red-300" : "border-gray-300"
@@ -152,7 +152,7 @@ const RegistrationForm = () => {
 								type="text"
 								name="lastname"
 								disabled={isSubmitting}
-								className={classNames(
+								className={classnames(
 									"block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
 									isSubmitting && "pointer-events-none cursor-not-allowed bg-gray-300 opacity-50",
 									errors.lastname ? "border-red-300" : "border-gray-300"
@@ -179,7 +179,7 @@ const RegistrationForm = () => {
 								type="text"
 								name="username"
 								disabled={isSubmitting}
-								className={classNames(
+								className={classnames(
 									"block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
 									isSubmitting && "pointer-events-none cursor-not-allowed bg-gray-300 opacity-50",
 									errors.username ? "border-red-300" : "border-gray-300"
@@ -206,7 +206,7 @@ const RegistrationForm = () => {
 								type="email"
 								name="email"
 								disabled={isSubmitting}
-								className={classNames(
+								className={classnames(
 									"block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
 									isSubmitting && "pointer-events-none cursor-not-allowed bg-gray-300 opacity-50 ",
 									errors.email ? "border-red-300" : "border-gray-300"
@@ -233,7 +233,7 @@ const RegistrationForm = () => {
 								type="password"
 								name="password1"
 								disabled={isSubmitting}
-								className={classNames(
+								className={classnames(
 									"block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
 									isSubmitting && "pointer-events-none cursor-not-allowed bg-gray-300 opacity-50",
 									errors.password1 ? "border-red-300" : "border-gray-300"
@@ -261,7 +261,7 @@ const RegistrationForm = () => {
 								type="password"
 								name="password2"
 								disabled={isSubmitting}
-								className={classNames(
+								className={classnames(
 									"block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm sm:leading-5",
 									isSubmitting && "pointer-events-none cursor-not-allowed bg-gray-300 opacity-50",
 									errors.password2 ? "border-red-300" : "border-gray-300"
@@ -283,7 +283,7 @@ const RegistrationForm = () => {
 							<button
 								type="submit"
 								disabled={isSubmitting}
-								className={classNames(
+								className={classnames(
 									"flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm",
 									isSubmitting
 										? "pointer-events-none cursor-not-allowed bg-indigo-300 opacity-50"

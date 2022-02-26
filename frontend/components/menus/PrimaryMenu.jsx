@@ -8,7 +8,7 @@ import { ArrowLeftIcon } from "@heroicons/react/solid";
 import { useSites } from "@hooks/useSites";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -70,7 +70,7 @@ const PrimaryMenu = () => {
 													return value2.slug !== "go-back-to-sites" ? (
 														<Link key={value2.slug} href={value2.url} passHref>
 															<a
-																className={classNames(
+																className={classnames(
 																	"group mt-1 flex items-center justify-between  rounded-md px-3 py-2 text-sm font-medium leading-5 ",
 																	asPath.includes(value2.url) &&
 																		isComponentReady &&
@@ -147,7 +147,7 @@ const PrimaryMenu = () => {
 													) : (
 														<Link key={value.slug} href={value2.url} passHref>
 															<a
-																className={classNames(
+																className={classnames(
 																	"group mt-1 flex items-center rounded-md py-2 text-sm font-medium leading-5 text-gray-400 hover:text-gray-100 focus:text-white focus:outline-none",
 																	isComponentReady &&
 																		user &&

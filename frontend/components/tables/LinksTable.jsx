@@ -1,7 +1,7 @@
 import { MemoizedLoadingMessage } from "@components/messages/LoadingMessage";
 import { MemoizedDataSorting } from "@components/sorting/DataSorting";
 import { LinksTableLabels } from "@constants/LinksTableLabels";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
@@ -32,7 +32,7 @@ const LinksTable = ({ count = 0, results = [], validatingLinks = false }) => {
 	return (
 		<Scrollbars autoHide universal>
 			<section
-				className={classNames(
+				className={classnames(
 					"flex h-full min-h-full w-full flex-col",
 					count > 0 && results?.length > 0 ? "justify-start" : "justify-center"
 				)}

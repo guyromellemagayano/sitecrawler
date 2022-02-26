@@ -1,7 +1,7 @@
 import { handleUnitAmountToRealPrice } from "@helpers/handleUnitAmountToRealPrice";
 import { CheckIcon } from "@heroicons/react/solid";
 import { useCurrentSubscription } from "@hooks/useCurrentSubscription";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import { handleConversionStringToLowercase } from "@utils/convertCase";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
@@ -83,7 +83,7 @@ const BasicPlan = ({ data = null, setPlanId, setPlanName, setOpen }) => {
 						</ul>
 						<div className="mt-8">
 							<div
-								className={classNames(
+								className={classnames(
 									"rounded-lg",
 									planName === "basic" && currentSubscriptionId == null ? "shadow-none" : "shadow-sm"
 								)}
@@ -91,7 +91,7 @@ const BasicPlan = ({ data = null, setPlanId, setPlanName, setOpen }) => {
 								<button
 									type="button"
 									disabled={planName === "basic" && currentSubscriptionId == null ? true : false}
-									className={classNames(
+									className={classnames(
 										"block w-full rounded-lg border border-transparent px-6 py-4 text-center text-lg font-medium leading-6 text-white focus:outline-none focus:ring-2 focus:ring-offset-2",
 										planName === "basic" && currentSubscriptionId == null
 											? currentSubscriptionCancelAt == null

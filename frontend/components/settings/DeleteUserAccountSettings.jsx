@@ -2,7 +2,7 @@ import { MemoizedDeleteUserAccountModal } from "@components/modals/DeleteUserAcc
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
@@ -50,7 +50,7 @@ const DeleteUserAccountSettings = () => {
 								type="button"
 								disabled={showModal}
 								id="user-account-delete-modal-button"
-								className={classNames(
+								className={classnames(
 									"inline-flex w-full cursor-pointer justify-center rounded-md border border-gray-300 bg-red-600 px-4 py-2 text-sm font-medium leading-5 text-white shadow-sm transition duration-150 ease-in-out sm:text-sm sm:leading-5",
 									showModal
 										? "cursor-not-allowed opacity-50"

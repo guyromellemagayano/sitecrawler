@@ -5,7 +5,7 @@ import { handlePostMethod } from "@helpers/handleHttpMethods";
 import { InformationCircleIcon } from "@heroicons/react/outline";
 import { ClipboardIcon } from "@heroicons/react/solid";
 import { useNotificationMessage } from "@hooks/useNotificationMessage";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { forwardRef, Fragment, memo, useEffect, useState } from "react";
@@ -222,7 +222,7 @@ const SiteVerifyModal = (
 															<input
 																type="text"
 																name="verify-id-meta-tag"
-																className={classNames(
+																className={classnames(
 																	"block w-full rounded-none rounded-l-md border-gray-300 text-gray-400 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
 																	disableSiteVerify && "cursor-not-allowed bg-gray-300 opacity-50"
 																)}
@@ -233,7 +233,7 @@ const SiteVerifyModal = (
 
 															<CopyToClipboard onCopy={handleInputCopy} text={copyValue}>
 																<button
-																	className={classNames(
+																	className={classnames(
 																		"relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700",
 																		disableSiteVerify
 																			? "cursor-not-allowed bg-gray-300 opacity-50"
@@ -263,7 +263,7 @@ const SiteVerifyModal = (
 														return (
 															<h3
 																key={key}
-																className={classNames(
+																className={classnames(
 																	"break-words text-sm font-medium leading-5",
 																	isSuccess ? "text-green-800" : "text-red-800"
 																)}
@@ -293,7 +293,7 @@ const SiteVerifyModal = (
 												type="submit"
 												tabIndex="0"
 												disabled={disableSiteVerify}
-												className={classNames(
+												className={classnames(
 													"relative mt-3 inline-flex w-full cursor-pointer items-center rounded-md border border-transparent bg-yellow-600 px-4 py-2 text-sm font-medium leading-5 text-white sm:mt-0",
 													disableSiteVerify
 														? "cursor-not-allowed opacity-50"
@@ -321,7 +321,7 @@ const SiteVerifyModal = (
 									<button
 										type="button"
 										disabled={disableSiteVerify}
-										className={classNames(
+										className={classnames(
 											"mr-3 inline-flex w-full cursor-pointer justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium  text-gray-700 shadow-sm ",
 											disableSiteVerify
 												? "cursor-not-allowed opacity-50"
