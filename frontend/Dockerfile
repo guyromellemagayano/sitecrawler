@@ -9,7 +9,7 @@ WORKDIR /app
 
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
-COPY . ./
+COPY . .
 
 EXPOSE 3000
 ENV PORT 3000
@@ -18,7 +18,7 @@ ENV PORT 3000
 FROM node:17-alpine AS builder
 WORKDIR /app
 COPY --from=dev /app/node_modules ./node_modules
-COPY . ./
+COPY . .
 
 RUN yarn build
 
@@ -26,6 +26,8 @@ RUN yarn build
 FROM node:17-alpine AS prod
 
 ENV NODE_ENV production
+
+WORKDIR /app
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
@@ -39,6 +41,8 @@ COPY --from=builder /app/package.json ./package.json
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
 
 EXPOSE 3000
 ENV PORT 3000
