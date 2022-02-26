@@ -1,10 +1,10 @@
 # Install dependencies only when needed
 FROM node:17-alpine AS dev
 
-ENV NODE_ENV development
-
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
+
+ENV NODE_ENV development
 WORKDIR /app
 
 COPY package.json yarn.lock ./
@@ -14,20 +14,13 @@ COPY . .
 EXPOSE 3000
 ENV PORT 3000
 
-# Rebuild the source code only when needed
-FROM node:17-alpine AS builder
-WORKDIR /app
-COPY --from=dev /app/node_modules ./node_modules
-COPY . .
-
-RUN yarn build
-
 # Production image, copy all the files and run next
 FROM node:17-alpine AS prod
 
 ENV NODE_ENV production
-
 WORKDIR /app
+COPY --from=dev /app/node_modules ./node_modules
+COPY . .
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
@@ -47,4 +40,5 @@ USER nextjs
 EXPOSE 3000
 ENV PORT 3000
 
+RUN yarn build
 CMD yarn start
