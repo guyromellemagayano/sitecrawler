@@ -77,14 +77,15 @@ const SiteSelectDropdown = ({ handleSiteSelectOnClick, openDropdown = false }, r
 				showModal={isSiteLimitComponentVisible}
 				setShowModal={setIsSiteLimitComponentVisible}
 			/>
+
 			<Transition
 				show={openDropdown}
-				enter="site-select-dropdown-enter"
-				enterFrom="site-select-dropdown-enter-from"
-				enterTo="site-select-dropdown-enter-to"
-				leave="site-select-dropdown-leave"
-				leaveFrom="site-select-dropdown-leave-from"
-				leaveTo="site-select-dropdown-leave-to"
+				enter="transition ease-out duration-100"
+				enterFrom="transform opacity-0 scale-95"
+				enterTo="transform opacity-100 scale-100"
+				leave="transition ease-in duration-75"
+				leaveFrom="transform opacity-100 scale-100"
+				leaveTo="transform opacity-0 scale-95"
 			>
 				<div ref={ref} className="absolute z-50 mt-1 w-full overflow-hidden rounded-md bg-white shadow-lg">
 					<MemoizedSitesList isOpen={openDropdown} />

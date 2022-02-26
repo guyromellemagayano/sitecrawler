@@ -111,20 +111,21 @@ const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 		<Transition.Root show={showModal} as={Fragment}>
 			<Dialog
 				as="div"
-				className="delete-user-account-modal-dialog"
+				className="fixed inset-0 z-50 overflow-y-auto"
 				initialFocus={ref}
 				onClose={!disableDeleteUser ? setShowModal : () => {}}
 			>
 				<div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
 					<Transition.Child
-						enter="delete-user-account-modal-first-child-enter"
-						enterFrom="delete-user-account-modal-first-child-enter-from"
-						enterTo="delete-user-account-modal-first-child-enter-to"
-						leave="delete-user-account-modal-first-child-leave"
-						leaveFrom="delete-user-account-modal-first-child-leave-from"
-						leaveTo="delete-user-account-modal-first-child-leave-to"
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
 					>
-						<Dialog.Overlay className="delete-user-account-modal-dialog-overlay" />
+						<Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
 					</Transition.Child>
 
 					{/* This element is to trick the browser into centering the modal contents. */}
@@ -134,12 +135,12 @@ const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 
 					<Transition.Child
 						as={Fragment}
-						enter="delete-user-account-modal-second-child-enter"
-						enterFrom="delete-user-account-modal-second-child-enter-from"
-						enterTo="delete-user-account-modal-second-child-enter-to"
-						leave="delete-user-account-modal-second-child-leave"
-						leaveFrom="delete-user-account-modal-second-child-leave-from"
-						leaveTo="delete-user-account-modal-second-child-leave-to"
+						enter="ease-out duration-300"
+						enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+						enterTo="opacity-100 translate-y-0 sm:scale-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+						leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 					>
 						{state?.responses?.map((value, key) => {
 							// Alert Messsages

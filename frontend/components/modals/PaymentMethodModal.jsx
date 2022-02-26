@@ -56,14 +56,14 @@ const PaymentMethodModal = (
 		<Transition show={open} className="fixed inset-0 z-50 overflow-y-auto">
 			<div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0"></div>
 			<Transition.Child
-				enter="payment-method-modal-first-child-enter"
-				enterFrom="payment-method-modal-first-child-enter-from"
-				enterTo="payment-method-modal-first-child-enter-to"
-				leave="payment-method-modal-first-child-leave"
-				leaveFrom="payment-method-modal-first-child-leave-from"
-				leaveTo="payment-method-modal-first-child-leave-to"
+				enter="change-to-basic-modal-first-child-enter"
+				enterFrom="change-to-basic-modal-first-child-enter-from"
+				enterTo="change-to-basic-modal-first-child-enter-to"
+				leave="change-to-basic-modal-first-child-leave"
+				leaveFrom="change-to-basic-modal-first-child-leave-from"
+				leaveTo="change-to-basic-modal-first-child-leave-to"
 			>
-				<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity">
+				<div className="fixed inset-0 transition-opacity" aria-hidden="true">
 					<div className="absolute inset-0 bg-gray-500 opacity-75"></div>
 				</div>
 			</Transition.Child>
@@ -73,12 +73,12 @@ const PaymentMethodModal = (
 			</span>
 
 			<Transition.Child
-				enter="payment-method-modal-second-child-enter"
-				enterFrom="payment-method-modal-second-child-enter-from"
-				enterTo="payment-method-modal-second-child-enter-to"
-				leave="payment-method-modal-second-child-leave"
-				leaveFrom="payment-method-modal-second-child-leave-from"
-				leaveTo="payment-method-modal-second-child-leave-to"
+				enter="change-to-basic-modal-second-child-enter"
+				enterFrom="change-to-basic-modal-second-child-enter-from"
+				enterTo="change-to-basic-modal-second-child-enter-to"
+				leave="change-to-basic-modal-second-child-leave"
+				leaveFrom="change-to-basic-modal-second-child-leave-from"
+				leaveTo="change-to-basic-modal-second-child-leave-to"
 			>
 				<div
 					ref={ref}

@@ -34,12 +34,12 @@ const Alert = ({ responseText = null, isSuccess = false }) => {
 		<Transition
 			show={isOpen}
 			as={Fragment}
-			enter="alerts-enter"
-			enterFrom="alerts-enter-from"
-			enterTo="alerts-enter-to"
-			leave="alerts-leave"
-			leaveFrom="alerts-leave-from"
-			leaveTo="alerts-leave-to"
+			enter="transition-opacity duration-75"
+			enterFrom="opacity-0"
+			enterTo="opacity-100"
+			leave="transition-opacity duration-150"
+			leaveFrom="opacity-100"
+			leaveTo="opacity-0"
 		>
 			<div
 				className={classNames(

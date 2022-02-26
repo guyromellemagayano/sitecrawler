@@ -39,12 +39,12 @@ const NewActivePlanModal = ({ planId = null, planName = null, showModal = false,
 		<Transition show={showModal}>
 			<div className="fixed inset-x-0 bottom-0 z-50 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center">
 				<Transition.Child
-					enter="new-active-plan-modal-first-child-enter"
-					enterFrom="new-active-plan-modal-first-child-enter-from"
-					enterTo="new-active-plan-modal-first-child-enter-to"
-					leave="new-active-plan-modal-first-child-leave"
-					leaveFrom="new-active-plan-modal-first-child-leave-from"
-					leaveTo="new-active-plan-modal-first-child-leave-to"
+					enter="change-to-basic-modal-first-child-enter"
+					enterFrom="change-to-basic-modal-first-child-enter-from"
+					enterTo="change-to-basic-modal-first-child-enter-to"
+					leave="change-to-basic-modal-first-child-leave"
+					leaveFrom="change-to-basic-modal-first-child-leave-from"
+					leaveTo="change-to-basic-modal-first-child-leave-to"
 				>
 					<div className="fixed inset-0 transition-opacity" aria-hidden="true">
 						<div className="absolute inset-0 bg-gray-500 opacity-75"></div>
@@ -54,12 +54,12 @@ const NewActivePlanModal = ({ planId = null, planName = null, showModal = false,
 				<span className="hidden sm:inline-block sm:h-screen sm:align-middle">&#8203;</span>
 
 				<Transition.Child
-					enter="new-active-plan-modal-second-child-enter"
-					enterFrom="new-active-plan-modal-second-child-enter-from"
-					enterTo="new-active-plan-modal-second-child-enter-to"
-					leave="new-active-plan-modal-second-child-leave"
-					leaveFrom="new-active-plan-modal-second-child-leave-from"
-					leaveTo="new-active-plan-modal-second-child-leave-to"
+					enter="change-to-basic-modal-second-child-enter"
+					enterFrom="change-to-basic-modal-second-child-enter-from"
+					enterTo="change-to-basic-modal-second-child-enter-to"
+					leave="change-to-basic-modal-second-child-leave"
+					leaveFrom="change-to-basic-modal-second-child-leave-from"
+					leaveTo="change-to-basic-modal-second-child-leave-to"
 				>
 					<div
 						ref={ref}

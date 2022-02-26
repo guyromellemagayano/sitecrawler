@@ -156,14 +156,14 @@ const SiteVerifyModal = (
 				<div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
 					<Transition.Child
 						as={Fragment}
-						enter="site-verify-modal-first-child-enter"
-						enterFrom="site-verify-modal-first-child-enter-from"
-						enterTo="site-verify-modal-first-child-enter-to"
-						leave="site-verify-modal-first-child-leave"
-						leaveFrom="site-verify-modal-first-child-leave-from"
-						leaveTo="site-verify-modal-first-child-leave-to"
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
 					>
-						<Dialog.Overlay className="site-verify-modal-dialog-overlay" />
+						<Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
 					</Transition.Child>
 
 					{/* This element is to trick the browser into centering the modal contents. */}
@@ -173,12 +173,12 @@ const SiteVerifyModal = (
 
 					<Transition.Child
 						as={Fragment}
-						enter="site-verify-modal-second-child-enter"
-						enterFrom="site-verify-modal-second-child-enter-from"
-						enterTo="site-verify-modal-second-child-enter-to"
-						leave="site-verify-modal-second-child-leave"
-						leaveFrom="site-verify-modal-second-child-leave-from"
-						leaveTo="site-verify-modal-second-child-leave-to"
+						enter="ease-out duration-300"
+						enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+						enterTo="opacity-100 translate-y-0 sm:scale-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+						leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 					>
 						<div className="inline-block transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6 sm:align-middle">
 							<div className="sm:flex sm:items-start">
@@ -186,7 +186,7 @@ const SiteVerifyModal = (
 									<InformationCircleIcon className="h-6 w-6 text-yellow-600" />
 								</div>
 								<div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-									<Dialog.Title as="h3" className="site-verify-modal-second-child-title">
+									<Dialog.Title as="h3" className="text-lg font-medium text-gray-900">
 										{verifySiteTitleText}
 									</Dialog.Title>
 
@@ -204,7 +204,7 @@ const SiteVerifyModal = (
 											</a>
 										</span>
 
-										<Dialog.Description as="p" className="site-verify-modal-second-child-description">
+										<Dialog.Description as="p" className="mt-4 mb-3 text-sm text-gray-500">
 											{instructionsText}
 										</Dialog.Description>
 

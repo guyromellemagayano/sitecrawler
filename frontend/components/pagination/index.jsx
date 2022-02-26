@@ -150,7 +150,7 @@ const DataPagination = ({ isValidating = false }) => {
 			</div>
 
 			<Pagination
-				className="pagination"
+				className="flex"
 				current={currentPage}
 				defaultCurrent={currentPage}
 				defaultPageSize={pageNumbers[0]}
