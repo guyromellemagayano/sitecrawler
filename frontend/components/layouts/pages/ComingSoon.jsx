@@ -4,7 +4,6 @@ import useTranslation from "next-translate/useTranslation";
 import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import "twin.macro";
 
 /**
  * Custom function to render the `ComingSoonPageLayout` component
@@ -21,9 +20,9 @@ const ComingSoonPageLayout = () => {
 	const { user } = useUser();
 
 	return (
-		<div tw="flex-grow flex justify-center items-center p-4 m-auto">
+		<div className="m-auto flex flex-grow items-center justify-center p-4">
 			{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-				<h3 tw="text-sm leading-6 font-medium text-gray-500">{comingSoon}</h3>
+				<h3 className="text-sm font-medium leading-6 text-gray-500">{comingSoon}</h3>
 			) : (
 				<Skeleton duration={2} width={196} height={16} />
 			)}

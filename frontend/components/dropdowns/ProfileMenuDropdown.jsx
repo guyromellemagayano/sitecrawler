@@ -4,13 +4,13 @@ import { SidebarMenus } from "@constants/SidebarMenus";
 import { Transition } from "@headlessui/react";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
+import { classNames } from "@utils/classNames";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import PropTypes from "prop-types";
 import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import tw from "twin.macro";
 
 /**
  * Custom function to render the `ProfileMenuDropdown` component
@@ -35,75 +35,80 @@ const ProfileMenuDropdown = ({ isComponentVisible = false }) => {
 	return (
 		<Transition
 			show={isComponentVisible}
-			enter="profile-menu-dropdown-enter"
-			enterFrom="profile-menu-dropdown-enter-from"
-			enterTo="profile-menu-dropdown-enter-to"
-			leave="profile-menu-dropdown-leave"
-			leaveFrom="profile-menu-dropdown-leave-from"
-			leaveTo="profile-menu-dropdown-leave-to"
-			tw="z-50 mx-3 origin-top absolute right-0 left-0 bottom-0 mt-1 mb-20 rounded-md shadow-lg"
+			enter="transition ease-out duration-100"
+			enterFrom="transform opacity-0 scale-95"
+			enterTo="transform opacity-100 scale-100"
+			leave="transition ease-in duration-75"
+			leaveFrom="transform opacity-100 scale-100"
+			leaveTo="transform opacity-0 scale-95"
 		>
-			<div tw="rounded-md bg-white" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-				<div tw="py-1">
-					<span className="group" tw="flex justify-between items-center my-1 px-4 py-2">
-						<span
-							css={[
-								tw`text-sm leading-5 font-medium`,
-								group.name === Basic ? tw`text-green-800` : group.name === Pro ? tw`text-blue-800` : tw`text-red-800`
-							]}
-						>
+			<div className="absolute right-0 left-0 bottom-0 z-50 mx-3 mt-1 mb-20 origin-top rounded-md shadow-lg">
+				<div className="rounded-md bg-white" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+					<div className="py-1">
+						<span className="group my-1 flex items-center justify-between px-4 py-2">
+							<span
+								className={classNames(
+									"text-sm font-medium leading-5",
+									group.name === Basic ? "text-green-800" : group.name === Pro ? "text-blue-800" : "text-red-800"
+								)}
+							>
+								{isComponentReady &&
+								user &&
+								Math.round(user?.status / 100) === 2 &&
+								!user?.data?.detail &&
+								group.name ? (
+									group.name + " " + plan
+								) : (
+									<Skeleton duration={2} width={67} height={20} />
+								)}
+							</span>
+
 							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && group.name ? (
-								group.name + " " + plan
+								group.name === Basic || group.name === Pro ? (
+									<Link href={SubscriptionPlansSettingsLink} passHref>
+										<a
+											className={classNames(
+												"inline-flex cursor-pointer items-center rounded px-2 py-1 text-xs font-medium leading-4 transition duration-150 ease-in-out hover:text-white",
+												group.name === Basic
+													? "bg-green-200 text-green-800 hover:bg-green-600"
+													: "bg-blue-200 text-blue-800 hover:bg-blue-600"
+											)}
+										>
+											<small>{upgrade}</small>
+										</a>
+									</Link>
+								) : null
 							) : (
-								<Skeleton duration={2} width={67} height={20} />
+								<Skeleton duration={2} width={57} height={24} />
 							)}
 						</span>
-
-						{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && group.name ? (
-							group.name === Basic || group.name === Pro ? (
-								<Link href={SubscriptionPlansSettingsLink} passHref>
-									<a
-										css={[
-											tw`text-xs leading-4 font-medium inline-flex items-center px-2 py-1 rounded hover:text-white cursor-pointer transition ease-in-out duration-150`,
-											group.name === Basic
-												? tw`bg-green-200 text-green-800 hover:bg-green-600`
-												: tw`bg-blue-200 text-blue-800 hover:bg-blue-600`
-										]}
-									>
-										<small>{upgrade}</small>
-									</a>
-								</Link>
-							) : null
-						) : (
-							<Skeleton duration={2} width={57} height={24} />
-						)}
-					</span>
-				</div>
-				<div tw="border-t border-gray-300"></div>
-				<div tw="py-1">
-					{ProfileSidebarMenus[0].links.map((val, key) => (
-						<Link key={key} href={val.url} passHref>
-							<a
-								tw="block px-4 py-2 text-sm leading-5 text-gray-700 cursor-pointer hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
-								role="menuitem"
-							>
-								{val.title}
-							</a>
-						</Link>
-					))}
-				</div>
-				<div tw="border-t border-gray-300"></div>
-				<div tw="py-1">
-					{ProfileSidebarMenus[1].links.map((val, key) => (
-						<Link key={key} href={val.url} passHref>
-							<a
-								tw="block px-4 py-2 text-sm leading-5 text-gray-700 cursor-pointer hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
-								role="menuitem"
-							>
-								{val.title}
-							</a>
-						</Link>
-					))}
+					</div>
+					<div className="border-t border-gray-300"></div>
+					<div className="py-1">
+						{ProfileSidebarMenus[0].links.map((val, key) => (
+							<Link key={key} href={val.url} passHref>
+								<a
+									className="block cursor-pointer px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none"
+									role="menuitem"
+								>
+									{val.title}
+								</a>
+							</Link>
+						))}
+					</div>
+					<div className="border-t border-gray-300"></div>
+					<div className="py-1">
+						{ProfileSidebarMenus[1].links.map((val, key) => (
+							<Link key={key} href={val.url} passHref>
+								<a
+									className="block cursor-pointer px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none"
+									role="menuitem"
+								>
+									{val.title}
+								</a>
+							</Link>
+						))}
+					</div>
 				</div>
 			</div>
 		</Transition>

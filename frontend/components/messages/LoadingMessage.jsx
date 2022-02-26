@@ -1,7 +1,6 @@
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
 import { memo } from "react";
-import "twin.macro";
 
 /**
  * Custom function to render the `LoadingMessage` component
@@ -14,7 +13,7 @@ const LoadingMessage = ({ message = null }) => {
 	const loaderMessage = t("loaderMessage");
 
 	return (
-		<h3 tw="text-sm leading-6 font-medium text-gray-500">
+		<h3 className="text-sm font-medium leading-6 text-gray-500">
 			{message !== null && message?.length > 0 && typeof message === "string" ? message : loaderMessage}
 		</h3>
 	);

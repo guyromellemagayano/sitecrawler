@@ -7,13 +7,13 @@ import { handlePostMethod } from "@helpers/handleHttpMethods";
 import { useShowPassword } from "@hooks/useShowPassword";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import * as Sentry from "@sentry/nextjs";
+import { classNames } from "@utils/classNames";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { memo, useContext } from "react";
 import { useSWRConfig } from "swr";
-import tw from "twin.macro";
 import * as Yup from "yup";
 
 /**
@@ -114,22 +114,22 @@ const LoginForm = () => {
 			{({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
 				<>
 					<form onSubmit={handleSubmit}>
-						<div tw="mt-1">
-							<label htmlFor="username" tw="block text-sm font-medium text-gray-700">
+						<div className="mt-1">
+							<label htmlFor="username" className="block text-sm font-medium text-gray-700">
 								{username}
 							</label>
-							<div tw="mt-1">
+							<div className="mt-1">
 								<input
 									id="username"
 									name="username"
 									type="text"
 									autoComplete="username"
 									disabled={isSubmitting}
-									css={[
-										tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
-										isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
-										errors.username ? tw`border-red-300` : tw`border-gray-300`
-									]}
+									className={classNames(
+										"block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+										isSubmitting && "pointer-events-none cursor-not-allowed bg-gray-300 opacity-50",
+										errors.username ? "border-red-300" : "border-gray-300"
+									)}
 									aria-describedby="username"
 									onChange={handleChange}
 									onBlur={handleBlur}
@@ -138,29 +138,29 @@ const LoginForm = () => {
 							</div>
 
 							{errors.username || touched.username ? (
-								<span tw="block mt-2 text-xs leading-5 text-red-700">{errors.username || touched.username}</span>
+								<span className="mt-2 block text-xs leading-5 text-red-700">{errors.username || touched.username}</span>
 							) : null}
 						</div>
 
-						<div tw="mt-6">
-							<div tw="flex items-center justify-between">
-								<label htmlFor="password" tw="block text-sm font-medium text-gray-700">
+						<div className="mt-6">
+							<div className="flex items-center justify-between">
+								<label htmlFor="password" className="block text-sm font-medium text-gray-700">
 									{password}
 								</label>
-								<div tw="text-xs">
+								<div className="text-xs">
 									<button
 										type="button"
-										css={[
-											tw`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none cursor-pointer`,
-											isSubmitting && tw`opacity-50 text-gray-500 cursor-not-allowed pointer-events-none`
-										]}
+										className={classNames(
+											"cursor-pointer font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none",
+											isSubmitting && "pointer-events-none cursor-not-allowed text-gray-500 opacity-50"
+										)}
 										onClick={() => setIsPasswordShown(!isPasswordShown)}
 									>
 										{isPasswordShown ? hidePassword : showPassword}
 									</button>
 								</div>
 							</div>
-							<div tw="mt-1">
+							<div className="mt-1">
 								<input
 									ref={passwordRef}
 									id="password"
@@ -168,11 +168,11 @@ const LoginForm = () => {
 									type="password"
 									autoComplete="current-password"
 									disabled={isSubmitting}
-									css={[
-										tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
-										isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
-										errors.password ? tw`border-red-300` : tw`border-gray-300`
-									]}
+									className={classNames(
+										"block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+										isSubmitting && "pointer-events-none cursor-not-allowed bg-gray-300 opacity-50",
+										errors.password ? "border-red-300" : "border-gray-300"
+									)}
 									aria-describedby="password"
 									onChange={handleChange}
 									onBlur={handleBlur}
@@ -181,37 +181,37 @@ const LoginForm = () => {
 							</div>
 
 							{errors.password || touched.password ? (
-								<span tw="block mt-2 text-xs leading-5 text-red-700">{errors.password || touched.password}</span>
+								<span className="mt-2 block text-xs leading-5 text-red-700">{errors.password || touched.password}</span>
 							) : null}
 						</div>
 
-						<div tw="mt-6 flex items-center justify-between">
-							<div tw="flex items-center">
+						<div className="mt-6 flex items-center justify-between">
+							<div className="flex items-center">
 								<input
 									id="rememberme"
 									name="rememberme"
 									type="checkbox"
 									disabled={isSubmitting}
-									css={[
-										tw`h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded`,
-										isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`
-									]}
+									className={classNames(
+										"h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500",
+										isSubmitting && "pointer-events-none cursor-not-allowed bg-gray-300 opacity-50"
+									)}
 									aria-describedby="rememberme"
 									onChange={handleChange}
 									value={values.rememberme}
 								/>
-								<label htmlFor="rememberme" tw="ml-2 block text-sm text-gray-900">
+								<label htmlFor="rememberme" className="ml-2 block text-sm text-gray-900">
 									{rememberMe}
 								</label>
 							</div>
 
-							<div tw="text-sm">
+							<div className="text-sm">
 								<Link href={ResetPasswordLink} passHref>
 									<a
-										css={[
-											tw`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150 cursor-pointer`,
-											isSubmitting && tw`opacity-50 text-gray-500 cursor-not-allowed pointer-events-none`
-										]}
+										className={classNames(
+											"cursor-pointer font-medium text-indigo-600 transition duration-150 ease-in-out hover:text-indigo-500 focus:underline focus:outline-none",
+											isSubmitting && "pointer-events-none cursor-not-allowed text-gray-500 opacity-50"
+										)}
 									>
 										{forgotPassword}
 									</a>
@@ -219,17 +219,17 @@ const LoginForm = () => {
 							</div>
 						</div>
 
-						<div tw="mt-6">
-							<span tw="block w-full rounded-md shadow-sm">
+						<div className="mt-6">
+							<span className="block w-full rounded-md shadow-sm">
 								<button
 									type="submit"
 									disabled={isSubmitting}
-									css={[
-										tw`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600`,
+									className={classNames(
+										"flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm",
 										isSubmitting
-											? tw`opacity-50 bg-indigo-300 cursor-not-allowed pointer-events-none`
-											: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
-									]}
+											? "pointer-events-none cursor-not-allowed bg-indigo-300 opacity-50"
+											: "hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+									)}
 								>
 									{isSubmitting ? signingIn : signIn}
 								</button>
@@ -237,34 +237,32 @@ const LoginForm = () => {
 						</div>
 					</form>
 
-					<div tw="mt-6">
-						<div tw="relative">
-							<div tw="absolute inset-0 flex items-center">
-								<div tw="w-full border-t border-gray-300"></div>
+					<div className="mt-6">
+						<div className="relative">
+							<div className="absolute inset-0 flex items-center">
+								<div className="w-full border-t border-gray-300"></div>
 							</div>
-							<div tw="relative flex justify-center text-sm leading-5">
-								<span tw="px-2 bg-white text-gray-600">{continueWith}</span>
+							<div className="relative flex justify-center text-sm leading-5">
+								<span className="bg-white px-2 text-gray-600">{continueWith}</span>
 							</div>
 						</div>
 
-						<div tw="mt-6 grid grid-cols-1 gap-3">
+						<div className="mt-6 grid grid-cols-1 gap-3">
 							{linksArray.map((links, key) => {
 								return (
 									<div key={key}>
-										<span tw="w-full inline-flex rounded-md shadow-sm">
+										<span className="inline-flex w-full rounded-md shadow-sm">
 											<a
 												href={links.href}
 												disabled={links.disabled}
 												title={links.label}
-												css={[
-													tw`w-full inline-flex items-center justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-500`,
-													links.disabled
-														? tw`bg-gray-300 opacity-50 cursor-not-allowed pointer-events-none`
-														: tw`bg-white`,
-													isSubmitting ? tw`bg-gray-300 cursor-not-allowed pointer-events-none` : tw`hover:bg-gray-50`
-												]}
+												className={classNames(
+													"inline-flex w-full items-center justify-center rounded-md border border-gray-300 py-2 px-4 text-sm font-medium text-gray-500 shadow-sm",
+													links.disabled ? "pointer-events-none cursor-not-allowed bg-gray-300 opacity-50" : "bg-white",
+													isSubmitting ? "pointer-events-none cursor-not-allowed bg-gray-300" : "hover:bg-gray-50"
+												)}
 											>
-												<FontAwesomeIcon icon={links.icon} tw="-ml-0.5 w-4 h-4 mr-3" />
+												<FontAwesomeIcon icon={links.icon} className="-ml-0.5 mr-3 h-4 w-4" />
 												{links.label}
 											</a>
 										</span>

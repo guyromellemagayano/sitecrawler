@@ -8,7 +8,6 @@ import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { memo } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
-import "twin.macro";
 import { MemoizedFooter } from "../components/Footer";
 
 /**
@@ -27,32 +26,32 @@ const LoginPageLayout = () => {
 		<>
 			<NextSeo title={loginText} />
 			<Scrollbars autoHide universal>
-				<section tw="h-screen bg-gray-50 flex flex-col justify-center relative overflow-auto py-12 sm:px-6 lg:px-8">
-					<div tw="mx-auto max-w-screen-xl">
-						<div tw="lg:grid lg:grid-cols-12 lg:gap-8">
-							<div tw="px-4 sm:px-6 sm:text-center md:max-w-2xl md:mx-auto lg:col-span-7 lg:text-left lg:flex lg:items-center">
+				<section className="relative flex h-screen flex-col justify-center overflow-auto bg-gray-50 py-12 sm:px-6 lg:px-8">
+					<div className="mx-auto max-w-screen-xl">
+						<div className="lg:grid lg:grid-cols-12 lg:gap-8">
+							<div className="px-4 sm:px-6 sm:text-center md:mx-auto md:max-w-2xl lg:col-span-7 lg:flex lg:items-center lg:text-left">
 								<div>
 									<SiteLogoDark className="flex" width={NoAuthAppLogo.width} height={NoAuthAppLogo.height} />
-									<h4 tw="mt-4 text-4xl tracking-tight text-center lg:text-left leading-10 font-bold text-gray-900 sm:mt-5 sm:leading-none">
+									<h4 className="mt-4 text-center text-4xl font-bold leading-10 tracking-tight text-gray-900 sm:mt-5 sm:leading-none lg:text-left">
 										{headline}&nbsp;
-										<span tw="text-red-600">{highlight}</span>
-										<br tw="hidden md:inline" />
+										<span className="text-red-600">{highlight}</span>
+										<br className="hidden md:inline" />
 									</h4>
 								</div>
 							</div>
-							<div tw="mt-12 sm:mt-16 lg:mt-0 lg:col-span-5">
+							<div className="mt-12 sm:mt-16 lg:col-span-5 lg:mt-0">
 								<MemoizedLogoLabel isLogin />
 
-								<div tw="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-									<div tw="bg-white mt-8 py-8 px-4 shadow-xl rounded-lg sm:px-10">
+								<div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+									<div className="mt-8 rounded-lg bg-white py-8 px-4 shadow-xl sm:px-10">
 										<MemoizedLoginForm />
 									</div>
 
-									<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
-										<span tw="px-2 py-5 text-gray-500">
+									<div className="relative flex flex-row flex-wrap justify-center text-sm leading-5">
+										<span className="px-2 py-5 text-gray-500">
 											{noAccount}&nbsp;
 											<Link href={RegistrationLink} passHref>
-												<a tw="font-medium text-indigo-600 cursor-pointer hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150">
+												<a className="cursor-pointer font-medium text-indigo-600 transition duration-150 ease-in-out hover:text-indigo-500 focus:underline focus:outline-none">
 													{createAccount}
 												</a>
 											</Link>
@@ -62,7 +61,7 @@ const LoginPageLayout = () => {
 							</div>
 						</div>
 
-						<div tw="px-4 xl:px-10 xl:mt-32">
+						<div className="px-4 xl:mt-32 xl:px-10">
 							<MemoizedFooter />
 						</div>
 					</div>

@@ -5,13 +5,13 @@ import { ClipboardIcon, QuestionMarkCircleIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useLoading } from "@hooks/useLoading";
 import { useSites } from "@hooks/useSites";
+import { classNames } from "@utils/classNames";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import tw from "twin.macro";
 
 /**
  * Custom function to render the `VerifyUrl` component
@@ -108,11 +108,11 @@ const VerifyUrlStep = (props) => {
 		<>
 			<MemoizedShowHelpModal ref={showModalRef} showModal={showModal} setShowModal={setShowModal} siteData={siteData} />
 
-			<div tw="block pt-8 pb-12">
-				<div tw="py-4 m-auto">
-					<div tw="block mb-12">
-						<h3 tw="flex-1 text-xl leading-7 font-medium text-gray-900">
-							<span tw="flex-1">
+			<div className="block pt-8 pb-12">
+				<div className="m-auto py-4">
+					<div className="mb-12 block">
+						<h3 className="flex-1 text-xl font-medium leading-7 text-gray-900">
+							<span className="flex-1">
 								{isComponentReady && siteData !== null && Object.keys(siteData)?.length > 0 ? (
 									step === 2 && !verified ? (
 										verifySiteTitle + ": "
@@ -124,17 +124,17 @@ const VerifyUrlStep = (props) => {
 								)}
 							</span>
 						</h3>
-						<h4 tw="flex-1 text-lg leading-7 font-normal text-gray-600 mb-5">
+						<h4 className="mb-5 flex-1 text-lg font-normal leading-7 text-gray-600">
 							{isComponentReady && siteData !== null && Object.keys(siteData)?.length > 0 ? (
 								<>
-									<span tw="flex-1">{siteData?.name}</span>
-									<span tw="flex-1">
+									<span className="flex-1">{siteData?.name}</span>
+									<span className="flex-1">
 										&nbsp;&#40;
 										<a
 											href={siteData?.url}
 											target="_blank"
 											title={siteData?.url}
-											tw="break-all text-base leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150"
+											className="break-all text-base font-semibold leading-6 text-indigo-600 transition duration-150 ease-in-out hover:text-indigo-500"
 											rel="noreferrer"
 										>
 											{siteData?.url}
@@ -150,29 +150,29 @@ const VerifyUrlStep = (props) => {
 						{step === 2 && !verified ? (
 							isComponentReady && siteData !== null && Object.keys(siteData)?.length > 0 ? (
 								<>
-									<p tw="text-base leading-6 text-gray-700 mb-3">
+									<p className="mb-3 text-base leading-6 text-gray-700">
 										<strong>{instructions}:</strong>
 									</p>
 
-									<ol tw="list-decimal mb-5 space-y-2">
-										<li tw="ml-4 text-sm leading-6 text-gray-600">{instruction1}</li>
-										<li tw="ml-4 text-sm leading-6 text-gray-600">
+									<ol className="mb-5 list-decimal space-y-2">
+										<li className="ml-4 text-sm leading-6 text-gray-600">{instruction1}</li>
+										<li className="ml-4 text-sm leading-6 text-gray-600">
 											{instruction2}
 
-											<div tw="max-w-2xl">
-												<label htmlFor="verify_id_meta_tag" tw="sr-only">
+											<div className="max-w-2xl">
+												<label htmlFor="verify_id_meta_tag" className="sr-only">
 													{verifyIdMetaTag}
 												</label>
-												<div tw="mt-1 flex">
-													<div tw="relative flex items-stretch flex-grow focus-within:z-10">
+												<div className="mt-1 flex">
+													<div className="relative flex flex-grow items-stretch focus-within:z-10">
 														<input
 															type="text"
 															name="verifyidmetatag"
 															id="verifyidmetatag"
-															css={[
-																tw`text-gray-400 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-none rounded-l-md sm:text-sm border-gray-300`,
-																disableSiteVerify && tw`opacity-50 bg-gray-300 cursor-not-allowed`
-															]}
+															className={classNames(
+																"block w-full rounded-none rounded-l-md border-gray-300 text-gray-400 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+																disableSiteVerify && "cursor-not-allowed bg-gray-300 opacity-50"
+															)}
 															value={copyValue}
 															onChange={handleInputChange}
 															autoComplete="off"
@@ -180,51 +180,51 @@ const VerifyUrlStep = (props) => {
 
 														<CopyToClipboard onCopy={handleInputCopy} text={copyValue}>
 															<button
-																css={[
-																	tw`-ml-px relative inline-flex items-center space-x-2 px-4 py-2 border border-gray-300 text-sm font-medium rounded-r-md text-gray-700 bg-gray-50`,
+																className={classNames(
+																	"relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700",
 																	disableSiteVerify
-																		? tw`opacity-50 bg-gray-300 cursor-not-allowed`
-																		: tw`hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500`
-																]}
+																		? "cursor-not-allowed bg-gray-300 opacity-50"
+																		: "hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+																)}
 															>
-																<ClipboardIcon tw="h-5 w-5 text-gray-400" />
+																<ClipboardIcon className="h-5 w-5 text-gray-400" />
 																<span>{copied ? copiedText : copyText}</span>
 															</button>
 														</CopyToClipboard>
 													</div>
-													<span tw="inline-flex">
+													<span className="inline-flex">
 														<button
 															type="button"
-															tw="inline-flex items-center ml-3 text-gray-400 focus:outline-none"
+															className="ml-3 inline-flex items-center text-gray-400 focus:outline-none"
 															title={needHelp}
 															onClick={() => setShowModal(!showModal)}
 														>
-															<QuestionMarkCircleIcon tw="h-7 w-7" />
+															<QuestionMarkCircleIcon className="h-7 w-7" />
 														</button>
 													</span>
 												</div>
 											</div>
 										</li>
-										<li tw="ml-4 text-sm leading-6 text-gray-600">{instruction3}</li>
+										<li className="ml-4 text-sm leading-6 text-gray-600">{instruction3}</li>
 									</ol>
 								</>
 							) : (
 								<>
-									<p tw="text-base leading-6 text-gray-700 mb-3">
+									<p className="mb-3 text-base leading-6 text-gray-700">
 										<Skeleton duration={2} width={100} height={18} />
 									</p>
 
-									<div tw="list-decimal mb-5 space-y-2">
+									<div className="mb-5 list-decimal space-y-2">
 										<Skeleton duration={2} width={160} height={24} />
 										<Skeleton duration={2} width={320} height={24} />
 
-										<div tw="max-w-2xl">
-											<div tw="mt-1 flex items-center">
-												<div tw="relative flex items-stretch flex-grow focus-within:z-10">
+										<div className="max-w-2xl">
+											<div className="mt-1 flex items-center">
+												<div className="relative flex flex-grow items-stretch focus-within:z-10">
 													<Skeleton duration={2} width={632} height={38} />
 												</div>
-												<span tw="inline-flex">
-													<Skeleton duration={2} width={38} height={38} tw="inline-flex items-center ml-3" />
+												<span className="inline-flex">
+													<Skeleton duration={2} width={38} height={38} className="ml-3 inline-flex items-center" />
 												</span>
 											</div>
 										</div>

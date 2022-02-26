@@ -15,7 +15,6 @@ import PropTypes from "prop-types";
 import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import "twin.macro";
 
 /**
  * Custom function to render the `PagesData` component
@@ -112,8 +111,8 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 
 	return (
 		<tr ref={selectedSiteRef}>
-			<td tw="flex-none p-4 whitespace-nowrap">
-				<div tw="flex flex-col items-start">
+			<td className="flex-none whitespace-nowrap p-4">
+				<div className="flex flex-col items-start">
 					<div>
 						<>
 							{isComponentReady &&
@@ -125,20 +124,20 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 									{pageTlsStatus ? (
 										<span
 											aria-label="Ok"
-											tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-green-400"
+											className="relative -left-3 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-green-400 leading-5"
 										></span>
 									) : (
 										<span
 											aria-label="Error"
-											tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-red-400"
+											className="relative -left-3 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-red-400 leading-5"
 										></span>
 									)}
 
-									<div tw="inline-flex flex-col justify-start items-start">
-										<span tw="flex items-center justify-start text-sm leading-6 font-semibold text-gray-500">
+									<div className="inline-flex flex-col items-start justify-start">
+										<span className="flex items-center justify-start text-sm font-semibold leading-6 text-gray-500">
 											<p className="truncate-link">{pageUrl}</p>
 										</span>
-										<span tw="flex space-x-2 justify-start text-sm leading-5 text-gray-500">
+										<span className="flex justify-start space-x-2 text-sm leading-5 text-gray-500">
 											<Link
 												href="/dashboard/sites/[siteId]/pages/[pageId]/"
 												as={`/dashboard/sites/${sanitizedSiteId}/pages/${pageDetailId}`}
@@ -146,7 +145,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 											>
 												<a
 													type="button"
-													tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150"
+													className="flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-indigo-600 transition duration-150 ease-in-out hover:text-indigo-500 focus:outline-none"
 												>
 													{goToSiteOverviewText}
 												</a>
@@ -154,7 +153,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 
 											<a
 												href={pageUrl}
-												tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150"
+												className="flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-gray-600 transition duration-150 ease-in-out hover:text-gray-500 focus:outline-none"
 												title={visitExternalSiteText}
 												target="_blank"
 												rel="noreferrer"
@@ -165,7 +164,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 											{!pageTlsStatus ? (
 												<button
 													type="button"
-													tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-green-600 hover:text-green-500 transition ease-in-out duration-150"
+													className="ml-3 flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-green-600 transition duration-150 ease-in-out hover:text-green-500 focus:outline-none"
 													onClick={() => {}}
 												>
 													{markAsResolvedText}
@@ -175,7 +174,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 									</div>
 								</>
 							) : (
-								<span tw="relative -left-3 flex items-start py-2 space-x-3">
+								<span className="relative -left-3 flex items-start space-x-3 py-2">
 									<Skeleton
 										duration={2}
 										width={9}
@@ -183,13 +182,13 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 										circle={true}
 										className="relative -left-3 top-4 block flex-shrink-0"
 									/>
-									<div tw="inline-flex flex-col justify-start items-start">
+									<div className="inline-flex flex-col items-start justify-start">
 										<Skeleton
 											duration={2}
 											width={150}
 											className="relative -left-3 inline-flex flex-col items-start justify-start"
 										/>
-										<span tw="flex flex-row justify-start text-sm leading-5 text-gray-500 space-x-3">
+										<span className="flex flex-row justify-start space-x-3 text-sm leading-5 text-gray-500">
 											<Skeleton duration={2} width={63} />
 											<Skeleton duration={2} width={63} />
 											<Skeleton duration={2} width={63} />
@@ -202,9 +201,9 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 					</div>
 				</div>
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
-					<span tw="text-gray-500">
+					<span className="text-gray-500">
 						{pageTotalSize > 0
 							? bytes(pageTotalSize, {
 									thousandsSeparator: " ",
@@ -216,7 +215,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
 					pageTlsStatus ? (
 						<MemoizedSiteSuccessIcon />
@@ -227,7 +226,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 					<Skeleton duration={2} width={150} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
 					pageImagesTlsStatus ? (
 						<MemoizedSiteSuccessIcon />
@@ -238,7 +237,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 					<Skeleton duration={2} width={150} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
 					pageScriptsTlsStatus ? (
 						<MemoizedSiteSuccessIcon />
@@ -249,7 +248,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 					<Skeleton duration={2} width={150} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
 					pageStylesheetsTlsStatus ? (
 						<MemoizedSiteSuccessIcon />
@@ -260,273 +259,273 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 					<Skeleton duration={2} width={150} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
-					<span tw="text-gray-500">{pageTotalLinks > 0 ? pageTotalLinks : 0}</span>
+					<span className="text-gray-500">{pageTotalLinks > 0 ? pageTotalLinks : 0}</span>
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
-					<span tw="text-gray-500">{pageTotalImages > 0 ? pageTotalImages : 0}</span>
+					<span className="text-gray-500">{pageTotalImages > 0 ? pageTotalImages : 0}</span>
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
-					<span tw="text-gray-500">{pageTotalScripts > 0 ? pageTotalScripts : 0}</span>
+					<span className="text-gray-500">{pageTotalScripts > 0 ? pageTotalScripts : 0}</span>
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
-					<span tw="text-gray-500">{pageTotalStylesheets > 0 ? pageTotalStylesheets : 0}</span>
+					<span className="text-gray-500">{pageTotalStylesheets > 0 ? pageTotalStylesheets : 0}</span>
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
 					pageTotalOkLinks > 0 ? (
-						<span tw="text-green-500">{pageTotalOkLinks}</span>
+						<span className="text-green-500">{pageTotalOkLinks}</span>
 					) : (
-						<span tw="text-red-500">0</span>
+						<span className="text-red-500">0</span>
 					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
 					pageTotalNonOkLinks > 0 ? (
-						<span tw="text-red-500">{pageTotalNonOkLinks}</span>
+						<span className="text-red-500">{pageTotalNonOkLinks}</span>
 					) : (
-						<span tw="text-green-500">0</span>
+						<span className="text-green-500">0</span>
 					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
 					pageTotalOkImages > 0 ? (
-						<span tw="text-green-500">{pageTotalOkImages}</span>
+						<span className="text-green-500">{pageTotalOkImages}</span>
 					) : (
-						<span tw="text-red-500">0</span>
+						<span className="text-red-500">0</span>
 					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
 					pageTotalNonOkImages > 0 ? (
-						<span tw="text-red-500">{pageTotalNonOkImages}</span>
+						<span className="text-red-500">{pageTotalNonOkImages}</span>
 					) : (
-						<span tw="text-green-500">0</span>
+						<span className="text-green-500">0</span>
 					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
 					pageTotalOkScripts > 0 ? (
-						<span tw="text-green-500">{pageTotalOkScripts}</span>
+						<span className="text-green-500">{pageTotalOkScripts}</span>
 					) : (
-						<span tw="text-red-500">0</span>
+						<span className="text-red-500">0</span>
 					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
 					pageTotalNonOkScripts > 0 ? (
-						<span tw="text-red-500">{pageTotalNonOkScripts}</span>
+						<span className="text-red-500">{pageTotalNonOkScripts}</span>
 					) : (
-						<span tw="text-green-500">0</span>
+						<span className="text-green-500">0</span>
 					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
 					pageTotalOkStylesheets > 0 ? (
-						<span tw="text-green-500">{pageTotalOkStylesheets}</span>
+						<span className="text-green-500">{pageTotalOkStylesheets}</span>
 					) : (
-						<span tw="text-red-500">0</span>
+						<span className="text-red-500">0</span>
 					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
 					pageTotalNonOkStylesheets > 0 ? (
-						<span tw="text-red-500">{pageTotalNonOkStylesheets}</span>
+						<span className="text-red-500">{pageTotalNonOkStylesheets}</span>
 					) : (
-						<span tw="text-green-500">0</span>
+						<span className="text-green-500">0</span>
 					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
 					pageTotalTlsImages > 0 ? (
-						<span tw="text-green-500">{pageTotalTlsImages}</span>
+						<span className="text-green-500">{pageTotalTlsImages}</span>
 					) : (
-						<span tw="text-red-500">0</span>
+						<span className="text-red-500">0</span>
 					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
 					pageTotalNonTlsImages > 0 ? (
-						<span tw="text-red-500">{pageTotalNonTlsImages}</span>
+						<span className="text-red-500">{pageTotalNonTlsImages}</span>
 					) : (
-						<span tw="text-green-500">0</span>
+						<span className="text-green-500">0</span>
 					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
 					pageTotalTlsScripts > 0 ? (
-						<span tw="text-green-500">{pageTotalTlsScripts}</span>
+						<span className="text-green-500">{pageTotalTlsScripts}</span>
 					) : (
-						<span tw="text-red-500">0</span>
+						<span className="text-red-500">0</span>
 					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
 					pageTotalNonTlsScripts > 0 ? (
-						<span tw="text-red-500">{pageTotalNonTlsScripts}</span>
+						<span className="text-red-500">{pageTotalNonTlsScripts}</span>
 					) : (
-						<span tw="text-green-500">0</span>
+						<span className="text-green-500">0</span>
 					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
 					pageTotalTlsStylesheets > 0 ? (
-						<span tw="text-green-500">{pageTotalTlsStylesheets}</span>
+						<span className="text-green-500">{pageTotalTlsStylesheets}</span>
 					) : (
-						<span tw="text-red-500">0</span>
+						<span className="text-red-500">0</span>
 					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
 					pageTotalNonTlsStylesheets > 0 ? (
-						<span tw="text-red-500">{pageTotalNonTlsStylesheets}</span>
+						<span className="text-red-500">{pageTotalNonTlsStylesheets}</span>
 					) : (
-						<span tw="text-green-500">0</span>
+						<span className="text-green-500">0</span>
 					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
 					pageResolvedTls ? (
-						<span tw="text-gray-500">{pageResolvedTls}</span>
+						<span className="text-gray-500">{pageResolvedTls}</span>
 					) : null
 				) : (
 					<Skeleton duration={2} width={75} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
 					pageResolvedSize ? (
-						<span tw="text-gray-500">{pageResolvedSize}</span>
+						<span className="text-gray-500">{pageResolvedSize}</span>
 					) : null
 				) : (
 					<Skeleton duration={2} width={75} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
 					pageResolvedMissingTitle ? (
-						<span tw="text-gray-500">{pageResolvedMissingTitle}</span>
+						<span className="text-gray-500">{pageResolvedMissingTitle}</span>
 					) : null
 				) : (
 					<Skeleton duration={2} width={75} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
 					pageResolvedMissingDescription ? (
-						<span tw="text-gray-500">{pageResolvedMissingDescription}</span>
+						<span className="text-gray-500">{pageResolvedMissingDescription}</span>
 					) : null
 				) : (
 					<Skeleton duration={2} width={75} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
 					pageResolvedMissingH1First ? (
-						<span tw="text-gray-500">{pageResolvedMissingH1First}</span>
+						<span className="text-gray-500">{pageResolvedMissingH1First}</span>
 					) : null
 				) : (
 					<Skeleton duration={2} width={75} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
 					pageResolvedMissingH1Second ? (
-						<span tw="text-gray-500">{pageResolvedMissingH1Second}</span>
+						<span className="text-gray-500">{pageResolvedMissingH1Second}</span>
 					) : null
 				) : (
 					<Skeleton duration={2} width={75} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
 					pageResolvedMissingH2First ? (
-						<span tw="text-gray-500">{pageResolvedMissingH2First}</span>
+						<span className="text-gray-500">{pageResolvedMissingH2First}</span>
 					) : null
 				) : (
 					<Skeleton duration={2} width={75} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
 					pageResolvedMissingH2Second ? (
-						<span tw="text-gray-500">{pageResolvedMissingH2Second}</span>
+						<span className="text-gray-500">{pageResolvedMissingH2Second}</span>
 					) : null
 				) : (
 					<Skeleton duration={2} width={75} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
 					pageResolvedDuplicateTitle ? (
-						<span tw="text-gray-500">{pageResolvedDuplicateTitle}</span>
+						<span className="text-gray-500">{pageResolvedDuplicateTitle}</span>
 					) : null
 				) : (
 					<Skeleton duration={2} width={75} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
 					pageResolvedDuplicateDescription ? (
-						<span tw="text-gray-500">{pageResolvedDuplicateDescription}</span>
+						<span className="text-gray-500">{pageResolvedDuplicateDescription}</span>
 					) : null
 				) : (
 					<Skeleton duration={2} width={75} />

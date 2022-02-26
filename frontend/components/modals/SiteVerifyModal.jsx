@@ -5,11 +5,11 @@ import { handlePostMethod } from "@helpers/handleHttpMethods";
 import { InformationCircleIcon } from "@heroicons/react/outline";
 import { ClipboardIcon } from "@heroicons/react/solid";
 import { useNotificationMessage } from "@hooks/useNotificationMessage";
+import { classNames } from "@utils/classNames";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { forwardRef, Fragment, memo, useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import tw from "twin.macro";
 
 /**
  * Custom function to render the `SiteVerifyModal` component
@@ -153,79 +153,79 @@ const SiteVerifyModal = (
 				initialFocus={ref}
 				onClose={!disableSiteVerify ? setShowModal : () => {}}
 			>
-				<div tw="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+				<div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
 					<Transition.Child
 						as={Fragment}
-						enter="site-verify-modal-first-child-enter"
-						enterFrom="site-verify-modal-first-child-enter-from"
-						enterTo="site-verify-modal-first-child-enter-to"
-						leave="site-verify-modal-first-child-leave"
-						leaveFrom="site-verify-modal-first-child-leave-from"
-						leaveTo="site-verify-modal-first-child-leave-to"
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
 					>
-						<Dialog.Overlay className="site-verify-modal-dialog-overlay" />
+						<Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
 					</Transition.Child>
 
 					{/* This element is to trick the browser into centering the modal contents. */}
-					<span tw="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
+					<span className="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">
 						&#8203;
 					</span>
 
 					<Transition.Child
 						as={Fragment}
-						enter="site-verify-modal-second-child-enter"
-						enterFrom="site-verify-modal-second-child-enter-from"
-						enterTo="site-verify-modal-second-child-enter-to"
-						leave="site-verify-modal-second-child-leave"
-						leaveFrom="site-verify-modal-second-child-leave-from"
-						leaveTo="site-verify-modal-second-child-leave-to"
+						enter="ease-out duration-300"
+						enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+						enterTo="opacity-100 translate-y-0 sm:scale-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+						leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 					>
-						<div tw="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
-							<div tw="sm:flex sm:items-start">
-								<div tw="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-									<InformationCircleIcon tw="h-6 w-6 text-yellow-600" />
+						<div className="inline-block transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6 sm:align-middle">
+							<div className="sm:flex sm:items-start">
+								<div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+									<InformationCircleIcon className="h-6 w-6 text-yellow-600" />
 								</div>
-								<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-									<Dialog.Title as="h3" className="site-verify-modal-second-child-title">
+								<div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+									<Dialog.Title as="h3" className="text-lg font-medium text-gray-900">
 										{verifySiteTitleText}
 									</Dialog.Title>
 
-									<div tw="mt-2">
-										<span tw="text-sm font-semibold text-gray-500">
+									<div className="mt-2">
+										<span className="text-sm font-semibold text-gray-500">
 											{siteName}
 											<a
 												href={siteUrl}
 												target="_blank"
 												title={siteUrl}
-												tw="table cursor-pointer break-all leading-6 text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150"
+												className="table cursor-pointer break-all leading-6 text-indigo-600 transition duration-150 ease-in-out hover:text-indigo-500"
 												rel="noreferrer"
 											>
 												{siteUrl}
 											</a>
 										</span>
 
-										<Dialog.Description as="p" className="site-verify-modal-second-child-description">
+										<Dialog.Description as="p" className="mt-4 mb-3 text-sm text-gray-500">
 											{instructionsText}
 										</Dialog.Description>
 
-										<ol tw="space-y-2 list-decimal ml-4">
-											<li tw="text-sm leading-6 text-gray-500">{instruction1}</li>
-											<li tw="text-sm leading-6 text-gray-500">
+										<ol className="ml-4 list-decimal space-y-2">
+											<li className="text-sm leading-6 text-gray-500">{instruction1}</li>
+											<li className="text-sm leading-6 text-gray-500">
 												{instruction2}
 
-												<div tw="w-full block">
-													<label htmlFor="verify-id-meta-tag" tw="sr-only">
+												<div className="block w-full">
+													<label htmlFor="verify-id-meta-tag" className="sr-only">
 														{verifyIdMetaTagText}
 													</label>
-													<div tw="mt-1 flex">
-														<div tw="relative flex items-stretch flex-grow focus-within:z-10">
+													<div className="mt-1 flex">
+														<div className="relative flex flex-grow items-stretch focus-within:z-10">
 															<input
 																type="text"
 																name="verify-id-meta-tag"
-																css={[
-																	tw`text-gray-400 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-none rounded-l-md sm:text-sm border-gray-300`,
-																	disableSiteVerify && tw`opacity-50 bg-gray-300 cursor-not-allowed`
-																]}
+																className={classNames(
+																	"block w-full rounded-none rounded-l-md border-gray-300 text-gray-400 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+																	disableSiteVerify && "cursor-not-allowed bg-gray-300 opacity-50"
+																)}
 																value={copyValue}
 																onChange={handleInputChange}
 																autoComplete="off"
@@ -233,14 +233,14 @@ const SiteVerifyModal = (
 
 															<CopyToClipboard onCopy={handleInputCopy} text={copyValue}>
 																<button
-																	css={[
-																		tw`-ml-px relative inline-flex items-center space-x-2 px-4 py-2 border border-gray-300 text-sm font-medium rounded-r-md text-gray-700 bg-gray-50`,
+																	className={classNames(
+																		"relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700",
 																		disableSiteVerify
-																			? tw`opacity-50 bg-gray-300 cursor-not-allowed`
-																			: tw`hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500`
-																	]}
+																			? "cursor-not-allowed bg-gray-300 opacity-50"
+																			: "hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+																	)}
 																>
-																	<ClipboardIcon tw="h-5 w-5 text-gray-400" />
+																	<ClipboardIcon className="h-5 w-5 text-gray-400" />
 																	<span>{copied ? copiedText : copyText}</span>
 																</button>
 															</CopyToClipboard>
@@ -248,13 +248,13 @@ const SiteVerifyModal = (
 													</div>
 												</div>
 											</li>
-											<li tw="text-sm leading-6 text-gray-500">{instruction3}</li>
-											<li tw="text-sm leading-6 text-gray-500">{instruction4}</li>
+											<li className="text-sm leading-6 text-gray-500">{instruction3}</li>
+											<li className="text-sm leading-6 text-gray-500">{instruction4}</li>
 										</ol>
 
 										{state?.responses?.length > 0 ? (
-											<div tw="block my-5">
-												<div tw="flex justify-center sm:justify-start">
+											<div className="my-5 block">
+												<div className="flex justify-center sm:justify-start">
 													{state.responses.map((value, key) => {
 														// Alert Messsages
 														const responseText = value?.responseText ?? null;
@@ -263,10 +263,10 @@ const SiteVerifyModal = (
 														return (
 															<h3
 																key={key}
-																css={[
-																	tw`text-sm leading-5 font-medium break-words`,
-																	isSuccess ? tw`text-green-800` : tw`text-red-800`
-																]}
+																className={classNames(
+																	"break-words text-sm font-medium leading-5",
+																	isSuccess ? "text-green-800" : "text-red-800"
+																)}
 															>
 																{responseText}
 															</h3>
@@ -279,8 +279,8 @@ const SiteVerifyModal = (
 								</div>
 							</div>
 
-							<div tw="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-								<span tw="flex w-full rounded-md shadow-sm sm:w-auto">
+							<div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+								<span className="flex w-full rounded-md shadow-sm sm:w-auto">
 									{!enableNextStep ? (
 										<form onSubmit={handleSiteVerification}>
 											<input
@@ -293,12 +293,12 @@ const SiteVerifyModal = (
 												type="submit"
 												tabIndex="0"
 												disabled={disableSiteVerify}
-												css={[
-													tw`cursor-pointer w-full mt-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600`,
+												className={classNames(
+													"relative mt-3 inline-flex w-full cursor-pointer items-center rounded-md border border-transparent bg-yellow-600 px-4 py-2 text-sm font-medium leading-5 text-white sm:mt-0",
 													disableSiteVerify
-														? tw`opacity-50 cursor-not-allowed`
-														: tw`hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 active:bg-yellow-700`
-												]}
+														? "cursor-not-allowed opacity-50"
+														: "hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 active:bg-yellow-700"
+												)}
 											>
 												{disableSiteVerify ? verifyingText : verifySiteTitleText}
 											</button>
@@ -310,23 +310,23 @@ const SiteVerifyModal = (
 											passHref
 											replace
 										>
-											<a tw="cursor-pointer w-full mt-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 active:bg-green-700">
+											<a className="relative mt-3 inline-flex w-full cursor-pointer items-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-sm font-medium leading-5 text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 active:bg-green-700 sm:mt-0">
 												{goToSiteOverviewText}
 											</a>
 										</Link>
 									)}
 								</span>
 
-								<span tw="mt-3 flex w-full sm:mt-0 sm:w-auto">
+								<span className="mt-3 flex w-full sm:mt-0 sm:w-auto">
 									<button
 										type="button"
 										disabled={disableSiteVerify}
-										css={[
-											tw`cursor-pointer inline-flex justify-center w-full mr-3 rounded-md border border-gray-300 px-4 py-2 shadow-sm text-sm font-medium  text-gray-700 bg-white `,
+										className={classNames(
+											"mr-3 inline-flex w-full cursor-pointer justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium  text-gray-700 shadow-sm ",
 											disableSiteVerify
-												? tw`opacity-50 cursor-not-allowed`
-												: tw`hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
-										]}
+												? "cursor-not-allowed opacity-50"
+												: "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+										)}
 										onClick={() => setShowModal(!showModal)}
 									>
 										{closeText}

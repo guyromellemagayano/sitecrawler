@@ -3,10 +3,10 @@ import { ChevronUpIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
+import { classNames } from "@utils/classNames";
 import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import tw from "twin.macro";
 
 /**
  * Custom function to render the `ProfileMenu` component
@@ -26,15 +26,15 @@ const ProfileMenu = () => {
 	} = useComponentVisible(false);
 
 	return (
-		<div ref={profileMenuRef} tw="flex-shrink-0 flex flex-col relative">
+		<div ref={profileMenuRef} className="relative flex flex-shrink-0 flex-col">
 			<button
 				type="button"
-				css={[
-					tw`p-4 flex items-center justify-between flex-shrink-0 w-full focus:outline-none transition ease-in-out duration-150 bg-gray-900`,
+				className={classNames(
+					"flex w-full flex-shrink-0 items-center justify-between bg-gray-900 p-4 transition duration-150 ease-in-out focus:outline-none",
 					isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail
-						? tw`cursor-pointer hover:bg-gray-1100`
-						: tw`cursor-default`
-				]}
+						? "cursor-pointer hover:bg-gray-1100"
+						: "cursor-default"
+				)}
 				id="options-menu"
 				aria-haspopup="true"
 				aria-expanded={
@@ -52,19 +52,16 @@ const ProfileMenu = () => {
 						: null
 				}
 			>
-				<div tw="flex items-center">
-					<div tw="flex flex-col flex-wrap text-left">
-						<p className="truncate-profile-text" tw="text-sm leading-tight mb-1 font-medium text-white">
+				<div className="flex items-center">
+					<div className="flex flex-col flex-wrap text-left">
+						<p className="truncate-profile-text mb-1 text-sm font-medium leading-tight text-white">
 							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 								firstname
 							) : (
-								<Skeleton duration={2} width={85} height={15} tw="mb-1" />
+								<Skeleton duration={2} width={85} height={15} className="mb-1" />
 							)}
 						</p>
-						<p
-							className="truncate-profile-text"
-							tw="text-xs leading-4 font-medium text-white transition ease-in-out duration-150"
-						>
+						<p className="truncate-profile-text text-xs font-medium leading-4 text-white transition duration-150 ease-in-out">
 							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 								email
 							) : (
@@ -76,7 +73,7 @@ const ProfileMenu = () => {
 
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					<div>
-						<ChevronUpIcon tw="w-4 h-4 text-white" />
+						<ChevronUpIcon className="h-4 w-4 text-white" />
 					</div>
 				) : null}
 			</button>

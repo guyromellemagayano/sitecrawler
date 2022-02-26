@@ -8,7 +8,6 @@ import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { memo, useContext, useEffect } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
-import "twin.macro";
 import { MemoizedSidebarLayout } from "./components/Sidebar";
 
 /**
@@ -39,7 +38,7 @@ export const DashboardLayout = ({ children }) => {
 					<div
 						key={key}
 						aria-live="assertive"
-						tw="fixed z-30 w-full max-w-md right-2 top-4 bottom-4 flex flex-col justify-start items-end gap-4 overflow-y-auto"
+						className="fixed right-2 top-4 bottom-4 z-30 flex w-full max-w-md flex-col items-end justify-start gap-4 overflow-y-auto"
 					>
 						<MemoizedNotification
 							key={key}
@@ -51,25 +50,25 @@ export const DashboardLayout = ({ children }) => {
 				);
 			}) ?? null}
 
-			<main tw="h-screen">
-				<section tw="h-screen overflow-hidden bg-white flex">
+			<main className="h-screen">
+				<section className="flex h-screen overflow-hidden bg-white">
 					<MemoizedSidebarLayout
 						ref={dashboardLayoutRef}
 						openSidebar={isDashboardLayoutComponentVisible}
 						setOpenSidebar={setIsDashboardLayoutComponentVisible}
 					/>
 
-					<div tw="flex flex-col w-0 flex-1 overflow-hidden min-h-screen">
-						<div tw="flex flex-shrink-0 border-b">
+					<div className="flex min-h-screen w-0 flex-1 flex-col overflow-hidden">
+						<div className="flex flex-shrink-0 border-b">
 							<MemoizedAddSite
 								handleOpenSidebar={() => setIsDashboardLayoutComponentVisible(!isDashboardLayoutComponentVisible)}
 							/>
 						</div>
 
-						<div tw="flex-1">
+						<div className="flex-1">
 							<Scrollbars autoHide universal>
-								<div tw="absolute w-full h-full max-w-screen-2xl mx-auto left-0 right-0">
-									<div tw="flex flex-col h-full">{children}</div>
+								<div className="absolute left-0 right-0 mx-auto h-full w-full max-w-screen-2xl">
+									<div className="flex h-full flex-col">{children}</div>
 								</div>
 							</Scrollbars>
 						</div>
@@ -107,7 +106,7 @@ export const StaticLayout = ({ children }) => {
 	}, []);
 
 	return (
-		<main tw="h-screen">
+		<main className="h-screen">
 			{state?.responses?.map((value, key) => {
 				// Alert Messsages
 				const responseText = value.responseText ?? null;
@@ -117,7 +116,7 @@ export const StaticLayout = ({ children }) => {
 					<div
 						key={key}
 						aria-live="assertive"
-						tw="fixed z-30 w-full max-w-md right-2 top-4 bottom-4 flex flex-col justify-start items-end gap-4 overflow-y-auto"
+						className="fixed right-2 top-4 bottom-4 z-30 flex w-full max-w-md flex-col items-end justify-start gap-4 overflow-y-auto"
 					>
 						<MemoizedAlert key={key} responseText={responseText} isSuccess={isSuccess} />
 					</div>

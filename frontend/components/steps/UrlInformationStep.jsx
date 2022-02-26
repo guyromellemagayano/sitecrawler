@@ -6,7 +6,6 @@ import PropTypes from "prop-types";
 import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import "twin.macro";
 
 /**
  * Custom function to render the `UrlInformationStep` component
@@ -27,18 +26,18 @@ const UrlInformationStep = (props) => {
 	const { user } = useUser();
 
 	return step === 1 ? (
-		<div tw="block pt-8 pb-12">
-			<div tw="py-4 m-auto">
-				<div tw="block mb-12">
-					<span tw="inline-flex flex-col">
-						<h4 tw="text-lg self-start leading-7 font-medium text-gray-900">
+		<div className="block pt-8 pb-12">
+			<div className="m-auto py-4">
+				<div className="mb-12 block">
+					<span className="inline-flex flex-col">
+						<h4 className="self-start text-lg font-medium leading-7 text-gray-900">
 							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 								formDetailLabel
 							) : (
 								<Skeleton duration={2} width={175} height={24} />
 							)}
 						</h4>
-						<p tw="text-sm self-start mt-1 leading-5 text-gray-500">
+						<p className="mt-1 self-start text-sm leading-5 text-gray-500">
 							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 								formDetailDescription
 							) : (

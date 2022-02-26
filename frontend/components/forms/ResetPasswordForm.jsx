@@ -1,10 +1,10 @@
 import { ResetPasswordApiEndpoint } from "@constants/ApiEndpoints";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
 import { SiteCrawlerAppContext } from "@pages/_app";
+import { classNames } from "@utils/classNames";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
 import { memo, useContext } from "react";
-import tw from "twin.macro";
 import * as Yup from "yup";
 
 /**
@@ -66,21 +66,21 @@ const ResetPasswordForm = () => {
 		>
 			{({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
 				<form onSubmit={handleSubmit}>
-					<div tw="mt-1">
-						<label htmlFor="email" tw="block text-sm font-medium leading-5 text-gray-700">
+					<div className="mt-1">
+						<label htmlFor="email" className="block text-sm font-medium leading-5 text-gray-700">
 							{emailAddress}
 						</label>
-						<div tw="mt-1 rounded-md shadow-sm">
+						<div className="mt-1 rounded-md shadow-sm">
 							<input
 								id="email"
 								type="email"
 								name="email"
 								disabled={isSubmitting}
-								css={[
-									tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
-									isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
-									errors.email ? tw`border-red-300` : tw`border-gray-300`
-								]}
+								className={classNames(
+									"block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+									isSubmitting && "pointer-events-none cursor-not-allowed bg-gray-300 opacity-50",
+									errors.email ? "border-red-300" : "border-gray-300"
+								)}
 								aria-describedby="email"
 								onChange={handleChange}
 								onBlur={handleBlur}
@@ -89,23 +89,23 @@ const ResetPasswordForm = () => {
 						</div>
 
 						{errors.email && touched.email && (
-							<span tw="block mt-2 text-xs leading-5 text-red-700">
+							<span className="mt-2 block text-xs leading-5 text-red-700">
 								{errors.email && touched.email && errors.email}
 							</span>
 						)}
 					</div>
 
-					<div tw="mt-6">
-						<span tw="block w-full rounded-md shadow-sm">
+					<div className="mt-6">
+						<span className="block w-full rounded-md shadow-sm">
 							<button
 								type="submit"
 								disabled={isSubmitting}
-								css={[
-									tw`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600`,
+								className={classNames(
+									"flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm",
 									isSubmitting
-										? tw`opacity-50 bg-indigo-300 cursor-not-allowed pointer-events-none`
-										: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
-								]}
+										? "pointer-events-none cursor-not-allowed bg-indigo-300 opacity-50"
+										: "hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+								)}
 							>
 								{isSubmitting ? submitting : isResetPassword}
 							</button>

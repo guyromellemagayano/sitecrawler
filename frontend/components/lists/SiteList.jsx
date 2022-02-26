@@ -1,6 +1,7 @@
 import { DashboardSitesLink, SiteOverviewSlug } from "@constants/PageLinks";
 import { useScan } from "@hooks/useScan";
 import { useStats } from "@hooks/useStats";
+import { classNames } from "@utils/classNames";
 import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
@@ -8,7 +9,6 @@ import PropTypes from "prop-types";
 import { memo } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import tw from "twin.macro";
 
 /**
  * Custom function to render the `SiteList` component
@@ -48,15 +48,15 @@ const SiteList = ({ data = null }) => {
 	const { scan, setScanConfig, currentScan, previousScan, scanObjId, scanCount, validatingScan } = useScan(siteId);
 
 	// SWR hooks
-	const { stats, errorStats } = useStats(siteId, scanObjId);
+	const { stats } = useStats(siteId, scanObjId);
 
 	return validatingScan ? (
 		<li>
-			<div tw="cursor-default w-full select-none block relative py-2 pl-3 pr-9">
-				<div tw="flex items-center space-x-3">
-					<Skeleton circle={true} duration={2} width={10} height={10} tw="relative top-0.5" />
+			<div className="relative block w-full cursor-default select-none py-2 pl-3 pr-9">
+				<div className="flex items-center space-x-3">
+					<Skeleton circle={true} duration={2} width={10} height={10} className="relative top-0.5" />
 
-					<span tw="block">
+					<span className="block">
 						<Skeleton duration={2} width={130} />
 					</span>
 				</div>
@@ -81,24 +81,25 @@ const SiteList = ({ data = null }) => {
 									siteId: siteId
 								}
 						  }
-						: {}
+						: {
+								pathname: "/"
+						  }
 				}
 				passHref
-				replace
 			>
 				<a
-					css={[
-						tw`w-full select-none block relative py-2 pl-3 pr-9 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900`,
+					className={classNames(
+						"relative block w-full select-none py-2 pl-3 pr-9 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none",
 						stats?.data?.num_links > 0 ||
-						stats?.data?.num_pages > 0 ||
-						stats?.data?.num_images > 0 ||
-						siteVerified ||
-						(!siteVerified && scanCount > 0)
-							? tw`cursor-pointer`
-							: tw`cursor-not-allowed`
-					]}
+							stats?.data?.num_pages > 0 ||
+							stats?.data?.num_images > 0 ||
+							siteVerified ||
+							(!siteVerified && scanCount > 0)
+							? "cursor-pointer"
+							: "cursor-not-allowed"
+					)}
 				>
-					<div tw="flex items-center space-x-3">
+					<div className="flex items-center space-x-3">
 						<span
 							aria-label={
 								siteVerified && currentScan == null
@@ -107,21 +108,21 @@ const SiteList = ({ data = null }) => {
 									? "Recrawling in Process"
 									: "Not Verified"
 							}
-							css={[
-								tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
+							className={classNames(
+								"inline-block h-2 w-2 flex-shrink-0 rounded-full",
 								siteVerified && currentScan == null
-									? tw`bg-green-400`
+									? "bg-green-400"
 									: siteVerified && currentScan !== null
-									? tw`bg-yellow-400`
-									: tw`bg-red-400`
-							]}
+									? "bg-yellow-400"
+									: "bg-red-400"
+							)}
 						/>
 
 						<span
-							css={[
-								tw`font-medium block truncate`,
-								siteVerified && scanCount > 0 ? tw`text-gray-500` : tw`text-gray-400`
-							]}
+							className={classNames(
+								"block truncate font-medium",
+								siteVerified && scanCount > 0 ? "text-gray-500" : "text-gray-400"
+							)}
 						>
 							{data.name}
 						</span>

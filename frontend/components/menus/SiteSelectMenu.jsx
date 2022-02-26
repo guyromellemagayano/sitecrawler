@@ -1,11 +1,11 @@
 import { SidebarMenuLabels } from "@constants/SidebarMenuLabels";
 import { SelectorIcon } from "@heroicons/react/solid";
 import { useScan } from "@hooks/useScan";
+import { classNames } from "@utils/classNames";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { memo } from "react";
-import tw from "twin.macro";
 
 /**
  * Custom function to render the `SiteSelectMenu` component
@@ -37,28 +37,24 @@ const SiteSelectMenu = ({ selectedSite = null, selectedSiteDetails = null, handl
 			aria-haspopup="listbox"
 			aria-expanded="true"
 			aria-labelledby="listbox-label"
-			tw="cursor-default relative w-full rounded-md border border-gray-700 pl-3 pr-10 py-2 text-left bg-white focus:outline-none focus:ring-1 sm:text-sm sm:leading-5 focus:ring-gray-1100"
+			className="relative w-full cursor-default rounded-md border border-gray-700 bg-white py-2 pl-3 pr-10 text-left focus:outline-none focus:ring-1 focus:ring-gray-1100 sm:text-sm sm:leading-5"
 			onClick={handleOpenDropdown}
 		>
-			<div tw="flex items-center space-x-3">
-				<span tw="block truncate text-gray-600">
+			<div className="flex items-center space-x-3">
+				<span className="block truncate text-gray-600">
 					{selectedSite !== null ? (
 						Object.keys(selectedSiteDetails)?.length > 0 ? (
-							<div tw="flex items-center space-x-3">
+							<div className="flex items-center space-x-3">
 								<span
 									aria-label={
 										selectedSiteDetails?.verified ? (currentScan ? recrawlingInProcess : verified) : notVerified
 									}
-									css={[
-										tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
-										selectedSiteDetails?.verified
-											? currentScan
-												? tw`bg-yellow-400`
-												: tw`bg-green-400`
-											: tw`bg-red-400`
-									]}
+									className={classNames(
+										"inline-block h-2 w-2 flex-shrink-0 rounded-full",
+										selectedSiteDetails?.verified ? (currentScan ? "bg-yellow-400" : "bg-green-400") : "bg-red-400"
+									)}
 								></span>
-								<span tw="font-medium block truncate text-gray-500">{selectedSite}</span>
+								<span className="block truncate font-medium text-gray-500">{selectedSite}</span>
 							</div>
 						) : null
 					) : (
@@ -66,8 +62,8 @@ const SiteSelectMenu = ({ selectedSite = null, selectedSiteDetails = null, handl
 					)}
 				</span>
 			</div>
-			<span tw="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-				<SelectorIcon tw="w-4 h-4 text-gray-400" />
+			<span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+				<SelectorIcon className="h-4 w-4 text-gray-400" />
 			</span>
 		</button>
 	);

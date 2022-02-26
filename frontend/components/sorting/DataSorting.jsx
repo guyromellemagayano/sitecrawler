@@ -9,7 +9,6 @@ import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { memo, useState } from "react";
 import { useSWRConfig } from "swr";
-import "twin.macro";
 
 const initialOrder = {
 	siteName: "asc"
@@ -73,8 +72,8 @@ const DataSorting = ({ slug = null, labels = null }) => {
 	};
 
 	return slug ? (
-		<div tw="flex flex-row mr-3">
-			<div tw="inline-flex">
+		<div className="mr-3 flex flex-row">
+			<div className="inline-flex">
 				<MemoizedSorting
 					sortOrder={sortOrder}
 					setSortOrder={setSortOrder}

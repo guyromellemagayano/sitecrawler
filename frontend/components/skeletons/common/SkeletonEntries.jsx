@@ -1,6 +1,5 @@
 import PropTypes from "prop-types";
 import { memo } from "react";
-import "twin.macro";
 
 /**
  * Custom function to render the `SkeletonEntries` component
@@ -14,7 +13,7 @@ const SkeletonEntries = ({ str = null, limit = null }) => {
 		}
 
 		return strArray.map((value, key) => (
-			<div tw="w-full" key={key}>
+			<div className="w-full" key={key}>
 				{value}
 			</div>
 		));

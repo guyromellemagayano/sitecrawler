@@ -4,7 +4,6 @@ import { Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
 import useTranslation from "next-translate/useTranslation";
 import { forwardRef, memo } from "react";
-import "twin.macro";
 
 /**
  * Custom function to render the `MobileSidebarLayout` component
@@ -18,48 +17,48 @@ const MobileSidebarLayout = ({ openSidebar = false, setOpenSidebar }, ref) => {
 	const closeSidebar = t("closeSidebar");
 
 	return (
-		<Transition show={openSidebar} tw="flex lg:hidden flex-shrink-0">
-			<div ref={ref} tw="fixed inset-0 flex z-50 lg:hidden" role="dialog" aria-modal="true">
+		<Transition show={openSidebar} className="flex flex-shrink-0 lg:hidden">
+			<div ref={ref} className="fixed inset-0 z-50 flex lg:hidden" role="dialog" aria-modal="true">
 				<Transition.Child
-					enter="mobile-sidebar-first-child-enter"
-					enterFrom="mobile-sidebar-first-child-enter-from"
-					enterTo="mobile-sidebar-first-child-enter-to"
-					leave="mobile-sidebar-first-child-leave"
-					leaveFrom="mobile-sidebar-first-child-leave-from"
-					leaveTo="mobile-sidebar-first-child-leave-to"
+					enter="transition-opacity ease-linear duration-300"
+					enterFrom="opacity-0"
+					enterTo="opacity-100"
+					leave="transition-opacity ease-linear duration-300"
+					leaveFrom="opacity-100"
+					leaveTo="opacity-0"
 				>
-					<div tw="fixed inset-0 bg-gray-600 bg-opacity-75" aria-hidden="true"></div>
+					<div className="fixed inset-0 bg-gray-600 bg-opacity-75" aria-hidden="true"></div>
 				</Transition.Child>
 
 				<Transition.Child
-					enter="mobile-sidebar-second-child-enter"
-					enterFrom="mobile-sidebar-second-child-enter-from"
-					enterTo="mobile-sidebar-second-child-enter-to"
-					leave="mobile-sidebar-second-child-leave"
-					leaveFrom="mobile-sidebar-second-child-leave-from"
-					leaveTo="mobile-sidebar-second-child-leave-to"
+					enter="transition ease-in-out duration-300 transform"
+					enterFrom="-translate-x-full"
+					enterTo="translate-x-0"
+					leave="transition ease-in-out duration-300 transform"
+					leaveFrom="translate-x-0"
+					leaveTo="-translate-x-full"
 				>
-					<div tw="relative flex-1 flex flex-col w-64 h-0 ">
+					<div className="relative flex h-0 w-64 flex-1 flex-col ">
 						<Transition.Child
-							enter="mobile-sidebar-third-child-enter"
-							enterFrom="mobile-sidebar-third-child-enter-from"
-							enterTo="mobile-sidebar-third-child-enter-to"
-							leave="mobile-sidebar-third-child-leave"
-							leaveFrom="mobile-sidebar-third-child-leave-from"
-							leaveTo="mobile-sidebar-third-child-leave-to"
+							enter="ease-in-out duration-300"
+							enterFrom="opacity-0"
+							enterTo="opacity-100"
+							leave="ease-in-out duration-300"
+							leaveFrom="opacity-100"
+							leaveTo="opacity-0"
 						>
-							<div tw="absolute top-0 right-0 -mr-12 pt-2">
+							<div className="absolute top-0 right-0 -mr-12 pt-2">
 								<button
-									tw="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+									className="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
 									onClick={() => setOpenSidebar(false)}
 								>
-									<span tw="sr-only">{closeSidebar}</span>
-									<XIcon tw="h-6 w-6 text-white" />
+									<span className="sr-only">{closeSidebar}</span>
+									<XIcon className="h-6 w-6 text-white" />
 								</button>
 							</div>
 
-							<div tw="flex flex-col w-full h-screen bg-gray-1000">
-								<div tw="flex flex-col flex-1 overflow-y-auto ">
+							<div className="flex h-screen w-full flex-col bg-gray-1000">
+								<div className="flex flex-1 flex-col overflow-y-auto ">
 									<MemoizedMainMenu />
 								</div>
 

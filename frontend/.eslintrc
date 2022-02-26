@@ -5,7 +5,6 @@
 		"browser": true,
 		"node": true
 	},
-	"parser": "@babel/eslint-parser",
 	"extends": [
 		"eslint:recommended",
 		"plugin:import/errors",
@@ -18,12 +17,18 @@
 		"next/core-web-vitals",
 		"prettier"
 	],
-	"plugins": ["prettier", "import", "react", "react-hooks", "jsx-a11y"],
+	"plugins": [
+		"prettier",
+		"import",
+		"react",
+		"react-hooks",
+		"jsx-a11y"
+	],
 	"parserOptions": {
-		"ecmaVersion": "latest",
+		"ecmaVersion": 6,
 		"sourceType": "module",
-		"requireConfigFile": false,
 		"ecmaFeatures": {
+			"modules": true,
 			"jsx": true
 		}
 	},
@@ -49,10 +54,16 @@
 		"import/resolver": {
 			"jsconfig": {
 				"config": "jsconfig.json",
-				"extensions": [".js", ".jsx"]
+				"extensions": [
+					".js",
+					".jsx"
+				]
 			},
 			"node": {
-				"extensions": [".js", ".jsx"]
+				"extensions": [
+					".js",
+					".jsx"
+				]
 			}
 		}
 	}

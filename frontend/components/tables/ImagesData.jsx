@@ -16,7 +16,6 @@ import PropTypes from "prop-types";
 import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import "twin.macro";
 
 /**
  * Custom function to render the `ImagesData` component
@@ -95,8 +94,8 @@ const ImagesData = ({ image = null, validatingImages = false }) => {
 
 	return (
 		<tr ref={selectedSiteRef}>
-			<td tw="flex-none p-4 whitespace-nowrap">
-				<div tw="flex flex-col items-start">
+			<td className="flex-none whitespace-nowrap p-4">
+				<div className="flex flex-col items-start">
 					<div>
 						<div>
 							{isComponentReady &&
@@ -108,12 +107,12 @@ const ImagesData = ({ image = null, validatingImages = false }) => {
 									{imageStatus === "OK" && imageTlsStatus === "OK" ? (
 										<span
 											aria-label="Ok"
-											tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-green-400"
+											className="relative -left-3 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-green-400 leading-5"
 										></span>
 									) : imageStatus === "TIMEOUT" ? (
 										<span
 											aria-label="Timeout"
-											tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-yellow-400"
+											className="relative -left-3 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-yellow-400 leading-5"
 										></span>
 									) : (
 										<span
@@ -124,15 +123,15 @@ const ImagesData = ({ image = null, validatingImages = false }) => {
 													? "Too Many Redirects"
 													: "Other Error"
 											}
-											tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-red-400"
+											className="relative -left-3 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-red-400 leading-5"
 										></span>
 									)}
 
-									<div tw="inline-flex flex-col justify-start items-start">
-										<span tw="flex items-center justify-start text-sm leading-6 font-semibold text-gray-500">
+									<div className="inline-flex flex-col items-start justify-start">
+										<span className="flex items-center justify-start text-sm font-semibold leading-6 text-gray-500">
 											<p className="truncate-link">{imageUrl}</p>
 										</span>
-										<span tw="flex space-x-2 justify-start text-sm leading-5 text-gray-500">
+										<span className="flex justify-start space-x-2 text-sm leading-5 text-gray-500">
 											<Link
 												href="/dashboard/sites/[siteId]/links/[linkId]/"
 												as={`/dashboard/sites/${sanitizedSiteId}/links/${linkDetailId}`}
@@ -140,7 +139,7 @@ const ImagesData = ({ image = null, validatingImages = false }) => {
 											>
 												<a
 													type="button"
-													tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150"
+													className="flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-indigo-600 transition duration-150 ease-in-out hover:text-indigo-500 focus:outline-none"
 												>
 													{goToSiteOverviewText}
 												</a>
@@ -148,7 +147,7 @@ const ImagesData = ({ image = null, validatingImages = false }) => {
 
 											<a
 												href={imageUrl}
-												tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150"
+												className="flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-gray-600 transition duration-150 ease-in-out hover:text-gray-500 focus:outline-none"
 												title={visitExternalSiteText}
 												target="_blank"
 												rel="noreferrer"
@@ -159,7 +158,7 @@ const ImagesData = ({ image = null, validatingImages = false }) => {
 											{imageStatus !== "OK" ? (
 												<button
 													type="button"
-													tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-green-600 hover:text-green-500 transition ease-in-out duration-150"
+													className="ml-3 flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-green-600 transition duration-150 ease-in-out hover:text-green-500 focus:outline-none"
 													onClick={() => {}}
 												>
 													{markAsResolvedText}
@@ -169,7 +168,7 @@ const ImagesData = ({ image = null, validatingImages = false }) => {
 									</div>
 								</>
 							) : (
-								<span tw="relative -left-3 flex items-start py-2 space-x-3">
+								<span className="relative -left-3 flex items-start space-x-3 py-2">
 									<Skeleton
 										duration={2}
 										width={9}
@@ -177,13 +176,13 @@ const ImagesData = ({ image = null, validatingImages = false }) => {
 										circle={true}
 										className="relative -left-3 top-4 block flex-shrink-0"
 									/>
-									<div tw="inline-flex flex-col justify-start items-start">
+									<div className="inline-flex flex-col items-start justify-start">
 										<Skeleton
 											duration={2}
 											width={150}
 											className="relative -left-3 inline-flex flex-col items-start justify-start"
 										/>
-										<span tw="flex flex-row justify-start text-sm leading-5 text-gray-500 space-x-3">
+										<span className="flex flex-row justify-start space-x-3 text-sm leading-5 text-gray-500">
 											<Skeleton duration={2} width={63} />
 											<Skeleton duration={2} width={63} />
 											<Skeleton duration={2} width={63} />
@@ -196,7 +195,7 @@ const ImagesData = ({ image = null, validatingImages = false }) => {
 					</div>
 				</div>
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5">
+			<td className="whitespace-nowrap px-6 py-4 text-sm leading-5 text-gray-500">
 				{isComponentReady &&
 				user &&
 				Math.round(user?.status / 100) === 2 &&
@@ -215,7 +214,7 @@ const ImagesData = ({ image = null, validatingImages = false }) => {
 					<Skeleton duration={2} width={100} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady &&
 				user &&
 				Math.round(user?.status / 100) === 2 &&
@@ -234,7 +233,7 @@ const ImagesData = ({ image = null, validatingImages = false }) => {
 					<Skeleton duration={2} width={150} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady &&
 				user &&
 				Math.round(user?.status / 100) === 2 &&
@@ -249,32 +248,32 @@ const ImagesData = ({ image = null, validatingImages = false }) => {
 					<Skeleton duration={2} width={150} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady &&
 				user &&
 				Math.round(user?.status / 100) === 2 &&
 				!user?.data?.detail &&
 				!validatingImages ? (
 					Math.round(imageHttpStatus / 100) === 2 ? (
-						<span tw="text-green-500">{imageHttpStatus}</span>
+						<span className="text-green-500">{imageHttpStatus}</span>
 					) : Math.round(imageHttpStatus / 100) === 4 || Math.round(imageHttpStatus / 100) === 5 ? (
-						<span tw="text-red-500">{imageHttpStatus}</span>
+						<span className="text-red-500">{imageHttpStatus}</span>
 					) : Math.round(imageHttpStatus / 100) === 3 ? (
-						<span tw="text-yellow-500">{imageHttpStatus}</span>
+						<span className="text-yellow-500">{imageHttpStatus}</span>
 					) : (
-						<span tw="text-gray-500">{imageHttpStatus}</span>
+						<span className="text-gray-500">{imageHttpStatus}</span>
 					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady &&
 				user &&
 				Math.round(user?.status / 100) === 2 &&
 				!user?.data?.detail &&
 				!validatingImages ? (
-					<span tw="text-gray-500">
+					<span className="text-gray-500">
 						{imageSize > 0
 							? bytes(imageSize, {
 									thousandsSeparator: " ",
@@ -286,76 +285,76 @@ const ImagesData = ({ image = null, validatingImages = false }) => {
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady &&
 				user &&
 				Math.round(user?.status / 100) === 2 &&
 				!user?.data?.detail &&
 				!validatingImages ? (
 					imageOccurences ? (
-						<span tw="text-gray-500">{imageOccurences}</span>
+						<span className="text-gray-500">{imageOccurences}</span>
 					) : null
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady &&
 				user &&
 				Math.round(user?.status / 100) === 2 &&
 				!user?.data?.detail &&
 				!validatingImages ? (
-					<span tw="text-gray-500">{imageOccurences > 0 ? imageOccurences : 0}</span>
+					<span className="text-gray-500">{imageOccurences > 0 ? imageOccurences : 0}</span>
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady &&
 				user &&
 				Math.round(user?.status / 100) === 2 &&
 				!user?.data?.detail &&
 				!validatingImages ? (
-					<span tw="text-gray-500">{imageMissingAlts > 0 ? imageMissingAlts : 0}</span>
+					<span className="text-gray-500">{imageMissingAlts > 0 ? imageMissingAlts : 0}</span>
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
 
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady &&
 				user &&
 				Math.round(user?.status / 100) === 2 &&
 				!user?.data?.detail &&
 				!validatingImages ? (
 					imageResolvedStatus ? (
-						<span tw="text-gray-500">{imageResolvedStatus}</span>
+						<span className="text-gray-500">{imageResolvedStatus}</span>
 					) : null
 				) : (
 					<Skeleton duration={2} width={75} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady &&
 				user &&
 				Math.round(user?.status / 100) === 2 &&
 				!user?.data?.detail &&
 				!validatingImages ? (
 					imageResolvedMissingAlts ? (
-						<span tw="text-gray-500">{imageResolvedMissingAlts}</span>
+						<span className="text-gray-500">{imageResolvedMissingAlts}</span>
 					) : null
 				) : (
 					<Skeleton duration={2} width={75} />
 				)}
 			</td>
-			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady &&
 				user &&
 				Math.round(user?.status / 100) === 2 &&
 				!user?.data?.detail &&
 				!validatingImages ? (
 					imageResolvedTls ? (
-						<span tw="text-gray-500">{imageResolvedTls}</span>
+						<span className="text-gray-500">{imageResolvedTls}</span>
 					) : null
 				) : (
 					<Skeleton duration={2} width={75} />

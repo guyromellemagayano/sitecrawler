@@ -13,7 +13,6 @@ import { handleConversionStringToLowercase } from "@utils/convertCase";
 import { memo, useEffect, useState } from "react";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useSWRConfig } from "swr";
-import "twin.macro";
 
 /**
  * Custom function to render the `SubscriptionPlansPageLayout` component
@@ -347,7 +346,7 @@ const SubscriptionPlansPageLayout = () => {
 				open={isChangeToBasicPlanModalVisible}
 			/> */}
 
-			<div tw="w-full flex items-start py-4">
+			<div className="flex w-full items-start py-4">
 				<MemoizedSubscriptionPlansPricing
 					setPlanId={setPlanId}
 					setPlanName={setPlanName}

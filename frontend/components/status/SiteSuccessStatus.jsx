@@ -1,7 +1,6 @@
 import { CheckCircleIcon } from "@heroicons/react/outline";
 import PropTypes from "prop-types";
 import { memo } from "react";
-import "twin.macro";
 
 /**
  * Custom function to render the `SiteSuccessStatus` component
@@ -10,8 +9,8 @@ import "twin.macro";
  */
 const SiteSuccessStatus = ({ text = null }) => {
 	return text !== null ? (
-		<span tw="inline-flex items-center text-sm leading-5 font-semibold rounded-full text-green-800">
-			<CheckCircleIcon tw="w-6 h-6 mr-2" />
+		<span className="inline-flex items-center rounded-full text-sm font-semibold leading-5 text-green-800">
+			<CheckCircleIcon className="mr-2 h-6 w-6" />
 			{text}
 		</span>
 	) : null;

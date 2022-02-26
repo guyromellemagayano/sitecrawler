@@ -11,7 +11,6 @@ import { memo, useContext, useEffect } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useSWRConfig } from "swr";
-import "twin.macro";
 
 /**
  * Custom function to render the `Filter` component
@@ -522,9 +521,9 @@ const Filter = ({
 	}, []);
 
 	return isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-		<form tw="px-4 py-5 border border-gray-300 sm:px-6 bg-white rounded-lg lg:flex lg:justify-between">
-			<div tw="-ml-4 lg:-mt-2 lg:flex items-center flex-wrap sm:flex-nowrap">
-				<h4 tw="ml-4 mb-4 lg:mb-0 mt-2 mr-1 leading-4 font-semibold text-gray-600">{filterText}</h4>
+		<form className="rounded-lg border border-gray-300 bg-white px-4 py-5 sm:px-6 lg:flex lg:justify-between">
+			<div className="-ml-4 flex-wrap items-center sm:flex-nowrap lg:-mt-2 lg:flex">
+				<h4 className="ml-4 mb-4 mt-2 mr-1 font-semibold leading-4 text-gray-600 lg:mb-0">{filterText}</h4>
 
 				{filtersArray
 					.filter(
@@ -537,22 +536,22 @@ const Filter = ({
 							e.value !== "allSeo"
 					)
 					.map((value, key) => (
-						<div key={key} tw="ml-4 mt-2">
-							<label tw="flex items-center space-x-2">
+						<div key={key} className="ml-4 mt-2">
+							<label className="flex items-center space-x-2">
 								<input
 									type="checkbox"
-									tw="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+									className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
 									checked={value.checked}
 									onChange={handleFilterUrl}
 									value={value.value}
 								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">{value.label}</span>
+								<span className="ml-2 text-left text-xs font-normal leading-4 text-gray-500">{value.label}</span>
 							</label>
 						</div>
 					))}
 			</div>
 
-			<div tw="lg:-mt-2 lg:flex items-center justify-end flex-wrap sm:flex-nowrap space-x-4">
+			<div className="flex-wrap items-center justify-end space-x-4 sm:flex-nowrap lg:-mt-2 lg:flex">
 				{filtersArray
 					.filter(
 						(e) =>
@@ -564,25 +563,25 @@ const Filter = ({
 								e.value === "allSeo")
 					)
 					.map((value, key) => (
-						<div key={key} tw="ml-4 mt-2">
-							<label tw="flex items-center space-x-2">
+						<div key={key} className="ml-4 mt-2">
+							<label className="flex items-center space-x-2">
 								<input
 									type="checkbox"
-									tw="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+									className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
 									checked={value.checked}
 									onChange={handleFilterUrl}
 									value={value.value}
 								/>
-								<span tw="text-left text-xs leading-4 font-normal text-gray-500">{value.label}</span>
+								<span className="text-left text-xs font-normal leading-4 text-gray-500">{value.label}</span>
 							</label>
 						</div>
 					))}
 			</div>
 		</form>
 	) : (
-		<div tw="px-4 py-5 border border-gray-300 sm:px-6 bg-white rounded-lg lg:flex lg:justify-between">
-			<div tw="-ml-4 lg:-mt-2 lg:flex items-center flex-wrap sm:flex-nowrap">
-				<Skeleton duration={2} width={50} height={16} tw="my-4 ml-4 mr-1 lg:mb-0" />
+		<div className="rounded-lg border border-gray-300 bg-white px-4 py-5 sm:px-6 lg:flex lg:justify-between">
+			<div className="-ml-4 flex-wrap items-center sm:flex-nowrap lg:-mt-2 lg:flex">
+				<Skeleton duration={2} width={50} height={16} className="my-4 ml-4 mr-1 lg:mb-0" />
 
 				{filtersArray
 					.filter(
@@ -595,16 +594,16 @@ const Filter = ({
 							e.value !== "allSeo"
 					)
 					.map((value, key) => (
-						<div key={key} tw="ml-4 mt-2">
-							<div tw="flex items-center space-x-2">
-								<Skeleton duration={2} width={16} height={16} tw="h-4 w-4 rounded" />
-								<Skeleton duration={2} width={100} height={16} tw="ml-2" />
+						<div key={key} className="ml-4 mt-2">
+							<div className="flex items-center space-x-2">
+								<Skeleton duration={2} width={16} height={16} className="h-4 w-4 rounded" />
+								<Skeleton duration={2} width={100} height={16} className="ml-2" />
 							</div>
 						</div>
 					))}
 			</div>
 
-			<div tw="lg:-mt-2 lg:flex items-center justify-end flex-wrap sm:flex-nowrap space-x-4">
+			<div className="flex-wrap items-center justify-end space-x-4 sm:flex-nowrap lg:-mt-2 lg:flex">
 				{filtersArray
 					.filter(
 						(e) =>
@@ -616,10 +615,10 @@ const Filter = ({
 								e.value === "allSeo")
 					)
 					.map((value, key) => (
-						<div key={key} tw="ml-4 mt-2">
-							<div tw="flex items-center space-x-2">
-								<Skeleton duration={2} width={16} height={16} tw="h-4 w-4 rounded" />
-								<Skeleton duration={2} width={100} height={16} tw="ml-2" />
+						<div key={key} className="ml-4 mt-2">
+							<div className="flex items-center space-x-2">
+								<Skeleton duration={2} width={16} height={16} className="h-4 w-4 rounded" />
+								<Skeleton duration={2} width={100} height={16} className="ml-2" />
 							</div>
 						</div>
 					))}

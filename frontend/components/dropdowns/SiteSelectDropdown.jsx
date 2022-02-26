@@ -15,7 +15,6 @@ import { useRouter } from "next/router";
 import { forwardRef, memo, useContext, useMemo, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import "twin.macro";
 
 /**
  * Custom function to render the `SiteSelectDropdown` component
@@ -78,42 +77,43 @@ const SiteSelectDropdown = ({ handleSiteSelectOnClick, openDropdown = false }, r
 				showModal={isSiteLimitComponentVisible}
 				setShowModal={setIsSiteLimitComponentVisible}
 			/>
+
 			<Transition
 				show={openDropdown}
-				enter="site-select-dropdown-enter"
-				enterFrom="site-select-dropdown-enter-from"
-				enterTo="site-select-dropdown-enter-to"
-				leave="site-select-dropdown-leave"
-				leaveFrom="site-select-dropdown-leave-from"
-				leaveTo="site-select-dropdown-leave-to"
+				enter="transition ease-out duration-100"
+				enterFrom="transform opacity-0 scale-95"
+				enterTo="transform opacity-100 scale-100"
+				leave="transition ease-in duration-75"
+				leaveFrom="transform opacity-100 scale-100"
+				leaveTo="transform opacity-0 scale-95"
 			>
-				<div ref={ref} tw="absolute z-50 mt-1 w-full rounded-md bg-white shadow-lg overflow-hidden">
+				<div ref={ref} className="absolute z-50 mt-1 w-full overflow-hidden rounded-md bg-white shadow-lg">
 					<MemoizedSitesList isOpen={openDropdown} />
-					<span tw="relative flex m-2 justify-center shadow-sm rounded-md">
+					<span className="relative m-2 flex justify-center rounded-md shadow-sm">
 						{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 							hasSiteLimitReached ? (
 								<button
 									type="button"
-									tw="active:bg-yellow-700 bg-yellow-600 border border-transparent cursor-pointer flex focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 font-medium hover:bg-yellow-700 items-center justify-center leading-4 px-3 py-2 rounded-md text-sm text-white w-full"
+									className="flex w-full cursor-pointer items-center justify-center rounded-md border border-transparent bg-yellow-600 px-3 py-2 text-sm font-medium leading-4 text-white hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 active:bg-yellow-700"
 									onClick={() => setIsSiteLimitComponentVisible(!isSiteLimitComponentVisible)}
 								>
-									<div tw="flex items-center space-x-2">
-										<FontAwesomeIcon icon={["fas", "crown"]} tw="h-4 w-4" />
+									<div className="flex items-center space-x-2">
+										<FontAwesomeIcon icon={["fas", "crown"]} className="h-4 w-4" />
 										<span>{addNewSite}</span>
 									</div>
 								</button>
 							) : (
 								<Link href={AddNewSiteLink + "?step=1&edit=false&verified=false"} passHref>
-									<a tw="active:bg-green-700 bg-green-600 border border-transparent cursor-pointer flex focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-medium hover:bg-green-700 items-center justify-center leading-4 px-3 py-2 rounded-md text-sm text-white w-full">
-										<div tw="flex items-center space-x-2">
-											<PlusIcon tw="mr-2 h-4 w-4" />
+									<a className="flex w-full cursor-pointer items-center justify-center rounded-md border border-transparent bg-green-600 px-3 py-2 text-sm font-medium leading-4 text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 active:bg-green-700">
+										<div className="flex items-center space-x-2">
+											<PlusIcon className="mr-2 h-4 w-4" />
 											{labelsArray[2]?.label ?? null}
 										</div>
 									</a>
 								</Link>
 							)
 						) : (
-							<Skeleton duration={2} width={208} height={38} tw="rounded-md" />
+							<Skeleton duration={2} width={208} height={38} className="rounded-md" />
 						)}
 					</span>
 				</div>

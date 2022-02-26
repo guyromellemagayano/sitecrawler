@@ -8,10 +8,9 @@ import { useRouter } from "next/router";
 import { memo, useEffect, useMemo, useState } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import { useSWRConfig } from "swr";
-import tw from "twin.macro";
 
 /**
- * Custom function to render the `ConfirmEmailPageLayout` component
+ * Custom function to render the "ConfirmEmailPageLayout" component
  */
 const ConfirmEmailPageLayout = () => {
 	const [success, setSuccess] = useState(false);
@@ -63,10 +62,10 @@ const ConfirmEmailPageLayout = () => {
 		const confirmEmailResponseStatus = confirmEmailResponse.status ?? null;
 
 		if (confirmEmailResponseData !== null && Math.round(confirmEmailResponseStatus / 200) === 1) {
-			// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
+			// Mutate "user" endpoint after successful 200 OK or 201 Created response is issued
 			mutate(UserApiEndpoint);
 
-			// Update `successMessage` and `success` states with an actual success message as soon as 200 OK or 201 Created response is issued
+			// Update "successMessage" and "success" states with an actual success message as soon as 200 OK or 201 Created response is issued
 			setSuccessMessage((prevState) => [
 				...prevState,
 				prevState.indexOf(confirmEmailPost201CreatedSuccessResponse) !== -1
@@ -75,7 +74,7 @@ const ConfirmEmailPageLayout = () => {
 			]);
 			setSuccess(true);
 		} else {
-			// Update `errorMessage` and `error` states with an actual success message as soon as an error response is issued
+			// Update "errorMessage" and "error" states with an actual success message as soon as an error response is issued
 			let errorStatusCodeMessage = "";
 
 			switch (confirmEmailResponseStatus) {
@@ -134,18 +133,18 @@ const ConfirmEmailPageLayout = () => {
 	}, [handleConfirmEmail]);
 
 	return (
-		<div tw="bg-gray-50 overflow-auto h-screen">
+		<div className="h-screen overflow-auto bg-gray-50">
 			<Scrollbars autoHide universal>
-				<div tw="flex flex-col justify-center h-full">
-					<div tw="relative py-12 sm:px-6 lg:px-8">
+				<div className="flex h-full flex-col justify-center">
+					<div className="relative py-12 sm:px-6 lg:px-8">
 						<MemoizedLogoLabel isConfirmEmail />
 
-						<div tw="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-							<div tw="bg-white py-8 px-4 shadow-xl rounded-lg sm:px-10">
+						<div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+							<div className="rounded-lg bg-white py-8 px-4 shadow-xl sm:px-10">
 								<h3
-									css={[
-										tw`text-lg leading-6 font-medium`,
-										success ? tw`text-green-900` : failure ? tw`text-red-900` : tw`text-gray-500`
+									className={[
+										"text-lg font-medium leading-6",
+										success ? "text-green-900" : failure ? "text-red-900" : "text-gray-500"
 									]}
 								>
 									{success ? (
@@ -153,7 +152,7 @@ const ConfirmEmailPageLayout = () => {
 									) : failure ? (
 										confirmEmailFailed
 									) : (
-										<span tw="block text-center">{loaderMessage}</span>
+										<span className="block text-center">{loaderMessage}</span>
 									)}
 								</h3>
 								{success &&
@@ -161,21 +160,21 @@ const ConfirmEmailPageLayout = () => {
 								successMessage !== null &&
 								successMessage !== [] &&
 								successMessage.length > 0 ? (
-									<div tw="mt-3 text-sm leading-5 text-gray-500">
+									<div className="mt-3 text-sm leading-5 text-gray-500">
 										{successMessage.map((value, key) => (
 											<p key={key}>{value}</p>
 										))}
-										<div tw="mt-5">
+										<div className="mt-5">
 											<Link href={LoginLink} passHref replace>
 												<a
-													css={[
+													className={[
 														success &&
 														typeof successMessage !== "undefined" &&
 														successMessage !== null &&
 														successMessage !== [] &&
 														successMessage.length > 0
-															? tw`inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm`
-															: tw`hidden`
+															? "inline-flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:text-sm"
+															: "hidden"
 													]}
 												>
 													{goBackLogin}
@@ -188,21 +187,21 @@ const ConfirmEmailPageLayout = () => {
 								  errorMessage !== null &&
 								  errorMessage !== [] &&
 								  errorMessage.length > 0 ? (
-									<div tw="mt-3 text-sm leading-5 text-gray-500">
+									<div className="mt-3 text-sm leading-5 text-gray-500">
 										{errorMessage.map((value, key) => (
 											<p key={key}>{value}</p>
 										))}
-										<div tw="mt-5">
+										<div className="mt-5">
 											<button
 												type="button"
-												css={[
+												className={[
 													failure &&
 													typeof errorMessage !== "undefined" &&
 													errorMessage !== null &&
 													errorMessage !== [] &&
 													errorMessage.length > 0
-														? tw`inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm`
-														: tw`hidden`
+														? "inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:text-sm"
+														: "hidden"
 												]}
 												onClick={() => router.reload()}
 											>
@@ -221,6 +220,6 @@ const ConfirmEmailPageLayout = () => {
 };
 
 /**
- * Memoized custom `ConfirmEmailPageLayout` component
+ * Memoized custom "ConfirmEmailPageLayout" component
  */
 export const MemoizedConfirmEmailPageLayout = memo(ConfirmEmailPageLayout);

@@ -1,9 +1,9 @@
 import { Transition } from "@headlessui/react";
 import { ExclamationIcon } from "@heroicons/react/outline";
+import { classNames } from "@utils/classNames";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
 import { forwardRef, memo } from "react";
-import tw from "twin.macro";
 
 /**
  * Custom function to render the `ChangeToBasicModal` component
@@ -44,7 +44,7 @@ const ChangeToBasicModal = (
 
 	return (
 		<Transition show={showModal}>
-			<div tw="fixed z-50 bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center">
+			<div className="fixed inset-x-0 bottom-0 z-50 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center">
 				<Transition.Child
 					enter="change-to-basic-modal-first-child-enter"
 					enterFrom="change-to-basic-modal-first-child-enter-from"
@@ -53,12 +53,12 @@ const ChangeToBasicModal = (
 					leaveFrom="change-to-basic-modal-first-child-leave-from"
 					leaveTo="change-to-basic-modal-first-child-leave-to"
 				>
-					<div tw="fixed inset-0 transition-opacity" aria-hidden="true">
-						<div tw="absolute inset-0 bg-gray-500 opacity-75"></div>
+					<div className="fixed inset-0 transition-opacity" aria-hidden="true">
+						<div className="absolute inset-0 bg-gray-500 opacity-75"></div>
 					</div>
 				</Transition.Child>
 
-				<span tw="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+				<span className="hidden sm:inline-block sm:h-screen sm:align-middle">&#8203;</span>
 
 				<Transition.Child
 					enter="change-to-basic-modal-second-child-enter"
@@ -70,36 +70,36 @@ const ChangeToBasicModal = (
 				>
 					<div
 						ref={ref}
-						tw="bg-white rounded-lg px-4 pt-5 pb-4 overflow-hidden transform transition-all sm:max-w-lg sm:w-full sm:p-6"
+						className="transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 transition-all sm:w-full sm:max-w-lg sm:p-6"
 						role="dialog"
 						aria-modal="true"
 						aria-labelledby="modal-headline"
 					>
-						<div tw="sm:flex sm:items-start">
-							<div tw="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full sm:mx-0 sm:h-10 sm:w-10 bg-yellow-100">
-								<ExclamationIcon tw="h-6 w-6 text-yellow-600" />
+						<div className="sm:flex sm:items-start">
+							<div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-yellow-100 sm:mx-0 sm:h-10 sm:w-10">
+								<ExclamationIcon className="h-6 w-6 text-yellow-600" />
 							</div>
-							<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-								<h3 tw="text-lg leading-6 font-medium text-gray-900" id="modal-headline">
+							<div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+								<h3 className="text-lg font-medium leading-6 text-gray-900" id="modal-headline">
 									{subscriptionPlansDowngradeToBasicLabel}
 								</h3>
-								<div tw="my-2">
-									<p tw="text-sm leading-5 text-gray-500">{subscriptionPlansDowngradeToBasicDescription}</p>
+								<div className="my-2">
+									<p className="text-sm leading-5 text-gray-500">{subscriptionPlansDowngradeToBasicDescription}</p>
 								</div>
 							</div>
 						</div>
 
-						<div tw="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-							<span tw="flex w-full sm:w-auto">
+						<div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+							<span className="flex w-full sm:w-auto">
 								<button
 									type="button"
 									disabled={disableDowngradeToBasicPlan}
-									css={[
-										tw`sm:ml-3 cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-yellow-600 text-sm leading-5 font-medium text-white shadow-sm sm:text-sm sm:leading-5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition ease-in-out duration-150`,
+									className={classNames(
+										"inline-flex w-full cursor-pointer justify-center rounded-md border border-gray-300 bg-yellow-600 px-4 py-2 text-sm font-medium leading-5 text-white shadow-sm transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 sm:ml-3 sm:text-sm sm:leading-5",
 										disableDowngradeToBasicPlan
-											? tw`opacity-50 cursor-not-allowed`
-											: tw`hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 active:bg-yellow-700`
-									]}
+											? "cursor-not-allowed opacity-50"
+											: "hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 active:bg-yellow-700"
+									)}
 									aria-label="Downgrade to Basic Plan"
 									onClick={handlePlanSelection(planId, planName, defaultPaymentMethod)}
 								>
@@ -108,12 +108,12 @@ const ChangeToBasicModal = (
 
 								<button
 									type="button"
-									css={[
-										tw`cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-sm sm:text-sm sm:leading-5`,
+									className={classNames(
+										"inline-flex w-full cursor-pointer justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium leading-5 text-gray-700 shadow-sm sm:ml-3 sm:text-sm sm:leading-5",
 										disableDowngradeToBasicPlan
-											? tw`opacity-50 cursor-not-allowed`
-											: tw`hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150`
-									]}
+											? "cursor-not-allowed opacity-50"
+											: "transition duration-150 ease-in-out hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+									)}
 									onClick={() => setShowModal(false)}
 								>
 									{close}

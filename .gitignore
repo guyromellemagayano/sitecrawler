@@ -244,8 +244,6 @@ dist
 # TernJS port file
 .tern-port
 
-.now
-
 # macOS temporary files
 .DS_Store
 .AppleDouble
@@ -253,9 +251,6 @@ dist
 
 # Visual Studio Code
 .vscode
-
-# Stylesheets
-*.css
 
 # sql dumps
 *.sql

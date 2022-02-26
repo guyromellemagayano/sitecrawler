@@ -5,7 +5,6 @@ import PropTypes from "prop-types";
 import { memo, useMemo } from "react";
 import Scrollbars from "react-custom-scrollbars-2";
 import "react-loading-skeleton/dist/skeleton.css";
-import "twin.macro";
 import { MemoizedSiteList } from "./SiteList";
 
 /**
@@ -42,7 +41,7 @@ const SitesList = ({ isOpen = false }) => {
 			tabIndex="-1"
 			role="listbox"
 			aria-labelledby="listbox-label"
-			tw="pt-2 h-48 text-base leading-6 overflow-auto focus:outline-none sm:text-sm sm:leading-5"
+			className="h-48 overflow-auto pt-2 text-base leading-6 focus:outline-none sm:text-sm sm:leading-5"
 		>
 			<Scrollbars autoHide universal>
 				{sites.data.results.map((value) => (
@@ -52,8 +51,8 @@ const SitesList = ({ isOpen = false }) => {
 		</ul>
 	) : (
 		// Show message if no sites are available
-		<span tw="w-full h-48 flex items-center justify-center">
-			<p tw="text-sm pt-6 pb-2 leading-6 font-medium text-gray-500">{noAvailableSites}</p>
+		<span className="flex h-48 w-full items-center justify-center">
+			<p className="pt-6 pb-2 text-sm font-medium leading-6 text-gray-500">{noAvailableSites}</p>
 		</span>
 	);
 };

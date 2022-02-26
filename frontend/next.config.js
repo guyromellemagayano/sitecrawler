@@ -6,6 +6,8 @@ const { withSentryConfig } = require("@sentry/nextjs");
 const withNextTranslate = require("next-translate");
 
 const NextConfig = {
+	swcMinify: true,
+	reactStrictMode: true,
 	trailingSlash: true,
 	eslint: {
 		dirs: ["pages", "configs", "components", "hooks", "helpers", "styles", "utils"],
@@ -17,6 +19,13 @@ const NextConfig = {
 	},
 	env: {
 		LOGROCKET_APP_ID: "epic-design-labs/link-app"
+	},
+	compiler: {
+		styledComponents: true,
+		removeConsole: true
+	},
+	experimental: {
+		outputStandalone: true
 	},
 	async redirects() {
 		return [

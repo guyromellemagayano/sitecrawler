@@ -1,7 +1,6 @@
 import { ExclamationIcon } from "@heroicons/react/outline";
 import PropTypes from "prop-types";
 import { memo } from "react";
-import "twin.macro";
 
 /**
  * Custom function to render the `SiteWarningStatus` component
@@ -10,8 +9,8 @@ import "twin.macro";
  */
 const SiteWarningStatus = ({ text = null }) => {
 	return text !== null ? (
-		<span tw="inline-flex items-center text-sm leading-5 font-semibold rounded-full text-yellow-800">
-			<ExclamationIcon tw="w-6 h-6 mr-2" />
+		<span className="inline-flex items-center rounded-full text-sm font-semibold leading-5 text-yellow-800">
+			<ExclamationIcon className="mr-2 h-6 w-6" />
 			{text}
 		</span>
 	) : null;

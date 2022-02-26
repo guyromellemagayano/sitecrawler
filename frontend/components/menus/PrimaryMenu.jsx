@@ -8,6 +8,7 @@ import { ArrowLeftIcon } from "@heroicons/react/solid";
 import { useSites } from "@hooks/useSites";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
+import { classNames } from "@utils/classNames";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -15,7 +16,6 @@ import { memo, useContext } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import tw from "twin.macro";
 
 /**
  * Custom function to render the `PrimaryMenu` component
@@ -40,23 +40,23 @@ const PrimaryMenu = () => {
 
 	return (
 		<Scrollbars autoHide renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />} universal>
-			<div tw="flex flex-col h-full py-4 lg:py-8">
-				<div tw="flex items-center flex-shrink-0 flex-row px-3 mb-0">
+			<div className="flex h-full flex-col py-4 lg:py-8">
+				<div className="mb-0 flex flex-shrink-0 flex-row items-center px-3">
 					<Link href={DashboardSitesLink} passHref>
-						<a tw="p-1 block w-full cursor-pointer">
+						<a className="block w-full cursor-pointer p-1">
 							<SiteLogoWhite className="flex" width={AuthAppLogo.width} height={AuthAppLogo.height} />
 						</a>
 					</Link>
 				</div>
 				{PrimarySidebarMenus?.length > 0 ? (
-					<div tw="flex-1 flex flex-col overflow-y-auto">
-						<nav tw="flex-1 px-4">
+					<div className="flex flex-1 flex-col overflow-y-auto">
+						<nav className="flex-1 px-4">
 							{PrimarySidebarMenus.filter((e) => {
 								return !asPath?.includes(DashboardSitesLink + AddNewSiteSlug) ? e.slug !== "navigation" : true;
 							})?.map((value) => {
 								return (
-									<div key={value.slug} tw="mb-4">
-										<h3 tw="mt-8 text-xs leading-4 font-semibold text-gray-200 uppercase tracking-wider inline-block">
+									<div key={value.slug} className="mb-4">
+										<h3 className="mt-8 inline-block text-xs font-semibold uppercase leading-4 tracking-wider text-gray-200">
 											{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 												value.category
 											) : (
@@ -64,52 +64,51 @@ const PrimaryMenu = () => {
 											)}
 										</h3>
 
-										<div tw="my-3" role="group">
+										<div className="my-3" role="group">
 											{value.links ? (
 												value.links.map((value2) => {
 													return value2.slug !== "go-back-to-sites" ? (
 														<Link key={value2.slug} href={value2.url} passHref>
 															<a
-																className="group"
-																css={[
-																	tw`mt-1 flex items-center justify-between  px-3 py-2 text-sm leading-5 font-medium rounded-md `,
+																className={classNames(
+																	"group mt-1 flex items-center justify-between  rounded-md px-3 py-2 text-sm font-medium leading-5 ",
 																	asPath.includes(value2.url) &&
-																	isComponentReady &&
-																	user &&
-																	Math.round(user?.status / 100) === 2 &&
-																	!user?.data?.detail
-																		? tw`bg-gray-1100 !cursor-default`
+																		isComponentReady &&
+																		user &&
+																		Math.round(user?.status / 100) === 2 &&
+																		!user?.data?.detail
+																		? "!cursor-default bg-gray-1100"
 																		: null,
 																	asPath.includes(value2.url) ||
-																	(asPath.includes(SitesSlug) && SitesSlug.includes(value2.url))
-																		? tw`text-gray-100`
-																		: tw`text-gray-400`,
+																		(asPath.includes(SitesSlug) && SitesSlug.includes(value2.url))
+																		? "text-gray-100"
+																		: "text-gray-400",
 																	isComponentReady &&
-																	user &&
-																	Math.round(user?.status / 100) === 2 &&
-																	!user?.data?.detail
-																		? tw`cursor-pointer hover:text-gray-100 focus:outline-none transition ease-in-out duration-150 hover:bg-gray-1100 focus:bg-gray-1100`
-																		: tw`cursor-default`
-																]}
+																		user &&
+																		Math.round(user?.status / 100) === 2 &&
+																		!user?.data?.detail
+																		? "cursor-pointer transition duration-150 ease-in-out hover:bg-gray-1100 hover:text-gray-100 focus:bg-gray-1100 focus:outline-none"
+																		: "cursor-default"
+																)}
 															>
-																<span tw="flex items-center justify-start">
+																<span className="flex items-center justify-start">
 																	{value2.slug === "sites" ? (
 																		isComponentReady &&
 																		user &&
 																		Math.round(user?.status / 100) === 2 &&
 																		!user?.data?.detail ? (
-																			<ExternalLinkIcon tw="mr-3 h-6 w-5" />
+																			<ExternalLinkIcon className="mr-3 h-6 w-5" />
 																		) : (
-																			<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
+																			<Skeleton duration={2} width={20} height={20} circle={true} className="mr-3" />
 																		)
 																	) : value2.slug === "audit-logs" ? (
 																		isComponentReady &&
 																		user &&
 																		Math.round(user?.status / 100) === 2 &&
 																		!user?.data?.detail ? (
-																			<DocumentReportIcon tw="mr-3 h-6 w-5" />
+																			<DocumentReportIcon className="mr-3 h-6 w-5" />
 																		) : (
-																			<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
+																			<Skeleton duration={2} width={20} height={20} circle={true} className="mr-3" />
 																		)
 																	) : null}
 
@@ -133,13 +132,13 @@ const PrimaryMenu = () => {
 																	Math.round(user?.status / 100) === 2 &&
 																	!user?.data?.detail ? (
 																		!validatingSites && sitesCount > 0 ? (
-																			<span tw="ml-auto inline-block text-xs leading-4 rounded-full py-1 px-3 bg-white text-black">
+																			<span className="ml-auto inline-block rounded-full bg-white py-1 px-3 text-xs leading-4 text-black">
 																				{sitesCount}
 																			</span>
 																		) : null
 																	) : (
-																		<span tw="flex items-center pl-3">
-																			<Skeleton duration={2} width={30} height={20} tw="rounded-full" />
+																		<span className="flex items-center pl-3">
+																			<Skeleton duration={2} width={30} height={20} className="rounded-full" />
 																		</span>
 																	)
 																) : null}
@@ -148,24 +147,23 @@ const PrimaryMenu = () => {
 													) : (
 														<Link key={value.slug} href={value2.url} passHref>
 															<a
-																className="group"
-																css={[
-																	tw`mt-1 flex items-center py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 focus:outline-none focus:text-white`,
+																className={classNames(
+																	"group mt-1 flex items-center rounded-md py-2 text-sm font-medium leading-5 text-gray-400 hover:text-gray-100 focus:text-white focus:outline-none",
 																	isComponentReady &&
-																	user &&
-																	Math.round(user?.status / 100) === 2 &&
-																	!user?.data?.detail
-																		? tw`cursor-pointer`
+																		user &&
+																		Math.round(user?.status / 100) === 2 &&
+																		!user?.data?.detail
+																		? "cursor-pointer"
 																		: null
-																]}
+																)}
 															>
 																{isComponentReady &&
 																user &&
 																Math.round(user?.status / 100) === 2 &&
 																!user?.data?.detail ? (
-																	<ArrowLeftIcon tw="mr-3 h-6 w-5" />
+																	<ArrowLeftIcon className="mr-3 h-6 w-5" />
 																) : (
-																	<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
+																	<Skeleton duration={2} width={20} height={20} circle={true} className="mr-3" />
 																)}
 
 																{value2.title ? (

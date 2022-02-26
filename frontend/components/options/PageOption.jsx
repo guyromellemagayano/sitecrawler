@@ -15,6 +15,7 @@ import { useSiteQueries } from "@hooks/useSiteQueries";
 import { useSites } from "@hooks/useSites";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
+import { classNames } from "@utils/classNames";
 import { handleConversionStringToLowercase, handleConversionStringToNumber } from "@utils/convertCase";
 import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
@@ -22,7 +23,6 @@ import { useRouter } from "next/router";
 import { memo, useContext, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import tw from "twin.macro";
 
 /**
  * Custom function to render the `PageOption` component
@@ -131,7 +131,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 	};
 
 	return (
-		<div tw="flex-none px-4 sm:px-6 md:px-0 md:flex md:items-center md:justify-between">
+		<div className="flex-none px-4 sm:px-6 md:flex md:items-center md:justify-between md:px-0">
 			{!isSites ? (
 				<>
 					<MemoizedUpgradeErrorModal
@@ -148,26 +148,25 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 				</>
 			) : null}
 
-			<div ref={selectedSiteRef} tw="flex-1 min-w-0">
-				<div tw="mt-4 mb-8 flex flex-col sm:flex-row sm:flex-wrap sm:mt-2 sm:space-x-6 md:justify-between">
-					<div tw="mt-2 flex justify-start space-x-6">
+			<div ref={selectedSiteRef} className="min-w-0 flex-1">
+				<div className="mt-4 mb-8 flex flex-col sm:mt-2 sm:flex-row sm:flex-wrap sm:space-x-6 md:justify-between">
+					<div className="mt-2 flex justify-start space-x-6">
 						{!isSites ? (
 							<>
-								<div tw="flex items-center space-x-2 text-sm text-gray-500">
+								<div className="flex items-center space-x-2 text-sm text-gray-500">
 									{isComponentReady &&
 									user &&
 									Math.round(user?.status / 100) === 2 &&
 									!user?.data?.detail &&
 									(!validatingLinks || !validatingPages) ? (
 										<>
-											<GlobeIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" aria-hidden="true" />
-											<span tw="text-sm leading-6 font-semibold text-gray-500">
+											<GlobeIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+											<span className="text-sm font-semibold leading-6 text-gray-500">
 												<a
 													href={siteUrl}
 													target="_blank"
 													title={siteName}
-													className="truncate-link"
-													tw="max-w-lg hover:text-gray-900 truncate"
+													className="truncate-link max-w-lg truncate hover:text-gray-900"
 													rel="noreferrer"
 												>
 													{siteName}
@@ -182,7 +181,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 									)}
 								</div>
 
-								<div tw="flex items-center space-x-2 text-sm text-gray-500">
+								<div className="flex items-center space-x-2 text-sm text-gray-500">
 									{isComponentReady &&
 									user &&
 									Math.round(user?.status / 100) === 2 &&
@@ -191,10 +190,10 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 										<>
 											<FontAwesomeIcon
 												icon={["fas", "spider"]}
-												tw="flex-shrink-0 h-5 w-5 text-gray-400"
+												className="h-5 w-5 flex-shrink-0 text-gray-400"
 												aria-hidden="true"
 											/>
-											<span tw="text-sm leading-6 text-gray-500">
+											<span className="text-sm leading-6 text-gray-500">
 												{scanCount > 1 ? (
 													!disableLocalTime ? (
 														dayjs(
@@ -206,7 +205,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 															.calendar(null, calendarStrings)
 													)
 												) : scanCount === 1 && currentScan !== null ? (
-													<span tw="text-sm leading-5 text-gray-500">{siteCrawlingInProcessText}</span>
+													<span className="text-sm leading-5 text-gray-500">{siteCrawlingInProcessText}</span>
 												) : !disableLocalTime ? (
 													dayjs(previousScan?.finished_at).calendar(null, calendarStrings)
 												) : (
@@ -224,7 +223,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 							</>
 						) : null}
 
-						<div tw="flex items-center space-x-2 text-sm text-gray-500">
+						<div className="flex items-center space-x-2 text-sm text-gray-500">
 							{isComponentReady &&
 							user &&
 							Math.round(user?.status / 100) === 2 &&
@@ -232,8 +231,8 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 							(!validatingSites || !validatingLinks || !validatingPages) ? (
 								isLinks && linksCount ? (
 									<>
-										<LinkIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" aria-hidden="true" />
-										<span tw="text-sm leading-6 text-gray-500">
+										<LinkIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+										<span className="text-sm leading-6 text-gray-500">
 											{linksCount > 1
 												? linksCount + " " + handleConversionStringToLowercase(linksText)
 												: linksCount + " " + linkText}
@@ -241,8 +240,8 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 									</>
 								) : isSites && sitesCount ? (
 									<>
-										<ExternalLinkIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" aria-hidden="true" />
-										<span tw="text-sm leading-6 text-gray-500">
+										<ExternalLinkIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+										<span className="text-sm leading-6 text-gray-500">
 											{sitesCount > 1
 												? sitesCount + " " + handleConversionStringToLowercase(sitesText)
 												: sitesCount + " " + siteText}
@@ -250,8 +249,8 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 									</>
 								) : isPages && pagesCount ? (
 									<>
-										<DocumentTextIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" aria-hidden="true" />
-										<span tw="text-sm leading-6 text-gray-500">
+										<DocumentTextIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+										<span className="text-sm leading-6 text-gray-500">
 											{pagesCount > 1
 												? pagesCount + " " + handleConversionStringToLowercase(pagesText)
 												: pagesCount + " " + siteText}
@@ -268,7 +267,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 					</div>
 
 					{!isSites ? (
-						<div tw="mt-4 flex md:mt-0 md:ml-4">
+						<div className="mt-4 flex md:mt-0 md:ml-4">
 							{isComponentReady &&
 							user &&
 							Math.round(user?.status / 100) === 2 &&
@@ -284,15 +283,15 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 											type="button"
 											disabled={(isCrawlStarted && !isCrawlFinished) || isProcessing}
 											onClick={handleCrawl}
-											css={[
-												tw`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white `,
+											className={classNames(
+												"inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm ",
 												(isCrawlStarted && !isCrawlFinished) || isProcessing
-													? tw`opacity-50 cursor-not-allowed`
-													: tw`bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`
-											]}
+													? "cursor-not-allowed opacity-50"
+													: "bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+											)}
 										>
-											<span tw="flex items-center space-x-2">
-												<FontAwesomeIcon icon={["fas", "spider"]} tw="w-4 h-4 text-white" />
+											<span className="flex items-center space-x-2">
+												<FontAwesomeIcon icon={["fas", "spider"]} className="h-4 w-4 text-white" />
 												<span>{isProcessing || (isCrawlStarted && !isCrawlFinished) ? crawlingText : crawlText}</span>
 											</span>
 										</button>
@@ -300,10 +299,10 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 										<button
 											type="button"
 											onClick={() => setIsSiteVerifyErrorModalVisible(!isSiteVerifyErrorModalVisible)}
-											tw="inline-flex items-center ml-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white focus:outline-none bg-red-600 hover:bg-red-700 focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+											className="ml-2 inline-flex items-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
 										>
-											<span tw="flex items-center space-x-2">
-												<XCircleIcon tw="w-4 h-4 text-white" />
+											<span className="flex items-center space-x-2">
+												<XCircleIcon className="h-4 w-4 text-white" />
 												<span>{crawlText}</span>
 											</span>
 										</button>
@@ -312,10 +311,10 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 									<button
 										type="button"
 										onClick={() => setIsUpgradeErrorModalVisible(!isUpgradeErrorModalVisible)}
-										tw="inline-flex items-center ml-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white focus:outline-none bg-yellow-600 hover:bg-yellow-700 focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+										className="ml-2 inline-flex items-center rounded-md border border-transparent bg-yellow-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
 									>
-										<span tw="flex items-center space-x-2">
-											<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-white" />
+										<span className="flex items-center space-x-2">
+											<FontAwesomeIcon icon={["fas", "crown"]} className="h-4 w-4 text-white" />
 											<span>{crawlText}</span>
 										</span>
 									</button>
@@ -334,16 +333,16 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 										<button
 											type="button"
 											disabled={isDownloading}
-											css={[
-												tw`inline-flex items-center ml-2 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white`,
+											className={classNames(
+												"ml-2 inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm",
 												isDownloading
-													? tw`opacity-50 cursor-not-allowed`
-													: tw`bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
-											]}
+													? "cursor-not-allowed opacity-50"
+													: "bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+											)}
 											onClick={handleCsvDownload}
 										>
-											<span tw="flex items-center space-x-2">
-												<DownloadIcon tw="w-4 h-4 text-white" />
+											<span className="flex items-center space-x-2">
+												<DownloadIcon className="h-4 w-4 text-white" />
 												<span>{isDownloading ? downloadingText : csvDownloadText}</span>
 											</span>
 										</button>
@@ -351,16 +350,16 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 										<button
 											type="button"
 											onClick={() => setIsSiteVerifyErrorModalVisible(!isSiteVerifyErrorModalVisible)}
-											tw="inline-flex items-center ml-2 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+											className="ml-2 inline-flex items-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
 										>
-											<span tw="flex items-center space-x-2">
-												<XCircleIcon tw="w-4 h-4 text-white" />
+											<span className="flex items-center space-x-2">
+												<XCircleIcon className="h-4 w-4 text-white" />
 												<span>{csvDownloadText}</span>
 											</span>
 										</button>
 									) : null
 								) : (
-									<Skeleton duration={2} width={150} height={40} tw="ml-2" />
+									<Skeleton duration={2} width={150} height={40} className="ml-2" />
 								)
 							) : null}
 						</div>
