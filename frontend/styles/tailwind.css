@@ -1,0 +1,127 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+/* Custom global overrides */
+body {
+	@apply antialiased;
+}
+
+tr a,
+tr div {
+	@apply max-w-full inline-block clear-both;
+}
+
+tr td > div {
+	@apply max-w-full block;
+}
+
+tr td > div > div {
+	@apply max-w-full block;
+}
+
+/* Custom variables */
+.link-item {
+	@apply max-w-full block;
+}
+
+.link-item a {
+	@apply inline-block clear-both;
+}
+
+.icon-status {
+	@apply text-left;
+}
+
+.icon-status span {
+	@apply mx-auto inline-block;
+}
+
+.truncate-link,
+.truncate-profile-text,
+.truncate-breadcrumbs {
+	@apply truncate;
+}
+
+.truncate-profile-text {
+	max-width: 12rem;
+}
+
+.truncate-link,
+.truncate-breadcrumbs {
+	max-width: 30rem;
+}
+
+.scroll-dark-bg {
+	background-color: rgba(255, 255, 255, 0.2);
+	border-radius: 3px;
+}
+
+/* Custom vendor overrides */
+.react-loading-skeleton {
+	@apply !rounded-md !relative;
+}
+
+.legend-val {
+	@apply text-gray-1300 font-semibold;
+}
+
+.legend-text {
+	@apply mr-2.5;
+}
+
+.apexcharts-legend {
+	@apply !block !mx-auto max-w-xs;
+}
+
+.apexcharts-legend-text {
+	@apply flex items-center justify-between w-full;
+}
+
+.apexcharts-legend-marker {
+	@apply mr-2.5;
+}
+
+.apexcharts-legend-series {
+	@apply flex items-center outline-none cursor-pointer border-gray-1400 border border-solid;
+	padding-bottom: 10px;
+	-webkit-tap-highlight-color: transparent;
+}
+
+.apexcharts-legend-series::last-child {
+	@apply border-none;
+}
+
+.rc-pagination {
+	@apply flex text-gray-500;
+}
+
+.rc-pagination li {
+	@apply cursor-pointer flex items-center justify-center outline-none text-sm leading-5 -mt-4 pt-4 font-medium text-opacity-100;
+	color: rgba(160, 174, 192, var(--text-opacity));
+}
+
+.rc-pagination li:hover {
+	color: rgba(74, 85, 104, var(--text-opacity));
+}
+
+.rc-pagination-item {
+	@apply w-10 h-10;
+}
+
+.rc-pagination-item a {
+	@apply outline-none;
+}
+
+.rc-pagination-item-active {
+	border-top: 2px solid #667eea;
+	color: #667eea !important;
+}
+
+.rc-pagination-prev {
+	@apply mr-3;
+}
+
+.rc-pagination-next {
+	@apply ml-3;
+}
