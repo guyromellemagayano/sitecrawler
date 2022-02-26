@@ -7,7 +7,7 @@ import { handlePostMethod } from "@helpers/handleHttpMethods";
 import { useShowPassword } from "@hooks/useShowPassword";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import * as Sentry from "@sentry/nextjs";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
@@ -125,7 +125,7 @@ const LoginForm = () => {
 									type="text"
 									autoComplete="username"
 									disabled={isSubmitting}
-									className={classNames(
+									className={classnames(
 										"block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
 										isSubmitting && "pointer-events-none cursor-not-allowed bg-gray-300 opacity-50",
 										errors.username ? "border-red-300" : "border-gray-300"
@@ -150,7 +150,7 @@ const LoginForm = () => {
 								<div className="text-xs">
 									<button
 										type="button"
-										className={classNames(
+										className={classnames(
 											"cursor-pointer font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none",
 											isSubmitting && "pointer-events-none cursor-not-allowed text-gray-500 opacity-50"
 										)}
@@ -168,7 +168,7 @@ const LoginForm = () => {
 									type="password"
 									autoComplete="current-password"
 									disabled={isSubmitting}
-									className={classNames(
+									className={classnames(
 										"block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
 										isSubmitting && "pointer-events-none cursor-not-allowed bg-gray-300 opacity-50",
 										errors.password ? "border-red-300" : "border-gray-300"
@@ -192,7 +192,7 @@ const LoginForm = () => {
 									name="rememberme"
 									type="checkbox"
 									disabled={isSubmitting}
-									className={classNames(
+									className={classnames(
 										"h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500",
 										isSubmitting && "pointer-events-none cursor-not-allowed bg-gray-300 opacity-50"
 									)}
@@ -208,7 +208,7 @@ const LoginForm = () => {
 							<div className="text-sm">
 								<Link href={ResetPasswordLink} passHref>
 									<a
-										className={classNames(
+										className={classnames(
 											"cursor-pointer font-medium text-indigo-600 transition duration-150 ease-in-out hover:text-indigo-500 focus:underline focus:outline-none",
 											isSubmitting && "pointer-events-none cursor-not-allowed text-gray-500 opacity-50"
 										)}
@@ -224,7 +224,7 @@ const LoginForm = () => {
 								<button
 									type="submit"
 									disabled={isSubmitting}
-									className={classNames(
+									className={classnames(
 										"flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm",
 										isSubmitting
 											? "pointer-events-none cursor-not-allowed bg-indigo-300 opacity-50"
@@ -256,7 +256,7 @@ const LoginForm = () => {
 												href={links.href}
 												disabled={links.disabled}
 												title={links.label}
-												className={classNames(
+												className={classnames(
 													"inline-flex w-full items-center justify-center rounded-md border border-gray-300 py-2 px-4 text-sm font-medium text-gray-500 shadow-sm",
 													links.disabled ? "pointer-events-none cursor-not-allowed bg-gray-300 opacity-50" : "bg-white",
 													isSubmitting ? "pointer-events-none cursor-not-allowed bg-gray-300" : "hover:bg-gray-50"

@@ -2,7 +2,7 @@ import { AddNewSiteLink, DashboardSitesLink, SubscriptionPlansSettingsLink } fro
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ExclamationIcon } from "@heroicons/react/outline";
 import { PlusIcon, ViewBoardsIcon } from "@heroicons/react/solid";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -53,7 +53,7 @@ const EmptyState = () => {
 						tabIndex="0"
 						onClick={handleRouterOnClick}
 						aria-hidden="true"
-						className={classNames(
+						className={classnames(
 							"inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2",
 							asPath !== DashboardSitesLink
 								? "bg-yellow-600 hover:bg-yellow-700 focus:ring-yellow-500"

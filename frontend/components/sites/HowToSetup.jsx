@@ -2,7 +2,7 @@ import { MemoizedHowToSetupSkeleton } from "@components/skeletons/HowToSetupSkel
 import { HowToSetupData } from "@constants/HowToSetup";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import { memo, useContext, useState } from "react";
 import Skeleton from "react-loading-skeleton";
@@ -128,7 +128,7 @@ const TabItem = ({
 	return (
 		<a
 			href="#"
-			className={classNames(
+			className={classnames(
 				"rounded-md text-sm font-medium leading-5",
 				isTabActive
 					? "bg-indigo-600 text-white focus:bg-indigo-600 focus:outline-none"

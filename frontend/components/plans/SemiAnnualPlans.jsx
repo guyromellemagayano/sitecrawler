@@ -1,7 +1,7 @@
 import { handleUnitAmountToRealPrice } from "@helpers/handleUnitAmountToRealPrice";
 import { CheckIcon } from "@heroicons/react/solid";
 import { useCurrentSubscription } from "@hooks/useCurrentSubscription";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import { handleConversionStringToLowercase } from "@utils/convertCase";
 import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
@@ -122,7 +122,7 @@ const SemiAnnualPlans = ({
 						}) ?? null}
 					</ul>
 					<div className="mt-10">
-						<div className={classNames("rounded-lg", planId === currentSubscriptionId ? "shadow-none" : "shadow-sm")}>
+						<div className={classnames("rounded-lg", planId === currentSubscriptionId ? "shadow-none" : "shadow-sm")}>
 							{planId === currentSubscriptionId &&
 							currentSubscriptionStatus === "PAID" &&
 							currentSubscriptionCancelAt !== null ? (
@@ -142,7 +142,7 @@ const SemiAnnualPlans = ({
 							<button
 								type="button"
 								disabled={planId === currentSubscriptionId ? true : false}
-								className={classNames(
+								className={classnames(
 									"block w-full rounded-lg border border-transparent px-6 py-4 text-center text-lg font-medium leading-6 text-white focus:outline-none focus:ring-2 focus:ring-offset-2",
 									planId === currentSubscriptionId
 										? loadingProSemiAnnually
@@ -201,7 +201,7 @@ const SemiAnnualPlans = ({
 						</ul>
 						<div className="mt-8">
 							<div
-								className={classNames("rounded-lg", data?.id == currentSubscription?.id ? "shadow-none" : "shadow-sm")}
+								className={classnames("rounded-lg", data?.id == currentSubscription?.id ? "shadow-none" : "shadow-sm")}
 							>
 								{planId === currentSubscriptionId &&
 								currentSubscriptionStatus === "PAID" &&
@@ -222,7 +222,7 @@ const SemiAnnualPlans = ({
 								<button
 									type="button"
 									disabled={planId === currentSubscriptionId ? true : false}
-									className={classNames(
+									className={classnames(
 										"block w-full rounded-lg border border-transparent px-6 py-4 text-center text-lg font-medium leading-6 text-white focus:outline-none focus:ring-2 focus:ring-offset-2",
 										planId === currentSubscriptionId
 											? loadingAgencySemiAnnually

@@ -1,7 +1,7 @@
 import { NotificationDisplayInterval } from "@constants/GlobalValues";
 import { Transition } from "@headlessui/react";
 import { CheckCircleIcon, XCircleIcon, XIcon } from "@heroicons/react/outline";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
 import { Fragment, memo, useEffect, useState } from "react";
@@ -42,7 +42,7 @@ const Alert = ({ responseText = null, isSuccess = false }) => {
 			leaveTo="opacity-0"
 		>
 			<div
-				className={classNames(
+				className={classnames(
 					"mx-4 max-w-sm origin-top rounded-md p-4 shadow",
 					isSuccess ? "bg-green-100" : "bg-red-100"
 				)}
@@ -57,7 +57,7 @@ const Alert = ({ responseText = null, isSuccess = false }) => {
 					</div>
 					<div className="ml-3">
 						<p
-							className={classNames(
+							className={classnames(
 								"break-words text-sm font-medium leading-5",
 								isSuccess ? "text-green-800" : "text-red-800"
 							)}
@@ -69,7 +69,7 @@ const Alert = ({ responseText = null, isSuccess = false }) => {
 						<div className="-mx-1.5 flex items-start">
 							<button
 								type="button"
-								className={classNames(
+								className={classnames(
 									"inline-flex rounded-full px-1 focus:outline-none focus:ring-2 focus:ring-offset-2",
 									isSuccess
 										? "bg-green-100 text-green-500 hover:bg-green-100  focus:ring-green-600 focus:ring-offset-green-50"

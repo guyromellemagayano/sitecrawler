@@ -1,6 +1,6 @@
 import { Transition } from "@headlessui/react";
 import { ExclamationIcon } from "@heroicons/react/outline";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
 import { forwardRef, memo } from "react";
@@ -94,7 +94,7 @@ const ChangeToBasicModal = (
 								<button
 									type="button"
 									disabled={disableDowngradeToBasicPlan}
-									className={classNames(
+									className={classnames(
 										"inline-flex w-full cursor-pointer justify-center rounded-md border border-gray-300 bg-yellow-600 px-4 py-2 text-sm font-medium leading-5 text-white shadow-sm transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 sm:ml-3 sm:text-sm sm:leading-5",
 										disableDowngradeToBasicPlan
 											? "cursor-not-allowed opacity-50"
@@ -108,7 +108,7 @@ const ChangeToBasicModal = (
 
 								<button
 									type="button"
-									className={classNames(
+									className={classnames(
 										"inline-flex w-full cursor-pointer justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium leading-5 text-gray-700 shadow-sm sm:ml-3 sm:text-sm sm:leading-5",
 										disableDowngradeToBasicPlan
 											? "cursor-not-allowed opacity-50"

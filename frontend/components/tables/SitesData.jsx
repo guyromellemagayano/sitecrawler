@@ -5,7 +5,7 @@ import { useScan } from "@hooks/useScan";
 import { useStats } from "@hooks/useStats";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
@@ -172,7 +172,7 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 										{!siteVerified ? (
 											<button
 												type="button"
-												className={classNames(
+												className={classnames(
 													"flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-yellow-600 transition duration-150 ease-in-out hover:text-yellow-500 focus:outline-none",
 													scanCount > 0 && "ml-3"
 												)}

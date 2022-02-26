@@ -2,7 +2,7 @@ import { MemoizedBreadcrumbs } from "@components/breadcrumbs";
 import { LoginLink, SubscriptionPlansSlug } from "@constants/PageLinks";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { memo, useContext, useEffect } from "react";
@@ -37,7 +37,7 @@ const PageLayout = ({ children, pageTitle = null }) => {
 			<div className="flex w-full flex-grow flex-col flex-nowrap">
 				<div className="w-full pt-12 pb-4">
 					<h2
-						className={classNames(
+						className={classnames(
 							asPath.includes(SubscriptionPlansSlug) ? "text-center" : null,
 							"text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl"
 						)}

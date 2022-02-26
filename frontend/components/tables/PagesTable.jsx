@@ -3,7 +3,7 @@ import { MemoizedDataSorting } from "@components/sorting/DataSorting";
 import { MemoizedEmptyState } from "@components/states/EmptyState";
 import { PagesTableLabels } from "@constants/PagesTableLabels";
 import { useUser } from "@hooks/useUser";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
@@ -37,7 +37,7 @@ const PagesTable = ({ count = 0, results = [], validatingPages = false }) => {
 	return (
 		<Scrollbars autoHide universal>
 			<section
-				className={classNames(
+				className={classnames(
 					"flex h-full min-h-full w-full flex-col",
 					permissions.includes("can_see_pages") &&
 						permissions.includes("can_see_scripts") &&

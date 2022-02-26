@@ -7,7 +7,7 @@ import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
 import { useSiteQueries } from "@hooks/useSiteQueries";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import { handleConversionStringToNumber } from "@utils/convertCase";
 import { useRouter } from "next/router";
 import { memo, useContext } from "react";
@@ -39,7 +39,7 @@ const SiteLinksPageLayout = () => {
 		<>
 			<MemoizedPageOption isLinks />
 			<div
-				className={classNames(
+				className={classnames(
 					"flex-grow px-4 pt-8 focus:outline-none sm:px-6 md:px-0",
 					isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && linksCount === 0
 						? "flex flex-auto flex-col items-center justify-center"
@@ -47,7 +47,7 @@ const SiteLinksPageLayout = () => {
 				)}
 			>
 				<div
-					className={classNames(
+					className={classnames(
 						"h-full w-full flex-1",
 						isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && linksCount === 0
 							? "flex flex-auto"
@@ -55,7 +55,7 @@ const SiteLinksPageLayout = () => {
 					)}
 				>
 					<div
-						className={classNames(
+						className={classnames(
 							"h-full w-full flex-1",
 							isComponentReady &&
 								user &&
@@ -66,7 +66,7 @@ const SiteLinksPageLayout = () => {
 						)}
 					>
 						<div
-							className={classNames(
+							className={classnames(
 								"h-full w-full flex-1 py-2",
 								isComponentReady &&
 									user &&

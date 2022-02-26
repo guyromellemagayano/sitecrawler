@@ -1,7 +1,7 @@
 import { SidebarMenuLabels } from "@constants/SidebarMenuLabels";
 import { SelectorIcon } from "@heroicons/react/solid";
 import { useScan } from "@hooks/useScan";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
@@ -49,7 +49,7 @@ const SiteSelectMenu = ({ selectedSite = null, selectedSiteDetails = null, handl
 									aria-label={
 										selectedSiteDetails?.verified ? (currentScan ? recrawlingInProcess : verified) : notVerified
 									}
-									className={classNames(
+									className={classnames(
 										"inline-block h-2 w-2 flex-shrink-0 rounded-full",
 										selectedSiteDetails?.verified ? (currentScan ? "bg-yellow-400" : "bg-green-400") : "bg-red-400"
 									)}

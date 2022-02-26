@@ -15,7 +15,7 @@ import { useSiteQueries } from "@hooks/useSiteQueries";
 import { useSites } from "@hooks/useSites";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import { handleConversionStringToLowercase, handleConversionStringToNumber } from "@utils/convertCase";
 import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
@@ -283,7 +283,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 											type="button"
 											disabled={(isCrawlStarted && !isCrawlFinished) || isProcessing}
 											onClick={handleCrawl}
-											className={classNames(
+											className={classnames(
 												"inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm ",
 												(isCrawlStarted && !isCrawlFinished) || isProcessing
 													? "cursor-not-allowed opacity-50"
@@ -333,7 +333,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 										<button
 											type="button"
 											disabled={isDownloading}
-											className={classNames(
+											className={classnames(
 												"ml-2 inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm",
 												isDownloading
 													? "cursor-not-allowed opacity-50"

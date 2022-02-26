@@ -3,7 +3,7 @@ import { ChevronUpIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -29,7 +29,7 @@ const ProfileMenu = () => {
 		<div ref={profileMenuRef} className="relative flex flex-shrink-0 flex-col">
 			<button
 				type="button"
-				className={classNames(
+				className={classnames(
 					"flex w-full flex-shrink-0 items-center justify-between bg-gray-900 p-4 transition duration-150 ease-in-out focus:outline-none",
 					isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail
 						? "cursor-pointer hover:bg-gray-1100"

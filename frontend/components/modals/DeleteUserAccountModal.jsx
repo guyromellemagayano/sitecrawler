@@ -6,7 +6,7 @@ import { handleDeleteMethod } from "@helpers/handleHttpMethods";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/outline";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import { forwardRef, Fragment, memo, useContext, useMemo, useState } from "react";
@@ -155,7 +155,7 @@ const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 								>
 									<div className="sm:flex sm:items-start">
 										<div
-											className={classNames(
+											className={classnames(
 												"mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full sm:mx-0 sm:h-10 sm:w-10",
 												isSuccess ? "bg-green-100" : "bg-red-100"
 											)}
@@ -186,7 +186,7 @@ const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 													<button
 														type="button"
 														disabled={disableDeleteUser}
-														className={classNames(
+														className={classnames(
 															"relative mt-3 inline-flex w-full cursor-pointer items-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium leading-5 text-white sm:mt-0",
 															disableDeleteUser
 																? "cursor-not-allowed opacity-50"
@@ -202,7 +202,7 @@ const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 												<button
 													type="button"
 													disabled={disableDeleteUser}
-													className={classNames(
+													className={classnames(
 														"mr-3 inline-flex w-full cursor-pointer justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium  text-gray-700 shadow-sm ",
 														disableDeleteUser
 															? "cursor-not-allowed opacity-50"

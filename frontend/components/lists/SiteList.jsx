@@ -1,7 +1,7 @@
 import { DashboardSitesLink, SiteOverviewSlug } from "@constants/PageLinks";
 import { useScan } from "@hooks/useScan";
 import { useStats } from "@hooks/useStats";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
@@ -88,7 +88,7 @@ const SiteList = ({ data = null }) => {
 				passHref
 			>
 				<a
-					className={classNames(
+					className={classnames(
 						"relative block w-full select-none py-2 pl-3 pr-9 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none",
 						stats?.data?.num_links > 0 ||
 							stats?.data?.num_pages > 0 ||
@@ -108,7 +108,7 @@ const SiteList = ({ data = null }) => {
 									? "Recrawling in Process"
 									: "Not Verified"
 							}
-							className={classNames(
+							className={classnames(
 								"inline-block h-2 w-2 flex-shrink-0 rounded-full",
 								siteVerified && currentScan == null
 									? "bg-green-400"
@@ -119,7 +119,7 @@ const SiteList = ({ data = null }) => {
 						/>
 
 						<span
-							className={classNames(
+							className={classnames(
 								"block truncate font-medium",
 								siteVerified && scanCount > 0 ? "text-gray-500" : "text-gray-400"
 							)}

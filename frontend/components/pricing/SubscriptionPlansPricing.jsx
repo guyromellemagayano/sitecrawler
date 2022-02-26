@@ -5,7 +5,7 @@ import { MemoizedSemiAnnualPlans } from "@components/plans/SemiAnnualPlans";
 import { useSubscriptions } from "@hooks/useSubscriptions";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
 import { memo, useContext } from "react";
@@ -85,7 +85,7 @@ const SubscriptionPlansPricing = ({
 							tabIndex="0"
 							onClick={() => setTogglePaymentPeriod(!togglePaymentPeriod)}
 							aria-checked={togglePaymentPeriod}
-							className={classNames(
+							className={classnames(
 								"relative mx-auto inline-flex h-6 w-12 flex-shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring",
 								togglePaymentPeriod ? "bg-indigo-600" : "bg-gray-200"
 							)}
@@ -94,7 +94,7 @@ const SubscriptionPlansPricing = ({
 								aria-hidden="true"
 								role="button"
 								tabIndex="0"
-								className={classNames(
+								className={classnames(
 									"inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ease-in-out",
 									togglePaymentPeriod ? "translate-x-6" : "translate-x-0"
 								)}

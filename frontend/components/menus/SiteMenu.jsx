@@ -9,7 +9,7 @@ import { useScan } from "@hooks/useScan";
 import { useStats } from "@hooks/useStats";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import { handleConversionStringToNumber } from "@utils/convertCase";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
@@ -94,7 +94,7 @@ const SiteMenu = () => {
 														passHref
 													>
 														<a
-															className={classNames(
+															className={classnames(
 																"group mt-1 flex items-center justify-between rounded-md px-3 py-2 text-sm font-medium leading-5",
 																asPath.includes(value2.url) &&
 																	isComponentReady &&
@@ -236,7 +236,7 @@ const SiteMenu = () => {
 												) : value2.slug !== "logout" ? (
 													<Link key={index} href={value2.url} passHref>
 														<a
-															className={classNames(
+															className={classnames(
 																"group mt-1 flex items-center rounded-md py-2 text-sm font-medium leading-5 text-gray-400 hover:text-gray-100 focus:text-white focus:outline-none",
 																isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail
 																	? "cursor-pointer"

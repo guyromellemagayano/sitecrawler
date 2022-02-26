@@ -5,7 +5,7 @@ import { handlePostMethod } from "@helpers/handleHttpMethods";
 import { useSites } from "@hooks/useSites";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
@@ -184,7 +184,7 @@ const VerifyUrlStepForm = ({ sid = null, step = null, verified = false, setDisab
 												<button
 													type="submit"
 													disabled={isSubmitting}
-													className={classNames(
+													className={classnames(
 														"relative mt-3 mr-3 inline-flex w-full items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium leading-5 text-white sm:mt-0",
 														isSubmitting
 															? "cursor-not-allowed opacity-50"
@@ -199,7 +199,7 @@ const VerifyUrlStepForm = ({ sid = null, step = null, verified = false, setDisab
 												<Link href={DashboardSitesLink} passHref replace>
 													<a
 														disabled={isSubmitting}
-														className={classNames(
+														className={classnames(
 															"relative mt-3 mr-3 inline-flex w-full cursor-pointer items-center rounded-md border border-transparent bg-yellow-600 px-4 py-2 text-sm font-medium leading-5 text-white sm:mt-0",
 															isSubmitting
 																? "cursor-not-allowed opacity-50"
@@ -218,7 +218,7 @@ const VerifyUrlStepForm = ({ sid = null, step = null, verified = false, setDisab
 											<span className="inline-flex">
 												<button
 													disabled={isSubmitting}
-													className={classNames(
+													className={classnames(
 														"relative mt-3 mr-3 inline-flex w-full cursor-pointer items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium leading-5 text-gray-700 sm:mt-0",
 														isSubmitting
 															? "cursor-not-allowed opacity-50"

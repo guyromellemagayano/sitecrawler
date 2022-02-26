@@ -5,7 +5,7 @@ import { ClipboardIcon, QuestionMarkCircleIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useLoading } from "@hooks/useLoading";
 import { useSites } from "@hooks/useSites";
-import { classNames } from "@utils/classNames";
+import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
@@ -169,7 +169,7 @@ const VerifyUrlStep = (props) => {
 															type="text"
 															name="verifyidmetatag"
 															id="verifyidmetatag"
-															className={classNames(
+															className={classnames(
 																"block w-full rounded-none rounded-l-md border-gray-300 text-gray-400 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
 																disableSiteVerify && "cursor-not-allowed bg-gray-300 opacity-50"
 															)}
@@ -180,7 +180,7 @@ const VerifyUrlStep = (props) => {
 
 														<CopyToClipboard onCopy={handleInputCopy} text={copyValue}>
 															<button
-																className={classNames(
+																className={classnames(
 																	"relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700",
 																	disableSiteVerify
 																		? "cursor-not-allowed bg-gray-300 opacity-50"
