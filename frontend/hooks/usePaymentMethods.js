@@ -1,4 +1,6 @@
 import { PaymentMethodApiEndpoint } from "@constants/ApiEndpoints";
+import { SiteCrawlerAppContext } from "@pages/_app";
+import { useContext } from "react";
 import { useMainSWRConfig } from "./useMainSWRConfig";
 
 /**
@@ -8,11 +10,20 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  * @returns {object} paymentMethods, errorPaymentMethods, validatingPaymentMethods
  */
 export const usePaymentMethods = (options = null) => {
+	// Custom context
+	const { setConfig: setPaymentMethodsConfig } = useContext(SiteCrawlerAppContext);
+
+	// Custom variable
+	const currentEndpoint = PaymentMethodApiEndpoint;
+
+	// SWR hook
 	const {
 		data: paymentMethods,
 		error: errorPaymentMethods,
 		isValidating: validatingPaymentMethods
-	} = useMainSWRConfig(PaymentMethodApiEndpoint, options);
+	} = useMainSWRConfig(currentEndpoint, options);
+
+	// TODO: Figure out what object this endpoint outputs
 
 	return { paymentMethods, errorPaymentMethods, validatingPaymentMethods };
 };
