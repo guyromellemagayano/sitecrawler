@@ -10,7 +10,7 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  * @param {object} options
  * @returns {object} user, errorUser, validatingUser
  */
-export const useUser = (options = null) => {
+export const useUser = (fallback = null, options = null) => {
 	const [userIdApiEndpoint, setUserIdApiEndpoint] = useState(null);
 	const [disableLocalTime, setDisableLocalTime] = useState(false);
 	const [largePageSizeThreshold, setLargePageSizeThreshold] = useState(0);
@@ -27,8 +27,11 @@ export const useUser = (options = null) => {
 	// Custom context
 	const { setConfig: setUserConfig } = useContext(SiteCrawlerAppContext);
 
+	// Custom variables
+	const currentEndpoint = fallback !== null ? fallback : UserApiEndpoint;
+
 	// SWR hook
-	const { data: user, error: errorUser, isValidating: validatingUser } = useMainSWRConfig(UserApiEndpoint, options);
+	const { data: user, error: errorUser, isValidating: validatingUser } = useMainSWRConfig(currentEndpoint, options);
 
 	useMemo(async () => {
 		if (errorUser) {
