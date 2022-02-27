@@ -57,14 +57,10 @@ export const useLinkDetail = (querySid = null, scanObjId = null, linkId = null, 
 		if (linkDetail?.data) {
 			if (linkDetail.data?.id) {
 				setLinkDetailId(linkDetail.data.id);
-			} else {
-				setLinkDetailId(0);
 			}
 
 			if (linkDetail.data?.pages) {
 				setLinkDetailPages(linkDetail.data.pages);
-			} else {
-				setLinkDetailPages([]);
 			}
 		}
 

@@ -46,20 +46,14 @@ export const useSiteId = (querySid = null, options = null) => {
 		if (siteId?.data) {
 			if (siteId.data?.verified) {
 				setSiteIdVerified(siteId.data.verified);
-			} else {
-				setSiteIdVerified(false);
 			}
 
 			if (siteId.data?.url) {
 				setSiteUrl(siteId.data.url);
-			} else {
-				setSiteUrl("");
 			}
 
 			if (siteId.data?.name) {
 				setSiteName(siteId.data.name);
-			} else {
-				setSiteName("");
 			}
 		}
 

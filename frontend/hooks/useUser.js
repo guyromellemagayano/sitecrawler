@@ -55,73 +55,52 @@ export const useUser = (options = null) => {
 				}
 
 				setSettings(user.data.settings);
-			} else {
-				setSettings({});
 			}
 
 			// Update `maxSiteLimit` user setting
 			if (user.data?.group?.max_sites) {
 				setMaxSiteLimit(user.data.group.max_sites);
-			} else {
-				setMaxSiteLimit(0);
 			}
 
 			// Handle `userIdApiEndpoint` and `userId` user settings
 			if (user.data?.id) {
 				setUserIdApiEndpoint(`${UserApiEndpoint + user.data.id}`);
 				setUserId(user.data.id);
-			} else {
-				setUserIdApiEndpoint(null);
-				setUserId(0);
 			}
 
 			// Handle `username` user setting
 			if (user.data?.username) {
 				setUsername(user.data.username);
-			} else {
-				setUsername("");
 			}
 
 			// Handle `email` user setting
 			if (user.data?.email) {
 				setEmail(user.data.email);
-			} else {
-				setEmail("");
 			}
 
 			// Handle `firstname` user setting
 			if (user.data?.first_name) {
 				setFirstname(user.data.first_name);
-			} else {
-				setFirstname("");
 			}
 
 			// Handle `lastname` user setting
 			if (user.data?.last_name) {
 				setLastname(user.data.last_name);
-			} else {
-				setLastname("");
 			}
 
 			// Handle `permissions` user setting
 			if (user.data?.permissions) {
 				setPermissions(user.data.permissions);
-			} else {
-				setPermissions([]);
 			}
 
 			// Handle `group` user setting
 			if (user.data?.group) {
 				setGroup(user.data.group);
-			} else {
-				setGroup({});
 			}
 
 			// Update `largePageSizeThreshold` user setting
 			if (user.data?.large_page_size_threshold) {
 				setLargePageSizeThreshold(user.data.large_page_size_threshold);
-			} else {
-				setLargePageSizeThreshold(0);
 			}
 		}
 

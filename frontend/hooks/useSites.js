@@ -44,14 +44,10 @@ export const useSites = (endpoint = null, options = null) => {
 		if (sites?.data) {
 			if (sites.data?.count) {
 				setSitesCount(sites.data.count);
-			} else {
-				setSitesCount(0);
 			}
 
 			if (sites.data?.results) {
 				setSitesResults(sites.data.results);
-			} else {
-				setSitesResults([]);
 			}
 		}
 

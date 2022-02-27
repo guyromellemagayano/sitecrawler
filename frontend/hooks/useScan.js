@@ -123,14 +123,10 @@ export const useScan = (querySid = null, options = null) => {
 		if (scan?.data) {
 			if (scan.data?.count) {
 				setScanCount(scan.data.count);
-			} else {
-				setScanCount(0);
 			}
 
 			if (scan.data?.results) {
 				setScanResults(scan.data.results);
-			} else {
-				setScanResults([]);
 			}
 
 			let previousScanResult =

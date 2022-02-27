@@ -56,14 +56,10 @@ export const usePageDetail = (querySid = null, scanObjId = null, linkId = null, 
 		if (pageDetail?.data) {
 			if (pageDetail.data?.id) {
 				setPageDetailId(pageDetail.data.id);
-			} else {
-				setPageDetailId(0);
 			}
 
 			if (pageDetail.data?.pages) {
 				setPageDetailPages(pageDetail.data.pages);
-			} else {
-				setPageDetailPages([]);
 			}
 		}
 

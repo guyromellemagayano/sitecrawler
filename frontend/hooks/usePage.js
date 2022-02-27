@@ -39,14 +39,10 @@ export const usePage = (endpoint = null, options = null) => {
 		if (page?.data) {
 			if (page.data?.count) {
 				setPageCount(page.data.count);
-			} else {
-				setPageCount(0);
 			}
 
 			if (page.data?.results) {
 				setPageResults(page.data.results);
-			} else {
-				setPageResults([]);
 			}
 		}
 

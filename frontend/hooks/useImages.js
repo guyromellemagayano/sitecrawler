@@ -56,14 +56,10 @@ export const useImages = (endpoint = null, querySid = null, scanObjId = null, op
 		if (images?.data) {
 			if (images.data?.count) {
 				setImagesCount(images.data.count);
-			} else {
-				setImagesCount(0);
 			}
 
 			if (images.data?.results) {
 				setImagesResults(images.data.results);
-			} else {
-				setImagesResults([]);
 			}
 		}
 
