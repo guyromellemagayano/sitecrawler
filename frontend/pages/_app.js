@@ -11,7 +11,6 @@ import setupLogRocketReact from "logrocket-react";
 import { DefaultSeo } from "next-seo";
 import { useRouter } from "next/router";
 import { createContext, useEffect, useState } from "react";
-import { useSWRConfig } from "swr";
 
 // Font Awesome
 library.add(fab);
@@ -30,9 +29,6 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 
 	// Custom hooks
 	const { state, setConfig } = useNotificationMessage();
-
-	// SWR hook for global mutations
-	const { mutate } = useSWRConfig();
 
 	useEffect(() => {
 		let isMounted = true;
