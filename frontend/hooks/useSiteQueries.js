@@ -16,7 +16,7 @@ export const useSiteQueries = () => {
 	// Router
 	const { asPath, query } = useRouter();
 
-	useMemo(() => {
+	useMemo(async () => {
 		let isMounted = true;
 
 		// Handle the queries

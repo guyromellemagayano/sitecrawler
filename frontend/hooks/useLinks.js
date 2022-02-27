@@ -52,10 +52,14 @@ export const useLinks = (endpoint = null, querySid = null, scanObjId = null, opt
 		if (links?.data) {
 			if (links.data?.count) {
 				setLinksCount(links.data.count);
+			} else {
+				setLinksCount(0);
 			}
 
 			if (links.data?.results) {
 				setLinksResults(links.data.results);
+			} else {
+				setLinksResults([]);
 			}
 		}
 
