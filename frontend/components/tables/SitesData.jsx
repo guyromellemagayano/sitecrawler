@@ -119,7 +119,7 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 
 				<div className="flex flex-col items-start">
 					<div>
-						{isComponentReady &&
+						{!isComponentReady &&
 						user &&
 						Math.round(user?.status / 100) === 2 &&
 						!user?.data?.detail &&

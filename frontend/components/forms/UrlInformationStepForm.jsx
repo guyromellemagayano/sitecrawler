@@ -60,7 +60,7 @@ const UrlInformationStepForm = (props) => {
 	const { user, largePageSizeThreshold } = useUser();
 	const { sites, sitesResults } = useSites();
 
-	useMemo(() => {
+	useMemo(async () => {
 		let isMounted = true;
 
 		if (isMounted) {
@@ -77,7 +77,7 @@ const UrlInformationStepForm = (props) => {
 		};
 	}, [edit, step, sid, verified]);
 
-	useMemo(() => {
+	useMemo(async () => {
 		let isMounted = true;
 
 		if (isMounted) {

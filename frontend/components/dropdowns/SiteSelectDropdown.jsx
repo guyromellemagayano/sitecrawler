@@ -51,7 +51,7 @@ const SiteSelectDropdown = ({ handleSiteSelectOnClick, openDropdown = false }, r
 	} = useComponentVisible(false);
 
 	// Update `hasSiteLimitReached` state value
-	useMemo(() => {
+	useMemo(async () => {
 		let isMounted = true;
 
 		(async () => {

@@ -50,7 +50,7 @@ const VerifyUrlStep = (props) => {
 	const { isComponentReady } = useLoading();
 
 	// Handle site data selection based on the given `sid` query value
-	useMemo(() => {
+	useMemo(async () => {
 		let isMounted = true;
 
 		if (isMounted) {

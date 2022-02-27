@@ -88,7 +88,7 @@ const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 		}
 	};
 
-	useMemo(() => {
+	useMemo(async () => {
 		let isMounted = true;
 
 		(async () => {

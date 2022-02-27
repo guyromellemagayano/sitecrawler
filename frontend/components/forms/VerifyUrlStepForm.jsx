@@ -58,7 +58,7 @@ const VerifyUrlStepForm = ({ sid = null, step = null, verified = false, setDisab
 	};
 
 	// Handle site data selection based on the given "siteData" prop value
-	useMemo(() => {
+	useMemo(async () => {
 		if (sitesResults) {
 			setSiteData(sitesResults.filter((site) => site.id === sid));
 		}
