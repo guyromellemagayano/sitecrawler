@@ -21,7 +21,7 @@ const SiteLimitReachedModal = ({ showModal = false, setShowModal }, ref) => {
 
 	return (
 		<Transition.Root show={showModal} as={Fragment}>
-			<Dialog as="div" className="site-limit-reached-modal-dialog" initialFocus={ref} onClose={setShowModal}>
+			<Dialog as="div" initialFocus={ref} onClose={setShowModal}>
 				<div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
 					<Transition.Child
 						as={Fragment}
