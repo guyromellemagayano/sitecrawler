@@ -1,10 +1,10 @@
 import { MemoizedPaymentMethodForm } from "@components/forms/PaymentMethodForm";
-import { useLoading } from "@hooks/useLoading";
 import { useStripePromise } from "@hooks/useStripePromise";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import useTranslation from "next-translate/useTranslation";
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useContext, useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
@@ -22,8 +22,8 @@ const PaymentMethodSettings = () => {
 	// Set `stripe` promise
 	const [stripePromiseData, setStripePromiseData] = useState(null);
 
-	// Custom hooks
-	const { isComponentReady } = useLoading();
+	// Custom context
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
 	// Handle `stripe` promise
 	const handleStripePromise = useCallback(async () => {

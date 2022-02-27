@@ -3,14 +3,14 @@ import { BillingSlug, SubscriptionPlansSlug } from "@constants/PageLinks";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
 import { CreditCardIcon } from "@heroicons/react/solid";
 import { useDefaultPaymentMethod } from "@hooks/useDefaultPaymentMethod";
-import { useLoading } from "@hooks/useLoading";
 import { useNotificationMessage } from "@hooks/useNotificationMessage";
 import { usePaymentMethods } from "@hooks/usePaymentMethods";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import { CardCvcElement, CardExpiryElement, CardNumberElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useContext, useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useSWRConfig } from "swr";
@@ -57,12 +57,14 @@ const PaymentMethodForm = ({
 	const subscriptionPlansDefaultCard = t("settings:subscriptionPlans.defaultCard");
 	const subscriptionPlansProcessingPayment = t("settings:subscriptionPlans.processingPayment");
 
+	// Custom context
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
+
 	// SWR hooks
 	const { paymentMethods, errorPaymentMethods } = usePaymentMethods();
 	const { defaultPaymentMethod, errorDefaultPaymentMethod } = useDefaultPaymentMethod();
 
 	// Custom hooks
-	const { isComponentReady } = useLoading();
 	const { setConfig } = useNotificationMessage();
 
 	// SWR hook for global mutations
@@ -71,8 +73,6 @@ const PaymentMethodForm = ({
 	// Stripe
 	const stripe = useStripe();
 	const elements = useElements();
-
-	console.log(paymentMethods, defaultPaymentMethod);
 
 	// Handle `currentPaymentMethod` state
 	const handleCurrentPaymentMethod = useCallback(async () => {

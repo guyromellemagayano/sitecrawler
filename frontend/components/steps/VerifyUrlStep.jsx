@@ -3,12 +3,12 @@ import { MemoizedShowHelpModal } from "@components/modals/ShowHelpModal";
 import { ResetCopyStateTimeout } from "@constants/GlobalValues";
 import { ClipboardIcon, QuestionMarkCircleIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
-import { useLoading } from "@hooks/useLoading";
 import { useSites } from "@hooks/useSites";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -47,7 +47,7 @@ const VerifyUrlStep = (props) => {
 		isComponentVisible: showModal,
 		setIsComponentVisible: setShowModal
 	} = useComponentVisible(false);
-	const { isComponentReady } = useLoading();
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
 	// Handle site data selection based on the given `sid` query value
 	useMemo(async () => {
