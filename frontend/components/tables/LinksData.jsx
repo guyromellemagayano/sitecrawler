@@ -18,9 +18,8 @@ import "react-loading-skeleton/dist/skeleton.css";
  * Custom function to render the `LinksData` component
  *
  * @param {object} link
- * @param {boolean} validatingLinks
  */
-const LinksData = ({ link = null, validatingLinks = false }) => {
+const LinksData = ({ link = null }) => {
 	// Site data props
 	const linkId = link?.id ?? null;
 	const linkStatus = link?.status ?? null;
@@ -92,11 +91,7 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 				<div className="flex flex-col items-start">
 					<div>
 						<div>
-							{isComponentReady &&
-							user &&
-							Math.round(user?.status / 100) === 2 &&
-							!user?.data?.detail &&
-							!validatingLinks ? (
+							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 								<>
 									{linkStatus === "OK" && linkTlsStatus === "OK" ? (
 										<span
@@ -162,13 +157,13 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 									</div>
 								</>
 							) : (
-								<span className="relative -left-3 flex items-start space-x-3 py-2">
+								<span className="flex items-start py-2">
 									<Skeleton
 										duration={2}
 										width={9}
 										height={9}
 										circle={true}
-										className="relative -left-3 top-4 block flex-shrink-0"
+										className="relative -left-3 block flex-shrink-0"
 									/>
 									<div className="inline-flex flex-col items-start justify-start">
 										<Skeleton
@@ -190,7 +185,7 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 				</div>
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingLinks ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					linkType === "PAGE" ? (
 						internalText
 					) : linkType === "EXTERNAL" ? (
@@ -205,7 +200,7 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingLinks ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					linkStatus === "OK" ? (
 						<MemoizedBadge text="OK" isSuccess />
 					) : linkStatus === "TIMEOUT" ? (
@@ -220,7 +215,7 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingLinks ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					Math.round(linkHttpStatus / 100) === 2 ? (
 						<span className="text-green-500">{linkHttpStatus}</span>
 					) : Math.round(linkHttpStatus / 100) === 4 || Math.round(linkHttpStatus / 100) === 5 ? (
@@ -235,7 +230,7 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingLinks ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					linkDetailPages?.length > 0 ? (
 						<Link
 							href="/dashboard/sites/[siteId]/links/[linkId]/"
@@ -263,7 +258,7 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingLinks ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					linkOccurrences ? (
 						<span className="text-gray-500">{linkOccurrences}</span>
 					) : null
@@ -272,7 +267,7 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingLinks ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					linkResolvedStatus ? (
 						<span className="text-gray-500">{linkResolvedStatus}</span>
 					) : null
@@ -281,7 +276,7 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingLinks ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					linkResolvedTls ? (
 						<span className="text-gray-500">{linkResolvedTls}</span>
 					) : null
@@ -295,17 +290,16 @@ const LinksData = ({ link = null, validatingLinks = false }) => {
 
 LinksData.propTypes = {
 	link: PropTypes.shape({
-		http_status: PropTypes.string,
+		http_status: PropTypes.any,
 		id: PropTypes.number,
 		occurences: PropTypes.number,
 		resolved_status: PropTypes.string,
 		resolved_tls: PropTypes.string,
 		status: PropTypes.string,
-		tls_status: PropTypes.bool,
+		tls_status: PropTypes.any,
 		type: PropTypes.string,
 		url: PropTypes.string
-	}),
-	validatingLinks: PropTypes.bool
+	})
 };
 
 /**

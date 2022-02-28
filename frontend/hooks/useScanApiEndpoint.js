@@ -2,6 +2,7 @@ import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import { orderingByNameQuery, perPageQuery } from "@constants/GlobalValues";
 import {
 	ScanSlug,
+	SiteImageSlug,
 	SiteImagesSlug,
 	SiteLinkSlug,
 	SiteLinksSlug,
@@ -39,7 +40,7 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 	} else if (asPath.includes(SitePagesSlug)) {
 		scanApiEndpoint += sanitizedSiteId + ScanSlug + scanObjId + SitePageSlug;
 	} else if (asPath.includes(SiteImagesSlug)) {
-		scanApiEndpoint += sanitizedSiteId + ScanSlug + scanObjId + SiteImagesSlug;
+		scanApiEndpoint += sanitizedSiteId + ScanSlug + scanObjId + SiteImageSlug;
 	}
 
 	scanApiEndpoint += "?" + perPageQuery + linksPerPage;

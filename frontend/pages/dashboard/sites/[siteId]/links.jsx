@@ -1,6 +1,7 @@
 import { MemoizedLayout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
 import { MemoizedSiteLinksPageLayout } from "@components/layouts/pages/SiteLinks";
+import { MemoizedLoader } from "@components/loaders";
 import { SitesApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { DashboardSitesLink, LoginLink } from "@constants/PageLinks";
 import { SSR_SITE_URL } from "@constants/ServerEnv";
@@ -91,7 +92,9 @@ const SiteLinksAuth = ({ siteName }) => {
 				<MemoizedSiteLinksPageLayout />
 			</MemoizedPageLayout>
 		</MemoizedLayout>
-	) : null;
+	) : (
+		<MemoizedLoader />
+	);
 };
 
 export default function SiteLinks({ siteName, fallback }) {

@@ -20,10 +20,9 @@ import "react-loading-skeleton/dist/skeleton.css";
 /**
  * Custom function to render the `ImagesData` component
  *
- * @param {object} link
- * @param {boolean} validatingImages
+ * @param {object} image
  */
-const ImagesData = ({ image = null, validatingImages = false }) => {
+const ImagesData = ({ image = null }) => {
 	// Site data props
 	const imageId = image?.id ?? null;
 	const imageType = image?.type ?? null;
@@ -98,11 +97,7 @@ const ImagesData = ({ image = null, validatingImages = false }) => {
 				<div className="flex flex-col items-start">
 					<div>
 						<div>
-							{isComponentReady &&
-							user &&
-							Math.round(user?.status / 100) === 2 &&
-							!user?.data?.detail &&
-							!validatingImages ? (
+							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 								<>
 									{imageStatus === "OK" && imageTlsStatus === "OK" ? (
 										<span
@@ -168,7 +163,7 @@ const ImagesData = ({ image = null, validatingImages = false }) => {
 									</div>
 								</>
 							) : (
-								<span className="relative -left-3 flex items-start space-x-3 py-2">
+								<span className="flex items-start space-x-3 py-2">
 									<Skeleton
 										duration={2}
 										width={9}
@@ -196,11 +191,7 @@ const ImagesData = ({ image = null, validatingImages = false }) => {
 				</div>
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm leading-5 text-gray-500">
-				{isComponentReady &&
-				user &&
-				Math.round(user?.status / 100) === 2 &&
-				!user?.data?.detail &&
-				!validatingImages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					imageType === "PAGE" ? (
 						internalText
 					) : imageType === "EXTERNAL" ? (
@@ -215,11 +206,7 @@ const ImagesData = ({ image = null, validatingImages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady &&
-				user &&
-				Math.round(user?.status / 100) === 2 &&
-				!user?.data?.detail &&
-				!validatingImages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					imageStatus === "OK" ? (
 						<MemoizedBadge text="OK" isSuccess />
 					) : imageStatus === "TIMEOUT" ? (
@@ -234,11 +221,7 @@ const ImagesData = ({ image = null, validatingImages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady &&
-				user &&
-				Math.round(user?.status / 100) === 2 &&
-				!user?.data?.detail &&
-				!validatingImages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					imageTlsStatus ? (
 						<MemoizedSiteSuccessIcon />
 					) : !imageTlsStatus ? (
@@ -249,11 +232,7 @@ const ImagesData = ({ image = null, validatingImages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady &&
-				user &&
-				Math.round(user?.status / 100) === 2 &&
-				!user?.data?.detail &&
-				!validatingImages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					Math.round(imageHttpStatus / 100) === 2 ? (
 						<span className="text-green-500">{imageHttpStatus}</span>
 					) : Math.round(imageHttpStatus / 100) === 4 || Math.round(imageHttpStatus / 100) === 5 ? (
@@ -268,11 +247,7 @@ const ImagesData = ({ image = null, validatingImages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady &&
-				user &&
-				Math.round(user?.status / 100) === 2 &&
-				!user?.data?.detail &&
-				!validatingImages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					<span className="text-gray-500">
 						{imageSize > 0
 							? bytes(imageSize, {
@@ -286,11 +261,7 @@ const ImagesData = ({ image = null, validatingImages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady &&
-				user &&
-				Math.round(user?.status / 100) === 2 &&
-				!user?.data?.detail &&
-				!validatingImages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					imageOccurences ? (
 						<span className="text-gray-500">{imageOccurences}</span>
 					) : null
@@ -299,22 +270,7 @@ const ImagesData = ({ image = null, validatingImages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady &&
-				user &&
-				Math.round(user?.status / 100) === 2 &&
-				!user?.data?.detail &&
-				!validatingImages ? (
-					<span className="text-gray-500">{imageOccurences > 0 ? imageOccurences : 0}</span>
-				) : (
-					<Skeleton duration={2} width={45} />
-				)}
-			</td>
-			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady &&
-				user &&
-				Math.round(user?.status / 100) === 2 &&
-				!user?.data?.detail &&
-				!validatingImages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					<span className="text-gray-500">{imageMissingAlts > 0 ? imageMissingAlts : 0}</span>
 				) : (
 					<Skeleton duration={2} width={45} />
@@ -322,11 +278,7 @@ const ImagesData = ({ image = null, validatingImages = false }) => {
 			</td>
 
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady &&
-				user &&
-				Math.round(user?.status / 100) === 2 &&
-				!user?.data?.detail &&
-				!validatingImages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					imageResolvedStatus ? (
 						<span className="text-gray-500">{imageResolvedStatus}</span>
 					) : null
@@ -335,11 +287,7 @@ const ImagesData = ({ image = null, validatingImages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady &&
-				user &&
-				Math.round(user?.status / 100) === 2 &&
-				!user?.data?.detail &&
-				!validatingImages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					imageResolvedMissingAlts ? (
 						<span className="text-gray-500">{imageResolvedMissingAlts}</span>
 					) : null
@@ -348,11 +296,7 @@ const ImagesData = ({ image = null, validatingImages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady &&
-				user &&
-				Math.round(user?.status / 100) === 2 &&
-				!user?.data?.detail &&
-				!validatingImages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					imageResolvedTls ? (
 						<span className="text-gray-500">{imageResolvedTls}</span>
 					) : null
@@ -366,7 +310,7 @@ const ImagesData = ({ image = null, validatingImages = false }) => {
 
 ImagesData.propTypes = {
 	image: PropTypes.shape({
-		http_status: PropTypes.string,
+		http_status: PropTypes.any,
 		id: PropTypes.number,
 		missing_alts: PropTypes.number,
 		occurences: PropTypes.number,
@@ -375,11 +319,10 @@ ImagesData.propTypes = {
 		resolved_tls: PropTypes.bool,
 		size: PropTypes.number,
 		status: PropTypes.string,
-		tls_status: PropTypes.bool,
+		tls_status: PropTypes.any,
 		type: PropTypes.string,
 		url: PropTypes.string
-	}),
-	validatingImages: PropTypes.bool
+	})
 };
 
 /**

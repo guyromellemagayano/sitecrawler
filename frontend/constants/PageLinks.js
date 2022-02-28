@@ -1,6 +1,7 @@
 export const DashboardSlug = "/dashboard/";
 export const ScanSlug = "/scan/";
 export const SiteImagesSlug = "/images/";
+export const SiteImageSlug = "/image/";
 export const SiteLinkSlug = "/link/";
 export const SiteLinksSlug = "/links/";
 export const SiteOverviewSlug = "/overview/";

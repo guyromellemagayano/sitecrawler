@@ -23,7 +23,7 @@ const SitesDashboardPageLayout = () => {
 
 	// SWR hooks
 	const { user } = useUser();
-	const { sitesCount, sitesResults, validatingSites } = useSites(scanApiEndpoint);
+	const { sitesCount, sitesResults } = useSites(scanApiEndpoint);
 
 	return (
 		<>
@@ -67,7 +67,7 @@ const SitesDashboardPageLayout = () => {
 							)}
 						>
 							<div className="h-full min-w-full rounded-lg border-gray-300">
-								<MemoizedSitesTable count={sitesCount} results={sitesResults} validatingSites={validatingSites} />
+								<MemoizedSitesTable count={sitesCount} results={sitesResults} />
 							</div>
 						</div>
 					</div>
@@ -75,7 +75,7 @@ const SitesDashboardPageLayout = () => {
 			</div>
 
 			<div className="flex-none">
-				<MemoizedDataPagination isValidating={validatingSites} />
+				<MemoizedDataPagination />
 			</div>
 		</>
 	);
