@@ -33,7 +33,7 @@ const PrimaryMenu = () => {
 
 	// SWR hooks
 	const { user } = useUser();
-	const { sitesCount, validatingSites } = useSites();
+	const { sitesCount } = useSites();
 
 	// Sidebar menus
 	const { PrimarySidebarMenus } = SidebarMenus();
@@ -41,7 +41,7 @@ const PrimaryMenu = () => {
 	return (
 		<Scrollbars autoHide renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />} universal>
 			<div className="flex h-full flex-col py-4 lg:py-8">
-				<div className="mb-0 flex flex-shrink-0 flex-row items-center px-3">
+				<div className="flex mb-0 flex-shrink-0 flex-row items-center px-3">
 					<Link href={DashboardSitesLink} passHref>
 						<a className="block w-full cursor-pointer p-1">
 							<SiteLogoWhite className="flex" width={AuthAppLogo.width} height={AuthAppLogo.height} />
@@ -71,7 +71,7 @@ const PrimaryMenu = () => {
 														<Link key={value2.slug} href={value2.url} passHref>
 															<a
 																className={classnames(
-																	"group mt-1 flex items-center justify-between  rounded-md px-3 py-2 text-sm font-medium leading-5 ",
+																	"flex group mt-1 items-center justify-between  rounded-md px-3 py-2 text-sm font-medium leading-5 ",
 																	asPath.includes(value2.url) &&
 																		isComponentReady &&
 																		user &&
@@ -131,7 +131,7 @@ const PrimaryMenu = () => {
 																	user &&
 																	Math.round(user?.status / 100) === 2 &&
 																	!user?.data?.detail ? (
-																		!validatingSites && sitesCount > 0 ? (
+																		sitesCount > 0 ? (
 																			<span className="ml-auto inline-block rounded-full bg-white py-1 px-3 text-xs leading-4 text-black">
 																				{sitesCount}
 																			</span>
@@ -148,7 +148,7 @@ const PrimaryMenu = () => {
 														<Link key={value.slug} href={value2.url} passHref>
 															<a
 																className={classnames(
-																	"group mt-1 flex items-center rounded-md py-2 text-sm font-medium leading-5 text-gray-400 hover:text-gray-100 focus:text-white focus:outline-none",
+																	"flex group mt-1 items-center rounded-md py-2 text-sm font-medium leading-5 text-gray-400 hover:text-gray-100 focus:text-white focus:outline-none",
 																	isComponentReady &&
 																		user &&
 																		Math.round(user?.status / 100) === 2 &&
