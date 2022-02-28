@@ -74,9 +74,16 @@ const DataPagination = () => {
 
 	// Set updated `linksPerPageOptions` for `linksPerPage` prop
 	if (pageCount <= MaxSitesPerPage) {
+		let i = pageCount;
+
+		while (i <= MinSitesPerPage) {
+			linksPerPageOptions.push(i);
+			i += MinSitesPerPage;
+		}
+	} else {
 		let i = MinSitesPerPage;
 
-		while (i <= pageCount) {
+		while (i <= MaxSitesPerPage) {
 			linksPerPageOptions.push(i);
 			i += MinSitesPerPage;
 		}
