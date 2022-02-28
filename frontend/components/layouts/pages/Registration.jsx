@@ -19,7 +19,7 @@ const RegistrationPageLayout = () => {
 	return (
 		<div className="h-screen overflow-auto bg-gray-50">
 			<Scrollbars autoHide universal>
-				<section className="relative flex h-screen flex-col justify-center overflow-auto bg-gray-50 py-12 sm:px-6 lg:px-8">
+				<section className="relative flex h-full flex-col overflow-auto bg-gray-50 py-12 sm:px-6 lg:px-8">
 					<div className="mx-auto max-w-screen-xl">
 						<div className="relative my-8 sm:my-16 md:my-20 lg:my-24">
 							<MemoizedLogoLabel isSignUp />
@@ -34,7 +34,7 @@ const RegistrationPageLayout = () => {
 								</div>
 
 								<div className="relative flex flex-row flex-wrap justify-center text-sm leading-5">
-									<span className="p-2 text-gray-500">
+									<span className="flex justify-center p-2 text-gray-500">
 										{alreadyHaveAccount}&nbsp;
 										<Link href={LoginLink} passHref>
 											<a className="cursor-pointer font-medium text-indigo-600 transition duration-150 ease-in-out hover:text-indigo-500 focus:underline focus:outline-none">
