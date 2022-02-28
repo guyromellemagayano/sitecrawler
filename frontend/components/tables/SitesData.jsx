@@ -118,7 +118,7 @@ const SitesData = ({ site = null }) => {
 
 				<div className="flex flex-col items-start">
 					<div>
-						{!isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+						{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 							<>
 								{siteVerified && currentScan == null ? (
 									<span
@@ -180,7 +180,7 @@ const SitesData = ({ site = null }) => {
 										{siteVerified && permissions.includes("can_start_scan") ? (
 											<button
 												type="button"
-												className="ml-3 flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-green-600 transition duration-150 ease-in-out hover:text-green-500 focus:outline-none"
+												className="flex ml-3 cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-green-600 transition duration-150 ease-in-out hover:text-green-500 focus:outline-none"
 												onClick={handleCrawl}
 											>
 												{crawlSiteText}
@@ -190,7 +190,7 @@ const SitesData = ({ site = null }) => {
 										{permissions.includes("delete_site") ? (
 											<button
 												type="button"
-												className="ml-3 flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-red-600 transition duration-150 ease-in-out hover:text-red-500 focus:outline-none"
+												className="flex ml-3 cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-red-600 transition duration-150 ease-in-out hover:text-red-500 focus:outline-none"
 												onClick={() => setIsSiteDeleteModalVisible(!isSiteDeleteModalVisible)}
 											>
 												{deleteText}
@@ -200,19 +200,19 @@ const SitesData = ({ site = null }) => {
 								</div>
 							</>
 						) : (
-							<span className="relative -left-3 flex items-start space-x-3 py-2">
+							<span className="flex items-start space-x-3 py-2">
 								<Skeleton
 									duration={2}
 									width={9}
 									height={9}
 									circle={true}
-									className="relative -left-3 top-4 block flex-shrink-0"
+									className="relative top-1 block flex-shrink-0"
 								/>
 								<div className="inline-flex flex-col items-start justify-start">
 									<Skeleton
 										duration={2}
 										width={150}
-										className="relative -left-3 inline-flex flex-col items-start justify-start"
+										className="inline-flex relative flex-col items-start justify-start"
 									/>
 									<span className="flex flex-row justify-start space-x-3 text-sm leading-5 text-gray-500">
 										<Skeleton duration={2} width={63} />

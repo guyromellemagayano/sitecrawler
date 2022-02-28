@@ -38,39 +38,13 @@ const SitesDashboardPageLayout = () => {
 			>
 				<div
 					className={classnames(
-						"h-full w-full flex-1",
+						"h-full w-full flex-1 overflow-y-hidden py-2",
 						isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && sitesCount === 0
-							? "flex flex-auto"
+							? "flex items-center justify-center"
 							: null
 					)}
 				>
-					<div
-						className={classnames(
-							"h-full w-full flex-1",
-							isComponentReady &&
-								user &&
-								Math.round(user?.status / 100) === 2 &&
-								!user?.data?.detail &&
-								sitesCount === 0 &&
-								"flex flex-initial"
-						)}
-					>
-						<div
-							className={classnames(
-								"h-full w-full flex-1 py-2",
-								isComponentReady &&
-									user &&
-									Math.round(user?.status / 100) === 2 &&
-									!user?.data?.detail &&
-									sitesCount === 0 &&
-									"flex items-center"
-							)}
-						>
-							<div className="h-full min-w-full rounded-lg border-gray-300">
-								<MemoizedSitesTable count={sitesCount} results={sitesResults} />
-							</div>
-						</div>
-					</div>
+					<MemoizedSitesTable count={sitesCount} results={sitesResults} />
 				</div>
 			</div>
 
