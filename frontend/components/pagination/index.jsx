@@ -13,12 +13,22 @@ import Pagination from "rc-pagination";
 import { memo, useContext } from "react";
 import { useSWRConfig } from "swr";
 
+const paginationTextItemRender = (current, type, element) => {
+	if (type === "prev") {
+		return "Prev";
+	}
+
+	if (type === "next") {
+		return "Next";
+	}
+
+	return element;
+};
+
 /**
  * Custom function to render the `Pagination` component
- *
- * @param {boolean} isValidating
  */
-const DataPagination = ({ isValidating = false }) => {
+const DataPagination = () => {
 	// Router
 	const { asPath, query, push } = useRouter();
 
@@ -48,8 +58,6 @@ const DataPagination = ({ isValidating = false }) => {
 	const showingText = t("common:showing");
 	const toText = t("common:to");
 	const ofText = t("common:of");
-	const nextText = t("common:next");
-	const previousText = t("common:previous");
 	const resultsText = t("common:results");
 	const rowsPerPageText = t("common:rowsPerPage");
 
@@ -66,16 +74,9 @@ const DataPagination = ({ isValidating = false }) => {
 
 	// Set updated `linksPerPageOptions` for `linksPerPage` prop
 	if (pageCount <= MaxSitesPerPage) {
-		let i = pageCount;
-
-		while (i <= MinSitesPerPage) {
-			linksPerPageOptions.push(i);
-			i += MinSitesPerPage;
-		}
-	} else {
 		let i = MinSitesPerPage;
 
-		while (i <= MaxSitesPerPage) {
+		while (i <= pageCount) {
 			linksPerPageOptions.push(i);
 			i += MinSitesPerPage;
 		}
@@ -118,13 +119,13 @@ const DataPagination = ({ isValidating = false }) => {
 
 			if (newPath.includes("?")) setPagePath(`${newPath}&`);
 			else setPagePath(`${newPath}?`);
-
-			// Push new path
-			push(newPath);
-
-			// Mutate function here
-			mutate(scanApiEndpoint);
 		}
+
+		// Push new path
+		push(newPath);
+
+		// Mutate function here
+		mutate(scanApiEndpoint);
 	};
 
 	return isComponentReady &&
@@ -132,8 +133,7 @@ const DataPagination = ({ isValidating = false }) => {
 		Math.round(user?.status / 100) === 2 &&
 		!user?.data?.detail &&
 		pageCount &&
-		pageResults?.length > 0 &&
-		!isValidating ? (
+		pageResults?.length > 0 ? (
 		<div className="mt-8 mb-4 items-center justify-between bg-white py-4 align-middle lg:flex">
 			<div className="mb-8 flex items-center lg:m-0">
 				<div className="mt-2 lg:my-0">
@@ -157,11 +157,9 @@ const DataPagination = ({ isValidating = false }) => {
 				disabled={!isComponentReady && user && Math.round(user?.status / 100) === 4 && user?.data?.detail}
 				onChange={handlePageChange}
 				pageSize={linksPerPage}
-				showLessItems
-				showPrevNextJumpers
+				locale={"en-US"}
 				total={totalPages * linksPerPage}
-				prevIcon={previousText}
-				nextIcon={nextText}
+				itemRender={paginationTextItemRender}
 			/>
 
 			<div className="mt-4 flex items-center lg:m-0">
