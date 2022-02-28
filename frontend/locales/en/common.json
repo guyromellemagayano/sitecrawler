@@ -30,7 +30,7 @@
 	"maximumSiteLimitReachedMessage": "You already reached the maximum limit of websites to add in your current plan. Upgrade to Pro or Agency plans to increase your site addition limit.",
 	"maximumSiteLimitReachedTitle": "Maximum Site Limit Reached",
 	"siteRecrawlFeatureNotAvailableTitle": "Site Recrawl Feature Not Available",
-	"siteRecrawlFeatureNotAvailableMessage": "You cannot recrawl this site right now apparently because this site is currently unverified. Go back to Sites Dashboard page and reverify this site. This button will be re-enabled once the site becomes verified again.",
+	"siteRecrawlFeatureNotAvailableMessage": "You cannot recrawl this site right now apparently because this site is currently unverified. Go back to Sites Dashboard page and reverify this site.",
 	"openSidebar": "Open Sidebar",
 	"pageText": "page",
 	"password": "Password",
