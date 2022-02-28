@@ -33,7 +33,7 @@ const SitePagesPageLayout = () => {
 
 	// SWR hooks
 	const { user, permissions } = useUser();
-	const { pagesCount, pagesResults, validatingPages } = usePages(scanApiEndpoint, sanitizedSiteId, scanObjId);
+	const { pagesCount, pagesResults } = usePages(scanApiEndpoint, sanitizedSiteId, scanObjId);
 
 	return (
 		<>
@@ -43,7 +43,8 @@ const SitePagesPageLayout = () => {
 			!user?.data?.detail &&
 			permissions.includes("can_see_pages") &&
 			permissions.includes("can_see_scripts") &&
-			permissions.includes("can_see_stylesheets") ? (
+			permissions.includes("can_see_stylesheets") &&
+			permissions.includes("can_see_images") ? (
 				<MemoizedPageOption isPages />
 			) : null}
 			<div
@@ -56,6 +57,7 @@ const SitePagesPageLayout = () => {
 						permissions.includes("can_see_pages") &&
 						permissions.includes("can_see_scripts") &&
 						permissions.includes("can_see_stylesheets") &&
+						permissions.includes("can_see_images") &&
 						pagesCount === 0
 						? "flex flex-auto flex-col items-center justify-center"
 						: null
@@ -63,7 +65,7 @@ const SitePagesPageLayout = () => {
 			>
 				<div
 					className={classnames(
-						"h-full w-full flex-1",
+						"h-full w-full flex-1 overflow-y-hidden py-2",
 						isComponentReady &&
 							user &&
 							Math.round(user?.status / 100) === 2 &&
@@ -71,44 +73,13 @@ const SitePagesPageLayout = () => {
 							permissions.includes("can_see_pages") &&
 							permissions.includes("can_see_scripts") &&
 							permissions.includes("can_see_stylesheets") &&
+							permissions.includes("can_see_images") &&
 							pagesCount === 0
-							? "flex flex-auto"
+							? "flex items-center justify-center"
 							: null
 					)}
 				>
-					<div
-						className={classnames(
-							"h-full w-full flex-1",
-							isComponentReady &&
-								user &&
-								Math.round(user?.status / 100) === 2 &&
-								!user?.data?.detail &&
-								permissions.includes("can_see_pages") &&
-								permissions.includes("can_see_scripts") &&
-								permissions.includes("can_see_stylesheets") &&
-								pagesCount === 0 &&
-								"flex flex-initial"
-						)}
-					>
-						<div
-							className={classnames(
-								"h-full w-full flex-1 py-2",
-								isComponentReady &&
-									user &&
-									Math.round(user?.status / 100) === 2 &&
-									!user?.data?.detail &&
-									permissions.includes("can_see_pages") &&
-									permissions.includes("can_see_scripts") &&
-									permissions.includes("can_see_stylesheets") &&
-									pagesCount === 0 &&
-									"flex items-center"
-							)}
-						>
-							<div className="h-full min-w-full rounded-lg border-gray-300">
-								<MemoizedPagesTable count={pagesCount} results={pagesResults} validatingPages={validatingPages} />
-							</div>
-						</div>
-					</div>
+					<MemoizedPagesTable count={pagesCount} results={pagesResults} />
 				</div>
 			</div>
 
@@ -118,9 +89,10 @@ const SitePagesPageLayout = () => {
 			!user?.data?.detail &&
 			permissions.includes("can_see_pages") &&
 			permissions.includes("can_see_scripts") &&
-			permissions.includes("can_see_stylesheets") ? (
+			permissions.includes("can_see_stylesheets") &&
+			permissions.includes("can_see_images") ? (
 				<div className="flex-none">
-					<MemoizedDataPagination isValidating={validatingPages} />
+					<MemoizedDataPagination />
 				</div>
 			) : null}
 		</>

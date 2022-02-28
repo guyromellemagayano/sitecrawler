@@ -1,7 +1,7 @@
 import { MemoizedTimestampSettingsForm } from "@components/forms/TimestampSettingsForm";
-import { useLoading } from "@hooks/useLoading";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
-import { memo } from "react";
+import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
@@ -14,7 +14,7 @@ const TimestampSettings = () => {
 	const timestampSettingsTitle = t("timestampSettings.title");
 
 	// Custom hooks
-	const { isComponentReady } = useLoading();
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
 	return (
 		<div className="pb-12">

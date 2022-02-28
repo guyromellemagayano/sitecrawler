@@ -12,14 +12,6 @@ tr div {
 	@apply max-w-full inline-block clear-both;
 }
 
-tr td > div {
-	@apply max-w-full block;
-}
-
-tr td > div > div {
-	@apply max-w-full block;
-}
-
 /* Custom variables */
 .link-item {
 	@apply max-w-full block;
@@ -44,7 +36,7 @@ tr td > div > div {
 }
 
 .truncate-profile-text {
-	max-width: 12rem;
+	width: auto;
 }
 
 .truncate-link,
@@ -124,4 +116,8 @@ tr td > div > div {
 
 .rc-pagination-next {
 	@apply ml-3;
+}
+
+.rc-pagination-disabled {
+	@apply !hidden;
 }

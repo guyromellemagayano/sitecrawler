@@ -19,9 +19,8 @@ import "react-loading-skeleton/dist/skeleton.css";
  * Custom function to render the `SitesData` component
  *
  * @param {object} site
- * @param {boolean} validatingSites
  */
-const SitesData = ({ site = null, validatingSites = false }) => {
+const SitesData = ({ site = null }) => {
 	// Site data props
 	const siteId = site?.id ?? null;
 	const siteName = site?.name ?? null;
@@ -119,11 +118,7 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 
 				<div className="flex flex-col items-start">
 					<div>
-						{isComponentReady &&
-						user &&
-						Math.round(user?.status / 100) === 2 &&
-						!user?.data?.detail &&
-						!validatingSites ? (
+						{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 							<>
 								{siteVerified && currentScan == null ? (
 									<span
@@ -185,7 +180,7 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 										{siteVerified && permissions.includes("can_start_scan") ? (
 											<button
 												type="button"
-												className="ml-3 flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-green-600 transition duration-150 ease-in-out hover:text-green-500 focus:outline-none"
+												className="flex ml-3 cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-green-600 transition duration-150 ease-in-out hover:text-green-500 focus:outline-none"
 												onClick={handleCrawl}
 											>
 												{crawlSiteText}
@@ -195,7 +190,7 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 										{permissions.includes("delete_site") ? (
 											<button
 												type="button"
-												className="ml-3 flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-red-600 transition duration-150 ease-in-out hover:text-red-500 focus:outline-none"
+												className="flex ml-3 cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-red-600 transition duration-150 ease-in-out hover:text-red-500 focus:outline-none"
 												onClick={() => setIsSiteDeleteModalVisible(!isSiteDeleteModalVisible)}
 											>
 												{deleteText}
@@ -205,19 +200,19 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 								</div>
 							</>
 						) : (
-							<span className="relative -left-3 flex items-start space-x-3 py-2">
+							<span className="flex items-start space-x-3 py-2">
 								<Skeleton
 									duration={2}
 									width={9}
 									height={9}
 									circle={true}
-									className="relative -left-3 top-4 block flex-shrink-0"
+									className="relative top-1 block flex-shrink-0"
 								/>
 								<div className="inline-flex flex-col items-start justify-start">
 									<Skeleton
 										duration={2}
 										width={150}
-										className="relative -left-3 inline-flex flex-col items-start justify-start"
+										className="inline-flex relative flex-col items-start justify-start"
 									/>
 									<span className="flex flex-row justify-start space-x-3 text-sm leading-5 text-gray-500">
 										<Skeleton duration={2} width={63} />
@@ -233,7 +228,7 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 				</div>
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingSites ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					scanResults?.length > 0 ? (
 						<span className="space-x-2">
 							<span className="text-sm leading-5 text-gray-500">
@@ -273,7 +268,7 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingSites ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					totalErrors > 0 ? (
 						<span className="text-red-500">{totalErrors}</span>
 					) : (
@@ -284,7 +279,7 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingSites ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					totalLinks > 0 ? (
 						<Link href="/dashboard/sites/[siteId]/links" as={`/dashboard/sites/${siteId}/links`} passHref>
 							<a className="cursor-pointer text-sm font-semibold leading-6 text-indigo-600 transition duration-150 ease-in-out hover:text-indigo-500">
@@ -299,7 +294,7 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingSites ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					totalPages > 0 ? (
 						<Link href="/dashboard/sites/[siteId]/pages" as={`/dashboard/sites/${siteId}/pages`} passHref>
 							<a className="cursor-pointer text-sm font-semibold leading-6 text-indigo-600 transition duration-150 ease-in-out hover:text-indigo-500">
@@ -314,7 +309,7 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingSites ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					totalImages > 0 ? (
 						<Link href="/dashboard/sites/[siteId]/images" as={`/dashboard/sites/${siteId}/images`} passHref>
 							<a className="cursor-pointer text-sm font-semibold leading-6 text-indigo-600 transition duration-150 ease-in-out hover:text-indigo-500">
@@ -340,8 +335,7 @@ SitesData.propTypes = {
 		url: PropTypes.string,
 		verification_id: PropTypes.string,
 		verified: PropTypes.bool
-	}),
-	validatingSites: PropTypes.bool
+	})
 };
 
 /**

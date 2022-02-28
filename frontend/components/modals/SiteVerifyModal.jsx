@@ -147,12 +147,7 @@ const SiteVerifyModal = (
 
 	return (
 		<Transition.Root show={showModal} as={Fragment}>
-			<Dialog
-				as="div"
-				className="site-verify-modal-dialog"
-				initialFocus={ref}
-				onClose={!disableSiteVerify ? setShowModal : () => {}}
-			>
+			<Dialog as="div" initialFocus={ref} onClose={!disableSiteVerify ? setShowModal : () => {}}>
 				<div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
 					<Transition.Child
 						as={Fragment}

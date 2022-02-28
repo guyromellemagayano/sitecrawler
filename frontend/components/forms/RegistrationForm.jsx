@@ -284,7 +284,7 @@ const RegistrationForm = () => {
 								type="submit"
 								disabled={isSubmitting}
 								className={classnames(
-									"flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm",
+									"w-full rounded-md  border border-transparent bg-indigo-600 py-2 px-4 text-center text-sm font-medium text-white shadow-sm",
 									isSubmitting
 										? "pointer-events-none cursor-not-allowed bg-indigo-300 opacity-50"
 										: "hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"

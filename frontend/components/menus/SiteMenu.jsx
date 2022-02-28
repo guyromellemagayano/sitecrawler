@@ -40,7 +40,7 @@ const SiteMenu = () => {
 	// SWR hooks
 	const { user } = useUser();
 	const { scan, scanObjId } = useScan(sanitizedSiteId);
-	const { stats, totalImages, totalLinks, totalPages, validatingStats } = useStats(sanitizedSiteId, scanObjId);
+	const { stats, totalImages, totalLinks, totalPages } = useStats(sanitizedSiteId, scanObjId);
 
 	// Sidebar menus
 	const { SiteSidebarMenus } = SidebarMenus();
@@ -186,7 +186,7 @@ const SiteMenu = () => {
 																user &&
 																Math.round(user?.status / 100) === 2 &&
 																!user?.data?.detail ? (
-																	!validatingStats && totalLinks > 0 ? (
+																	totalLinks > 0 ? (
 																		<span className="ml-auto inline-block rounded-full bg-white py-1 px-3 text-xs leading-4 text-black">
 																			{totalLinks}
 																		</span>
@@ -203,7 +203,7 @@ const SiteMenu = () => {
 																user &&
 																Math.round(user?.status / 100) === 2 &&
 																!user?.data?.detail ? (
-																	!validatingStats && totalPages > 0 ? (
+																	totalPages > 0 ? (
 																		<span className="ml-auto inline-block rounded-full bg-white py-1 px-3 text-xs leading-4 text-black">
 																			{totalPages}
 																		</span>
@@ -220,7 +220,7 @@ const SiteMenu = () => {
 																user &&
 																Math.round(user?.status / 100) === 2 &&
 																!user?.data?.detail ? (
-																	!validatingStats && totalImages > 0 ? (
+																	totalImages > 0 ? (
 																		<span className="ml-auto inline-block rounded-full bg-white py-1 px-3 text-xs leading-4 text-black">
 																			{totalImages}
 																		</span>

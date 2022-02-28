@@ -20,9 +20,8 @@ import "react-loading-skeleton/dist/skeleton.css";
  * Custom function to render the `PagesData` component
  *
  * @param {object} link
- * @param {boolean} validatingPages
  */
-const PagesData = ({ page = null, validatingPages = false }) => {
+const PagesData = ({ page = null }) => {
 	// Site data props
 	const pageId = page?.id ?? null;
 	const pageUrl = page?.url ?? null;
@@ -115,11 +114,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				<div className="flex flex-col items-start">
 					<div>
 						<>
-							{isComponentReady &&
-							user &&
-							Math.round(user?.status / 100) === 2 &&
-							!user?.data?.detail &&
-							!validatingPages ? (
+							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 								<>
 									{pageTlsStatus ? (
 										<span
@@ -164,7 +159,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 											{!pageTlsStatus ? (
 												<button
 													type="button"
-													className="ml-3 flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-green-600 transition duration-150 ease-in-out hover:text-green-500 focus:outline-none"
+													className="flex ml-3 cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-green-600 transition duration-150 ease-in-out hover:text-green-500 focus:outline-none"
 													onClick={() => {}}
 												>
 													{markAsResolvedText}
@@ -174,21 +169,22 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 									</div>
 								</>
 							) : (
-								<span className="relative -left-3 flex items-start space-x-3 py-2">
+								<span className="flex items-start space-x-3 py-2">
 									<Skeleton
 										duration={2}
 										width={9}
 										height={9}
 										circle={true}
-										className="relative -left-3 top-4 block flex-shrink-0"
+										className="relative top-1 block flex-shrink-0"
 									/>
 									<div className="inline-flex flex-col items-start justify-start">
 										<Skeleton
 											duration={2}
 											width={150}
-											className="relative -left-3 inline-flex flex-col items-start justify-start"
+											className="inline-flex relative flex-col items-start justify-start"
 										/>
 										<span className="flex flex-row justify-start space-x-3 text-sm leading-5 text-gray-500">
+											<Skeleton duration={2} width={63} />
 											<Skeleton duration={2} width={63} />
 											<Skeleton duration={2} width={63} />
 											<Skeleton duration={2} width={63} />
@@ -202,7 +198,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				</div>
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					<span className="text-gray-500">
 						{pageTotalSize > 0
 							? bytes(pageTotalSize, {
@@ -216,7 +212,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					pageTlsStatus ? (
 						<MemoizedSiteSuccessIcon />
 					) : !pageTlsStatus ? (
@@ -227,7 +223,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					pageImagesTlsStatus ? (
 						<MemoizedSiteSuccessIcon />
 					) : !pageImagesTlsStatus ? (
@@ -238,7 +234,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					pageScriptsTlsStatus ? (
 						<MemoizedSiteSuccessIcon />
 					) : !pageScriptsTlsStatus ? (
@@ -249,7 +245,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					pageStylesheetsTlsStatus ? (
 						<MemoizedSiteSuccessIcon />
 					) : !pageStylesheetsTlsStatus ? (
@@ -260,35 +256,35 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					<span className="text-gray-500">{pageTotalLinks > 0 ? pageTotalLinks : 0}</span>
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					<span className="text-gray-500">{pageTotalImages > 0 ? pageTotalImages : 0}</span>
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					<span className="text-gray-500">{pageTotalScripts > 0 ? pageTotalScripts : 0}</span>
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					<span className="text-gray-500">{pageTotalStylesheets > 0 ? pageTotalStylesheets : 0}</span>
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					pageTotalOkLinks > 0 ? (
 						<span className="text-green-500">{pageTotalOkLinks}</span>
 					) : (
@@ -299,7 +295,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					pageTotalNonOkLinks > 0 ? (
 						<span className="text-red-500">{pageTotalNonOkLinks}</span>
 					) : (
@@ -310,7 +306,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					pageTotalOkImages > 0 ? (
 						<span className="text-green-500">{pageTotalOkImages}</span>
 					) : (
@@ -321,7 +317,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					pageTotalNonOkImages > 0 ? (
 						<span className="text-red-500">{pageTotalNonOkImages}</span>
 					) : (
@@ -332,7 +328,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					pageTotalOkScripts > 0 ? (
 						<span className="text-green-500">{pageTotalOkScripts}</span>
 					) : (
@@ -343,7 +339,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					pageTotalNonOkScripts > 0 ? (
 						<span className="text-red-500">{pageTotalNonOkScripts}</span>
 					) : (
@@ -354,7 +350,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					pageTotalOkStylesheets > 0 ? (
 						<span className="text-green-500">{pageTotalOkStylesheets}</span>
 					) : (
@@ -365,7 +361,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					pageTotalNonOkStylesheets > 0 ? (
 						<span className="text-red-500">{pageTotalNonOkStylesheets}</span>
 					) : (
@@ -376,7 +372,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					pageTotalTlsImages > 0 ? (
 						<span className="text-green-500">{pageTotalTlsImages}</span>
 					) : (
@@ -387,7 +383,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					pageTotalNonTlsImages > 0 ? (
 						<span className="text-red-500">{pageTotalNonTlsImages}</span>
 					) : (
@@ -398,7 +394,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					pageTotalTlsScripts > 0 ? (
 						<span className="text-green-500">{pageTotalTlsScripts}</span>
 					) : (
@@ -409,7 +405,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					pageTotalNonTlsScripts > 0 ? (
 						<span className="text-red-500">{pageTotalNonTlsScripts}</span>
 					) : (
@@ -420,7 +416,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					pageTotalTlsStylesheets > 0 ? (
 						<span className="text-green-500">{pageTotalTlsStylesheets}</span>
 					) : (
@@ -431,7 +427,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					pageTotalNonTlsStylesheets > 0 ? (
 						<span className="text-red-500">{pageTotalNonTlsStylesheets}</span>
 					) : (
@@ -442,7 +438,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					pageResolvedTls ? (
 						<span className="text-gray-500">{pageResolvedTls}</span>
 					) : null
@@ -451,7 +447,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					pageResolvedSize ? (
 						<span className="text-gray-500">{pageResolvedSize}</span>
 					) : null
@@ -460,7 +456,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					pageResolvedMissingTitle ? (
 						<span className="text-gray-500">{pageResolvedMissingTitle}</span>
 					) : null
@@ -469,7 +465,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					pageResolvedMissingDescription ? (
 						<span className="text-gray-500">{pageResolvedMissingDescription}</span>
 					) : null
@@ -478,7 +474,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					pageResolvedMissingH1First ? (
 						<span className="text-gray-500">{pageResolvedMissingH1First}</span>
 					) : null
@@ -487,7 +483,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					pageResolvedMissingH1Second ? (
 						<span className="text-gray-500">{pageResolvedMissingH1Second}</span>
 					) : null
@@ -496,7 +492,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					pageResolvedMissingH2First ? (
 						<span className="text-gray-500">{pageResolvedMissingH2First}</span>
 					) : null
@@ -505,7 +501,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					pageResolvedMissingH2Second ? (
 						<span className="text-gray-500">{pageResolvedMissingH2Second}</span>
 					) : null
@@ -514,7 +510,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					pageResolvedDuplicateTitle ? (
 						<span className="text-gray-500">{pageResolvedDuplicateTitle}</span>
 					) : null
@@ -523,7 +519,7 @@ const PagesData = ({ page = null, validatingPages = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					pageResolvedDuplicateDescription ? (
 						<span className="text-gray-500">{pageResolvedDuplicateDescription}</span>
 					) : null
@@ -569,7 +565,7 @@ PagesData.propTypes = {
 		size_total: PropTypes.number,
 		tls_images: PropTypes.bool,
 		tls_scripts: PropTypes.bool,
-		tls_status: PropTypes.bool,
+		tls_status: PropTypes.any,
 		tls_stylesheets: PropTypes.bool,
 		url: PropTypes.string
 	}),

@@ -4,7 +4,7 @@ import { MemoizedUpgradeErrorModal } from "@components/modals/UpgradeErrorModal"
 import { RedirectInterval } from "@constants/GlobalValues";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DocumentTextIcon, ExternalLinkIcon, LinkIcon } from "@heroicons/react/outline";
-import { DownloadIcon, GlobeIcon, XCircleIcon } from "@heroicons/react/solid";
+import { DownloadIcon, GlobeIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useLinks } from "@hooks/useLinks";
 import { usePages } from "@hooks/usePages";
@@ -20,6 +20,7 @@ import { handleConversionStringToLowercase, handleConversionStringToNumber } fro
 import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
+import PropTypes from "prop-types";
 import { memo, useContext, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -158,7 +159,8 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 									user &&
 									Math.round(user?.status / 100) === 2 &&
 									!user?.data?.detail &&
-									(!validatingLinks || !validatingPages) ? (
+									siteName &&
+									siteUrl ? (
 										<>
 											<GlobeIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
 											<span className="text-sm font-semibold leading-6 text-gray-500">
@@ -186,7 +188,8 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 									user &&
 									Math.round(user?.status / 100) === 2 &&
 									!user?.data?.detail &&
-									(!validatingSites || !validatingLinks || !validatingPages) ? (
+									scanCount &&
+									(previousScan || currentScan) ? (
 										<>
 											<FontAwesomeIcon
 												icon={["fas", "spider"]}
@@ -228,7 +231,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 							user &&
 							Math.round(user?.status / 100) === 2 &&
 							!user?.data?.detail &&
-							(!validatingSites || !validatingLinks || !validatingPages) ? (
+							(linksCount || sitesCount || pagesCount) ? (
 								isLinks && linksCount ? (
 									<>
 										<LinkIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
@@ -272,7 +275,8 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 							user &&
 							Math.round(user?.status / 100) === 2 &&
 							!user?.data?.detail &&
-							(!validatingLinks || !validatingPages) ? (
+							(linksCount || sitesCount || pagesCount) &&
+							(isCrawlStarted || !isCrawlStarted || isCrawlFinished || !isCrawlFinished) ? (
 								permissions.includes("can_start_scan") &&
 								permissions.includes("can_see_pages") &&
 								permissions.includes("can_see_scripts") &&
@@ -302,7 +306,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 											className="ml-2 inline-flex items-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
 										>
 											<span className="flex items-center space-x-2">
-												<XCircleIcon className="h-4 w-4 text-white" />
+												<FontAwesomeIcon icon={["fas", "spider"]} className="h-4 w-4 text-white" />
 												<span>{crawlText}</span>
 											</span>
 										</button>
@@ -328,7 +332,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 								user &&
 								Math.round(user?.status / 100) === 2 &&
 								!user?.data?.detail &&
-								(!validatingLinks || !validatingPages) ? (
+								(linksCount || sitesCount || pagesCount) ? (
 									siteIdVerified ? (
 										<button
 											type="button"
@@ -353,7 +357,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 											className="ml-2 inline-flex items-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
 										>
 											<span className="flex items-center space-x-2">
-												<XCircleIcon className="h-4 w-4 text-white" />
+												<DownloadIcon className="h-4 w-4 text-white" />
 												<span>{csvDownloadText}</span>
 											</span>
 										</button>
@@ -378,6 +382,13 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 			</div>
 		</div>
 	);
+};
+
+PageOption.propTypes = {
+	isImages: PropTypes.bool,
+	isLinks: PropTypes.bool,
+	isPages: PropTypes.bool,
+	isSites: PropTypes.bool
 };
 
 /**

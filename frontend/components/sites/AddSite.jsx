@@ -51,7 +51,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 	const { user, maxSiteLimit } = useUser();
 	const { sitesCount } = useSites();
 
-	useMemo(() => {
+	useMemo(async () => {
 		// Handle `hasSiteLimitReached` value
 		if (maxSiteLimit && sitesCount) {
 			setHasSiteLimitReached(sitesCount >= maxSiteLimit);

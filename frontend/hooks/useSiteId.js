@@ -16,7 +16,7 @@ export const useSiteId = (querySid = null, options = null) => {
 	const [siteUrl, setSiteUrl] = useState("");
 
 	// Custom context
-	const { setConfig: setSitesConfig } = useContext(SiteCrawlerAppContext);
+	const { setConfig: setSiteIdConfig } = useContext(SiteCrawlerAppContext);
 
 	// Custom variables
 	const currentEndpoint =
@@ -33,8 +33,8 @@ export const useSiteId = (querySid = null, options = null) => {
 		if (errorSiteId) {
 			// Show alert message after failed `user` SWR hook fetch
 			errorSiteId
-				? setSitesConfig({
-						isSites: true,
+				? setSiteIdConfig({
+						isSiteId: true,
 						method: errorSiteId?.config?.method ?? null,
 						status: errorSiteId?.status ?? null
 				  })
