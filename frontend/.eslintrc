@@ -17,13 +17,7 @@
 		"next/core-web-vitals",
 		"prettier"
 	],
-	"plugins": [
-		"prettier",
-		"import",
-		"react",
-		"react-hooks",
-		"jsx-a11y"
-	],
+	"plugins": ["prettier", "import", "react", "react-hooks", "jsx-a11y"],
 	"parserOptions": {
 		"ecmaVersion": 6,
 		"sourceType": "module",
@@ -54,16 +48,10 @@
 		"import/resolver": {
 			"jsconfig": {
 				"config": "jsconfig.json",
-				"extensions": [
-					".js",
-					".jsx"
-				]
+				"extensions": [".js", ".jsx"]
 			},
 			"node": {
-				"extensions": [
-					".js",
-					".jsx"
-				]
+				"extensions": [".js", ".jsx"]
 			}
 		}
 	}

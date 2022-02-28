@@ -9,16 +9,16 @@ body {
 
 tr a,
 tr div {
-	@apply max-w-full inline-block clear-both;
+	@apply clear-both inline-block max-w-full;
 }
 
 /* Custom variables */
 .link-item {
-	@apply max-w-full block;
+	@apply block max-w-full;
 }
 
 .link-item a {
-	@apply inline-block clear-both;
+	@apply clear-both inline-block;
 }
 
 .icon-status {
@@ -51,11 +51,11 @@ tr div {
 
 /* Custom vendor overrides */
 .react-loading-skeleton {
-	@apply !rounded-md !relative;
+	@apply !relative !rounded-md;
 }
 
 .legend-val {
-	@apply text-gray-1300 font-semibold;
+	@apply font-semibold text-gray-1300;
 }
 
 .legend-text {
@@ -63,11 +63,11 @@ tr div {
 }
 
 .apexcharts-legend {
-	@apply !block !mx-auto max-w-xs;
+	@apply !mx-auto !block max-w-xs;
 }
 
 .apexcharts-legend-text {
-	@apply flex items-center justify-between w-full;
+	@apply flex w-full items-center justify-between;
 }
 
 .apexcharts-legend-marker {
@@ -75,7 +75,7 @@ tr div {
 }
 
 .apexcharts-legend-series {
-	@apply flex items-center outline-none cursor-pointer border-gray-1400 border border-solid;
+	@apply flex cursor-pointer items-center border border-solid border-gray-1400 outline-none;
 	padding-bottom: 10px;
 	-webkit-tap-highlight-color: transparent;
 }
@@ -89,7 +89,7 @@ tr div {
 }
 
 .rc-pagination li {
-	@apply cursor-pointer flex items-center justify-center outline-none text-sm leading-5 -mt-4 pt-4 font-medium text-opacity-100;
+	@apply -mt-4 flex cursor-pointer items-center justify-center pt-4 text-sm font-medium leading-5 text-opacity-100 outline-none;
 	color: rgba(160, 174, 192, var(--text-opacity));
 }
 
@@ -98,7 +98,7 @@ tr div {
 }
 
 .rc-pagination-item {
-	@apply w-10 h-10;
+	@apply h-10 w-10;
 }
 
 .rc-pagination-item a {
