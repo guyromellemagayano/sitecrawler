@@ -16,9 +16,8 @@ import { MemoizedSitesData } from "./SitesData";
  *
  * @param {number} count
  * @param {array} results
- * @param {boolean} validatingSites
  */
-const SitesTable = ({ count = 0, results = [], validatingSites = false }) => {
+const SitesTable = ({ count = 0, results = [] }) => {
 	// Translations
 	const { t } = useTranslation();
 	const noAvailableSites = t("sites:noAvailableSites");
@@ -59,7 +58,7 @@ const SitesTable = ({ count = 0, results = [], validatingSites = false }) => {
 
 							<tbody className="relative divide-y divide-gray-200">
 								{results?.map((result) => {
-									return <MemoizedSitesData key={result.id} site={result} validatingSites={validatingSites} />;
+									return <MemoizedSitesData key={result.id} site={result} />;
 								}) ?? null}
 							</tbody>
 						</table>
@@ -80,8 +79,7 @@ const SitesTable = ({ count = 0, results = [], validatingSites = false }) => {
 
 SitesTable.propTypes = {
 	count: PropTypes.number,
-	results: PropTypes.array,
-	validatingSites: PropTypes.bool
+	results: PropTypes.array
 };
 
 /**

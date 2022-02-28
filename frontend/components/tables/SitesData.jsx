@@ -19,9 +19,8 @@ import "react-loading-skeleton/dist/skeleton.css";
  * Custom function to render the `SitesData` component
  *
  * @param {object} site
- * @param {boolean} validatingSites
  */
-const SitesData = ({ site = null, validatingSites = false }) => {
+const SitesData = ({ site = null }) => {
 	// Site data props
 	const siteId = site?.id ?? null;
 	const siteName = site?.name ?? null;
@@ -119,11 +118,7 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 
 				<div className="flex flex-col items-start">
 					<div>
-						{!isComponentReady &&
-						user &&
-						Math.round(user?.status / 100) === 2 &&
-						!user?.data?.detail &&
-						!validatingSites ? (
+						{!isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 							<>
 								{siteVerified && currentScan == null ? (
 									<span
@@ -233,7 +228,7 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 				</div>
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingSites ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					scanResults?.length > 0 ? (
 						<span className="space-x-2">
 							<span className="text-sm leading-5 text-gray-500">
@@ -273,7 +268,7 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingSites ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					totalErrors > 0 ? (
 						<span className="text-red-500">{totalErrors}</span>
 					) : (
@@ -284,7 +279,7 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingSites ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					totalLinks > 0 ? (
 						<Link href="/dashboard/sites/[siteId]/links" as={`/dashboard/sites/${siteId}/links`} passHref>
 							<a className="cursor-pointer text-sm font-semibold leading-6 text-indigo-600 transition duration-150 ease-in-out hover:text-indigo-500">
@@ -299,7 +294,7 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingSites ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					totalPages > 0 ? (
 						<Link href="/dashboard/sites/[siteId]/pages" as={`/dashboard/sites/${siteId}/pages`} passHref>
 							<a className="cursor-pointer text-sm font-semibold leading-6 text-indigo-600 transition duration-150 ease-in-out hover:text-indigo-500">
@@ -314,7 +309,7 @@ const SitesData = ({ site = null, validatingSites = false }) => {
 				)}
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && !validatingSites ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					totalImages > 0 ? (
 						<Link href="/dashboard/sites/[siteId]/images" as={`/dashboard/sites/${siteId}/images`} passHref>
 							<a className="cursor-pointer text-sm font-semibold leading-6 text-indigo-600 transition duration-150 ease-in-out hover:text-indigo-500">
@@ -340,8 +335,7 @@ SitesData.propTypes = {
 		url: PropTypes.string,
 		verification_id: PropTypes.string,
 		verified: PropTypes.bool
-	}),
-	validatingSites: PropTypes.bool
+	})
 };
 
 /**
