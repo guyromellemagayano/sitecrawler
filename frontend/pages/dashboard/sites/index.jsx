@@ -1,10 +1,10 @@
 import { MemoizedLayout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
 import { MemoizedSitesDashboardPageLayout } from "@components/layouts/pages/SitesDashboard";
+import { MemoizedLoader } from "@components/loaders";
 import { SitesApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { LoginLink } from "@constants/PageLinks";
 import { SSR_SITE_URL } from "@constants/ServerEnv";
-import { useSites } from "@hooks/useSites";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import AppAxiosInstance from "@utils/axios";
@@ -48,7 +48,6 @@ export async function getServerSideProps({ req }) {
 			return {
 				props: {
 					fallback: {
-						"/api/site/": sitesData,
 						"/api/auth/user/": userData
 					}
 				}
@@ -74,7 +73,6 @@ const SitesAuth = () => {
 
 	// SWR hooks
 	const { user } = useUser("/api/auth/user/");
-	const { sites, sitesResults, sitesCount } = useSites("/api/site/");
 
 	return isComponentReady && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 		<MemoizedLayout>
@@ -83,7 +81,9 @@ const SitesAuth = () => {
 				<MemoizedSitesDashboardPageLayout />
 			</MemoizedPageLayout>
 		</MemoizedLayout>
-	) : null;
+	) : (
+		<MemoizedLoader />
+	);
 };
 
 export default function Sites({ fallback }) {
