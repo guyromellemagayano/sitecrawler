@@ -47,7 +47,7 @@ const SitesTable = ({ count = 0, results = [] }) => {
 								{labelsArray?.map((label) => (
 									<th
 										key={label.label}
-										className="min-w-[24rem] border-b border-gray-200 px-6 py-3 text-left text-xs font-medium uppercase leading-4 tracking-wider text-gray-500"
+										className="border-b border-gray-200 px-6 py-3 text-left text-xs font-medium uppercase leading-4 tracking-wider text-gray-500"
 									>
 										<span className="flex items-center justify-start">
 											<MemoizedDataSorting slug={label.slug} labels={labelsArray} />
