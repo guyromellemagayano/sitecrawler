@@ -7,7 +7,6 @@ import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import PropTypes from "prop-types";
 import { memo } from "react";
-import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
 /**
@@ -45,24 +44,12 @@ const SiteList = ({ data = null }) => {
 	};
 
 	// SWR hooks
-	const { scan, setScanConfig, currentScan, previousScan, scanObjId, scanCount, validatingScan } = useScan(siteId);
+	const { scan, setScanConfig, currentScan, previousScan, scanObjId, scanCount } = useScan(siteId);
 
 	// SWR hooks
 	const { stats } = useStats(siteId, scanObjId);
 
-	return validatingScan ? (
-		<li>
-			<div className="relative block w-full cursor-default select-none py-2 pl-3 pr-9">
-				<div className="flex items-center space-x-3">
-					<Skeleton circle={true} duration={2} width={10} height={10} className="relative top-0.5" />
-
-					<span className="block">
-						<Skeleton duration={2} width={130} />
-					</span>
-				</div>
-			</div>
-		</li>
-	) : (
+	return (
 		<li
 			id={`listbox-item-${siteId}`}
 			role="option"

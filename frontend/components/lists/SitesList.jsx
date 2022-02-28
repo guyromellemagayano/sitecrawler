@@ -23,7 +23,7 @@ const SitesList = ({ isOpen = false }) => {
 	const { setConfig } = useNotificationMessage();
 
 	// `sites` SWR hook
-	const { sites, errorSites, validatingSites, sitesCount, sitesResults } = useSites();
+	const { sites, errorSites, sitesCount, sitesResults } = useSites();
 
 	return sitesCount && sitesResults ? (
 		sitesCount > 0 && sitesResults?.length > 0 ? (
