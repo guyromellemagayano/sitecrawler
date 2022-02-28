@@ -1,11 +1,12 @@
 import { MemoizedLoadingMessage } from "@components/messages/LoadingMessage";
 import { MemoizedDataSorting } from "@components/sorting/DataSorting";
 import { LinksTableLabels } from "@constants/LinksTableLabels";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import { memo } from "react";
+import { memo, useContext } from "react";
 import "react-loading-skeleton/dist/skeleton.css";
 import { MemoizedLinksData } from "./LinksData";
 
@@ -24,6 +25,9 @@ const LinksTable = ({ count = 0, results = [] }) => {
 	// Router
 	const { query } = useRouter();
 
+	// Custom context
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
+
 	// Sites table labels with translations
 	const labelsArray = LinksTableLabels();
 
@@ -31,7 +35,7 @@ const LinksTable = ({ count = 0, results = [] }) => {
 		<section
 			className={classnames("flex flex-col", count > 0 && results?.length > 0 ? "justify-start" : "justify-center")}
 		>
-			{count && results ? (
+			{isComponentReady && count && results ? (
 				count > 0 && results?.length > 0 ? (
 					<table className="relative w-full">
 						<thead>

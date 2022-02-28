@@ -3,11 +3,12 @@ import { MemoizedDataSorting } from "@components/sorting/DataSorting";
 import { MemoizedEmptyState } from "@components/states/EmptyState";
 import { PagesTableLabels } from "@constants/PagesTableLabels";
 import { useUser } from "@hooks/useUser";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import { memo } from "react";
+import { memo, useContext } from "react";
 import "react-loading-skeleton/dist/skeleton.css";
 import { MemoizedPagesData } from "./PagesData";
 
@@ -26,6 +27,9 @@ const PagesTable = ({ count = 0, results = [] }) => {
 	// Router
 	const { query } = useRouter();
 
+	// Custom context
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
+
 	// SWR hooks
 	const { permissions } = useUser();
 
@@ -36,23 +40,21 @@ const PagesTable = ({ count = 0, results = [] }) => {
 		<section
 			className={classnames(
 				"flex flex-col",
-				permissions.includes("can_see_pages") &&
-					permissions.includes("can_see_scripts") &&
-					permissions.includes("can_see_stylesheets") &&
-					permissions.includes("can_see_images") &&
+				permissions?.includes("can_see_pages") &&
+					permissions?.includes("can_see_scripts") &&
+					permissions?.includes("can_see_stylesheets") &&
+					permissions?.includes("can_see_images") &&
 					count > 0 &&
 					results?.length > 0
 					? "justify-start"
 					: "justify-center"
 			)}
 		>
-			{permissions?.length > 0 ? (
-				permissions.includes("can_see_pages") &&
-				permissions.includes("can_see_scripts") &&
-				permissions.includes("can_see_stylesheets") &&
-				permissions.includes("can_see_images") &&
-				count &&
-				results ? (
+			{permissions?.includes("can_see_pages") &&
+			permissions?.includes("can_see_scripts") &&
+			permissions?.includes("can_see_stylesheets") &&
+			permissions?.includes("can_see_images") ? (
+				isComponentReady && count && results ? (
 					count > 0 && results?.length > 0 ? (
 						<table>
 							<thead>
@@ -84,12 +86,12 @@ const PagesTable = ({ count = 0, results = [] }) => {
 					) : null
 				) : (
 					<div className="flex items-center justify-center px-4 py-5 sm:p-6">
-						<MemoizedEmptyState />
+						<MemoizedLoadingMessage message={loaderMessage} />
 					</div>
 				)
 			) : (
 				<div className="flex items-center justify-center px-4 py-5 sm:p-6">
-					<MemoizedLoadingMessage message={loaderMessage} />
+					<MemoizedEmptyState />
 				</div>
 			)}
 		</section>

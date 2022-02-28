@@ -90,97 +90,96 @@ const LinksData = ({ link = null }) => {
 			<td className="flex-none whitespace-nowrap p-4">
 				<div className="flex flex-col items-start">
 					<div>
-						<div>
-							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-								<>
-									{linkStatus === "OK" && linkTlsStatus === "OK" ? (
-										<span
-											aria-label="Ok"
-											className="relative -left-3 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-green-400 leading-5"
-										></span>
-									) : linkStatus === "TIMEOUT" ? (
-										<span
-											aria-label="Timeout"
-											className="relative -left-3 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-yellow-400 leading-5"
-										></span>
-									) : (
-										<span
-											aria-label={
-												linkStatus === "HTTP_ERROR" && linkTlsStatus === "ERROR"
-													? "HTTP Error"
-													: linkStatus === "TOO MANY REDIRECTS"
-													? "Too Many Redirects"
-													: "Other Error"
-											}
-											className="relative -left-3 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-red-400 leading-5"
-										></span>
-									)}
+						{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+							<>
+								{linkStatus === "OK" && linkTlsStatus === "OK" ? (
+									<span
+										aria-label="Ok"
+										className="relative -left-3 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-green-400 leading-5"
+									></span>
+								) : linkStatus === "TIMEOUT" ? (
+									<span
+										aria-label="Timeout"
+										className="relative -left-3 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-yellow-400 leading-5"
+									></span>
+								) : (
+									<span
+										aria-label={
+											linkStatus === "HTTP_ERROR" && linkTlsStatus === "ERROR"
+												? "HTTP Error"
+												: linkStatus === "TOO MANY REDIRECTS"
+												? "Too Many Redirects"
+												: "Other Error"
+										}
+										className="relative -left-3 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-red-400 leading-5"
+									></span>
+								)}
 
-									<div className="inline-flex flex-col items-start justify-start">
-										<span className="flex items-center justify-start text-sm font-semibold leading-6 text-gray-500">
-											<p className="truncate-link">{linkUrl}</p>
-										</span>
-										<span className="flex justify-start space-x-2 text-sm leading-5 text-gray-500">
-											<Link
-												href="/dashboard/sites/[siteId]/links/[linkId]/"
-												as={`/dashboard/sites/${sanitizedSiteId}/links/${linkDetailId}`}
-												passHref
-											>
-												<a
-													type="button"
-													className="flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-indigo-600 transition duration-150 ease-in-out hover:text-indigo-500 focus:outline-none"
-												>
-													{goToSiteOverviewText}
-												</a>
-											</Link>
-
+								<div className="inline-flex flex-col items-start justify-start">
+									<span className="flex items-center justify-start text-sm font-semibold leading-6 text-gray-500">
+										<p className="truncate-link">{linkUrl}</p>
+									</span>
+									<span className="flex justify-start space-x-2 text-sm leading-5 text-gray-500">
+										<Link
+											href="/dashboard/sites/[siteId]/links/[linkId]/"
+											as={`/dashboard/sites/${sanitizedSiteId}/links/${linkDetailId}`}
+											passHref
+										>
 											<a
-												href={linkUrl}
-												className="flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-gray-600 transition duration-150 ease-in-out hover:text-gray-500 focus:outline-none"
-												title={visitExternalSiteText}
-												target="_blank"
-												rel="noreferrer"
+												type="button"
+												className="flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-indigo-600 transition duration-150 ease-in-out hover:text-indigo-500 focus:outline-none"
 											>
-												{visitExternalSiteText}
+												{goToSiteOverviewText}
 											</a>
+										</Link>
 
-											{linkStatus !== "OK" ? (
-												<button
-													type="button"
-													className="ml-3 flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-green-600 transition duration-150 ease-in-out hover:text-green-500 focus:outline-none"
-													onClick={() => {}}
-												>
-													{markAsResolvedText}
-												</button>
-											) : null}
-										</span>
-									</div>
-								</>
-							) : (
-								<span className="flex items-start py-2">
+										<a
+											href={linkUrl}
+											className="flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-gray-600 transition duration-150 ease-in-out hover:text-gray-500 focus:outline-none"
+											title={visitExternalSiteText}
+											target="_blank"
+											rel="noreferrer"
+										>
+											{visitExternalSiteText}
+										</a>
+
+										{linkStatus !== "OK" ? (
+											<button
+												type="button"
+												className="flex ml-3 cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-green-600 transition duration-150 ease-in-out hover:text-green-500 focus:outline-none"
+												onClick={() => {}}
+											>
+												{markAsResolvedText}
+											</button>
+										) : null}
+									</span>
+								</div>
+							</>
+						) : (
+							<span className="flex items-start space-x-3 py-2">
+								<Skeleton
+									duration={2}
+									width={9}
+									height={9}
+									circle={true}
+									className="relative top-1 block flex-shrink-0"
+								/>
+								<div className="inline-flex flex-col items-start justify-start">
 									<Skeleton
 										duration={2}
-										width={9}
-										height={9}
-										circle={true}
-										className="relative -left-3 block flex-shrink-0"
+										width={150}
+										className="inline-flex relative flex-col items-start justify-start"
 									/>
-									<div className="inline-flex flex-col items-start justify-start">
-										<Skeleton
-											duration={2}
-											width={150}
-											className="relative -left-3 inline-flex flex-col items-start justify-start"
-										/>
-										<span className="flex flex-row justify-start space-x-3 text-sm leading-5 text-gray-500">
-											<Skeleton duration={2} width={63} />
-											<Skeleton duration={2} width={63} />
-											<Skeleton duration={2} width={63} />
-											<Skeleton duration={2} width={63} />
-										</span>
-									</div>
-								</span>
-							)}
-						</div>
+									<span className="flex flex-row justify-start space-x-3 text-sm leading-5 text-gray-500">
+										<Skeleton duration={2} width={63} />
+										<Skeleton duration={2} width={63} />
+										<Skeleton duration={2} width={63} />
+										<Skeleton duration={2} width={63} />
+										<Skeleton duration={2} width={63} />
+									</span>
+								</div>
+							</span>
+						)}
 					</div>
 				</div>
 			</td>
@@ -237,7 +236,7 @@ const LinksData = ({ link = null }) => {
 							as={`/dashboard/sites/${sanitizedSiteId}/links/${linkDetailId}/`}
 							passHref
 						>
-							<a className="mr-3 flex items-center text-sm font-semibold leading-6 text-indigo-600 outline-none transition duration-150 ease-in-out hover:text-indigo-500 focus:outline-none">
+							<a className="flex mr-3 items-center text-sm font-semibold leading-6 text-indigo-600 outline-none transition duration-150 ease-in-out hover:text-indigo-500 focus:outline-none">
 								<span className="truncate-link">
 									{linkDetailPages[0]?.url === linkUrl ? "/" : linkDetailPages[0]?.url}
 								</span>
