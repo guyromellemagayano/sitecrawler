@@ -1,10 +1,10 @@
 import { MemoizedLayout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
 import { MemoizedSitesDashboardPageLayout } from "@components/layouts/pages/SitesDashboard";
-import { MemoizedLoader } from "@components/loaders";
-import { UserApiEndpoint } from "@constants/ApiEndpoints";
+import { SitesApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { LoginLink } from "@constants/PageLinks";
 import { SSR_SITE_URL } from "@constants/ServerEnv";
+import { useSites } from "@hooks/useSites";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import AppAxiosInstance from "@utils/axios";
@@ -15,6 +15,7 @@ import { SWRConfig } from "swr";
 
 // Pre-render `user` data with NextJS SSR. Redirect to a login page if current user is not allowed to access that page (403 Forbidden) or redirect to the sites dashboard page if the user is still currently logged in (200 OK).
 export async function getServerSideProps({ req }) {
+	// User
 	const userResponse = await AppAxiosInstance.get(`${SSR_SITE_URL + UserApiEndpoint}`, {
 		headers: {
 			cookie: req.headers.cookie ?? null
@@ -23,19 +24,36 @@ export async function getServerSideProps({ req }) {
 	const userData = userResponse?.data ?? null;
 	const userStatus = userResponse?.status ?? null;
 
+	// Sites
+	const sitesResponse = await AppAxiosInstance.get(`${SSR_SITE_URL + SitesApiEndpoint}`, {
+		headers: {
+			cookie: req.headers.cookie ?? null
+		}
+	});
+	const sitesData = sitesResponse?.data ?? null;
+	const sitesStatus = sitesResponse?.status ?? null;
+
 	if (
 		userData !== null &&
 		!userData?.detail &&
 		Object.keys(userData)?.length > 0 &&
 		Math.round(userStatus / 200) === 1
 	) {
-		return {
-			props: {
-				fallback: {
-					"/api/auth/user/": userData
+		if (
+			sitesData !== null &&
+			!sitesData?.detail &&
+			Object.keys(sitesData)?.length > 0 &&
+			Math.round(sitesStatus / 200) === 1
+		) {
+			return {
+				props: {
+					fallback: {
+						"/api/site/": sitesData,
+						"/api/auth/user/": userData
+					}
 				}
-			}
-		};
+			};
+		}
 	} else {
 		return {
 			redirect: {
@@ -56,6 +74,7 @@ const SitesAuth = () => {
 
 	// SWR hooks
 	const { user } = useUser("/api/auth/user/");
+	const { sites, sitesResults, sitesCount } = useSites("/api/site/");
 
 	return isComponentReady && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 		<MemoizedLayout>
@@ -64,9 +83,7 @@ const SitesAuth = () => {
 				<MemoizedSitesDashboardPageLayout />
 			</MemoizedPageLayout>
 		</MemoizedLayout>
-	) : (
-		<MemoizedLoader />
-	);
+	) : null;
 };
 
 export default function Sites({ fallback }) {

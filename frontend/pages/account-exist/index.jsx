@@ -10,6 +10,7 @@ import AppAxiosInstance from "@utils/axios";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
 import { useContext } from "react";
+import { SWRConfig } from "swr";
 
 // Pre-render `user` data with NextJS SSR. Redirect to a login page if current user is not allowed to access that page (403 Forbidden) or redirect to the sites dashboard page if the user is still currently logged in (200 OK).
 export async function getServerSideProps({ req }) {
@@ -35,12 +36,16 @@ export async function getServerSideProps({ req }) {
 		};
 	} else {
 		return {
-			props: {}
+			props: {
+				fallback: {
+					"/api/auth/user/": userData
+				}
+			}
 		};
 	}
 }
 
-export default function AccountExist() {
+const AccountExistAuth = () => {
 	// Translations
 	const { t } = useTranslation("common");
 	const isAccountExist = t("isAccountExist");
@@ -58,6 +63,14 @@ export default function AccountExist() {
 		</MemoizedLayout>
 	) : (
 		<MemoizedLoader />
+	);
+};
+
+export default function AccountExist({ fallback }) {
+	return (
+		<SWRConfig value={{ fallback }}>
+			<AccountExistAuth />
+		</SWRConfig>
 	);
 }
 
