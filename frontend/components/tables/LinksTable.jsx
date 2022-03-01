@@ -33,9 +33,12 @@ const LinksTable = ({ count = 0, results = [] }) => {
 
 	return (
 		<section
-			className={classnames("flex flex-col", count > 0 && results?.length > 0 ? "justify-start" : "justify-center")}
+			className={classnames(
+				"flex h-full min-h-full w-full flex-col",
+				count > 0 && results?.length > 0 ? "justify-start" : "justify-center"
+			)}
 		>
-			{isComponentReady && count && results ? (
+			{isComponentReady ? (
 				count > 0 && results?.length > 0 ? (
 					<table className="relative w-full">
 						<thead>

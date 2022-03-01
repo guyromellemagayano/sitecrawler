@@ -39,7 +39,7 @@ const ImagesTable = ({ count = 0, results = [] }) => {
 	return (
 		<section
 			className={classnames(
-				"flex flex-col",
+				"flex h-full min-h-full w-full flex-col",
 				permissions?.includes("can_see_pages") &&
 					permissions?.includes("can_see_scripts") &&
 					permissions?.includes("can_see_stylesheets") &&
@@ -54,7 +54,7 @@ const ImagesTable = ({ count = 0, results = [] }) => {
 			permissions?.includes("can_see_scripts") &&
 			permissions?.includes("can_see_stylesheets") &&
 			permissions?.includes("can_see_images") ? (
-				isComponentReady && count && results ? (
+				isComponentReady ? (
 					count > 0 && results?.length > 0 ? (
 						<table>
 							<thead>
