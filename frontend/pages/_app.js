@@ -3,6 +3,7 @@ import { ComponentReadyInterval } from "@constants/GlobalValues";
 import { isProd } from "@constants/ServerEnv";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
+import { far } from "@fortawesome/free-regular-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { useNotificationMessage } from "@hooks/useNotificationMessage";
 import "@styles/tailwind.css";
@@ -15,6 +16,7 @@ import { createContext, useEffect, useState } from "react";
 // Font Awesome
 library.add(fab);
 library.add(fas);
+library.add(far);
 
 /**
  * Create new App context
