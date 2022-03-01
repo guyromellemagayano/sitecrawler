@@ -74,6 +74,8 @@
 	"showing": "Showing",
 	"to": "to",
 	"of": "of",
+	"next": "Next",
+	"previous": "Previous",
 	"results": "results",
 	"rowsPerPage": "Rows per page"
 }
