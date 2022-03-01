@@ -1,4 +1,3 @@
-import { MemoizedPaginationSkeleton } from "@components/skeletons/PaginationSkeleton";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import {
 	ArrowNarrowLeftIcon,
@@ -16,6 +15,8 @@ import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import Pagination from "rc-pagination";
 import { memo, useContext } from "react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import { useSWRConfig } from "swr";
 
 // Locales
@@ -171,7 +172,7 @@ const DataPagination = () => {
 		Math.round(user?.status / 100) === 2 &&
 		!user?.data?.detail &&
 		pageCount &&
-		pageResults?.length > 0 ? (
+		pageResults ? (
 		<div className="mt-8 mb-4 items-center justify-between bg-white py-4 align-middle lg:flex">
 			<div className="flex mb-8 items-center lg:m-0">
 				<div className="mt-2 lg:my-0">
@@ -223,7 +224,23 @@ const DataPagination = () => {
 			</div>
 		</div>
 	) : (
-		<MemoizedPaginationSkeleton />
+		<div className="mt-8 mb-4 items-center justify-between bg-white py-4 align-middle lg:flex">
+			<div className="flex flex-1">
+				<Skeleton duration={2} width={120} />
+			</div>
+			<div className="space-x-3 md:flex">
+				<Skeleton duration={2} width={80} />
+				<div className="space-x-3 md:flex">
+					<Skeleton duration={2} width={40} />
+					<Skeleton duration={2} width={40} />
+					<Skeleton duration={2} width={40} />
+				</div>
+				<Skeleton duration={2} width={80} />
+			</div>
+			<div className="flex flex-1 justify-end">
+				<Skeleton duration={2} width={120} />
+			</div>
+		</div>
 	);
 };
 
