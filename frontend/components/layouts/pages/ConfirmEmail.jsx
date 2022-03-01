@@ -2,6 +2,7 @@ import { MemoizedLogoLabel } from "@components/labels/LogoLabel";
 import { ConfirmEmailApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { LoginLink } from "@constants/PageLinks";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
+import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -142,10 +143,10 @@ const ConfirmEmailPageLayout = () => {
 						<div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
 							<div className="rounded-lg bg-white py-8 px-4 shadow-xl sm:px-10">
 								<h3
-									className={[
+									className={classnames(
 										"text-lg font-medium leading-6",
 										success ? "text-green-900" : failure ? "text-red-900" : "text-gray-500"
-									]}
+									)}
 								>
 									{success ? (
 										confirmEmailSuccess
@@ -167,15 +168,15 @@ const ConfirmEmailPageLayout = () => {
 										<div className="mt-5">
 											<Link href={LoginLink} passHref replace>
 												<a
-													className={[
+													className={classnames(
 														success &&
-														typeof successMessage !== "undefined" &&
-														successMessage !== null &&
-														successMessage !== [] &&
-														successMessage.length > 0
+															typeof successMessage !== "undefined" &&
+															successMessage !== null &&
+															successMessage !== [] &&
+															successMessage.length > 0
 															? "inline-flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:text-sm"
 															: "hidden"
-													]}
+													)}
 												>
 													{goBackLogin}
 												</a>
@@ -194,15 +195,15 @@ const ConfirmEmailPageLayout = () => {
 										<div className="mt-5">
 											<button
 												type="button"
-												className={[
+												className={classnames(
 													failure &&
-													typeof errorMessage !== "undefined" &&
-													errorMessage !== null &&
-													errorMessage !== [] &&
-													errorMessage.length > 0
+														typeof errorMessage !== "undefined" &&
+														errorMessage !== null &&
+														errorMessage !== [] &&
+														errorMessage.length > 0
 														? "inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:text-sm"
 														: "hidden"
-												]}
+												)}
 												onClick={() => router.reload()}
 											>
 												{reloadPage}
