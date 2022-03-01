@@ -39,7 +39,7 @@ const SitesTable = ({ count = 0, results = [] }) => {
 				count > 0 && results?.length > 0 ? "justify-start" : "justify-center"
 			)}
 		>
-			{isComponentReady && count && results ? (
+			{isComponentReady ? (
 				count > 0 && results?.length > 0 ? (
 					<table className="relative w-full">
 						<thead>
