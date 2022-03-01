@@ -81,33 +81,233 @@ tr div {
 }
 
 .apexcharts-legend-series::last-child {
-	@apply border-none;
+	@apply border-none border-0;
 }
 
 .rc-pagination {
-	@apply flex text-gray-500;
+	@apply flex m-0 p-0 text-sm font-normal leading-5 text-gray-500 justify-between items-center;
 }
 
-.rc-pagination li {
-	@apply -mt-4 flex cursor-pointer items-center justify-center pt-4 text-sm font-medium leading-5 text-opacity-100 outline-none;
-	color: rgba(160, 174, 192, var(--text-opacity));
+.rc-pagination ul,
+.rc-pagination ol {
+	@apply m-0 p-0 list-none;
 }
 
-.rc-pagination li:hover {
-	color: rgba(74, 85, 104, var(--text-opacity));
+.rc-pagination::after {
+	@apply block clear-both h-0 overflow-hidden invisible;
+}
+
+.rc-pagination-total-text {
+	@apply mb-8 flex items-center lg:m-0;
 }
 
 .rc-pagination-item {
-	@apply h-10 w-10;
+	@apply inline-block h-auto min-w-[2rem] mr-2 text-center align-middle list-none leading-7 rounded-sm outline-none cursor-pointer select-none text-gray-500;
 }
 
 .rc-pagination-item a {
-	@apply outline-none;
+	@apply block py-0 px-2 text-gray-500 transition-none outline-none;
+}
+
+.rc-pagination-item a:hover {
+	@apply no-underline;
+}
+
+.rc-pagination-item:focus,
+.rc-pagination-item:hover {
+	@apply border-gray-1000 transition-all;
+}
+
+.rc-pagination-item:focus a,
+.rc-pagination-item:hover a {
+	@apply text-gray-1100;
 }
 
 .rc-pagination-item-active {
-	border-top: 2px solid #667eea;
-	color: #667eea !important;
+	@apply border-gray-400 border-2 border-solid font-semibold rounded-lg;
+}
+
+.rc-pagination-item-active a {
+	@apply text-gray-500;
+}
+
+.rc-pagination-item-active:focus,
+.rc-pagination-item-active:hover {
+	@apply border-gray-800;
+}
+
+.rc-pagination-item-active:focus a,
+.rc-pagination-item-active:hover a {
+	@apply text-gray-800;
+}
+
+.rc-pagination-jump-prev,
+.rc-pagination-jump-next {
+	@apply outline-none;
+}
+
+.rc-pagination-jump-prev button,
+.rc-pagination-jump-next button {
+	@apply bg-transparent border-none border-0 cursor-pointer text-gray-1600;
+}
+
+.rc-pagination-jump-prev button:after,
+.rc-pagination-jump-next button:after {
+	@apply block;
+}
+
+.rc-pagination-prev,
+.rc-pagination-next,
+.rc-pagination-jump-prev,
+.rc-pagination-jump-next {
+	@apply inline-block min-w-[2rem] text-gray-500 leading-7 align-middle text-center list-none rounded-sm cursor-pointer transition-all;
+}
+
+.rc-pagination-prev,
+.rc-pagination-next {
+	@apply outline-none;
+}
+
+.rc-pagination-prev button,
+.rc-pagination-next button {
+	@apply cursor-pointer select-none text-gray-500;
+}
+
+.rc-pagination-prev:hover button,
+.rc-pagination-next:hover button {
+	@apply border-gray-1200;
+}
+
+.rc-pagination-prev .rc-pagination-item-link,
+.rc-pagination-next .rc-pagination-item-link {
+	@apply block w-full h-full text-center rounded-sm outline-none transition-all;
+}
+.rc-pagination-prev:focus .rc-pagination-item-link,
+.rc-pagination-prev:hover .rc-pagination-item-link,
+.rc-pagination-next:focus .rc-pagination-item-link,
+.rc-pagination-next:hover .rc-pagination-item-link {
+	@apply text-gray-1100 border-gray-1100;
+}
+
+.rc-pagination-prev button:after {
+	@apply block;
+	content: "‹";
+}
+
+.rc-pagination-next button:after {
+	@apply block;
+	content: "›";
+}
+
+.rc-pagination-disabled,
+.rc-pagination-disabled:hover,
+.rc-pagination-disabled:focus {
+	@apply cursor-not-allowed opacity-50;
+}
+
+.rc-pagination-disabled .rc-pagination-item-link,
+.rc-pagination-disabled:hover .rc-pagination-item-link,
+.rc-pagination-disabled:focus .rc-pagination-item-link {
+	@apply text-gray-1700 border-gray-1500 cursor-not-allowed;
+}
+
+.rc-pagination-slash {
+	@apply mr-3 ml-2;
+}
+
+.rc-pagination-options {
+	@apply inline-block ml-4 align-middle;
+}
+
+@media all and (-ms-high-contrast: none) {
+	.rc-pagination-options *::-ms-backdrop,
+	.rc-pagination-options {
+		@apply align-top;
+	}
+}
+
+.rc-pagination-options-size-changer.rc-select {
+	@apply inline-block w-auto mr-2;
+}
+
+.rc-pagination-options-quick-jumper {
+	@apply inline-block h-7 leading-7 align-top;
+}
+
+.rc-pagination-options-quick-jumper input {
+	@apply w-14 mx-2;
+}
+
+.rc-pagination-simple .rc-pagination-prev,
+.rc-pagination-simple .rc-pagination-next {
+	@apply h-6 leading-6 align-top;
+}
+
+.rc-pagination-simple .rc-pagination-prev .rc-pagination-item-link,
+.rc-pagination-simple .rc-pagination-next .rc-pagination-item-link {
+	@apply h-6 bg-transparent border-none border-0;
+}
+
+.rc-pagination-simple .rc-pagination-prev .rc-pagination-item-link::after,
+.rc-pagination-simple .rc-pagination-next .rc-pagination-item-link::after {
+	@apply h-6 leading-6;
+}
+
+.rc-pagination-simple .rc-pagination-simple-pager {
+	@apply inline-block h-6 mr-2;
+}
+
+.rc-pagination-simple .rc-pagination-simple-pager input {
+	@apply box-border h-full mr-2 px-2 text-center bg-white border-2 border-solid border-gray-1500 rounded-sm outline-none transition-all;
+}
+
+.rc-pagination-simple .rc-pagination-simple-pager input:hover {
+	@apply border-gray-1100;
+}
+
+.rc-pagination.rc-pagination-disabled {
+	@apply cursor-not-allowed;
+}
+
+.rc-pagination.rc-pagination-disabled .rc-pagination-item {
+	@apply bg-gray-1800 border-gray-1500 cursor-not-allowed;
+}
+
+.rc-pagination.rc-pagination-disabled .rc-pagination-item a {
+	@apply text-gray-1500 bg-transparent border-0 border-none cursor-not-allowed;
+}
+
+.rc-pagination.rc-pagination-disabled .rc-pagination-item-active {
+	@apply bg-gray-1800 border-transparent;
+}
+
+.rc-pagination.rc-pagination-disabled .rc-pagination-item-active a {
+	@apply text-white;
+}
+
+.rc-pagination.rc-pagination-disabled .rc-pagination-item-link {
+	@apply text-gray-1700 bg-gray-1800 border-gray-1500 cursor-not-allowed;
+}
+
+.rc-pagination.rc-pagination-disabled .rc-pagination-item-link-icon {
+	@apply opacity-0;
+}
+
+.rc-pagination.rc-pagination-disabled .rc-pagination-item-ellipsis {
+	@apply opacity-100;
+}
+
+@media only screen and (max-width: 992px) {
+	.rc-pagination-item-after-jump-prev,
+	.rc-pagination-item-before-jump-next {
+		@apply hidden;
+	}
+}
+
+@media only screen and (max-width: 576px) {
+	.rc-pagination-options {
+		@apply hidden;
+	}
 }
 
 .rc-pagination-prev {

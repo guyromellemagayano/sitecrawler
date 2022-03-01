@@ -1,6 +1,11 @@
 import { MemoizedPaginationSkeleton } from "@components/skeletons/PaginationSkeleton";
-import { MaxSitesPerPage, MinSitesPerPage } from "@constants/GlobalValues";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
+import {
+	ArrowNarrowLeftIcon,
+	ArrowNarrowRightIcon,
+	ChevronDoubleLeftIcon,
+	ChevronDoubleRightIcon
+} from "@heroicons/react/solid";
 import { usePage } from "@hooks/usePage";
 import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
 import { useSiteQueries } from "@hooks/useSiteQueries";
@@ -13,16 +18,12 @@ import Pagination from "rc-pagination";
 import { memo, useContext } from "react";
 import { useSWRConfig } from "swr";
 
-const paginationTextItemRender = (current, type, element) => {
-	if (type === "prev") {
-		return "Prev";
-	}
-
-	if (type === "next") {
-		return "Next";
-	}
-
-	return element;
+// Locales
+const PaginationLocale = {
+	prev_page: "Previous Page",
+	next_page: "Next Page",
+	prev_5: "Previous 5 Pages",
+	next_5: "Next 5 Pages"
 };
 
 /**
@@ -51,7 +52,7 @@ const DataPagination = () => {
 	const offset = (currentPage - 1) * linksPerPage;
 	const linkNumbers = [];
 	const pageNumbers = [];
-	const linksPerPageOptions = [];
+	const linksPerPageOptions = [25, 50, 75, 100];
 
 	// Translations
 	const { t } = useTranslation();
@@ -60,6 +61,8 @@ const DataPagination = () => {
 	const ofText = t("common:of");
 	const resultsText = t("common:results");
 	const rowsPerPageText = t("common:rowsPerPage");
+	const nextText = t("common:next");
+	const previousText = t("common:previous");
 
 	// Set `totalPages` value
 	const totalPages = Math.ceil(pageCount / linksPerPage) || 0;
@@ -70,23 +73,6 @@ const DataPagination = () => {
 	// Set updated `pageNumbers` for `linksPerPage` prop
 	for (let i = 1; i <= totalPages; i++) {
 		pageNumbers.push(i);
-	}
-
-	// Set updated `linksPerPageOptions` for `linksPerPage` prop
-	if (pageCount <= MaxSitesPerPage) {
-		let i = pageCount;
-
-		while (i <= MinSitesPerPage) {
-			linksPerPageOptions.push(i);
-			i += MinSitesPerPage;
-		}
-	} else {
-		let i = MinSitesPerPage;
-
-		while (i <= MaxSitesPerPage) {
-			linksPerPageOptions.push(i);
-			i += MinSitesPerPage;
-		}
 	}
 
 	// Set `linkNumbers` array based on the `pageCount`
@@ -135,6 +121,51 @@ const DataPagination = () => {
 		mutate(scanApiEndpoint);
 	};
 
+	// Custom navigation item renders
+	const navigationItemRender = (current, type, element) => {
+		if (type === "prev") {
+			return (
+				<div className="flex items-center justify-center space-x-3">
+					<ArrowNarrowLeftIcon className="h-4 w-4 font-semibold text-gray-400" aria-hidden="true" />
+					<span className="text-sm font-semibold text-gray-500 hover:text-gray-700">{previousText}</span>
+				</div>
+			);
+		}
+
+		if (type === "next") {
+			return (
+				<div className="flex items-center justify-center space-x-3">
+					<span className="text-sm font-semibold text-gray-500 hover:text-gray-700">{nextText}</span>
+					<ArrowNarrowRightIcon className="h-4 w-4 font-semibold text-gray-400" aria-hidden="true" />
+				</div>
+			);
+		}
+
+		if (type === "jump-prev") {
+			return (
+				<div className="flex items-center justify-center space-x-3">
+					<ChevronDoubleLeftIcon
+						className="mx-2 h-4 w-4 text-sm text-gray-400 hover:text-gray-700"
+						aria-hidden="true"
+					/>
+				</div>
+			);
+		}
+
+		if (type === "jump-next") {
+			return (
+				<div className="flex items-center justify-center space-x-3">
+					<ChevronDoubleRightIcon
+						className="mx-2 h-4 w-4 text-sm text-gray-400  hover:text-gray-700"
+						aria-hidden="true"
+					/>
+				</div>
+			);
+		}
+
+		return element;
+	};
+
 	return isComponentReady &&
 		user &&
 		Math.round(user?.status / 100) === 2 &&
@@ -142,7 +173,7 @@ const DataPagination = () => {
 		pageCount &&
 		pageResults?.length > 0 ? (
 		<div className="mt-8 mb-4 items-center justify-between bg-white py-4 align-middle lg:flex">
-			<div className="mb-8 flex items-center lg:m-0">
+			<div className="flex mb-8 items-center lg:m-0">
 				<div className="mt-2 lg:my-0">
 					<p className="text-center text-sm leading-5 text-gray-500 lg:text-left">
 						{showingText}
@@ -157,19 +188,20 @@ const DataPagination = () => {
 			</div>
 
 			<Pagination
-				className="flex"
+				showPrevNextJumpers={true}
 				current={currentPage}
 				defaultCurrent={currentPage}
 				defaultPageSize={pageNumbers[0]}
 				disabled={!isComponentReady && user && Math.round(user?.status / 100) === 4 && user?.data?.detail}
 				onChange={handlePageChange}
 				pageSize={linksPerPage}
-				locale={"en-US"}
+				locale={PaginationLocale}
 				total={totalPages * linksPerPage}
-				itemRender={paginationTextItemRender}
+				pageSizeOptions={linksPerPageOptions}
+				itemRender={navigationItemRender}
 			/>
 
-			<div className="mt-4 flex items-center lg:m-0">
+			<div className="flex mt-4 items-center lg:m-0">
 				<h1 className="-mt-px inline-flex items-center pr-4 text-sm font-normal leading-5 text-gray-500">
 					{rowsPerPageText}
 				</h1>
