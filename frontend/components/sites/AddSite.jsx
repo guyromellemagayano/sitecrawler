@@ -1,7 +1,7 @@
 import { MemoizedMobileSidebarButton } from "@components/buttons/MobileSidebarButton";
 import { MemoizedNotAllowedFeatureModal } from "@components/modals/NotAllowedFeatureModal";
 import { MemoizedSiteLimitReachedModal } from "@components/modals/SiteLimitReachedModal";
-import { AddNewSiteLink, AddNewSiteSlug } from "@constants/PageLinks";
+import { AddNewSiteLink } from "@constants/PageLinks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import { PlusIcon, SearchIcon } from "@heroicons/react/solid";
@@ -109,23 +109,18 @@ const AddSite = ({ handleOpenSidebar }) => {
 	const handleRouterOnClick = (e) => {
 		e.preventDefault();
 
-		asPath.includes(AddNewSiteSlug)
-			? setIsNotAllowedFeatureModalVisible(!isNotAllowedFeatureModalVisible)
-			: () => {
-					setIsLoading(!isLoading);
+		const addNewSitePage = AddNewSiteLink + "?step=1&edit=false&verified=false";
 
-					if (!asPath.includes(AddNewSiteSlug)) {
-						push(AddNewSiteLink + "?step=1&edit=false&verified=false");
-
-						return () => {
-							setIsLoading(!isLoading);
-						};
-					} else return null;
-			  };
+		if (asPath.includes(addNewSitePage)) {
+			setIsNotAllowedFeatureModalVisible(!isNotAllowedFeatureModalVisible);
+		} else {
+			setIsLoading(!isLoading);
+			push(addNewSitePage);
+		}
 	};
 
 	return (
-		<div className="relative z-20 mx-auto flex w-full max-w-screen-2xl flex-1 flex-shrink-0 justify-between overflow-hidden xl:px-12 xl:py-4">
+		<div className="flex relative z-20 mx-auto w-full max-w-screen-2xl flex-1 flex-shrink-0 justify-between overflow-hidden xl:px-12 xl:py-4">
 			<MemoizedSiteLimitReachedModal
 				ref={siteLimitReachedModalRef}
 				showModal={isSiteLimitReachedModalVisible}
@@ -141,14 +136,14 @@ const AddSite = ({ handleOpenSidebar }) => {
 			<div className="flex flex-1">
 				<MemoizedMobileSidebarButton handleOpenSidebar={handleOpenSidebar} />
 
-				<div className="ml-4 flex w-full items-center lg:ml-0">
+				<div className="flex ml-4 w-full items-center lg:ml-0">
 					{isBrowser ? (
 						<>
 							<label htmlFor="searchSites" className="sr-only">
 								{searchSites}
 							</label>
-							<div className="relative flex w-full items-center text-gray-400 focus-within:text-gray-600">
-								<div className="pointer-events-none absolute inset-y-0 left-0 flex items-center">
+							<div className="flex relative w-full items-center text-gray-400 focus-within:text-gray-600">
+								<div className="flex pointer-events-none absolute inset-y-0 left-0 items-center">
 									{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 										<SearchIcon className="h-5 w-5 text-gray-400" />
 									) : (
@@ -177,17 +172,17 @@ const AddSite = ({ handleOpenSidebar }) => {
 					) : null}
 				</div>
 			</div>
-			<div className="ml-4 flex items-center space-x-2 p-4 lg:ml-6 xl:p-0">
+			<div className="flex ml-4 items-center space-x-2 p-4 lg:ml-6 xl:p-0">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					hasSiteLimitReached ? (
 						<button
 							type="button"
-							className="flex w-full cursor-pointer items-center justify-center rounded-md border border-transparent bg-yellow-600 px-4 py-2 text-sm font-medium leading-4 text-white hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 active:bg-yellow-700"
+							className="inline-flex w-full cursor-pointer items-center justify-center rounded-md border border-transparent bg-yellow-600 px-4 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 active:bg-yellow-700"
 							onClick={() => setIsSiteLimitReachedModalVisible(!isSiteLimitReachedModalVisible)}
 						>
 							<span className="flex items-center space-x-2">
-								<FontAwesomeIcon icon={["fas", "crown"]} className="h-4 w-4 text-white" />
-								<span>{addNewSite}</span>
+								<FontAwesomeIcon icon={["fas", "crown"]} className="mr-2 h-4 w-4 text-white" />
+								{addNewSite}
 							</span>
 						</button>
 					) : (
@@ -195,13 +190,16 @@ const AddSite = ({ handleOpenSidebar }) => {
 							<a
 								role="button"
 								tabIndex="0"
+								aria-disabled={isLoading}
 								onClick={handleRouterOnClick}
 								aria-hidden="true"
 								className={classnames(
-									"flex w-full cursor-pointer items-center justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium leading-4 text-white",
-									asPath.includes(AddNewSiteSlug)
-										? "bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 active:bg-red-700"
-										: "bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 active:bg-green-700"
+									"inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm ",
+									asPath.includes(AddNewSiteLink)
+										? "cursor-pointer bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 active:bg-red-700"
+										: isLoading
+										? "cursor-not-allowed bg-green-500 opacity-50"
+										: "cursor-pointer bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 active:bg-green-700"
 								)}
 							>
 								<span className="flex items-center space-x-2">

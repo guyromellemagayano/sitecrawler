@@ -1,14 +1,16 @@
+import { ResetLoadingStateTimeout } from "@constants/GlobalValues";
 import { AddNewSiteLink, DashboardSitesLink, SubscriptionPlansSettingsLink } from "@constants/PageLinks";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { ExclamationIcon } from "@heroicons/react/outline";
+import { ExclamationIcon, FolderAddIcon } from "@heroicons/react/outline";
 import { PlusIcon, ViewBoardsIcon } from "@heroicons/react/solid";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { memo } from "react";
+import { memo, useState } from "react";
 
 const EmptyState = () => {
+	const [isLoading, setIsLoading] = useState(false);
+
 	// Translations
 	const { t } = useTranslation();
 	const siteFeatureNotAvailableTitleText = t("common:siteFeatureNotAvailableTitle");
@@ -17,6 +19,7 @@ const EmptyState = () => {
 	const noAvailableSitesText = t("sites:noAvailableSites");
 	const addNewSiteMessageText = t("sites:addNewSiteMessage");
 	const addNewSiteText = t("sites:addNewSite");
+	const loaderMessage = t("common:loaderMessage");
 
 	// Router
 	const { asPath, push } = useRouter();
@@ -25,11 +28,19 @@ const EmptyState = () => {
 	const handleRouterOnClick = (e) => {
 		e.preventDefault();
 
-		if (asPath !== DashboardSitesLink) {
-			push(SubscriptionPlansSettingsLink);
+		const addNewSitePage = AddNewSiteLink + "?step=1&edit=false&verified=false";
+
+		setIsLoading(!isLoading);
+
+		if (asPath === DashboardSitesLink) {
+			push(addNewSitePage);
 		} else {
-			push(AddNewSiteLink + "?step=1&edit=false&verified=false");
+			push(SubscriptionPlansSettingsLink);
 		}
+
+		setTimeout(() => {
+			setIsLoading(!isLoading);
+		}, ResetLoadingStateTimeout);
 	};
 
 	return (
@@ -37,7 +48,7 @@ const EmptyState = () => {
 			{asPath !== DashboardSitesLink ? (
 				<ExclamationIcon className="mx-auto h-12 w-12 text-yellow-400" />
 			) : (
-				<FontAwesomeIcon icon={["far", "folder-plus"]} className="mx-auto h-12 w-12 text-gray-400" />
+				<FolderAddIcon className="mx-auto h-12 w-12 text-gray-400" />
 			)}
 
 			<h3 className="mt-2 text-sm font-medium text-gray-900">
@@ -47,25 +58,34 @@ const EmptyState = () => {
 				{asPath !== DashboardSitesLink ? siteFeatureNotAvailableMessageText : addNewSiteMessageText}
 			</p>
 			<div className="mt-6">
-				<Link href={SubscriptionPlansSettingsLink} passHref>
+				<Link href="/" passHref>
 					<a
 						role="button"
 						tabIndex="0"
+						aria-disabled={isLoading}
 						onClick={handleRouterOnClick}
 						aria-hidden="true"
 						className={classnames(
-							"inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2",
+							"inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm ",
 							asPath !== DashboardSitesLink
-								? "bg-yellow-600 hover:bg-yellow-700 focus:ring-yellow-500"
-								: "bg-green-600 hover:bg-green-700 focus:ring-green-500"
+								? isLoading
+									? "cursor-not-allowed bg-yellow-500 opacity-50"
+									: "cursor-pointer bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+								: isLoading
+								? "cursor-not-allowed bg-green-500 opacity-50"
+								: "cursor-pointer bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
 						)}
 					>
 						{asPath !== DashboardSitesLink ? (
 							<ViewBoardsIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
+						) : isLoading ? (
+							loaderMessage
 						) : (
-							<PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
+							<>
+								<PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
+								{addNewSiteText}
+							</>
 						)}
-						{asPath !== DashboardSitesLink ? upgradePlanText : addNewSiteText}
 					</a>
 				</Link>
 			</div>
