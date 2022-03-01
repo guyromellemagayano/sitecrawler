@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DocumentTextIcon, ExternalLinkIcon, LinkIcon } from "@heroicons/react/outline";
 import { DownloadIcon, GlobeIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
+import { useImages } from "@hooks/useImages";
 import { useLinks } from "@hooks/useLinks";
 import { usePages } from "@hooks/usePages";
 import { useScan } from "@hooks/useScan";
@@ -79,7 +80,8 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 	const { siteIdVerified, siteName, siteUrl } = useSiteId(sanitizedSiteId);
 	const { sitesCount, sitesResults, validatingSites } = useSites(scanApiEndpoint);
 	const { linksCount, linksResults, validatingLinks } = useLinks(scanApiEndpoint, sanitizedSiteId, scanObjId);
-	const { pagesCount, pagesResultsm, validatingPages } = usePages(scanApiEndpoint, sanitizedSiteId, scanObjId);
+	const { pagesCount, pagesResults, validatingPages } = usePages(scanApiEndpoint, sanitizedSiteId, scanObjId);
+	const { imagesCount, imagesResults, validatingImages } = useImages(scanApiEndpoint, sanitizedSiteId, scanObjId);
 
 	// Custom hooks
 	const {
@@ -132,7 +134,16 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 	};
 
 	return (
-		<div className="flex-none px-4 sm:px-6 md:flex md:items-center md:justify-between md:px-0">
+		<div
+			className={classnames(
+				(isLinks && linksCount > 0 && linksResults?.length > 0) ||
+					(isSites && sitesCount > 0 && sitesResults?.length > 0) ||
+					(isPages && pagesCount > 0 && pagesResults?.length > 0) ||
+					(isImages && imagesCount > 0 && imagesResults?.length > 0)
+					? "flex-none px-4 sm:px-6 md:flex md:items-center md:justify-between md:px-0"
+					: "hidden"
+			)}
+		>
 			{!isSites ? (
 				<>
 					<MemoizedUpgradeErrorModal
@@ -150,8 +161,8 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 			) : null}
 
 			<div ref={selectedSiteRef} className="min-w-0 flex-1">
-				<div className="mt-4 mb-8 flex flex-col sm:mt-2 sm:flex-row sm:flex-wrap sm:space-x-6 md:justify-between">
-					<div className="mt-2 flex justify-start space-x-6">
+				<div className="flex mt-4 mb-8 flex-col sm:mt-2 sm:flex-row sm:flex-wrap sm:space-x-6 md:justify-between">
+					<div className="flex mt-2 justify-start space-x-6">
 						{!isSites ? (
 							<>
 								<div className="flex items-center space-x-2 text-sm text-gray-500">
@@ -227,12 +238,8 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 						) : null}
 
 						<div className="flex items-center space-x-2 text-sm text-gray-500">
-							{isComponentReady &&
-							user &&
-							Math.round(user?.status / 100) === 2 &&
-							!user?.data?.detail &&
-							(linksCount || sitesCount || pagesCount) ? (
-								isLinks && linksCount ? (
+							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+								isLinks && linksCount > 0 ? (
 									<>
 										<LinkIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
 										<span className="text-sm leading-6 text-gray-500">
@@ -241,7 +248,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 												: linksCount + " " + linkText}
 										</span>
 									</>
-								) : isSites && sitesCount ? (
+								) : isSites && sitesCount > 0 ? (
 									<>
 										<ExternalLinkIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
 										<span className="text-sm leading-6 text-gray-500">
@@ -250,7 +257,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 												: sitesCount + " " + siteText}
 										</span>
 									</>
-								) : isPages && pagesCount ? (
+								) : isPages && pagesCount > 0 ? (
 									<>
 										<DocumentTextIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
 										<span className="text-sm leading-6 text-gray-500">
@@ -270,7 +277,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 					</div>
 
 					{!isSites ? (
-						<div className="mt-4 flex md:mt-0 md:ml-4">
+						<div className="flex mt-4 md:mt-0 md:ml-4">
 							{isComponentReady &&
 							user &&
 							Math.round(user?.status / 100) === 2 &&
