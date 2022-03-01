@@ -89,7 +89,7 @@ const SiteSelectDropdown = ({ handleSiteSelectOnClick, openDropdown = false }, r
 			>
 				<div ref={ref} className="absolute z-50 mt-1 w-full overflow-hidden rounded-md bg-white shadow-lg">
 					<MemoizedSitesList isOpen={openDropdown} />
-					<span className="relative m-2 flex justify-center rounded-md shadow-sm">
+					<span className="flex relative m-2 justify-center rounded-md shadow-sm">
 						{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 							hasSiteLimitReached ? (
 								<button

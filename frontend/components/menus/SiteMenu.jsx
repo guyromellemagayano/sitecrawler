@@ -53,15 +53,15 @@ const SiteMenu = () => {
 	return (
 		<Scrollbars autoHide renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />} universal>
 			<div className="flex h-full flex-col py-4 lg:py-8">
-				<div className="mb-0 flex flex-shrink-0 flex-row items-center px-3">
+				<div className="flex mb-0 flex-shrink-0 flex-row items-center px-3">
 					<Link href={DashboardSitesLink} passHref>
 						<a
-							className={[
+							className={classnames(
 								"block w-full p-1",
 								isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail
 									? "cursor-pointer"
 									: null
-							]}
+							)}
 						>
 							<SiteLogoWhite className="flex" width={AuthAppLogo.width} height={AuthAppLogo.height} />
 						</a>
@@ -95,7 +95,7 @@ const SiteMenu = () => {
 													>
 														<a
 															className={classnames(
-																"group mt-1 flex items-center justify-between rounded-md px-3 py-2 text-sm font-medium leading-5",
+																"flex group mt-1 items-center justify-between rounded-md px-3 py-2 text-sm font-medium leading-5",
 																asPath.includes(value2.url) &&
 																	isComponentReady &&
 																	user &&
@@ -237,7 +237,7 @@ const SiteMenu = () => {
 													<Link key={index} href={value2.url} passHref>
 														<a
 															className={classnames(
-																"group mt-1 flex items-center rounded-md py-2 text-sm font-medium leading-5 text-gray-400 hover:text-gray-100 focus:text-white focus:outline-none",
+																"flex group mt-1 items-center rounded-md py-2 text-sm font-medium leading-5 text-gray-400 hover:text-gray-100 focus:text-white focus:outline-none",
 																isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail
 																	? "cursor-pointer"
 																	: null

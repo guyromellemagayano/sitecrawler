@@ -38,7 +38,7 @@ export const DashboardLayout = ({ children }) => {
 					<div
 						key={key}
 						aria-live="assertive"
-						className="fixed right-2 top-4 bottom-4 z-30 flex w-full max-w-md flex-col items-end justify-start gap-4 overflow-y-auto"
+						className="flex fixed right-2 top-4 bottom-4 z-30 w-full max-w-md flex-col items-end justify-start gap-4 overflow-y-auto"
 					>
 						<MemoizedNotification
 							key={key}
@@ -50,15 +50,15 @@ export const DashboardLayout = ({ children }) => {
 				);
 			}) ?? null}
 
-			<main className="h-screen">
-				<section className="flex h-screen overflow-hidden bg-white">
+			<main className="h-screen w-full">
+				<section className="flex h-full overflow-hidden bg-white">
 					<MemoizedSidebarLayout
 						ref={dashboardLayoutRef}
 						openSidebar={isDashboardLayoutComponentVisible}
 						setOpenSidebar={setIsDashboardLayoutComponentVisible}
 					/>
 
-					<div className="flex min-h-screen w-0 flex-1 flex-col overflow-hidden">
+					<div className="flex min-h-full w-0 flex-1 flex-col overflow-hidden">
 						<div className="flex flex-shrink-0 border-b">
 							<MemoizedAddSite
 								handleOpenSidebar={() => setIsDashboardLayoutComponentVisible(!isDashboardLayoutComponentVisible)}
@@ -106,7 +106,7 @@ export const StaticLayout = ({ children }) => {
 	}, []);
 
 	return (
-		<main className="h-screen">
+		<main className="h-screen w-full">
 			{state?.responses?.map((value, key) => {
 				// Alert Messsages
 				const responseText = value.responseText ?? null;
@@ -116,7 +116,7 @@ export const StaticLayout = ({ children }) => {
 					<div
 						key={key}
 						aria-live="assertive"
-						className="fixed right-2 top-4 bottom-4 z-30 flex w-full max-w-md flex-col items-end justify-start gap-4 overflow-y-auto"
+						className="flex fixed right-2 top-4 bottom-4 z-30 w-full max-w-md flex-col items-end justify-start gap-4 overflow-y-auto"
 					>
 						<MemoizedAlert key={key} responseText={responseText} isSuccess={isSuccess} />
 					</div>

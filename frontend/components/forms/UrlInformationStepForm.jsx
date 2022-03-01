@@ -6,6 +6,7 @@ import { handleGetMethod, handlePostMethod, handlePutMethod } from "@helpers/han
 import { useSites } from "@hooks/useSites";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
+import { classnames } from "@utils/classnames";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
@@ -321,11 +322,11 @@ const UrlInformationStepForm = (props) => {
 										name="sitename"
 										disabled={isSubmitting}
 										placeholder={formSiteNamePlaceholder}
-										className={[
+										className={classnames(
 											"block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
 											isSubmitting || disableForm ? "cursor-not-allowed bg-gray-300 opacity-50" : null,
 											errors.sitename && touched.sitename ? "border-red-300" : "border-gray-300"
-										]}
+										)}
 										aria-describedby="sitename"
 										onChange={handleChange}
 										onBlur={handleBlur}
@@ -353,17 +354,17 @@ const UrlInformationStepForm = (props) => {
 							<div className="relative mt-1 rounded-md shadow-sm">
 								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 									<>
-										<span className="absolute inset-y-0 left-0 flex items-center">
+										<span className="flex absolute inset-y-0 left-0 items-center">
 											<label htmlFor="siteurlprotocol" className="sr-only">
 												{formSiteUrlProtocol}
 											</label>
 											<select
 												id="siteurlprotocol"
 												name="siteurlprotocol"
-												className={[
+												className={classnames(
 													"h-full rounded-md border-transparent bg-transparent py-0 pl-3 pr-7 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
 													editMode ? "cursor-not-allowed bg-gray-300 opacity-50" : null
-												]}
+												)}
 												disabled={isSubmitting || editMode}
 												onChange={handleChange}
 												onBlur={handleBlur}
@@ -379,13 +380,13 @@ const UrlInformationStepForm = (props) => {
 											type="text"
 											name="siteurl"
 											disabled={isSubmitting || editMode}
-											className={[
+											className={classnames(
 												"block w-full rounded-md border-gray-300 pl-24 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
 												editMode || disableForm || isSubmitting
 													? "cursor-not-allowed bg-gray-300 text-gray-500 opacity-50"
 													: null,
 												!disableForm && (errors.siteurl || touched.siteurl) ? "border-red-300" : "border-gray-300"
-											]}
+											)}
 											placeholder={formSiteUrlPlaceholder}
 											aria-describedby="siteurl"
 											onChange={handleChange}
@@ -410,12 +411,12 @@ const UrlInformationStepForm = (props) => {
 										disabled={
 											isSubmitting || disableForm || Object.keys(errors).length > 0 || !urlRegex.test(values.siteurl)
 										}
-										className={[
+										className={classnames(
 											"relative mt-3 inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium leading-5 text-white sm:mt-0",
 											isSubmitting || disableForm || Object.keys(errors).length > 0 || !urlRegex.test(values.siteurl)
 												? "cursor-not-allowed bg-indigo-300 opacity-50"
 												: "hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-										]}
+										)}
 									>
 										{isSubmitting ? submitting : !edit ? proceedToStep2 : updateSiteDetail}
 									</button>
