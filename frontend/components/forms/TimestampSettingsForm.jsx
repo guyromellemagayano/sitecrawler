@@ -21,7 +21,7 @@ const TimestampSettingsForm = () => {
 	const timestampSettingsDisableLocalTime = t("settings:timestampSettings.disableLocalTime");
 
 	// Custom context
-	const { isComponentReady, setConfig } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
 	// SWR hooks
 	const {
@@ -33,7 +33,8 @@ const TimestampSettingsForm = () => {
 		largePageSizeThreshold,
 		disableLocalTime,
 		setDisableLocalTime,
-		settings
+		settings,
+		setUserConfig
 	} = useUser();
 
 	// SWR hook for global mutations
@@ -43,8 +44,8 @@ const TimestampSettingsForm = () => {
 		<div className="space-y-8 divide-y divide-gray-200">
 			<div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4">
 				<div className="sm:col-span-3">
-					<div className="relative flex items-center">
-						<div className="absolute flex h-5 items-center">
+					<div className="flex relative items-center">
+						<div className="flex absolute h-5 items-center">
 							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 								<Switch
 									checked={!disableLocalTime}
@@ -75,13 +76,13 @@ const TimestampSettingsForm = () => {
 											) {
 												// Show alert message after successful 200 OK or 201 Created response is issued
 												if (!disableLocalTime) {
-													setConfig({
+													setUserConfig({
 														isLocalTimeDisabled: true,
 														method: timestampSettingsResponseMethod,
 														status: timestampSettingsResponseStatus
 													});
 												} else {
-													setConfig({
+													setUserConfig({
 														isLocalTimeEnabled: true,
 														method: timestampSettingsResponseMethod,
 														status: timestampSettingsResponseStatus
@@ -98,7 +99,7 @@ const TimestampSettingsForm = () => {
 												);
 											} else {
 												// Show alert message after unsuccessful 200 OK or 201 Created response is issued
-												setConfig({
+												setUserConfig({
 													isUser: true,
 													method: timestampSettingsResponseMethod,
 													status: timestampSettingsResponseStatus
@@ -123,7 +124,7 @@ const TimestampSettingsForm = () => {
 										<span
 											className={classnames(
 												!disableLocalTime ? "opacity-0 duration-100 ease-out" : "opacity-100 duration-200 ease-in",
-												"absolute inset-0 flex h-full w-full items-center justify-center transition-opacity"
+												"flex absolute inset-0 h-full w-full items-center justify-center transition-opacity"
 											)}
 											aria-hidden="true"
 										>
@@ -140,7 +141,7 @@ const TimestampSettingsForm = () => {
 										<span
 											className={classnames(
 												!disableLocalTime ? "opacity-100 duration-200 ease-in" : "opacity-0 duration-100 ease-out",
-												"absolute inset-0 flex h-full w-full items-center justify-center transition-opacity"
+												"flex absolute inset-0 h-full w-full items-center justify-center transition-opacity"
 											)}
 											aria-hidden="true"
 										>
