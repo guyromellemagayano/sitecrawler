@@ -120,7 +120,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 	};
 
 	return (
-		<div className="flex relative z-20 mx-auto w-full max-w-screen-2xl flex-1 flex-shrink-0 justify-between overflow-hidden xl:px-12 xl:py-4">
+		<div className="relative z-20 mx-auto flex w-full max-w-screen-2xl flex-1 flex-shrink-0 justify-between overflow-hidden xl:px-12 xl:py-4">
 			<MemoizedSiteLimitReachedModal
 				ref={siteLimitReachedModalRef}
 				showModal={isSiteLimitReachedModalVisible}
@@ -136,14 +136,14 @@ const AddSite = ({ handleOpenSidebar }) => {
 			<div className="flex flex-1">
 				<MemoizedMobileSidebarButton handleOpenSidebar={handleOpenSidebar} />
 
-				<div className="flex ml-4 w-full items-center lg:ml-0">
+				<div className="ml-4 flex w-full items-center lg:ml-0">
 					{isBrowser ? (
 						<>
 							<label htmlFor="searchSites" className="sr-only">
 								{searchSites}
 							</label>
-							<div className="flex relative w-full items-center text-gray-400 focus-within:text-gray-600">
-								<div className="flex pointer-events-none absolute inset-y-0 left-0 items-center">
+							<div className="relative flex w-full items-center text-gray-400 focus-within:text-gray-600">
+								<div className="pointer-events-none absolute inset-y-0 left-0 flex items-center">
 									{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 										<SearchIcon className="h-5 w-5 text-gray-400" />
 									) : (
@@ -172,7 +172,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 					) : null}
 				</div>
 			</div>
-			<div className="flex ml-4 items-center space-x-2 p-4 lg:ml-6 xl:p-0">
+			<div className="ml-4 flex items-center space-x-2 p-4 lg:ml-6 xl:p-0">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					hasSiteLimitReached ? (
 						<button
