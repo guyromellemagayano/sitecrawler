@@ -44,8 +44,8 @@ const TimestampSettingsForm = () => {
 		<div className="space-y-8 divide-y divide-gray-200">
 			<div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4">
 				<div className="sm:col-span-3">
-					<div className="flex relative items-center">
-						<div className="flex absolute h-5 items-center">
+					<div className="relative flex items-center">
+						<div className="absolute flex h-5 items-center">
 							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 								<Switch
 									checked={!disableLocalTime}
@@ -124,7 +124,7 @@ const TimestampSettingsForm = () => {
 										<span
 											className={classnames(
 												!disableLocalTime ? "opacity-0 duration-100 ease-out" : "opacity-100 duration-200 ease-in",
-												"flex absolute inset-0 h-full w-full items-center justify-center transition-opacity"
+												"absolute inset-0 flex h-full w-full items-center justify-center transition-opacity"
 											)}
 											aria-hidden="true"
 										>
@@ -141,7 +141,7 @@ const TimestampSettingsForm = () => {
 										<span
 											className={classnames(
 												!disableLocalTime ? "opacity-100 duration-200 ease-in" : "opacity-0 duration-100 ease-out",
-												"flex absolute inset-0 h-full w-full items-center justify-center transition-opacity"
+												"absolute inset-0 flex h-full w-full items-center justify-center transition-opacity"
 											)}
 											aria-hidden="true"
 										>
