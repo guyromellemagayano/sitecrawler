@@ -1,8 +1,10 @@
 import { MemoizedAlert } from "@components/alerts";
+import { MemoizedNotification } from "@components/notifications";
 import { MemoizedAddSite } from "@components/sites/AddSite";
 import { DashboardSitesLink, DashboardSlug } from "@constants/PageLinks";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { SiteCrawlerAppContext } from "@pages/_app";
+import { classnames } from "@utils/classnames";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { memo, useContext, useEffect } from "react";
@@ -30,15 +32,26 @@ export const DashboardLayout = ({ children }) => {
 			{state?.responses?.length > 0 ? (
 				<div
 					aria-live="assertive"
-					className="fixed right-3 top-3 bottom-3 z-50 flex w-full max-w-xs flex-col items-end justify-start gap-4 overflow-y-auto"
+					className={classnames(
+						"right-3 top-3 bottom-3 z-50 flex w-full max-w-xs flex-col items-end justify-end gap-4 overflow-y-auto",
+						state?.responses?.length > 0 ? "fixed" : "hidden"
+					)}
 				>
 					<div className="flex w-full flex-col items-center space-y-4 sm:items-end">
 						{state.responses.map((value, key) => {
-							// Alert Messsages
+							// Notification Messsages
+							const responseTitle = value.responseTitle ?? null;
 							const responseText = value.responseText ?? null;
 							const isSuccess = value.isSuccess ?? null;
 
-							return <MemoizedAlert key={key} responseText={responseText} isSuccess={isSuccess} />;
+							return (
+								<MemoizedNotification
+									key={key}
+									responseTitle={responseTitle}
+									responseText={responseText}
+									isSuccess={isSuccess}
+								/>
+							);
 						}) ?? null}
 					</div>
 				</div>
@@ -104,16 +117,21 @@ export const StaticLayout = ({ children }) => {
 			{state?.responses?.length > 0 ? (
 				<div
 					aria-live="assertive"
-					className="fixed right-3 top-3 bottom-3 z-50 flex w-full max-w-xs flex-col items-end justify-start gap-4 overflow-y-auto"
+					className={classnames(
+						"right-3 top-3 bottom-3 z-50 flex w-full max-w-xs flex-col items-end justify-start gap-4 overflow-y-auto",
+						state?.responses?.length > 0 ? "fixed" : "hidden"
+					)}
 				>
 					<div className="flex w-full flex-col items-center space-y-4 sm:items-end">
-						{state.responses.map((value, key) => {
-							// Alert Messsages
-							const responseText = value.responseText ?? null;
-							const isSuccess = value.isSuccess ?? null;
+						{state?.responses?.length > 0
+							? state.responses.map((value, key) => {
+									// Alert Messsages
+									const responseText = value.responseText ?? null;
+									const isSuccess = value.isSuccess ?? null;
 
-							return <MemoizedAlert key={key} responseText={responseText} isSuccess={isSuccess} />;
-						}) ?? null}
+									return <MemoizedAlert key={key} responseText={responseText} isSuccess={isSuccess} />;
+							  }) ?? null
+							: null}
 					</div>
 				</div>
 			) : null}
