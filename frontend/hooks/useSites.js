@@ -9,7 +9,7 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  *
  * @param {string} endpoint
  * @param {object} options
- * @returns {object} sites, errorSites, validatingSites
+ * @returns {object} sites, validatingSites, sitesResults, sitesCount, setSitesConfig
  */
 export const useSites = (endpoint = null, options = null) => {
 	const [sitesCount, setSitesCount] = useState(0);
@@ -54,5 +54,5 @@ export const useSites = (endpoint = null, options = null) => {
 		return { sitesResults, sitesCount };
 	}, [sites, sitesResults, sitesCount]);
 
-	return { sites, validatingSites, sitesResults, sitesCount };
+	return { sites, validatingSites, sitesResults, sitesCount, setSitesConfig };
 };
