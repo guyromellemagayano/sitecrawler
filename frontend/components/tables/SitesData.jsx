@@ -180,22 +180,20 @@ const SitesData = ({ site = null }) => {
 										{siteVerified && permissions.includes("can_start_scan") ? (
 											<button
 												type="button"
-												className="flex ml-3 cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-green-600 transition duration-150 ease-in-out hover:text-green-500 focus:outline-none"
+												className="ml-3 flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-green-600 transition duration-150 ease-in-out hover:text-green-500 focus:outline-none"
 												onClick={handleCrawl}
 											>
 												{crawlSiteText}
 											</button>
 										) : null}
 
-										{permissions.includes("delete_site") ? (
-											<button
-												type="button"
-												className="flex ml-3 cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-red-600 transition duration-150 ease-in-out hover:text-red-500 focus:outline-none"
-												onClick={() => setIsSiteDeleteModalVisible(!isSiteDeleteModalVisible)}
-											>
-												{deleteText}
-											</button>
-										) : null}
+										<button
+											type="button"
+											className="ml-3 flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-red-600 transition duration-150 ease-in-out hover:text-red-500 focus:outline-none"
+											onClick={() => setIsSiteDeleteModalVisible(!isSiteDeleteModalVisible)}
+										>
+											{deleteText}
+										</button>
 									</span>
 								</div>
 							</>
@@ -212,7 +210,7 @@ const SitesData = ({ site = null }) => {
 									<Skeleton
 										duration={2}
 										width={150}
-										className="inline-flex relative flex-col items-start justify-start"
+										className="relative inline-flex flex-col items-start justify-start"
 									/>
 									<span className="flex flex-row justify-start space-x-3 text-sm leading-5 text-gray-500">
 										<Skeleton duration={2} width={63} />
