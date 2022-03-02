@@ -41,28 +41,30 @@ const Notification = ({ responseTitle = null, responseText = null, isSuccess = f
 			leaveFrom="opacity-100"
 			leaveTo="opacity-0"
 		>
-			<div className="pointer-events-auto mx-4 w-full max-w-sm origin-top overflow-hidden rounded-lg bg-white p-4 ring-1 ring-black ring-opacity-5">
-				<div className="flex items-start">
-					<div className="flex-shrink-0">
-						{isSuccess ? (
-							<CheckCircleIcon className="h-5 w-5 text-green-400" />
-						) : (
-							<XCircleIcon className="h-5 w-5 text-red-400" />
-						)}
-					</div>
-					<div className="ml-3 w-0 flex-1 pt-0.5">
-						<p className="text-sm font-medium text-gray-900">{responseTitle}</p>
-						<p className="mt-1 text-sm text-gray-500">{responseText}</p>
-					</div>
-					<div className="ml-4 flex flex-shrink-0">
-						<button
-							type="button"
-							className="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-							onClick={() => setIsOpen(false)}
-						>
-							<span className="sr-only">{dismiss}</span>
-							<XIcon className="h-4 w-4" />
-						</button>
+			<div className="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+				<div className="p-4">
+					<div className="flex items-start">
+						<div className="flex-shrink-0">
+							{isSuccess ? (
+								<CheckCircleIcon className="h-6 w-6 text-green-400" aria-hidden="true" />
+							) : (
+								<XCircleIcon className="h-6 w-6 text-red-400" aria-hidden="true" />
+							)}
+						</div>
+						<div className="ml-3 w-0 flex-1 pt-0.5">
+							<p className="break-words text-sm font-medium text-gray-900">{responseTitle}</p>
+							<p className="mt-1 break-words text-sm text-gray-500">{responseText}</p>
+						</div>
+						<div className="flex ml-4 flex-shrink-0">
+							<button
+								type="button"
+								className="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+								onClick={() => setIsOpen(false)}
+							>
+								<span className="sr-only">{dismiss}</span>
+								<XIcon className="h-5 w-5" aria-hidden="true" />
+							</button>
+						</div>
 					</div>
 				</div>
 			</div>

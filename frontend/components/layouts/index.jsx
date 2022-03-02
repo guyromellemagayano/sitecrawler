@@ -1,5 +1,4 @@
 import { MemoizedAlert } from "@components/alerts";
-import { MemoizedNotification } from "@components/notifications";
 import { MemoizedAddSite } from "@components/sites/AddSite";
 import { DashboardSitesLink, DashboardSlug } from "@constants/PageLinks";
 import { useComponentVisible } from "@hooks/useComponentVisible";
@@ -28,27 +27,22 @@ export const DashboardLayout = ({ children }) => {
 
 	return (
 		<>
-			{state?.responses?.map((value, key) => {
-				// Alert Messsages
-				const responseTitle = value.responseTitle ?? null;
-				const responseText = value.responseText ?? null;
-				const isSuccess = value.isSuccess ?? null;
+			{state?.responses?.length > 0 ? (
+				<div
+					aria-live="assertive"
+					className="fixed right-3 top-3 bottom-3 z-50 flex w-full max-w-xs flex-col items-end justify-start gap-4 overflow-y-auto"
+				>
+					<div className="flex w-full flex-col items-center space-y-4 sm:items-end">
+						{state.responses.map((value, key) => {
+							// Alert Messsages
+							const responseText = value.responseText ?? null;
+							const isSuccess = value.isSuccess ?? null;
 
-				return (
-					<div
-						key={key}
-						aria-live="assertive"
-						className="flex fixed right-2 top-4 bottom-4 z-30 w-full max-w-md flex-col items-end justify-start gap-4 overflow-y-auto"
-					>
-						<MemoizedNotification
-							key={key}
-							responseTitle={responseTitle}
-							responseText={responseText}
-							isSuccess={isSuccess}
-						/>
+							return <MemoizedAlert key={key} responseText={responseText} isSuccess={isSuccess} />;
+						}) ?? null}
 					</div>
-				);
-			}) ?? null}
+				</div>
+			) : null}
 
 			<main className="h-screen w-full">
 				<section className="flex h-full overflow-hidden bg-white">
@@ -106,24 +100,26 @@ export const StaticLayout = ({ children }) => {
 	}, []);
 
 	return (
-		<main className="h-screen w-full">
-			{state?.responses?.map((value, key) => {
-				// Alert Messsages
-				const responseText = value.responseText ?? null;
-				const isSuccess = value.isSuccess ?? null;
+		<>
+			{state?.responses?.length > 0 ? (
+				<div
+					aria-live="assertive"
+					className="fixed right-3 top-3 bottom-3 z-50 flex w-full max-w-xs flex-col items-end justify-start gap-4 overflow-y-auto"
+				>
+					<div className="flex w-full flex-col items-center space-y-4 sm:items-end">
+						{state.responses.map((value, key) => {
+							// Alert Messsages
+							const responseText = value.responseText ?? null;
+							const isSuccess = value.isSuccess ?? null;
 
-				return (
-					<div
-						key={key}
-						aria-live="assertive"
-						className="flex fixed right-2 top-4 bottom-4 z-30 w-full max-w-md flex-col items-end justify-start gap-4 overflow-y-auto"
-					>
-						<MemoizedAlert key={key} responseText={responseText} isSuccess={isSuccess} />
+							return <MemoizedAlert key={key} responseText={responseText} isSuccess={isSuccess} />;
+						}) ?? null}
 					</div>
-				);
-			}) ?? null}
-			{children}
-		</main>
+				</div>
+			) : null}
+
+			<main className="h-screen w-full">{children}</main>
+		</>
 	);
 };
 
