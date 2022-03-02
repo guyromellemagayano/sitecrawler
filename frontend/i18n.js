@@ -3,7 +3,7 @@ module.exports = {
 	defaultLocale: "en",
 	pages: {
 		"*": ["alerts", "common"],
-		"/": ["login"],
+		"/login": ["login"],
 		"/account-exist": ["accountExist"],
 		"/registration": ["registration"],
 		"/logout": ["logout"],
