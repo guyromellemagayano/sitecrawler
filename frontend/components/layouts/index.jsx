@@ -33,7 +33,7 @@ export const DashboardLayout = ({ children }) => {
 				<div
 					aria-live="assertive"
 					className={classnames(
-						"right-3 top-3 bottom-3 z-50 flex w-full max-w-xs flex-col items-end justify-end gap-4 overflow-y-auto",
+						"right-3 top-3 bottom-3 z-50 flex w-full max-w-xs flex-col items-end justify-start gap-4 overflow-y-auto",
 						state?.responses?.length > 0 ? "fixed" : "hidden"
 					)}
 				>

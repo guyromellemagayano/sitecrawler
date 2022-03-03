@@ -55,7 +55,7 @@ const Notification = ({ responseTitle = null, responseText = null, isSuccess = f
 							<p className="break-words text-sm font-medium text-gray-900">{responseTitle}</p>
 							<p className="mt-1 break-words text-sm text-gray-500">{responseText}</p>
 						</div>
-						<div className="flex ml-4 flex-shrink-0">
+						<div className="ml-4 flex flex-shrink-0">
 							<button
 								type="button"
 								className="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"

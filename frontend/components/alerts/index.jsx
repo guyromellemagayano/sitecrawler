@@ -42,7 +42,12 @@ const Alert = ({ responseText = null, isSuccess = false }) => {
 			leaveFrom="opacity-100"
 			leaveTo="opacity-0"
 		>
-			<div className={classnames("rounded-md p-4", isSuccess ? "bg-green-50" : "bg-red-50")}>
+			<div
+				className={classnames(
+					"rounded-lg p-4 shadow-sm ring-1 ring-opacity-5",
+					isSuccess ? "bg-green-50 ring-green-50" : "bg-red-50 ring-red-50"
+				)}
+			>
 				<div className="flex">
 					<div className="flex-shrink-0">
 						{isSuccess ? (
