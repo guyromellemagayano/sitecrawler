@@ -57,30 +57,28 @@ export const DashboardLayout = ({ children }) => {
 				</div>
 			) : null}
 
-			<main className="h-screen w-full">
-				<section className="flex h-full overflow-hidden bg-white">
-					<MemoizedSidebarLayout
-						ref={dashboardLayoutRef}
-						openSidebar={isDashboardLayoutComponentVisible}
-						setOpenSidebar={setIsDashboardLayoutComponentVisible}
-					/>
+			<main className="flex h-screen w-full overflow-hidden bg-white">
+				<MemoizedSidebarLayout
+					ref={dashboardLayoutRef}
+					openSidebar={isDashboardLayoutComponentVisible}
+					setOpenSidebar={setIsDashboardLayoutComponentVisible}
+				/>
 
-					<div className="flex min-h-full w-0 flex-1 flex-col overflow-hidden">
-						<div className="flex flex-shrink-0 border-b">
-							<MemoizedAddSite
-								handleOpenSidebar={() => setIsDashboardLayoutComponentVisible(!isDashboardLayoutComponentVisible)}
-							/>
-						</div>
-
-						<div className="flex-1">
-							<Scrollbars autoHide universal>
-								<div className="absolute left-0 right-0 mx-auto h-full w-full max-w-screen-2xl">
-									<div className="flex h-full flex-col">{children}</div>
-								</div>
-							</Scrollbars>
-						</div>
+				<div className="flex min-h-full w-0 flex-1 flex-col overflow-hidden">
+					<div className="flex flex-shrink-0 border-b">
+						<MemoizedAddSite
+							handleOpenSidebar={() => setIsDashboardLayoutComponentVisible(!isDashboardLayoutComponentVisible)}
+						/>
 					</div>
-				</section>
+
+					<div className="flex-1">
+						<Scrollbars autoHide universal>
+							<div className="absolute left-0 right-0 mx-auto h-full w-full max-w-screen-2xl">
+								<div className="flex h-full flex-col">{children}</div>
+							</div>
+						</Scrollbars>
+					</div>
+				</div>
 			</main>
 		</>
 	);
