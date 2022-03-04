@@ -61,7 +61,7 @@ const Breadcrumbs = ({
 						{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 							<Link href={isOther && siteId == null ? DashboardSitesLink : sitesIdOverviewPageLink} passHref>
 								<a className="text-gray-400 hover:text-gray-500">
-									<HomeIcon className="h-5 w-5 flex-shrink-0" />
+									<HomeIcon className="h-4 w-4 flex-shrink-0" />
 									<span className="sr-only">{home}</span>
 								</a>
 							</Link>
@@ -73,7 +73,7 @@ const Breadcrumbs = ({
 				<li>
 					<div className="flex items-center">
 						{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-							<ChevronRightIcon className="h-5 w-5 flex-shrink-0 text-gray-400" />
+							<ChevronRightIcon className="h-4 w-4 flex-shrink-0 text-gray-400" />
 						) : (
 							<Skeleton duration={2} width={20} height={20} />
 						)}
@@ -124,7 +124,7 @@ const Breadcrumbs = ({
 					isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 						<li>
 							<div className="flex items-center">
-								<ChevronRightIcon className="h-5 w-5 flex-shrink-0 text-gray-400" />
+								<ChevronRightIcon className="h-4 w-4 flex-shrink-0 text-gray-400" />
 								<p aria-current="page" className="ml-4 cursor-default text-sm font-medium text-gray-700">
 									{pageDetailTitle}
 								</p>
@@ -133,7 +133,7 @@ const Breadcrumbs = ({
 					) : (
 						<li>
 							<div className="flex items-center">
-								<ChevronRightIcon className="h-5 w-5 flex-shrink-0 text-gray-400" />
+								<ChevronRightIcon className="h-4 w-4 flex-shrink-0 text-gray-400" />
 								<Skeleton duration={2} width={128} height={20} className="ml-4" />
 							</div>
 						</li>

@@ -20,7 +20,7 @@ const SiteVerifyErrorModal = ({ showModal = false, setShowModal }, ref) => {
 	const siteRecrawlFeatureNotAvailableTitle = t("siteRecrawlFeatureNotAvailableTitle");
 	const siteRecrawlFeatureNotAvailableMessage = t("siteRecrawlFeatureNotAvailableMessage");
 	const closeText = t("close");
-	const goBackToSitesDashboardText = t("goBackToSitesDashboard");
+	const goBackText = t("goBack");
 	const loaderMessage = t("loaderMessage");
 
 	// Router
@@ -126,8 +126,8 @@ const SiteVerifyErrorModal = ({ showModal = false, setShowModal }, ref) => {
 											loaderMessage
 										) : (
 											<>
-												<ExternalLinkIcon className="mr-2 h-5 w-5" aria-hidden="true" />
-												{goBackToSitesDashboardText}
+												<ExternalLinkIcon className="mr-2 h-4 w-4" aria-hidden="true" />
+												{goBackText}
 											</>
 										)}
 									</span>

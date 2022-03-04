@@ -147,7 +147,7 @@ const ShowHelpModal = ({ siteData = null, showModal = false, setShowModal }, ref
 														ref={showHelpRef}
 														className="inline-flex w-full cursor-pointer items-center justify-center space-x-2 rounded-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
 													>
-														<ClipboardIcon className="h-5 w-5 text-gray-400" />
+														<ClipboardIcon className="h-4 w-4 text-gray-400" />
 														<span>{copied ? copiedText : copyText}</span>
 													</button>
 												</CopyToClipboard>

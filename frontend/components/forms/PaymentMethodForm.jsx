@@ -346,7 +346,7 @@ const PaymentMethodForm = ({
 								{isComponentReady ? (
 									<div className="relative mt-1 rounded-md shadow-sm">
 										<div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-											<CreditCardIcon className="h-5 w-5 text-gray-400" />
+											<CreditCardIcon className="h-4 w-4 text-gray-400" />
 										</div>
 
 										<input

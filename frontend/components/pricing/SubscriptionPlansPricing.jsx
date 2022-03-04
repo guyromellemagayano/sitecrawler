@@ -95,7 +95,7 @@ const SubscriptionPlansPricing = ({
 								role="button"
 								tabIndex="0"
 								className={classnames(
-									"inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ease-in-out",
+									"inline-block h-4 w-4 transform rounded-full bg-white shadow transition duration-200 ease-in-out",
 									togglePaymentPeriod ? "translate-x-6" : "translate-x-0"
 								)}
 							/>
