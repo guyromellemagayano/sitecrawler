@@ -81,20 +81,20 @@ tr div {
 }
 
 .apexcharts-legend-series::last-child {
-	@apply border-none border-0;
+	@apply border-0 border-none;
 }
 
 .rc-pagination {
-	@apply flex m-0 p-0 text-sm font-normal leading-5 text-gray-500 justify-between items-center;
+	@apply m-0 flex items-center justify-between p-0 text-sm font-normal leading-5 text-gray-500;
 }
 
 .rc-pagination ul,
 .rc-pagination ol {
-	@apply m-0 p-0 list-none;
+	@apply m-0 list-none p-0;
 }
 
 .rc-pagination::after {
-	@apply block clear-both h-0 overflow-hidden invisible;
+	@apply invisible clear-both block h-0 overflow-hidden;
 }
 
 .rc-pagination-total-text {
@@ -102,11 +102,11 @@ tr div {
 }
 
 .rc-pagination-item {
-	@apply inline-block h-auto min-w-[2rem] mr-2 text-center align-middle list-none leading-7 rounded-sm outline-none cursor-pointer select-none text-gray-500;
+	@apply mr-2 inline-block h-auto min-w-[2rem] cursor-pointer select-none list-none rounded-sm text-center align-middle leading-7 text-gray-500 outline-none;
 }
 
 .rc-pagination-item a {
-	@apply block py-0 px-2 text-gray-500 transition-none outline-none;
+	@apply block py-0 px-2 text-gray-500 outline-none transition-none;
 }
 
 .rc-pagination-item a:hover {
@@ -124,7 +124,7 @@ tr div {
 }
 
 .rc-pagination-item-active {
-	@apply border-gray-400 border-2 border-solid font-semibold rounded-lg;
+	@apply rounded-lg border-2 border-solid border-gray-400 font-semibold;
 }
 
 .rc-pagination-item-active a {
@@ -148,7 +148,7 @@ tr div {
 
 .rc-pagination-jump-prev button,
 .rc-pagination-jump-next button {
-	@apply bg-transparent border-none border-0 cursor-pointer text-gray-1600;
+	@apply cursor-pointer border-0 border-none bg-transparent text-gray-1600;
 }
 
 .rc-pagination-jump-prev button:after,
@@ -160,7 +160,7 @@ tr div {
 .rc-pagination-next,
 .rc-pagination-jump-prev,
 .rc-pagination-jump-next {
-	@apply inline-block min-w-[2rem] text-gray-500 leading-7 align-middle text-center list-none rounded-sm cursor-pointer transition-all;
+	@apply inline-block min-w-[2rem] cursor-pointer list-none rounded-sm text-center align-middle leading-7 text-gray-500 transition-all;
 }
 
 .rc-pagination-prev,
@@ -180,13 +180,13 @@ tr div {
 
 .rc-pagination-prev .rc-pagination-item-link,
 .rc-pagination-next .rc-pagination-item-link {
-	@apply block w-full h-full text-center rounded-sm outline-none transition-all;
+	@apply block h-full w-full rounded-sm text-center outline-none transition-all;
 }
 .rc-pagination-prev:focus .rc-pagination-item-link,
 .rc-pagination-prev:hover .rc-pagination-item-link,
 .rc-pagination-next:focus .rc-pagination-item-link,
 .rc-pagination-next:hover .rc-pagination-item-link {
-	@apply text-gray-1100 border-gray-1100;
+	@apply border-gray-1100 text-gray-1100;
 }
 
 .rc-pagination-prev button:after {
@@ -208,7 +208,7 @@ tr div {
 .rc-pagination-disabled .rc-pagination-item-link,
 .rc-pagination-disabled:hover .rc-pagination-item-link,
 .rc-pagination-disabled:focus .rc-pagination-item-link {
-	@apply text-gray-1700 border-gray-1500 cursor-not-allowed;
+	@apply cursor-not-allowed border-gray-1500 text-gray-1700;
 }
 
 .rc-pagination-slash {
@@ -216,7 +216,7 @@ tr div {
 }
 
 .rc-pagination-options {
-	@apply inline-block ml-4 align-middle;
+	@apply ml-4 inline-block align-middle;
 }
 
 @media all and (-ms-high-contrast: none) {
@@ -227,25 +227,25 @@ tr div {
 }
 
 .rc-pagination-options-size-changer.rc-select {
-	@apply inline-block w-auto mr-2;
+	@apply mr-2 inline-block w-auto;
 }
 
 .rc-pagination-options-quick-jumper {
-	@apply inline-block h-7 leading-7 align-top;
+	@apply inline-block h-7 align-top leading-7;
 }
 
 .rc-pagination-options-quick-jumper input {
-	@apply w-14 mx-2;
+	@apply mx-2 w-14;
 }
 
 .rc-pagination-simple .rc-pagination-prev,
 .rc-pagination-simple .rc-pagination-next {
-	@apply h-6 leading-6 align-top;
+	@apply h-6 align-top leading-6;
 }
 
 .rc-pagination-simple .rc-pagination-prev .rc-pagination-item-link,
 .rc-pagination-simple .rc-pagination-next .rc-pagination-item-link {
-	@apply h-6 bg-transparent border-none border-0;
+	@apply h-6 border-0 border-none bg-transparent;
 }
 
 .rc-pagination-simple .rc-pagination-prev .rc-pagination-item-link::after,
@@ -254,11 +254,11 @@ tr div {
 }
 
 .rc-pagination-simple .rc-pagination-simple-pager {
-	@apply inline-block h-6 mr-2;
+	@apply mr-2 inline-block h-6;
 }
 
 .rc-pagination-simple .rc-pagination-simple-pager input {
-	@apply box-border h-full mr-2 px-2 text-center bg-white border-2 border-solid border-gray-1500 rounded-sm outline-none transition-all;
+	@apply mr-2 box-border h-full rounded-sm border-2 border-solid border-gray-1500 bg-white px-2 text-center outline-none transition-all;
 }
 
 .rc-pagination-simple .rc-pagination-simple-pager input:hover {
@@ -270,15 +270,15 @@ tr div {
 }
 
 .rc-pagination.rc-pagination-disabled .rc-pagination-item {
-	@apply bg-gray-1800 border-gray-1500 cursor-not-allowed;
+	@apply cursor-not-allowed border-gray-1500 bg-gray-1800;
 }
 
 .rc-pagination.rc-pagination-disabled .rc-pagination-item a {
-	@apply text-gray-1500 bg-transparent border-0 border-none cursor-not-allowed;
+	@apply cursor-not-allowed border-0 border-none bg-transparent text-gray-1500;
 }
 
 .rc-pagination.rc-pagination-disabled .rc-pagination-item-active {
-	@apply bg-gray-1800 border-transparent;
+	@apply border-transparent bg-gray-1800;
 }
 
 .rc-pagination.rc-pagination-disabled .rc-pagination-item-active a {
@@ -286,7 +286,7 @@ tr div {
 }
 
 .rc-pagination.rc-pagination-disabled .rc-pagination-item-link {
-	@apply text-gray-1700 bg-gray-1800 border-gray-1500 cursor-not-allowed;
+	@apply cursor-not-allowed border-gray-1500 bg-gray-1800 text-gray-1700;
 }
 
 .rc-pagination.rc-pagination-disabled .rc-pagination-item-link-icon {

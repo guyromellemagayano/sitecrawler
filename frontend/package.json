@@ -13,6 +13,7 @@
 		"build": "next build --profile --debug",
 		"start": "next start",
 		"lint": "next lint --no-cache",
+		"format": "prettier --write .",
 		"analyze": "cross-env ANALYZE=true next build",
 		"analyze:server": "cross-env BUNDLE_ANALYZE=server next build",
 		"analyze:browser": "cross-env BUNDLE_ANALYZE=browser next build"

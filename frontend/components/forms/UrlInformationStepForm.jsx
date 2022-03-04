@@ -354,7 +354,7 @@ const UrlInformationStepForm = (props) => {
 							<div className="relative mt-1 rounded-md shadow-sm">
 								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 									<>
-										<span className="flex absolute inset-y-0 left-0 items-center">
+										<span className="absolute inset-y-0 left-0 flex items-center">
 											<label htmlFor="siteurlprotocol" className="sr-only">
 												{formSiteUrlProtocol}
 											</label>
