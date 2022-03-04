@@ -4,6 +4,7 @@ import { DashboardSitesLink } from "@constants/PageLinks";
 import { Dialog, Transition } from "@headlessui/react";
 import { handleDeleteMethod } from "@helpers/handleHttpMethods";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/outline";
+import { TrashIcon } from "@heroicons/react/solid";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
@@ -193,26 +194,36 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 									disabled={isLoading}
 									aria-disabled={isLoading}
 									aria-hidden={isLoading}
+									onClick={isLoading ? () => {} : handleSiteDeletion}
 									className={classnames(
 										"inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm sm:ml-3 sm:w-auto sm:text-sm",
 										isLoading
 											? "cursor-not-allowed opacity-50"
 											: "hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
 									)}
-									onClick={handleSiteDeletion}
 								>
-									{isLoading ? processingText : proceedText}
+									<span className="flex items-center space-x-2">
+										{isLoading ? (
+											processingText
+										) : (
+											<>
+												<TrashIcon className="mr-2 h-4 w-4" aria-hidden="true" />
+												{proceedText}
+											</>
+										)}
+									</span>
 								</button>
 
 								<button
 									type="button"
 									disabled={isLoading}
 									aria-disabled={isLoading}
+									aria-hidden={isLoading}
 									className={classnames(
 										"mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm",
 										isLoading ? "cursor-not-allowed opacity-50" : "hover:bg-gray-50"
 									)}
-									onClick={handleCloseModal}
+									onClick={isLoading ? () => {} : handleCloseModal}
 									ref={ref}
 								>
 									{closeText}

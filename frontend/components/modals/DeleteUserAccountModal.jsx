@@ -4,6 +4,7 @@ import { LoginLink } from "@constants/PageLinks";
 import { Dialog, Transition } from "@headlessui/react";
 import { handleDeleteMethod } from "@helpers/handleHttpMethods";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/outline";
+import { TrashIcon } from "@heroicons/react/solid";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
@@ -29,6 +30,7 @@ const DeleteUserAccountModal = ({ setShowModal, showModal = false }, ref) => {
 	const closeText = t("common:close");
 	const proceedText = t("common:proceed");
 	const processingText = t("common:processing");
+	const loaderMessage = t("loaderMessage");
 
 	// Router
 	const { push } = useRouter();
@@ -202,18 +204,28 @@ const DeleteUserAccountModal = ({ setShowModal, showModal = false }, ref) => {
 									)}
 									onClick={handleUserDeletion}
 								>
-									{isLoading ? processingText : proceedText}
+									<span className="flex items-center space-x-2">
+										{isLoading ? (
+											processingText
+										) : (
+											<>
+												<TrashIcon className="mr-2 h-4 w-4" aria-hidden="true" />
+												{proceedText}
+											</>
+										)}
+									</span>
 								</button>
 
 								<button
 									type="button"
 									disabled={isLoading}
 									aria-disabled={isLoading}
+									aria-hidden={isLoading}
 									className={classnames(
 										"mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm",
 										isLoading ? "cursor-not-allowed opacity-50" : "hover:bg-gray-50"
 									)}
-									onClick={handleCloseModal}
+									onClick={isLoading ? () => {} : handleCloseModal}
 									ref={ref}
 								>
 									{closeText}

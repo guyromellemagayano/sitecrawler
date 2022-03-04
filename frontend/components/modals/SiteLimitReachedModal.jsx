@@ -4,9 +4,8 @@ import { ExclamationIcon } from "@heroicons/react/outline";
 import { ViewBoardsIcon } from "@heroicons/react/solid";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
-import Link from "next/link";
 import { useRouter } from "next/router";
-import { forwardRef, Fragment, memo, useState } from "react";
+import { forwardRef, Fragment, memo, useRef, useState } from "react";
 
 /**
  * Custom function to render the `SiteLimitReachedModal` component
@@ -28,12 +27,26 @@ const SiteLimitReachedModal = ({ showModal = false, setShowModal }, ref) => {
 	// Router
 	const { asPath, push } = useRouter();
 
-	// Handle `onClick` event on <Link> element
-	const handleRouterOnClick = (e) => {
-		e.preventDefault();
+	// Custom hooks
+	const siteLimitReachedModalRef = useRef(null);
 
-		setIsLoading(!isLoading);
-		push(SubscriptionPlansSettingsLink);
+	// Handle `onClick` event on <Link> element
+	const handleRouterOnClick = () => {
+		setIsLoading(true);
+
+		let isMounted = true;
+
+		(async () => {
+			if (!isMounted) return;
+
+			// Redirect to the subscription plans page after successful 200 OK or 201 Created response is issued
+			setIsLoading(false);
+			push(SubscriptionPlansSettingsLink);
+		})();
+
+		return () => {
+			isMounted = false;
+		};
 	};
 
 	// Handle close modal
@@ -46,7 +59,7 @@ const SiteLimitReachedModal = ({ showModal = false, setShowModal }, ref) => {
 			<Dialog
 				as="div"
 				className="fixed inset-0 z-50 overflow-y-auto"
-				initialFocus={ref}
+				initialFocus={siteLimitReachedModalRef}
 				onClose={!isLoading ? setShowModal : () => {}}
 			>
 				<div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
@@ -95,38 +108,42 @@ const SiteLimitReachedModal = ({ showModal = false, setShowModal }, ref) => {
 							</div>
 
 							<div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-								<Link href="/" passHref>
-									<a
-										role="button"
-										aria-disabled={isLoading}
-										onClick={handleRouterOnClick}
-										aria-hidden="true"
-										className={classnames(
-											"inline-flex w-full justify-center rounded-md border border-transparent bg-yellow-600 px-4 py-2 text-base font-medium text-white shadow-sm sm:ml-3 sm:w-auto sm:text-sm",
-											isLoading
-												? "cursor-not-allowed bg-yellow-500 opacity-50"
-												: "cursor-pointer bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 active:bg-yellow-700"
+								<button
+									ref={siteLimitReachedModalRef}
+									type="button"
+									disabled={isLoading}
+									aria-disabled={isLoading}
+									aria-hidden={isLoading}
+									onClick={isLoading ? () => {} : handleRouterOnClick}
+									className={classnames(
+										"inline-flex w-full justify-center rounded-md border border-transparent bg-yellow-600 px-4 py-2 text-base font-medium text-white shadow-sm sm:ml-3 sm:w-auto sm:text-sm",
+										isLoading
+											? "cursor-not-allowed opacity-50"
+											: "hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+									)}
+								>
+									<span className="flex items-center space-x-2">
+										{isLoading ? (
+											loaderMessage
+										) : (
+											<>
+												<ViewBoardsIcon className="mr-2 h-4 w-4" aria-hidden="true" />
+												{upgradePlanText}
+											</>
 										)}
-									>
-										<span className="flex items-center space-x-2">
-											{isLoading ? (
-												loaderMessage
-											) : (
-												<>
-													<ViewBoardsIcon className="mr-2 h-5 w-5" aria-hidden="true" />
-													{upgradePlanText}
-												</>
-											)}
-										</span>
-									</a>
-								</Link>
+									</span>
+								</button>
 
 								<button
 									type="button"
 									disabled={isLoading}
-									aria-disabled="true"
-									className="mt-3 inline-flex w-full cursor-pointer justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 sm:mt-0 sm:w-auto sm:text-sm"
-									onClick={handleCloseModal}
+									aria-disabled={isLoading}
+									aria-hidden={isLoading}
+									className={classnames(
+										"mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm",
+										isLoading ? "cursor-not-allowed opacity-50" : "hover:bg-gray-50"
+									)}
+									onClick={isLoading ? () => {} : handleCloseModal}
 									ref={ref}
 								>
 									{closeText}

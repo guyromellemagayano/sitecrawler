@@ -325,8 +325,8 @@ const SiteVerifyModal = (
 										className={classnames(
 											"inline-flex w-full justify-center rounded-md border border-transparent bg-yellow-600 px-4 py-2 text-base font-medium text-white shadow-sm sm:ml-3 sm:w-auto sm:text-sm",
 											isLoading
-												? "cursor-not-allowed bg-yellow-500 opacity-50"
-												: "cursor-pointer bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 active:bg-yellow-700"
+												? "cursor-not-allowed opacity-50"
+												: "hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
 										)}
 									>
 										{isLoading ? verifyingText : verifySiteTitleText}
