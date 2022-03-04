@@ -179,7 +179,6 @@ const AddSite = ({ handleOpenSidebar }) => {
 						hasSiteLimitReached ? (
 							<button
 								type="button"
-								tabIndex="0"
 								disabled={isLoading}
 								aria-disabled={isLoading}
 								aria-hidden={isLoading}
@@ -195,9 +194,8 @@ const AddSite = ({ handleOpenSidebar }) => {
 							<Link href="/" passHref>
 								<a
 									role="button"
-									tabIndex="0"
 									aria-disabled={isLoading}
-									onClick={handleRouterOnClick}
+									onClick={!isLoading ? handleRouterOnClick : () => {}}
 									aria-hidden={isLoading}
 									className={classnames(
 										"inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm",
@@ -209,7 +207,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 									)}
 								>
 									<span className="flex items-center space-x-2">
-										{isLoading ? (
+										{!asPath.includes(AddNewSiteLink) && isLoading ? (
 											loaderMessage
 										) : (
 											<>
