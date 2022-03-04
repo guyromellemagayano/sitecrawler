@@ -61,7 +61,6 @@ const EmptyState = () => {
 				<Link href="/" passHref>
 					<a
 						role="button"
-						tabIndex="0"
 						aria-disabled={isLoading}
 						onClick={handleRouterOnClick}
 						aria-hidden="true"
