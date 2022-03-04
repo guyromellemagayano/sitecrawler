@@ -8,7 +8,7 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  * SWR React hook that will handle the user information
  *
  * @param {object} options
- * @returns {object} user, errorUser, validatingUser
+ * @returns {object} disableLocalTime, email, errorUser, firstname, group, largePageSizeThreshold, lastname, maxSiteLimit, permissions, setDisableLocalTime, setEmail, setFirstname, setLargePageSizeThreshold, setLastname, setSettings, settings, setUsername, user, userId, userIdApiEndpoint, username
  */
 export const useUser = (fallback = null, options = null) => {
 	const [userIdApiEndpoint, setUserIdApiEndpoint] = useState(null);
@@ -25,7 +25,7 @@ export const useUser = (fallback = null, options = null) => {
 	const [settings, setSettings] = useState({});
 
 	// Custom context
-	const { setConfig: setUserConfig } = useContext(SiteCrawlerAppContext);
+	const { setConfig } = useContext(SiteCrawlerAppContext);
 
 	// Custom variables
 	const currentEndpoint = fallback !== null ? fallback : UserApiEndpoint;
@@ -37,7 +37,7 @@ export const useUser = (fallback = null, options = null) => {
 		if (errorUser) {
 			// Show alert message after failed `user` SWR hook fetch
 			errorUser
-				? setUserConfig({
+				? setConfig({
 						isUser: true,
 						method: errorUser?.config?.method ?? null,
 						status: errorUser?.status ?? null
@@ -147,7 +147,6 @@ export const useUser = (fallback = null, options = null) => {
 		lastname,
 		maxSiteLimit,
 		permissions,
-		setUserConfig,
 		setDisableLocalTime,
 		setEmail,
 		setFirstname,
