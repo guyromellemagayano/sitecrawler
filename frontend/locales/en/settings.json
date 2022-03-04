@@ -10,7 +10,9 @@
 		"failed": "Password update failed. Please try again."
 	},
 	"deleteUserAccountModalRequest": {
-		"title": "Delete User Account"
+		"title": "Delete User Account",
+		"headline": "Are you sure you want to delete your account?",
+		"subheadline": "This action cannot be undone."
 	},
 	"helpSupportForm": {
 		"title": "App Support Form",

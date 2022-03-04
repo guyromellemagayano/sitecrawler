@@ -100,7 +100,6 @@ const LoginForm = () => {
 				} else {
 					// Reenable submission and reset form as soon as 200 OK or 201 Created response was not issued
 					setSubmitting(false);
-					resetForm({ values: "" });
 
 					// Show alert message after failed response is issued
 					setConfig({

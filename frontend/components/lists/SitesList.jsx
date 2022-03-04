@@ -1,8 +1,9 @@
-import { useNotificationMessage } from "@hooks/useNotificationMessage";
+import { RevalidationInterval } from "@constants/GlobalValues";
 import { useSites } from "@hooks/useSites";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
-import { memo } from "react";
+import { memo, useContext } from "react";
 import Scrollbars from "react-custom-scrollbars-2";
 import "react-loading-skeleton/dist/skeleton.css";
 import { MemoizedSiteList } from "./SiteList";
@@ -19,13 +20,17 @@ const SitesList = ({ isOpen = false }) => {
 	const noAvailableSites = t("sites:noAvailableSites");
 	const loaderMessage = t("common:loaderMessage");
 
-	// Custom hooks
-	const { setConfig } = useNotificationMessage();
+	// Custom context
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
 	// `sites` SWR hook
-	const { sites, errorSites, sitesCount, sitesResults } = useSites();
+	const { sites, errorSites, sitesCount, sitesResults } = useSites({
+		options: {
+			refreshInterval: RevalidationInterval
+		}
+	});
 
-	return sitesCount && sitesResults ? (
+	return isComponentReady ? (
 		sitesCount > 0 && sitesResults?.length > 0 ? (
 			<ul
 				tabIndex="-1"
@@ -34,7 +39,7 @@ const SitesList = ({ isOpen = false }) => {
 				className="h-48 overflow-auto pt-2 text-base leading-6 focus:outline-none sm:text-sm sm:leading-5"
 			>
 				<Scrollbars autoHide universal>
-					{sites.data.results.map((value) => (
+					{sitesResults.map((value) => (
 						<MemoizedSiteList key={value.id} data={value} />
 					))}
 				</Scrollbars>

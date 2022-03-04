@@ -21,7 +21,7 @@ const TimestampSettingsForm = () => {
 	const timestampSettingsDisableLocalTime = t("settings:timestampSettings.disableLocalTime");
 
 	// Custom context
-	const { isComponentReady, setConfig } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
 	// SWR hooks
 	const {
@@ -33,7 +33,8 @@ const TimestampSettingsForm = () => {
 		largePageSizeThreshold,
 		disableLocalTime,
 		setDisableLocalTime,
-		settings
+		settings,
+		setUserConfig
 	} = useUser();
 
 	// SWR hook for global mutations
@@ -75,13 +76,13 @@ const TimestampSettingsForm = () => {
 											) {
 												// Show alert message after successful 200 OK or 201 Created response is issued
 												if (!disableLocalTime) {
-													setConfig({
+													setUserConfig({
 														isLocalTimeDisabled: true,
 														method: timestampSettingsResponseMethod,
 														status: timestampSettingsResponseStatus
 													});
 												} else {
-													setConfig({
+													setUserConfig({
 														isLocalTimeEnabled: true,
 														method: timestampSettingsResponseMethod,
 														status: timestampSettingsResponseStatus
@@ -98,7 +99,7 @@ const TimestampSettingsForm = () => {
 												);
 											} else {
 												// Show alert message after unsuccessful 200 OK or 201 Created response is issued
-												setConfig({
+												setUserConfig({
 													isUser: true,
 													method: timestampSettingsResponseMethod,
 													status: timestampSettingsResponseStatus

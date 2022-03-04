@@ -161,8 +161,8 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 			) : null}
 
 			<div ref={selectedSiteRef} className="min-w-0 flex-1">
-				<div className="flex mt-4 mb-8 flex-col sm:mt-2 sm:flex-row sm:flex-wrap sm:space-x-6 md:justify-between">
-					<div className="flex mt-2 justify-start space-x-6">
+				<div className="mt-4 mb-8 flex flex-col sm:mt-2 sm:flex-row sm:flex-wrap sm:space-x-6 md:justify-between">
+					<div className="mt-2 flex justify-start space-x-6">
 						{!isSites ? (
 							<>
 								<div className="flex items-center space-x-2 text-sm text-gray-500">
@@ -277,7 +277,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 					</div>
 
 					{!isSites ? (
-						<div className="flex mt-4 md:mt-0 md:ml-4">
+						<div className="mt-4 flex md:mt-0 md:ml-4">
 							{isComponentReady &&
 							user &&
 							Math.round(user?.status / 100) === 2 &&

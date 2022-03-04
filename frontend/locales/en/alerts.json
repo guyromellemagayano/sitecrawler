@@ -30,6 +30,7 @@
 			"delete": {
 				"200OkSuccessResponse": "User delete success! Got a 200 OK success response.",
 				"201CreatedSuccessResponse": "User delete success! Got a 201 created success response.",
+				"204NoContentSuccessResponse": "User delete success! Got a 204 no content success response.",
 				"400BadRequestErrorResponse": "User delete failed. Got a 400 bad request error response. Please try again.",
 				"401UnauthorizedErrorResponse": "User delete failed. Got a 401 unauthorized error response. Please try again.",
 				"403ForbiddenErrorResponse": "User delete failed. Got a 403 forbidden error response.",

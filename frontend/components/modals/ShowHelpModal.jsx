@@ -1,8 +1,9 @@
 import { ResetCopyStateTimeout } from "@constants/GlobalValues";
 import { Dialog, Transition } from "@headlessui/react";
-import { ClipboardIcon, QuestionMarkCircleIcon } from "@heroicons/react/solid";
+import { QuestionMarkCircleIcon } from "@heroicons/react/outline";
+import { ClipboardIcon } from "@heroicons/react/solid";
 import useTranslation from "next-translate/useTranslation";
-import { forwardRef, Fragment, memo, useEffect, useState } from "react";
+import { forwardRef, Fragment, memo, useEffect, useRef, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
 /**
@@ -17,6 +18,9 @@ const ShowHelpModal = ({ siteData = null, showModal = false, setShowModal }, ref
 	const [siteUrl, setSiteUrl] = useState(null);
 	const [copyValue, setCopyValue] = useState(null);
 	const [copied, setCopied] = useState(false);
+
+	// Custom hooks
+	const showHelpRef = useRef(null);
 
 	// Handle the copy to clipboard functionality
 	useEffect(() => {
@@ -43,17 +47,24 @@ const ShowHelpModal = ({ siteData = null, showModal = false, setShowModal }, ref
 	// Reset copied state as soon as the modal is closed
 	useEffect(() => {
 		if (copied) {
-			setTimeout(() => {
+			const timeout = setTimeout(() => {
 				setCopied(false);
 			}, ResetCopyStateTimeout);
+
+			return () => clearTimeout(timeout);
 		}
 	}, [copied]);
+
+	// Handle close modal
+	const handleCloseModal = () => {
+		setShowModal(false);
+	};
 
 	// Translation
 	const { t } = useTranslation();
 	const pasteContents = t("sites:pasteContents");
 	const clickCopyToClipboard = t("sites:clickCopyToClipboard");
-	const notSure = t("sites:notSure");
+	const notSureText = t("sites:notSure");
 	const doTheFollowing = t("sites:doTheFollowing");
 	const copiedText = t("common:copiedText");
 	const copyText = t("common:copyText");
@@ -71,7 +82,12 @@ const ShowHelpModal = ({ siteData = null, showModal = false, setShowModal }, ref
 
 	return (
 		<Transition.Root show={showModal} as={Fragment}>
-			<Dialog as="div" initialFocus={ref} onClose={!copied ? setShowModal : () => {}}>
+			<Dialog
+				as="div"
+				className="fixed inset-0 z-50 overflow-y-auto"
+				initialFocus={showHelpRef}
+				onClose={copied ? () => {} : handleCloseModal}
+			>
 				<div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
 					<Transition.Child
 						as={Fragment}
@@ -101,16 +117,16 @@ const ShowHelpModal = ({ siteData = null, showModal = false, setShowModal }, ref
 					>
 						<div className="inline-block transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6 sm:align-middle">
 							<div className="sm:flex sm:items-start">
-								<div className="flex mx-auto h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-yellow-100 sm:mx-0 sm:h-10 sm:w-10">
-									<QuestionMarkCircleIcon className="h-6 w-6 text-yellow-600" />
+								<div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+									<QuestionMarkCircleIcon className="h-6 w-6 text-yellow-600" aria-hidden="true" />
 								</div>
 								<div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-									<Dialog.Title as="h3" className="text-lg font-medium text-gray-900">
-										{notSure}
+									<Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
+										{notSureText}
 									</Dialog.Title>
 
 									<div className="mt-2">
-										<Dialog.Description as="p" className="mb-3 italic">
+										<Dialog.Description as="p" className="mb-3 text-sm italic text-gray-500">
 											{doTheFollowing}
 										</Dialog.Description>
 
@@ -127,7 +143,10 @@ const ShowHelpModal = ({ siteData = null, showModal = false, setShowModal }, ref
 													onChange={handleTextareaChange}
 												></textarea>
 												<CopyToClipboard onCopy={handleInputCopy} text={instructionHtmlText}>
-													<button className="inline-flex w-full cursor-pointer items-center justify-center space-x-2 rounded-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+													<button
+														ref={showHelpRef}
+														className="inline-flex w-full cursor-pointer items-center justify-center space-x-2 rounded-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+													>
 														<ClipboardIcon className="h-5 w-5 text-gray-400" />
 														<span>{copied ? copiedText : copyText}</span>
 													</button>
@@ -142,8 +161,9 @@ const ShowHelpModal = ({ siteData = null, showModal = false, setShowModal }, ref
 							<div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
 								<button
 									type="button"
-									className="inline-flex w-full cursor-pointer justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium  text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-									onClick={() => setShowModal(!showModal)}
+									className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
+									onClick={handleCloseModal}
+									ref={ref}
 								>
 									{closeText}
 								</button>

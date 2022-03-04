@@ -4,11 +4,11 @@ import { Dialog, Transition } from "@headlessui/react";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
 import { InformationCircleIcon } from "@heroicons/react/outline";
 import { ClipboardIcon } from "@heroicons/react/solid";
-import { useNotificationMessage } from "@hooks/useNotificationMessage";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
-import { forwardRef, Fragment, memo, useEffect, useState } from "react";
+import { forwardRef, Fragment, memo, useContext, useEffect, useRef, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
 /**
@@ -27,7 +27,7 @@ const SiteVerifyModal = (
 ) => {
 	const [copied, setCopied] = useState(false);
 	const [copyValue, setCopyValue] = useState("");
-	const [disableSiteVerify, setDisableSiteVerify] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 	const [enableNextStep, setEnableNextStep] = useState(false);
 	const [siteVerifyId, setSiteVerifyId] = useState(siteId);
 
@@ -53,8 +53,11 @@ const SiteVerifyModal = (
 	instructionHtmlText += `3. ${instruction3}.` + "\n\n";
 	instructionHtmlText += `4. ${instruction4}` + "\n\n";
 
+	// Custom contexts
+	const { state, setConfig } = useContext(SiteCrawlerAppContext);
+
 	// Custom hooks
-	const { state, setConfig } = useNotificationMessage();
+	const siteVerifyRef = useRef(null);
 
 	// Handle site verification copy to clipboard
 	useEffect(() => {
@@ -81,29 +84,72 @@ const SiteVerifyModal = (
 	// Reset copied state as soon as the modal is closed
 	useEffect(() => {
 		if (copied) {
-			setTimeout(() => {
+			const timeout = setTimeout(() => {
 				setCopied(false);
 			}, ResetCopyStateTimeout);
+
+			return () => {
+				clearTimeout(timeout);
+			};
 		}
 	}, [copied]);
 
 	// Handle site verification
-	const handleSiteVerification = async (e) => {
-		e.preventDefault();
+	const handleSiteVerification = () => {
+		let isMounted = true;
 
-		setDisableSiteVerify(true);
+		setIsLoading(true);
 
-		const body = {
-			sid: e.currentTarget.site_verify_id.value
-		};
+		(async () => {
+			if (!isMounted) return;
 
-		const siteVerifyResponse = await handlePostMethod(siteVerifyApiEndpoint, body);
-		const siteVerifyResponseData = siteVerifyResponse?.data ?? null;
-		const siteVerifyResponseStatus = siteVerifyResponse?.status ?? null;
-		const siteVerifyResponseMethod = siteVerifyResponse?.config?.method ?? null;
+			const body = {
+				sid: siteVerifyId
+			};
 
-		if (siteVerifyResponseData !== null && Math.round(siteVerifyResponseStatus / 200) === 1) {
-			if (siteVerifyResponseData?.verified) {
+			const siteVerifyResponse = await handlePostMethod(siteVerifyApiEndpoint, body);
+			const siteVerifyResponseData = siteVerifyResponse?.data ?? null;
+			const siteVerifyResponseStatus = siteVerifyResponse?.status ?? null;
+			const siteVerifyResponseMethod = siteVerifyResponse?.config?.method ?? null;
+
+			if (siteVerifyResponseData !== null && Math.round(siteVerifyResponseStatus / 200) === 1) {
+				if (siteVerifyResponseData?.verified) {
+					// Show alert message after successful 200 OK or 201 Created response is issued
+					setConfig({
+						isVerifyUrlStep: true,
+						method: siteVerifyResponseMethod,
+						status: siteVerifyResponseStatus,
+						isError: false
+					});
+
+					// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
+					const timeout = setTimeout(() => {
+						setEnableNextStep(true);
+						setIsLoading(false);
+					}, NotificationDisplayInterval);
+
+					return () => {
+						clearTimeout(timeout);
+					};
+				} else {
+					// Show alert message after successful 200 OK or 201 Created response is issued
+					setConfig({
+						isVerifyUrlStep: true,
+						method: siteVerifyResponseMethod,
+						status: siteVerifyResponseStatus,
+						isError: true
+					});
+
+					// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
+					const timeout = setTimeout(() => {
+						setIsLoading(false);
+					}, NotificationDisplayInterval);
+
+					return () => {
+						clearTimeout(timeout);
+					};
+				}
+			} else {
 				// Show alert message after successful 200 OK or 201 Created response is issued
 				setConfig({
 					isVerifyUrlStep: true,
@@ -112,42 +158,34 @@ const SiteVerifyModal = (
 				});
 
 				// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
-				setTimeout(() => {
-					setEnableNextStep(!enableNextStep);
-					setDisableSiteVerify(false);
+				const timeout = setTimeout(() => {
+					setIsLoading(false);
 				}, NotificationDisplayInterval);
-			} else {
-				// Show alert message after successful 200 OK or 201 Created response is issued
-				setConfig({
-					isVerifyUrlStep: true,
-					method: siteVerifyResponseMethod,
-					status: siteVerifyResponseStatus,
-					isError: true
-				});
 
-				// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
-				setTimeout(() => {
-					setDisableSiteVerify(false);
-				}, NotificationDisplayInterval);
+				return () => {
+					clearTimeout(timeout);
+				};
 			}
-		} else {
-			// Show alert message after successful 200 OK or 201 Created response is issued
-			setConfig({
-				isVerifyUrlStep: true,
-				method: siteVerifyResponseMethod,
-				status: siteVerifyResponseStatus
-			});
+		})();
 
-			// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
-			setTimeout(() => {
-				setDisableSiteVerify(false);
-			}, NotificationDisplayInterval);
-		}
+		return () => {
+			isMounted = false;
+		};
+	};
+
+	// Handle close modal
+	const handleCloseModal = () => {
+		setShowModal(false);
 	};
 
 	return (
 		<Transition.Root show={showModal} as={Fragment}>
-			<Dialog as="div" initialFocus={ref} onClose={!disableSiteVerify ? setShowModal : () => {}}>
+			<Dialog
+				as="div"
+				className="fixed inset-0 z-50 overflow-y-auto"
+				initialFocus={siteVerifyRef}
+				onClose={isLoading ? () => {} : handleCloseModal}
+			>
 				<div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
 					<Transition.Child
 						as={Fragment}
@@ -177,11 +215,11 @@ const SiteVerifyModal = (
 					>
 						<div className="inline-block transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6 sm:align-middle">
 							<div className="sm:flex sm:items-start">
-								<div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+								<div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-yellow-100 sm:mx-0 sm:h-10 sm:w-10">
 									<InformationCircleIcon className="h-6 w-6 text-yellow-600" />
 								</div>
 								<div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-									<Dialog.Title as="h3" className="text-lg font-medium text-gray-900">
+									<Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
 										{verifySiteTitleText}
 									</Dialog.Title>
 
@@ -219,20 +257,21 @@ const SiteVerifyModal = (
 																name="verify-id-meta-tag"
 																className={classnames(
 																	"block w-full rounded-none rounded-l-md border-gray-300 text-gray-400 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
-																	disableSiteVerify && "cursor-not-allowed bg-gray-300 opacity-50"
+																	isLoading && "cursor-not-allowed bg-gray-300 opacity-50"
 																)}
 																value={copyValue}
 																onChange={handleInputChange}
 																autoComplete="off"
 															/>
 
-															<CopyToClipboard onCopy={handleInputCopy} text={copyValue}>
+															<CopyToClipboard onCopy={isLoading ? () => {} : handleInputCopy} text={copyValue}>
 																<button
+																	ref={siteVerifyRef}
 																	className={classnames(
 																		"relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700",
-																		disableSiteVerify
-																			? "cursor-not-allowed bg-gray-300 opacity-50"
-																			: "hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+																		isLoading
+																			? "cursor-not-allowed opacity-50"
+																			: "hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500  focus:ring-offset-2"
 																	)}
 																>
 																	<ClipboardIcon className="h-5 w-5 text-gray-400" />
@@ -275,58 +314,61 @@ const SiteVerifyModal = (
 							</div>
 
 							<div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-								<span className="flex w-full rounded-md shadow-sm sm:w-auto">
-									{!enableNextStep ? (
-										<form onSubmit={handleSiteVerification}>
-											<input
-												type="hidden"
-												value={siteVerifyId}
-												name="site_verify_id"
-												onChange={handleHiddenInputChange}
-											/>
-											<button
-												type="submit"
-												tabIndex="0"
-												disabled={disableSiteVerify}
-												className={classnames(
-													"relative mt-3 inline-flex w-full cursor-pointer items-center rounded-md border border-transparent bg-yellow-600 px-4 py-2 text-sm font-medium leading-5 text-white sm:mt-0",
-													disableSiteVerify
-														? "cursor-not-allowed opacity-50"
-														: "hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 active:bg-yellow-700"
-												)}
-											>
-												{disableSiteVerify ? verifyingText : verifySiteTitleText}
-											</button>
-										</form>
-									) : (
-										<Link
-											href="/dashboard/sites/[siteId]/overview/"
-											as={`/dashboard/sites/${siteId}/overview/`}
-											passHref
-											replace
-										>
-											<a className="relative mt-3 inline-flex w-full cursor-pointer items-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-sm font-medium leading-5 text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 active:bg-green-700 sm:mt-0">
-												{goToSiteOverviewText}
-											</a>
-										</Link>
-									)}
-								</span>
-
-								<span className="mt-3 flex w-full sm:mt-0 sm:w-auto">
+								{!enableNextStep ? (
 									<button
+										ref={siteVerifyRef}
+										disabled={isLoading}
+										aria-disabled={isLoading}
+										aria-hidden={isLoading}
 										type="button"
-										disabled={disableSiteVerify}
+										onClick={handleSiteVerification}
 										className={classnames(
-											"mr-3 inline-flex w-full cursor-pointer justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium  text-gray-700 shadow-sm ",
-											disableSiteVerify
+											"inline-flex w-full justify-center rounded-md border border-transparent bg-yellow-600 px-4 py-2 text-base font-medium text-white shadow-sm sm:ml-3 sm:w-auto sm:text-sm",
+											isLoading
 												? "cursor-not-allowed opacity-50"
-												: "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+												: "hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
 										)}
-										onClick={() => setShowModal(!showModal)}
 									>
-										{closeText}
+										{isLoading ? verifyingText : verifySiteTitleText}
 									</button>
-								</span>
+								) : (
+									<Link
+										href="/dashboard/sites/[siteId]/overview/"
+										as={`/dashboard/sites/${siteId}/overview/`}
+										passHref
+										replace
+									>
+										<a
+											ref={siteVerifyRef}
+											type="button"
+											disabled={isLoading}
+											aria-disabled={isLoading}
+											aria-hidden={isLoading}
+											className={classnames(
+												"inline-flex w-full justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-base font-medium text-white shadow-sm sm:ml-3 sm:w-auto sm:text-sm",
+												isLoading
+													? "cursor-not-allowed opacity-50"
+													: "hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+											)}
+										>
+											{goToSiteOverviewText}
+										</a>
+									</Link>
+								)}
+
+								<button
+									type="button"
+									disabled={isLoading}
+									aria-disabled={isLoading}
+									aria-hidden={isLoading}
+									className={classnames(
+										"mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm",
+										isLoading ? "cursor-not-allowed opacity-50" : "hover:bg-gray-50"
+									)}
+									onClick={() => setShowModal(false)}
+								>
+									{closeText}
+								</button>
 							</div>
 						</div>
 					</Transition.Child>

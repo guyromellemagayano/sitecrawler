@@ -1,14 +1,15 @@
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
-import { NotificationDisplayInterval } from "@constants/GlobalValues";
+import { ModalDisplayInterval } from "@constants/GlobalValues";
 import { DashboardSitesLink } from "@constants/PageLinks";
 import { Dialog, Transition } from "@headlessui/react";
 import { handleDeleteMethod } from "@helpers/handleHttpMethods";
-import { XCircleIcon } from "@heroicons/react/outline";
-import { useNotificationMessage } from "@hooks/useNotificationMessage";
+import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/outline";
+import { TrashIcon } from "@heroicons/react/solid";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
-import { forwardRef, Fragment, memo, useState } from "react";
+import { forwardRef, Fragment, memo, useContext, useRef, useState } from "react";
 import { useSWRConfig } from "swr";
 
 /**
@@ -19,46 +20,44 @@ import { useSWRConfig } from "swr";
  * @param {number} siteId
  */
 const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref) => {
-	const [disableDeleteSite, setDisableDeleteSite] = useState(false);
-	const [errorMsg, setErrorMsg] = useState([]);
-	const [successMsg, setSuccessMsg] = useState([]);
-	const [hideButtons, setHideButtons] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
+	const [isHidden, setIsHidden] = useState(false);
 
 	// Translations
 	const { t } = useTranslation();
 	const deleteSiteHeadlineText = t("sites:deleteSite.headline");
 	const deleteSiteSubheadingText = t("sites:deleteSite.subHeading");
-	const requestText = t("common:request");
-	const cancelText = t("common:cancel");
-	const processingText = t("common:processing");
 	const closeText = t("common:close");
 	const proceedText = t("common:proceed");
+	const processingText = t("common:processing");
 
 	const SiteIdApiEndpoint = `${SitesApiEndpoint + siteId}/`;
+
+	// Router
+	const { push } = useRouter();
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
 
 	// Custom hooks
-	const { state, setConfig } = useNotificationMessage();
+	const deleteSiteRef = useRef(null);
 
-	// Router
-	const { asPath, push } = useRouter();
+	// Custom contexts
+	const { state, setConfig } = useContext(SiteCrawlerAppContext);
 
 	// Handle site deletion
-	const handleSiteDeletion = async (e) => {
-		e.preventDefault();
+	const handleSiteDeletion = () => {
+		let isMounted = true;
 
-		setDisableDeleteSite(true);
+		setIsLoading(true);
 
-		const siteDeleteResponse = await handleDeleteMethod(SiteIdApiEndpoint);
-		const siteDeleteResponseData = siteDeleteResponse?.data ?? null;
-		const siteDeleteResponseStatus = siteDeleteResponse?.status ?? null;
-		const siteDeleteResponseMethod = siteDeleteResponse?.config?.method ?? null;
+		(async () => {
+			if (!isMounted) return;
 
-		if (siteDeleteResponseData !== null && Math.round(siteDeleteResponseStatus / 200) === 1) {
-			// Mutate "sites" endpoint after successful 200 OK or 201 Created response is issued
-			mutate(SitesApiEndpoint);
+			const siteDeleteResponse = await handleDeleteMethod(SiteIdApiEndpoint);
+			const siteDeleteResponseData = siteDeleteResponse?.data ?? null;
+			const siteDeleteResponseStatus = siteDeleteResponse?.status ?? null;
+			const siteDeleteResponseMethod = siteDeleteResponse?.config?.method ?? null;
 
 			// Show alert message after successful 200 OK or 201 Created response is issued
 			setConfig({
@@ -67,30 +66,43 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 				status: siteDeleteResponseStatus
 			});
 
-			// Renable the button after a successful form submission
-			setTimeout(() => {
-				setDisableDeleteSite(false);
-				setShowModal(false);
-				push(DashboardSitesLink);
-			}, NotificationDisplayInterval);
-		} else {
-			// Show alert message after successful 200 OK or 201 Created response is issued
-			setConfig({
-				isSites: true,
-				method: siteDeleteResponseMethod,
-				status: siteDeleteResponseStatus
-			});
+			if (siteDeleteResponseData !== null && Math.round(siteDeleteResponseStatus / 200) === 1) {
+				setIsHidden(true);
 
-			// Renable the button after a successful form submission
-			setTimeout(() => {
-				setDisableDeleteSite(false);
-			}, NotificationDisplayInterval);
-		}
+				const timeout = setTimeout(() => {
+					// Mutate "user" endpoint after successful 200 OK or 201 Created response is issued
+					mutate(SitesApiEndpoint);
+
+					// Redirect to the sites dashboard page after successful 200 OK or 201 Created response is issued
+					push(DashboardSitesLink);
+				}, ModalDisplayInterval);
+
+				return () => {
+					clearTimeout(timeout);
+				};
+			} else {
+				setIsLoading(false);
+			}
+		})();
+
+		return () => {
+			isMounted = false;
+		};
+	};
+
+	// Handle close modal
+	const handleCloseModal = () => {
+		setShowModal(false);
 	};
 
 	return (
 		<Transition.Root show={showModal} as={Fragment}>
-			<Dialog as="div" initialFocus={ref} onClose={!disableDeleteSite ? setShowModal : () => {}}>
+			<Dialog
+				as="div"
+				className="fixed inset-0 z-50 overflow-y-auto"
+				initialFocus={deleteSiteRef}
+				onClose={isLoading ? () => {} : handleCloseModal}
+			>
 				<div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
 					<Transition.Child
 						as={Fragment}
@@ -120,19 +132,36 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 					>
 						<div className="inline-block transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6 sm:align-middle">
 							<div className="sm:flex sm:items-start">
-								<div className="flex mx-auto h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-									<XCircleIcon className="h-6 w-6 text-red-600" />
+								<div
+									className={classnames(
+										"mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full sm:mx-0 sm:h-10 sm:w-10",
+										!isHidden ? "bg-red-100" : "bg-green-500"
+									)}
+								>
+									{!isHidden ? (
+										<XCircleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
+									) : (
+										<CheckCircleIcon className="h-6 w-6 text-green-600" aria-hidden="true" />
+									)}
 								</div>
 								<div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-									<Dialog.Title as="h3" className="text-lg font-bold leading-6 text-gray-900">
+									<Dialog.Title
+										as="h3"
+										className={classnames("text-lg font-medium leading-6 text-gray-900", isHidden ? "hidden" : "block")}
+									>
 										{deleteSiteHeadlineText}
 									</Dialog.Title>
 
 									<div className="mt-2">
-										<p className="text-sm leading-5 text-gray-500">{deleteSiteSubheadingText}</p>
+										<Dialog.Description
+											as="p"
+											className={classnames("mb-3 text-sm text-gray-500", isHidden ? "hidden" : "block")}
+										>
+											{deleteSiteSubheadingText}
+										</Dialog.Description>
 
 										{state?.responses?.length > 0 ? (
-											<div className="my-5 block">
+											<div className={classnames("block", !isHidden ? "my-5" : null)}>
 												<div className="flex justify-center sm:justify-start">
 													{state.responses.map((value, key) => {
 														// Alert Messsages
@@ -140,7 +169,7 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 														const isSuccess = value?.isSuccess ?? null;
 
 														return (
-															<h3
+															<p
 																key={key}
 																className={classnames(
 																	"break-words text-sm font-medium leading-5",
@@ -148,7 +177,7 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 																)}
 															>
 																{responseText}
-															</h3>
+															</p>
 														);
 													}) ?? null}
 												</div>
@@ -158,40 +187,47 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 								</div>
 							</div>
 
-							<div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-								<span className="flex w-full rounded-md shadow-sm sm:w-auto">
-									<button
-										type="button"
-										tabIndex="0"
-										disabled={disableDeleteSite}
-										className={classnames(
-											"relative mt-3 inline-flex w-full cursor-pointer items-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium leading-5 text-white sm:mt-0 ",
-											disableDeleteSite
-												? "cursor-not-allowed opacity-50"
-												: "hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 active:bg-red-700"
+							<div className={classnames("mt-5 sm:mt-4 sm:flex-row-reverse", isHidden ? "hidden" : "sm:flex")}>
+								<button
+									ref={deleteSiteRef}
+									type="button"
+									disabled={isLoading}
+									aria-disabled={isLoading}
+									aria-hidden={isLoading}
+									onClick={isLoading ? () => {} : handleSiteDeletion}
+									className={classnames(
+										"inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm sm:ml-3 sm:w-auto sm:text-sm",
+										isLoading
+											? "cursor-not-allowed opacity-50"
+											: "hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+									)}
+								>
+									<span className="flex items-center space-x-2">
+										{isLoading ? (
+											processingText
+										) : (
+											<>
+												<TrashIcon className="mr-2 h-4 w-4" aria-hidden="true" />
+												{proceedText}
+											</>
 										)}
-										aria-label="Delete Site"
-										onClick={handleSiteDeletion}
-									>
-										{disableDeleteSite ? processingText : proceedText}
-									</button>
-								</span>
+									</span>
+								</button>
 
-								<span className="flex mt-3 w-full sm:mt-0 sm:w-auto">
-									<button
-										type="button"
-										disabled={disableDeleteSite}
-										className={classnames(
-											"mr-3 inline-flex w-full cursor-pointer justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium  text-gray-700 shadow-sm ",
-											disableDeleteSite
-												? "cursor-not-allowed opacity-50"
-												: "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-										)}
-										onClick={() => setShowModal(false)}
-									>
-										{closeText}
-									</button>
-								</span>
+								<button
+									type="button"
+									disabled={isLoading}
+									aria-disabled={isLoading}
+									aria-hidden={isLoading}
+									className={classnames(
+										"mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm",
+										isLoading ? "cursor-not-allowed opacity-50" : "hover:bg-gray-50"
+									)}
+									onClick={isLoading ? () => {} : handleCloseModal}
+									ref={ref}
+								>
+									{closeText}
+								</button>
 							</div>
 						</div>
 					</Transition.Child>

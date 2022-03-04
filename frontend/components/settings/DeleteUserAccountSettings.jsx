@@ -30,6 +30,11 @@ const DeleteUserAccountSettings = () => {
 		setIsComponentVisible: setShowModal
 	} = useComponentVisible(false);
 
+	// Handle show modal
+	const handleShowModal = () => {
+		setShowModal(true);
+	};
+
 	return (
 		<div className="pb-12">
 			<MemoizedDeleteUserAccountModal ref={showModalRef} showModal={showModal} setShowModal={setShowModal} />
@@ -54,9 +59,9 @@ const DeleteUserAccountSettings = () => {
 									"inline-flex w-full cursor-pointer justify-center rounded-md border border-gray-300 bg-red-600 px-4 py-2 text-sm font-medium leading-5 text-white shadow-sm transition duration-150 ease-in-out sm:text-sm sm:leading-5",
 									showModal
 										? "cursor-not-allowed opacity-50"
-										: "hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 active:bg-red-700"
+										: "hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
 								)}
-								onClick={() => setShowModal(!showModal)}
+								onClick={handleShowModal}
 							>
 								{request}
 							</button>

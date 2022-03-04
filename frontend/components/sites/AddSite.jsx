@@ -13,7 +13,6 @@ import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { memo, useContext, useMemo, useState } from "react";
@@ -106,9 +105,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 	};
 
 	// Handle `onClick` event on <Link> element
-	const handleRouterOnClick = (e) => {
-		e.preventDefault();
-
+	const handleRouterOnClick = () => {
 		const addNewSitePage = AddNewSiteLink + "?step=1&edit=false&verified=false";
 
 		if (asPath.includes(addNewSitePage)) {
@@ -120,7 +117,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 	};
 
 	return (
-		<div className="flex relative z-20 mx-auto w-full max-w-screen-2xl flex-1 flex-shrink-0 justify-between overflow-hidden xl:px-12 xl:py-4">
+		<>
 			<MemoizedSiteLimitReachedModal
 				ref={siteLimitReachedModalRef}
 				showModal={isSiteLimitReachedModalVisible}
@@ -133,77 +130,80 @@ const AddSite = ({ handleOpenSidebar }) => {
 				setShowModal={setIsNotAllowedFeatureModalVisible}
 			/>
 
-			<div className="flex flex-1">
-				<MemoizedMobileSidebarButton handleOpenSidebar={handleOpenSidebar} />
+			<div className="relative z-20 mx-auto flex w-full max-w-screen-2xl flex-1 flex-shrink-0 justify-between overflow-hidden xl:px-12 xl:py-4">
+				<div className="flex flex-1">
+					<MemoizedMobileSidebarButton handleOpenSidebar={handleOpenSidebar} />
 
-				<div className="flex ml-4 w-full items-center lg:ml-0">
-					{isBrowser ? (
-						<>
-							<label htmlFor="searchSites" className="sr-only">
-								{searchSites}
-							</label>
-							<div className="flex relative w-full items-center text-gray-400 focus-within:text-gray-600">
-								<div className="flex pointer-events-none absolute inset-y-0 left-0 items-center">
+					<div className="ml-4 flex w-full items-center lg:ml-0">
+						{isBrowser ? (
+							<>
+								<label htmlFor="searchSites" className="sr-only">
+									{searchSites}
+								</label>
+								<div className="relative flex w-full items-center text-gray-400 focus-within:text-gray-600">
+									<div className="pointer-events-none absolute inset-y-0 left-0 flex items-center">
+										{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+											<SearchIcon className="h-5 w-5 text-gray-400" />
+										) : (
+											<Skeleton duration={2} width={20} height={20} />
+										)}
+									</div>
 									{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-										<SearchIcon className="h-5 w-5 text-gray-400" />
+										sitesCount > 0 ? (
+											<input
+												type="search"
+												name="search-sites"
+												id="searchSites"
+												className="block h-full w-full border-transparent py-2 pl-8 pr-3 text-gray-900  focus:border-transparent focus:placeholder-gray-400 focus:outline-none focus:ring-0 sm:text-sm"
+												placeholder={searchSites}
+												onKeyUp={useHandleSiteSearch}
+												defaultValue={searchKey}
+											/>
+										) : (
+											<p className="flex-1 pl-8 placeholder-gray-500 sm:text-sm">{searchNotAvailable}</p>
+										)
 									) : (
-										<Skeleton duration={2} width={20} height={20} />
+										<Skeleton duration={2} width={320} height={20} />
 									)}
 								</div>
-								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-									sitesCount > 0 ? (
-										<input
-											type="search"
-											name="search-sites"
-											id="searchSites"
-											className="block h-full w-full border-transparent py-2 pl-8 pr-3 text-gray-900  focus:border-transparent focus:placeholder-gray-400 focus:outline-none focus:ring-0 sm:text-sm"
-											placeholder={searchSites}
-											onKeyUp={useHandleSiteSearch}
-											defaultValue={searchKey}
-										/>
-									) : (
-										<p className="flex-1 pl-8 placeholder-gray-500 sm:text-sm">{searchNotAvailable}</p>
-									)
-								) : (
-									<Skeleton duration={2} width={320} height={20} />
-								)}
-							</div>
-						</>
-					) : null}
+							</>
+						) : null}
+					</div>
 				</div>
-			</div>
-			<div className="flex ml-4 items-center space-x-2 p-4 lg:ml-6 xl:p-0">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-					hasSiteLimitReached ? (
-						<button
-							type="button"
-							className="inline-flex w-full cursor-pointer items-center justify-center rounded-md border border-transparent bg-yellow-600 px-4 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 active:bg-yellow-700"
-							onClick={() => setIsSiteLimitReachedModalVisible(!isSiteLimitReachedModalVisible)}
-						>
-							<span className="flex items-center space-x-2">
-								<FontAwesomeIcon icon={["fas", "crown"]} className="mr-2 h-4 w-4 text-white" />
-								{addNewSite}
-							</span>
-						</button>
-					) : (
-						<Link href="/" passHref>
-							<a
-								role="button"
-								tabIndex="0"
+				<div className="ml-4 flex items-center space-x-2 p-4 lg:ml-6 xl:p-0">
+					{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+						hasSiteLimitReached ? (
+							<button
+								type="button"
+								disabled={isLoading}
 								aria-disabled={isLoading}
-								onClick={handleRouterOnClick}
-								aria-hidden="true"
+								aria-hidden={isLoading}
+								className="inline-flex w-full cursor-pointer items-center rounded-md border border-transparent bg-yellow-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+								onClick={() => setIsSiteLimitReachedModalVisible(!isSiteLimitReachedModalVisible)}
+							>
+								<span className="flex items-center space-x-2">
+									<FontAwesomeIcon icon={["fas", "crown"]} className="mr-2 h-4 w-4 text-white" />
+									{addNewSite}
+								</span>
+							</button>
+						) : (
+							<button
+								type="button"
+								disabled={isLoading}
+								aria-disabled={isLoading}
+								onClick={!isLoading ? handleRouterOnClick : () => {}}
+								aria-hidden={isLoading}
 								className={classnames(
 									"inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm",
 									asPath.includes(AddNewSiteLink)
-										? "cursor-pointer bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 active:bg-red-700"
+										? "cursor-pointer bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
 										: isLoading
-										? "cursor-not-allowed bg-green-500 opacity-50"
-										: "cursor-pointer bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 active:bg-green-700"
+										? "cursor-not-allowed opacity-50"
+										: "cursor-pointer bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
 								)}
 							>
 								<span className="flex items-center space-x-2">
-									{isLoading ? (
+									{!asPath.includes(AddNewSiteLink) && isLoading ? (
 										loaderMessage
 									) : (
 										<>
@@ -212,14 +212,14 @@ const AddSite = ({ handleOpenSidebar }) => {
 										</>
 									)}
 								</span>
-							</a>
-						</Link>
-					)
-				) : (
-					<Skeleton duration={2} width={147} height={38} />
-				)}
+							</button>
+						)
+					) : (
+						<Skeleton duration={2} width={147} height={38} />
+					)}
+				</div>
 			</div>
-		</div>
+		</>
 	);
 };
 

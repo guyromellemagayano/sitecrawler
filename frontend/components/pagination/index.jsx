@@ -174,7 +174,7 @@ const DataPagination = () => {
 		pageCount &&
 		pageResults ? (
 		<div className="mt-8 mb-4 items-center justify-between bg-white py-4 align-middle lg:flex">
-			<div className="flex mb-8 items-center lg:m-0">
+			<div className="mb-8 flex items-center lg:m-0">
 				<div className="mt-2 lg:my-0">
 					<p className="text-center text-sm leading-5 text-gray-500 lg:text-left">
 						{showingText}
@@ -202,7 +202,7 @@ const DataPagination = () => {
 				itemRender={navigationItemRender}
 			/>
 
-			<div className="flex mt-4 items-center lg:m-0">
+			<div className="mt-4 flex items-center lg:m-0">
 				<h1 className="-mt-px inline-flex items-center pr-4 text-sm font-normal leading-5 text-gray-500">
 					{rowsPerPageText}
 				</h1>

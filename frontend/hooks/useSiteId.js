@@ -12,8 +12,8 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  */
 export const useSiteId = (querySid = null, options = null) => {
 	const [siteIdVerified, setSiteIdVerified] = useState(false);
-	const [siteName, setSiteName] = useState("");
-	const [siteUrl, setSiteUrl] = useState("");
+	const [siteName, setSiteName] = useState(null);
+	const [siteUrl, setSiteUrl] = useState(null);
 
 	// Custom context
 	const { setConfig: setSiteIdConfig } = useContext(SiteCrawlerAppContext);

@@ -15,26 +15,26 @@ const messagesReducer = (state, action) => {
  */
 export const useNotificationMessage = () => {
 	const [config, setConfig] = useState({
-		isLocalTimeEnabled: false,
+		isLinks: false,
 		isLocalTimeDisabled: false,
+		isLocalTimeEnabled: false,
 		isLogin: false,
 		isLogout: false,
+		isPages: false,
 		isPasswordChange: false,
 		isPasswordReset: false,
 		isPasswordResetConfirm: false,
-		isUrlInformationStep: false,
-		isVerifyUrlStep: false,
+		isPaymentMethod: false,
 		isRegistration: false,
+		isScan: false,
 		isSignup: false,
 		isSites: false,
 		isStats: false,
-		isScan: false,
-		isPages: false,
-		isPaymentMethod: false,
 		isSubscriptions: false,
 		isSupport: false,
+		isUrlInformationStep: false,
 		isUser: false,
-		isLinks: false,
+		isVerifyUrlStep: false,
 		isError: false,
 		isAlert: false,
 		isNotification: false,
@@ -51,6 +51,7 @@ export const useNotificationMessage = () => {
 	// User translations
 	const userDelete200OkSuccessResponse = t("alerts:auth.user.delete.200OkSuccessResponse");
 	const userDelete201CreatedSuccessResponse = t("alerts:auth.user.delete.201CreatedSuccessResponse");
+	const userDelete204CreatedSuccessResponse = t("alerts:auth.user.delete.201CreatedSuccessResponse");
 	const userDelete400BadRequestErrorResponse = t("alerts:auth.user.delete.400BadRequestErrorResponse");
 	const userDelete401UnauthorizedErrorResponse = t("alerts:auth.user.delete.401UnauthorizedErrorResponse");
 	const userDelete403ForbiddenErrorResponse = t("alerts:auth.user.delete.403ForbiddenErrorResponse");
@@ -720,6 +721,12 @@ export const useNotificationMessage = () => {
 								status: 201,
 								title: fallback201CreatedSuccessResponse,
 								message: userDelete201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 204,
+								title: fallback201CreatedSuccessResponse,
+								message: userDelete204CreatedSuccessResponse,
 								isSuccess: true
 							},
 							{

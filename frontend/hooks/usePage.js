@@ -14,7 +14,7 @@ export const usePage = (endpoint = null, options = null) => {
 	const [pageResults, setPageResults] = useState([]);
 
 	// Custom context
-	const { setConfig: setPageConfig } = useContext(SiteCrawlerAppContext);
+	const { setConfig } = useContext(SiteCrawlerAppContext);
 
 	// Custom variables
 	const currentEndpoint = endpoint !== null && typeof endpoint === "string" && endpoint !== "" ? endpoint : null;
@@ -26,7 +26,7 @@ export const usePage = (endpoint = null, options = null) => {
 		if (errorPage) {
 			// Show alert message after failed `user` SWR hook fetch
 			errorPage
-				? setPageConfig({
+				? setConfig({
 						isPage: true,
 						method: errorPage?.config?.method ?? null,
 						status: errorPage?.status ?? null

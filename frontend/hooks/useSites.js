@@ -9,14 +9,14 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  *
  * @param {string} endpoint
  * @param {object} options
- * @returns {object} sites, errorSites, validatingSites
+ * @returns {object} sites, validatingSites, sitesResults, sitesCount
  */
 export const useSites = (endpoint = null, options = null) => {
 	const [sitesCount, setSitesCount] = useState(0);
 	const [sitesResults, setSitesResults] = useState([]);
 
 	// Custom context
-	const { setConfig: setSitesConfig } = useContext(SiteCrawlerAppContext);
+	const { setConfig } = useContext(SiteCrawlerAppContext);
 
 	// Custom variables
 	const currentEndpoint =
@@ -31,7 +31,7 @@ export const useSites = (endpoint = null, options = null) => {
 		if (errorSites) {
 			// Show alert message after failed `user` SWR hook fetch
 			errorSites
-				? setSitesConfig({
+				? setConfig({
 						isSites: true,
 						method: errorSites?.config?.method ?? null,
 						status: errorSites?.status ?? null
