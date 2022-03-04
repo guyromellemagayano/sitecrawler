@@ -187,7 +187,7 @@ const VerifyUrlStep = (props) => {
 																		: "hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
 																)}
 															>
-																<ClipboardIcon className="h-5 w-5 text-gray-400" />
+																<ClipboardIcon className="h-4 w-4 text-gray-400" />
 																<span>{copied ? copiedText : copyText}</span>
 															</button>
 														</CopyToClipboard>

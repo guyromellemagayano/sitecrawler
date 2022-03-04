@@ -20,7 +20,7 @@ const AscSorting = ({ handleClickEvent, isAscClicked, setIsAscClicked }, ref) =>
 
 	return (
 		<button ref={ref} className="focus:outline-none" onClick={() => setIsAscClicked(!isAscClicked)}>
-			<ChevronUpIcon className={classnames("inline-block h-5 w-5", isAscClicked ? "text-gray-500" : "text-gray-300")} />
+			<ChevronUpIcon className={classnames("inline-block h-4 w-4", isAscClicked ? "text-gray-500" : "text-gray-300")} />
 		</button>
 	);
 };

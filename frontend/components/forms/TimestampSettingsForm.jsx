@@ -118,7 +118,7 @@ const TimestampSettingsForm = () => {
 									<span
 										className={classnames(
 											!disableLocalTime ? "translate-x-5" : "translate-x-0",
-											"pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ease-in-out"
+											"pointer-events-none relative inline-block h-4 w-4 transform rounded-full bg-white shadow transition duration-200 ease-in-out"
 										)}
 									>
 										<span

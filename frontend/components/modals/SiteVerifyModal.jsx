@@ -274,7 +274,7 @@ const SiteVerifyModal = (
 																			: "hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500  focus:ring-offset-2"
 																	)}
 																>
-																	<ClipboardIcon className="h-5 w-5 text-gray-400" />
+																	<ClipboardIcon className="h-4 w-4 text-gray-400" />
 																	<span>{copied ? copiedText : copyText}</span>
 																</button>
 															</CopyToClipboard>

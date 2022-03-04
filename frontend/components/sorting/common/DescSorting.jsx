@@ -21,7 +21,7 @@ const DescSorting = ({ handleClickEvent, isDescClicked, setIsDescClicked }, ref)
 	return (
 		<button ref={ref} className="focus:outline-none" onClick={() => setIsDescClicked(!isDescClicked)}>
 			<ChevronDownIcon
-				className={classnames("inline-block h-5 w-5", isDescClicked ? "text-gray-500" : "text-gray-300")}
+				className={classnames("inline-block h-4 w-4", isDescClicked ? "text-gray-500" : "text-gray-300")}
 			/>
 		</button>
 	);

@@ -122,7 +122,8 @@ const LinksData = ({ link = null }) => {
 									<span className="flex justify-start space-x-2 text-sm leading-5 text-gray-500">
 										<Link
 											href="/dashboard/sites/[siteId]/links/[linkId]/"
-											as={`/dashboard/sites/${sanitizedSiteId}/links/${linkDetailId}`}
+											as={`/dashboard/sites/${sanitizedSiteId}/links/${linkDetailId}/`}
+											title={linkUrl}
 											passHref
 										>
 											<a

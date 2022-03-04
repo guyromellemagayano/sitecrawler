@@ -173,7 +173,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 									siteName &&
 									siteUrl ? (
 										<>
-											<GlobeIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+											<GlobeIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
 											<span className="text-sm font-semibold leading-6 text-gray-500">
 												<a
 													href={siteUrl}
@@ -204,7 +204,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 										<>
 											<FontAwesomeIcon
 												icon={["fas", "spider"]}
-												className="h-5 w-5 flex-shrink-0 text-gray-400"
+												className="h-4 w-4 flex-shrink-0 text-gray-400"
 												aria-hidden="true"
 											/>
 											<span className="text-sm leading-6 text-gray-500">
@@ -241,7 +241,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 								isLinks && linksCount > 0 ? (
 									<>
-										<LinkIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+										<LinkIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
 										<span className="text-sm leading-6 text-gray-500">
 											{linksCount > 1
 												? linksCount + " " + handleConversionStringToLowercase(linksText)
@@ -250,7 +250,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 									</>
 								) : isSites && sitesCount > 0 ? (
 									<>
-										<ExternalLinkIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+										<ExternalLinkIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
 										<span className="text-sm leading-6 text-gray-500">
 											{sitesCount > 1
 												? sitesCount + " " + handleConversionStringToLowercase(sitesText)
@@ -259,7 +259,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 									</>
 								) : isPages && pagesCount > 0 ? (
 									<>
-										<DocumentTextIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+										<DocumentTextIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
 										<span className="text-sm leading-6 text-gray-500">
 											{pagesCount > 1
 												? pagesCount + " " + handleConversionStringToLowercase(pagesText)

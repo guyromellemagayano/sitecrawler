@@ -51,9 +51,9 @@ const Alert = ({ responseText = null, isSuccess = false }) => {
 				<div className="flex">
 					<div className="flex-shrink-0">
 						{isSuccess ? (
-							<CheckCircleIcon className="h-5 w-5 text-green-400" aria-hidden="true" />
+							<CheckCircleIcon className="h-4 w-4 text-green-400" aria-hidden="true" />
 						) : (
-							<XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
+							<XCircleIcon className="h-4 w-4 text-red-400" aria-hidden="true" />
 						)}
 					</div>
 					<div className="ml-3">
@@ -74,7 +74,7 @@ const Alert = ({ responseText = null, isSuccess = false }) => {
 								onClick={() => setIsOpen(false)}
 							>
 								<span className="sr-only">{dismiss}</span>
-								<XIcon className="h-5 w-5" aria-hidden="true" />
+								<XIcon className="h-4 w-4" aria-hidden="true" />
 							</button>
 						</div>
 					</div>

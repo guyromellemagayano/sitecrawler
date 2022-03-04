@@ -62,7 +62,7 @@ const Notification = ({ responseTitle = null, responseText = null, isSuccess = f
 								onClick={() => setIsOpen(false)}
 							>
 								<span className="sr-only">{dismiss}</span>
-								<XIcon className="h-5 w-5" aria-hidden="true" />
+								<XIcon className="h-4 w-4" aria-hidden="true" />
 							</button>
 						</div>
 					</div>
