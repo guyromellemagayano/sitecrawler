@@ -89,7 +89,7 @@ const SiteSelectDropdown = ({ handleSiteSelectOnClick, openDropdown = false }, r
 			>
 				<div ref={ref} className="absolute z-50 mt-1 w-full overflow-hidden rounded-md bg-white shadow-lg">
 					<MemoizedSitesList isOpen={openDropdown} />
-					<span className="flex relative m-2 justify-center rounded-md shadow-sm">
+					<span className="relative m-2 flex justify-center rounded-md shadow-sm">
 						{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 							hasSiteLimitReached ? (
 								<button
@@ -106,7 +106,7 @@ const SiteSelectDropdown = ({ handleSiteSelectOnClick, openDropdown = false }, r
 								<Link href={AddNewSiteLink + "?step=1&edit=false&verified=false"} passHref>
 									<a className="flex w-full cursor-pointer items-center justify-center rounded-md border border-transparent bg-green-600 px-3 py-2 text-sm font-medium leading-4 text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 active:bg-green-700">
 										<div className="flex items-center space-x-2">
-											<PlusIcon className="mr-2 h-4 w-4" />
+											<PlusIcon className="mr-2 h-4 w-4" aria-hidden="true" />
 											{labelsArray[2]?.label ?? null}
 										</div>
 									</a>
