@@ -51,6 +51,7 @@ export const useNotificationMessage = () => {
 	// User translations
 	const userDelete200OkSuccessResponse = t("alerts:auth.user.delete.200OkSuccessResponse");
 	const userDelete201CreatedSuccessResponse = t("alerts:auth.user.delete.201CreatedSuccessResponse");
+	const userDelete204CreatedSuccessResponse = t("alerts:auth.user.delete.201CreatedSuccessResponse");
 	const userDelete400BadRequestErrorResponse = t("alerts:auth.user.delete.400BadRequestErrorResponse");
 	const userDelete401UnauthorizedErrorResponse = t("alerts:auth.user.delete.401UnauthorizedErrorResponse");
 	const userDelete403ForbiddenErrorResponse = t("alerts:auth.user.delete.403ForbiddenErrorResponse");
@@ -720,6 +721,12 @@ export const useNotificationMessage = () => {
 								status: 201,
 								title: fallback201CreatedSuccessResponse,
 								message: userDelete201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 204,
+								title: fallback201CreatedSuccessResponse,
+								message: userDelete204CreatedSuccessResponse,
 								isSuccess: true
 							},
 							{
