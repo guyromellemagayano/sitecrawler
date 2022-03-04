@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { MemoizedMobileSidebarButton } from "@components/buttons/MobileSidebarButton";
 import { MemoizedNotAllowedFeatureModal } from "@components/modals/NotAllowedFeatureModal";
 import { MemoizedSiteLimitReachedModal } from "@components/modals/SiteLimitReachedModal";
@@ -14,7 +13,6 @@ import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { memo, useContext, useMemo, useState } from "react";
@@ -107,9 +105,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 	};
 
 	// Handle `onClick` event on <Link> element
-	const handleRouterOnClick = (e) => {
-		e.preventDefault();
-
+	const handleRouterOnClick = () => {
 		const addNewSitePage = AddNewSiteLink + "?step=1&edit=false&verified=false";
 
 		if (asPath.includes(addNewSitePage)) {
@@ -191,33 +187,32 @@ const AddSite = ({ handleOpenSidebar }) => {
 								</span>
 							</button>
 						) : (
-							<Link href="/" passHref>
-								<a
-									role="button"
-									aria-disabled={isLoading}
-									onClick={!isLoading ? handleRouterOnClick : () => {}}
-									aria-hidden={isLoading}
-									className={classnames(
-										"inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm",
-										asPath.includes(AddNewSiteLink)
-											? "cursor-pointer bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-											: isLoading
-											? "cursor-not-allowed bg-green-500 opacity-50"
-											: "cursor-pointer bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+							<button
+								type="button"
+								disabled={isLoading}
+								aria-disabled={isLoading}
+								onClick={!isLoading ? handleRouterOnClick : () => {}}
+								aria-hidden={isLoading}
+								className={classnames(
+									"inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm",
+									asPath.includes(AddNewSiteLink)
+										? "cursor-pointer bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+										: isLoading
+										? "cursor-not-allowed opacity-50"
+										: "cursor-pointer bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+								)}
+							>
+								<span className="flex items-center space-x-2">
+									{!asPath.includes(AddNewSiteLink) && isLoading ? (
+										loaderMessage
+									) : (
+										<>
+											<PlusIcon className="mr-2 h-4 w-4 text-white" />
+											{addNewSite}
+										</>
 									)}
-								>
-									<span className="flex items-center space-x-2">
-										{!asPath.includes(AddNewSiteLink) && isLoading ? (
-											loaderMessage
-										) : (
-											<>
-												<PlusIcon className="mr-2 h-4 w-4 text-white" />
-												{addNewSite}
-											</>
-										)}
-									</span>
-								</a>
-							</Link>
+								</span>
+							</button>
 						)
 					) : (
 						<Skeleton duration={2} width={147} height={38} />
