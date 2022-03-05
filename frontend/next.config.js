@@ -37,16 +37,6 @@ const NextConfig = {
 				source: "/dashboard/site",
 				destination: "/dashboard/sites",
 				permanent: false
-			},
-			{
-				source: "/dashboard/site/:siteId",
-				destination: "/dashboard/sites/:siteId/overview",
-				permanent: false
-			},
-			{
-				source: "/dashboard/sites/:siteId",
-				destination: "/dashboard/sites/:siteId/overview",
-				permanent: false
 			}
 		];
 	}
