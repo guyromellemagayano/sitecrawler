@@ -2,6 +2,7 @@ import { ResetCopyStateTimeout } from "@constants/GlobalValues";
 import { Dialog, Transition } from "@headlessui/react";
 import { QuestionMarkCircleIcon } from "@heroicons/react/outline";
 import { ClipboardIcon } from "@heroicons/react/solid";
+import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import { forwardRef, Fragment, memo, useEffect, useRef, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -142,9 +143,14 @@ const ShowHelpModal = ({ siteData = null, showModal = false, setShowModal }, ref
 													value={instructionHtmlText}
 													onChange={handleTextareaChange}
 												></textarea>
+
 												<CopyToClipboard onCopy={handleInputCopy} text={instructionHtmlText}>
 													<button
 														ref={showHelpRef}
+														type="button"
+														disabled={copied}
+														aria-disabled={copied}
+														aria-hidden={copied}
 														className="inline-flex w-full cursor-pointer items-center justify-center space-x-2 rounded-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
 													>
 														<ClipboardIcon className="h-4 w-4 text-gray-400" />
@@ -161,9 +167,14 @@ const ShowHelpModal = ({ siteData = null, showModal = false, setShowModal }, ref
 							<div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
 								<button
 									type="button"
-									className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
+									disabled={copied}
+									aria-disabled={copied}
+									aria-hidden={copied}
+									className={classnames(
+										"mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm",
+										copied ? "cursor-not-allowed opacity-50" : "hover:bg-gray-50"
+									)}
 									onClick={handleCloseModal}
-									ref={ref}
 								>
 									{closeText}
 								</button>

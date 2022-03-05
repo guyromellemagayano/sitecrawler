@@ -20,9 +20,18 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
  * @param {number} siteId
  * @param {string} siteName
  * @param {number} siteVerificationId
+ * @param {number} scanObjId
  */
 const SiteVerifyModal = (
-	{ setShowModal, showModal = false, siteId = null, siteName = null, siteUrl = null, siteVerificationId = null },
+	{
+		setShowModal,
+		showModal = false,
+		siteId = null,
+		siteName = null,
+		siteUrl = null,
+		siteVerificationId = null,
+		scanObjId = null
+	},
 	ref
 ) => {
 	const [copied, setCopied] = useState(false);
@@ -333,10 +342,9 @@ const SiteVerifyModal = (
 									</button>
 								) : (
 									<Link
-										href="/dashboard/sites/[siteId]/overview/"
-										as={`/dashboard/sites/${siteId}/overview/`}
+										href="/dashboard/sites/[siteId]/scan/[scanId]/"
+										as={`/dashboard/sites/${siteId}/scan/${scanObjId}/`}
 										passHref
-										replace
 									>
 										<a
 											ref={siteVerifyRef}
@@ -365,7 +373,7 @@ const SiteVerifyModal = (
 										"mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm",
 										isLoading ? "cursor-not-allowed opacity-50" : "hover:bg-gray-50"
 									)}
-									onClick={() => setShowModal(false)}
+									onClick={handleCloseModal}
 								>
 									{closeText}
 								</button>

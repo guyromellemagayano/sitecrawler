@@ -140,7 +140,6 @@ const UpgradeErrorModal = ({ showModal = false, setShowModal }, ref) => {
 									aria-hidden={isLoading}
 									className="mt-3 inline-flex w-full cursor-pointer justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 sm:mt-0 sm:w-auto sm:text-sm"
 									onClick={isLoading ? () => {} : handleCloseModal}
-									ref={ref}
 								>
 									{closeText}
 								</button>

@@ -224,7 +224,6 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 										isLoading ? "cursor-not-allowed opacity-50" : "hover:bg-gray-50"
 									)}
 									onClick={isLoading ? () => {} : handleCloseModal}
-									ref={ref}
 								>
 									{closeText}
 								</button>
