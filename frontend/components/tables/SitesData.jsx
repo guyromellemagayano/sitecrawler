@@ -106,6 +106,7 @@ const SitesData = ({ site = null }) => {
 					siteName={siteName}
 					siteUrl={siteUrl}
 					siteVerificationId={siteVerificationId}
+					scanObjId={scanObjId}
 					ref={siteVerifyModalRef}
 				/>
 
@@ -143,12 +144,7 @@ const SitesData = ({ site = null }) => {
 									</span>
 									<span className="flex justify-start space-x-2 text-sm leading-5 text-gray-500">
 										{scanCount > 0 ? (
-											<Link
-												href="/dashboard/sites/[siteId]/overview"
-												as={`/dashboard/sites/${siteId}/overview`}
-												passHref
-												replace
-											>
+											<Link href="/dashboard/sites/[siteId]/" as={`/dashboard/sites/${siteId}/`} passHref>
 												<a className="flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-indigo-600 transition duration-150 ease-in-out hover:text-indigo-500 focus:outline-none">
 													{goToSiteOverviewText}
 												</a>

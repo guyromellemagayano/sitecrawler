@@ -341,11 +341,7 @@ const SiteVerifyModal = (
 										{isLoading ? verifyingText : verifySiteTitleText}
 									</button>
 								) : (
-									<Link
-										href="/dashboard/sites/[siteId]/scan/[scanId]/"
-										as={`/dashboard/sites/${siteId}/scan/${scanObjId}/`}
-										passHref
-									>
+									<Link href="/dashboard/sites/[siteId]/" as={`/dashboard/sites/${siteId}/`} passHref>
 										<a
 											ref={siteVerifyRef}
 											type="button"
