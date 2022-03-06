@@ -2,8 +2,6 @@ import { MemoizedBadge } from "@components/badges";
 import { MemoizedSiteDanagerIcon } from "@components/icons/SiteDangerIcon";
 import { MemoizedSiteSuccessIcon } from "@components/icons/SiteSuccessIcon";
 import { useComponentVisible } from "@hooks/useComponentVisible";
-import { useLinkDetail } from "@hooks/useLinkDetail";
-import { useScan } from "@hooks/useScan";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { handleConversionStringToNumber } from "@utils/convertCase";
@@ -60,8 +58,6 @@ const ImagesData = ({ image = null }) => {
 
 	// SWR hooks
 	const { user, disableLocalTime, permissions } = useUser();
-	const { scanObjId, selectedSiteRef } = useScan(sanitizedSiteId);
-	const { linkDetail, linkDetailId, linkDetailPages } = useLinkDetail(sanitizedSiteId, scanObjId, imageId);
 
 	// Custom hooks
 	const {
@@ -92,7 +88,7 @@ const ImagesData = ({ image = null }) => {
 	};
 
 	return (
-		<tr ref={selectedSiteRef}>
+		<tr>
 			<td className="flex-none whitespace-nowrap p-4">
 				<div className="flex flex-col items-start">
 					<div>
@@ -127,8 +123,8 @@ const ImagesData = ({ image = null }) => {
 									</span>
 									<span className="flex justify-start space-x-2 text-sm leading-5 text-gray-500">
 										<Link
-											href="/dashboard/sites/[siteId]/links/[linkId]/"
-											as={`/dashboard/sites/${sanitizedSiteId}/links/${linkDetailId}`}
+											href="/dashboard/sites/[siteId]/images/[imageId]/"
+											as={`/dashboard/sites/${sanitizedSiteId}/images/${imageId}`}
 											passHref
 										>
 											<a

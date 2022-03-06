@@ -1,8 +1,6 @@
 import { MemoizedSiteDanagerIcon } from "@components/icons/SiteDangerIcon";
 import { MemoizedSiteSuccessIcon } from "@components/icons/SiteSuccessIcon";
 import { useComponentVisible } from "@hooks/useComponentVisible";
-import { usePageDetail } from "@hooks/usePageDetail";
-import { useScan } from "@hooks/useScan";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { handleConversionStringToNumber } from "@utils/convertCase";
@@ -77,8 +75,6 @@ const PagesData = ({ page = null }) => {
 
 	// SWR hooks
 	const { user, disableLocalTime, permissions } = useUser();
-	const { scanObjId, selectedSiteRef } = useScan(sanitizedSiteId);
-	const { pageDetail, pageDetailId, pageDetailPages } = usePageDetail(sanitizedSiteId, scanObjId, pageId);
 
 	// Custom hooks
 	const {
@@ -109,7 +105,7 @@ const PagesData = ({ page = null }) => {
 	};
 
 	return (
-		<tr ref={selectedSiteRef}>
+		<tr>
 			<td className="flex-none whitespace-nowrap p-4">
 				<div className="flex flex-col items-start">
 					<div>
@@ -135,7 +131,7 @@ const PagesData = ({ page = null }) => {
 										<span className="flex justify-start space-x-2 text-sm leading-5 text-gray-500">
 											<Link
 												href="/dashboard/sites/[siteId]/pages/[pageId]/"
-												as={`/dashboard/sites/${sanitizedSiteId}/pages/${pageDetailId}`}
+												as={`/dashboard/sites/${sanitizedSiteId}/pages/${pageId}`}
 												passHref
 											>
 												<a

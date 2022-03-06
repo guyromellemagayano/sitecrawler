@@ -54,8 +54,8 @@ const LinksData = ({ link = null }) => {
 
 	// SWR hooks
 	const { user, disableLocalTime, permissions } = useUser();
-	const { scanObjId, selectedSiteRef } = useScan(sanitizedSiteId);
-	const { linkDetail, linkDetailId, linkDetailPages } = useLinkDetail(sanitizedSiteId, scanObjId, linkId);
+	const { scanObjId } = useScan(sanitizedSiteId);
+	const { linkDetail, linkDetailPages } = useLinkDetail(sanitizedSiteId, scanObjId, linkId);
 
 	// Custom hooks
 	const {
@@ -86,7 +86,7 @@ const LinksData = ({ link = null }) => {
 	};
 
 	return (
-		<tr ref={selectedSiteRef}>
+		<tr>
 			<td className="flex-none whitespace-nowrap p-4">
 				<div className="flex flex-col items-start">
 					<div>
@@ -122,7 +122,7 @@ const LinksData = ({ link = null }) => {
 									<span className="flex justify-start space-x-2 text-sm leading-5 text-gray-500">
 										<Link
 											href="/dashboard/sites/[siteId]/links/[linkId]/"
-											as={`/dashboard/sites/${sanitizedSiteId}/links/${linkDetailId}/`}
+											as={`/dashboard/sites/${sanitizedSiteId}/links/${linkId}/`}
 											title={linkUrl}
 											passHref
 										>
@@ -234,7 +234,7 @@ const LinksData = ({ link = null }) => {
 					linkDetailPages?.length > 0 ? (
 						<Link
 							href="/dashboard/sites/[siteId]/links/[linkId]/"
-							as={`/dashboard/sites/${sanitizedSiteId}/links/${linkDetailId}/`}
+							as={`/dashboard/sites/${sanitizedSiteId}/links/${linkId}/`}
 							passHref
 						>
 							<a className="mr-3 flex items-center text-sm font-semibold leading-6 text-indigo-600 outline-none transition duration-150 ease-in-out hover:text-indigo-500 focus:outline-none">
