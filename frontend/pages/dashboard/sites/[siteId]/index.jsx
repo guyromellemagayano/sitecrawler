@@ -1,6 +1,6 @@
 import { MemoizedLayout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
-import { MemoizedSiteOverviewPageLayout } from "@components/layouts/pages/SiteOverview";
+import { MemoizedComingSoonPageLayout } from "@components/layouts/pages/ComingSoon";
 import { SitesApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { DashboardSitesLink, LoginLink } from "@constants/PageLinks";
 import { SSR_SITE_URL } from "@constants/ServerEnv";
@@ -88,7 +88,7 @@ const SiteOverviewAuth = ({ siteName }) => {
 		<MemoizedLayout>
 			<NextSeo title={sitesOverviewPageTitle} />
 			<MemoizedPageLayout pageTitle={sitesOverviewText}>
-				<MemoizedSiteOverviewPageLayout />
+				<MemoizedComingSoonPageLayout />
 			</MemoizedPageLayout>
 		</MemoizedLayout>
 	) : null;
