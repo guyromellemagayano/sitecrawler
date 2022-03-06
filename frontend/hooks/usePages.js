@@ -9,7 +9,7 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  * @param {number} querySid
  * @param {number} scanObjId
  * @param {object} options
- * @returns {object} pages, errorPages, validatingPages, pagesResults, pagesCount
+ * @returns {object} pages, errorPages, validatingPages, pagesResults, pagesCount, setPagesConfig
  */
 export const usePages = (endpoint = null, querySid = null, scanObjId = null, options = null) => {
 	const [pagesCount, setPagesCount] = useState(0);
@@ -49,7 +49,7 @@ export const usePages = (endpoint = null, querySid = null, scanObjId = null, opt
 	}, [errorPages]);
 
 	useMemo(async () => {
-		if (pages?.data) {
+		if (Math.round(pages?.status / 100) === 2 && pages?.data && !pages?.data?.detail) {
 			if (pages.data?.count) {
 				setPagesCount(pages.data.count);
 			}
@@ -62,5 +62,5 @@ export const usePages = (endpoint = null, querySid = null, scanObjId = null, opt
 		return { pagesResults, pagesCount };
 	}, [pages, pagesResults, pagesCount]);
 
-	return { pages, errorPages, validatingPages, pagesResults, pagesCount };
+	return { pages, errorPages, validatingPages, pagesResults, pagesCount, setPagesConfig };
 };

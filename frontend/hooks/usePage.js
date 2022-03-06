@@ -7,14 +7,14 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  *
  * @param {string} endpoint
  * @param {object} options
- * @returns {object} page, errorPage, validatingPage
+ * @returns {object} page, errorPage, validatingPage, pageCount, pageResults, setPageConfig
  */
 export const usePage = (endpoint = null, options = null) => {
 	const [pageCount, setPageCount] = useState(0);
 	const [pageResults, setPageResults] = useState([]);
 
 	// Custom context
-	const { setConfig } = useContext(SiteCrawlerAppContext);
+	const { setConfig: setPageConfig } = useContext(SiteCrawlerAppContext);
 
 	// Custom variables
 	const currentEndpoint = endpoint !== null && typeof endpoint === "string" && endpoint !== "" ? endpoint : null;
@@ -26,7 +26,7 @@ export const usePage = (endpoint = null, options = null) => {
 		if (errorPage) {
 			// Show alert message after failed `user` SWR hook fetch
 			errorPage
-				? setConfig({
+				? setPageConfig({
 						isPage: true,
 						method: errorPage?.config?.method ?? null,
 						status: errorPage?.status ?? null
@@ -36,7 +36,7 @@ export const usePage = (endpoint = null, options = null) => {
 	}, [errorPage]);
 
 	useMemo(async () => {
-		if (page?.data) {
+		if (Math.round(page?.status / 100) === 2 && page?.data && !page?.data?.detail) {
 			if (page.data?.count) {
 				setPageCount(page.data.count);
 			}
@@ -49,5 +49,5 @@ export const usePage = (endpoint = null, options = null) => {
 		return { pageCount, pageResults };
 	}, [page, pageCount, pageResults]);
 
-	return { page, errorPage, validatingPage, pageCount, pageResults };
+	return { page, errorPage, validatingPage, pageCount, pageResults, setPageConfig };
 };

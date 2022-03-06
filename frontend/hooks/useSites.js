@@ -9,14 +9,14 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  *
  * @param {string} endpoint
  * @param {object} options
- * @returns {object} sites, validatingSites, sitesResults, sitesCount
+ * @returns {object} sites, validatingSites, sitesResults, sitesCount, setSitesConfig
  */
 export const useSites = (endpoint = null, options = null) => {
 	const [sitesCount, setSitesCount] = useState(0);
 	const [sitesResults, setSitesResults] = useState([]);
 
 	// Custom context
-	const { setConfig } = useContext(SiteCrawlerAppContext);
+	const { setConfig: setSitesConfig } = useContext(SiteCrawlerAppContext);
 
 	// Custom variables
 	const currentEndpoint =
@@ -31,7 +31,7 @@ export const useSites = (endpoint = null, options = null) => {
 		if (errorSites) {
 			// Show alert message after failed `user` SWR hook fetch
 			errorSites
-				? setConfig({
+				? setSitesConfig({
 						isSites: true,
 						method: errorSites?.config?.method ?? null,
 						status: errorSites?.status ?? null
@@ -41,7 +41,7 @@ export const useSites = (endpoint = null, options = null) => {
 	}, [errorSites]);
 
 	useMemo(async () => {
-		if (sites?.data) {
+		if (Math.round(sites?.status / 100) === 2 && sites?.data && !sites?.data?.detail) {
 			if (sites.data?.count) {
 				setSitesCount(sites.data.count);
 			}
@@ -54,5 +54,5 @@ export const useSites = (endpoint = null, options = null) => {
 		return { sitesResults, sitesCount };
 	}, [sites, sitesResults, sitesCount]);
 
-	return { sites, validatingSites, sitesResults, sitesCount };
+	return { sites, validatingSites, sitesResults, sitesCount, setSitesConfig };
 };

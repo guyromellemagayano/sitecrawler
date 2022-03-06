@@ -37,7 +37,7 @@ export const useLinks = (endpoint = null, querySid = null, scanObjId = null, opt
 
 	useMemo(async () => {
 		if (errorLinks) {
-			// Show alert message after failed `user` SWR hook fetch
+			// Show alert message after failed `links` SWR hook fetch
 			errorLinks
 				? setLinksConfig({
 						isLinks: true,
@@ -49,7 +49,7 @@ export const useLinks = (endpoint = null, querySid = null, scanObjId = null, opt
 	}, [errorLinks]);
 
 	useMemo(async () => {
-		if (links?.data) {
+		if (Math.round(links?.status / 100) === 2 && links?.data && !links?.data?.detail) {
 			if (links.data?.count) {
 				setLinksCount(links.data.count);
 			}

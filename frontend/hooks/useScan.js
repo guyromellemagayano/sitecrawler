@@ -12,7 +12,7 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  *
  * @param {number} querySid
  * @param {object} options
- * @returns {object} currentScan, errorScan, handleCrawl, isCrawlFinished, isCrawlStarted, isProcessing, previousScan, scan, scanCount, scanObjId, scanResults, setCurrentScan, setIsCrawlFinished, setIsCrawlStarted, setIsProcessing, setPreviousScan, setScanConfig, setScanCount, setScanObjId, setScanResults, validatingScan
+ * @returns {object} currentScan, errorScan, handleCrawl, isCrawlFinished, isCrawlStarted, isProcessing, previousScan, scan, scanCount, scanObjId, scanResults, selectedSiteRef, setCurrentScan, setIsCrawlFinished, setIsCrawlStarted, setIsProcessing, setPreviousScan, setScanConfig, setScanCount, setScanObjId, setScanResults, validatingScan
  */
 export const useScan = (querySid = null, options = null) => {
 	const [currentScan, setCurrentScan] = useState(null);
@@ -54,6 +54,19 @@ export const useScan = (querySid = null, options = null) => {
 
 	// SWR hook
 	const { data: scan, error: errorScan, isValidating: validatingScan } = useMainSWRConfig(currentEndpoint, options);
+
+	useMemo(async () => {
+		if (errorScan) {
+			// Show alert message after failed `scan` SWR hook fetch
+			errorScan
+				? setScanConfig({
+						isScan: true,
+						method: errorScan?.config?.method ?? null,
+						status: errorScan?.status ?? null
+				  })
+				: null;
+		}
+	}, [errorScan]);
 
 	// Handle crawl process
 	const handleCrawl = async (e) => {
@@ -107,20 +120,7 @@ export const useScan = (querySid = null, options = null) => {
 	};
 
 	useMemo(async () => {
-		if (errorScan) {
-			// Show alert message after failed `user` SWR hook fetch
-			errorScan
-				? setScanConfig({
-						isScan: true,
-						method: errorScan?.config?.method ?? null,
-						status: errorScan?.status ?? null
-				  })
-				: null;
-		}
-	}, [errorScan]);
-
-	useMemo(async () => {
-		if (scan?.data) {
+		if (Math.round(scan?.status / 100) === 2 && scan?.data && !scan?.data?.detail) {
 			if (scan.data?.count) {
 				setScanCount(scan.data.count);
 			}

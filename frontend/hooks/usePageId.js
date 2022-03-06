@@ -83,13 +83,7 @@ export const usePageId = (querySid = null, queryPageId = null, scanObjId = null,
 	}, [errorPageId]);
 
 	useMemo(async () => {
-		if (Math.round(pageId?.status) === 200 && pageId?.data && !pageId?.data?.detail) {
-			setPageIdConfig({
-				isPageId: true,
-				method: pageId.config?.method ?? null,
-				status: pageId.status ?? null
-			});
-
+		if (Math.round(pageId?.status / 100) === 2 && pageId?.data && !pageId?.data?.detail) {
 			if (pageId.data?.id) {
 				setId(pageId.data.id);
 			}

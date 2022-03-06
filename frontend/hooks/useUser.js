@@ -8,14 +8,14 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  * SWR React hook that will handle the user information
  *
  * @param {object} options
- * @returns {object} disableLocalTime, email, errorUser, firstname, group, largePageSizeThreshold, lastname, maxSiteLimit, permissions, setDisableLocalTime, setEmail, setFirstname, setLargePageSizeThreshold, setLastname, setSettings, settings, setUsername, user, userId, userIdApiEndpoint, username
+ * @returns {object} disableLocalTime, email, errorUser, firstname, group, largePageSizeThreshold, lastname, maxSiteLimit, permissions, setDisableLocalTime, setEmail, setFirstname, setLargePageSizeThreshold, setLastname, setSettings, settings, setUsername, user, id, userIdApiEndpoint, username
  */
 export const useUser = (fallback = null, options = null) => {
 	const [userIdApiEndpoint, setUserIdApiEndpoint] = useState(null);
 	const [disableLocalTime, setDisableLocalTime] = useState(false);
 	const [largePageSizeThreshold, setLargePageSizeThreshold] = useState(0);
 	const [maxSiteLimit, setMaxSiteLimit] = useState(0);
-	const [userId, setUserId] = useState(0);
+	const [id, setId] = useState(0);
 	const [username, setUsername] = useState("");
 	const [email, setEmail] = useState("");
 	const [firstname, setFirstname] = useState("");
@@ -25,7 +25,7 @@ export const useUser = (fallback = null, options = null) => {
 	const [settings, setSettings] = useState({});
 
 	// Custom context
-	const { setConfig } = useContext(SiteCrawlerAppContext);
+	const { setConfig: setUserConfig } = useContext(SiteCrawlerAppContext);
 
 	// Custom variables
 	const currentEndpoint = fallback !== null ? fallback : UserApiEndpoint;
@@ -37,7 +37,7 @@ export const useUser = (fallback = null, options = null) => {
 		if (errorUser) {
 			// Show alert message after failed `user` SWR hook fetch
 			errorUser
-				? setConfig({
+				? setUserConfig({
 						isUser: true,
 						method: errorUser?.config?.method ?? null,
 						status: errorUser?.status ?? null
@@ -47,8 +47,7 @@ export const useUser = (fallback = null, options = null) => {
 	}, [errorUser]);
 
 	useMemo(async () => {
-		if (user?.data) {
-			// Update `settings` user setting
+		if (Math.round(user?.status / 100) === 2 && user?.data && !user?.data?.detail) {
 			if (user.data?.settings) {
 				if (
 					Object.prototype.hasOwnProperty.call(user.data.settings, "disableLocalTime") &&
@@ -60,48 +59,39 @@ export const useUser = (fallback = null, options = null) => {
 				setSettings(user.data.settings);
 			}
 
-			// Update `maxSiteLimit` user setting
 			if (user.data?.group?.max_sites) {
 				setMaxSiteLimit(user.data.group.max_sites);
 			}
 
-			// Handle `userIdApiEndpoint` and `userId` user settings
 			if (user.data?.id) {
 				setUserIdApiEndpoint(`${UserApiEndpoint + user.data.id}`);
-				setUserId(user.data.id);
+				setId(user.data.id);
 			}
 
-			// Handle `username` user setting
 			if (user.data?.username) {
 				setUsername(user.data.username);
 			}
 
-			// Handle `email` user setting
 			if (user.data?.email) {
 				setEmail(user.data.email);
 			}
 
-			// Handle `firstname` user setting
 			if (user.data?.first_name) {
 				setFirstname(user.data.first_name);
 			}
 
-			// Handle `lastname` user setting
 			if (user.data?.last_name) {
 				setLastname(user.data.last_name);
 			}
 
-			// Handle `permissions` user setting
 			if (user.data?.permissions) {
 				setPermissions(user.data.permissions);
 			}
 
-			// Handle `group` user setting
 			if (user.data?.group) {
 				setGroup(user.data.group);
 			}
 
-			// Update `largePageSizeThreshold` user setting
 			if (user.data?.large_page_size_threshold) {
 				setLargePageSizeThreshold(user.data.large_page_size_threshold);
 			}
@@ -111,7 +101,7 @@ export const useUser = (fallback = null, options = null) => {
 			disableLocalTime,
 			maxSiteLimit,
 			userIdApiEndpoint,
-			userId,
+			id,
 			username,
 			email,
 			firstname,
@@ -126,7 +116,7 @@ export const useUser = (fallback = null, options = null) => {
 		disableLocalTime,
 		maxSiteLimit,
 		userIdApiEndpoint,
-		userId,
+		id,
 		username,
 		email,
 		firstname,
@@ -156,8 +146,9 @@ export const useUser = (fallback = null, options = null) => {
 		settings,
 		setUsername,
 		user,
-		userId,
+		id,
 		userIdApiEndpoint,
-		username
+		username,
+		setUserConfig
 	};
 };

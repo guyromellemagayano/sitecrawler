@@ -69,13 +69,7 @@ export const useImageId = (querySid = null, queryImageId = null, scanObjId = nul
 	}, [errorImageId]);
 
 	useMemo(async () => {
-		if (Math.round(imageId?.status) === 200 && imageId?.data && !imageId?.data?.detail) {
-			setImageIdConfig({
-				isImageId: true,
-				method: imageId.config?.method ?? null,
-				status: imageId.status ?? null
-			});
-
+		if (Math.round(imageId?.status / 100) === 2 && imageId?.data && !imageId?.data?.detail) {
 			if (imageId.data?.id) {
 				setId(imageId.data.id);
 			}

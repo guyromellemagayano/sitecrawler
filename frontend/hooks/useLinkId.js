@@ -66,13 +66,7 @@ export const useLinkId = (querySid = null, queryLinkId = null, scanObjId = null,
 	}, [errorLinkId]);
 
 	useMemo(async () => {
-		if (Math.round(linkId?.status) === 200 && linkId?.data && !linkId?.data?.detail) {
-			setLinkIdConfig({
-				isLinkId: true,
-				method: linkId.config?.method ?? null,
-				status: linkId.status ?? null
-			});
-
+		if (Math.round(linkId?.status / 100) === 2 && linkId?.data && !linkId?.data?.detail) {
 			if (linkId.data?.id) {
 				setId(linkId.data.id);
 			}
