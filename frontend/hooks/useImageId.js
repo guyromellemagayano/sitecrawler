@@ -3,7 +3,7 @@ import { ScanSlug, SiteImageSlug } from "@constants/PageLinks";
 import { handlePutMethod } from "@helpers/handleHttpMethods";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { useContext, useMemo, useState } from "react";
-import { mutate } from "swr";
+import { useSWRConfig } from "swr";
 import { useMainSWRConfig } from "./useMainSWRConfig";
 
 export const useImageId = (querySid = null, queryImageId = null, scanObjId = null, options = null) => {
@@ -22,10 +22,10 @@ export const useImageId = (querySid = null, queryImageId = null, scanObjId = nul
 	const [tlsStatusAdjusted, setTlsStatusAdjusted] = useState(null);
 	const [resolvedStatus, setResolvedStatus] = useState(false);
 	const [resolvedTls, setResolvedTls] = useState(false);
+	const [tls, setTls] = useState(null);
 	const [missingAlts, setMissingAlts] = useState(null);
 	const [missingAltsAdjusted, setMissingAltsAdjusted] = useState(null);
 	const [resolvedMissingAlts, setResolvedMissingAlts] = useState(false);
-	const [tls, setTls] = useState(null);
 	const [pages, setPages] = useState(null);
 
 	// Custom context
@@ -45,101 +45,15 @@ export const useImageId = (querySid = null, queryImageId = null, scanObjId = nul
 			? SitesApiEndpoint + querySid + ScanSlug + scanObjId + SiteImageSlug + queryImageId + "/"
 			: null;
 
+	// SWR hook for global mutations
+	const { mutate } = useSWRConfig();
+
 	// SWR hook
 	const {
 		data: imageId,
 		error: errorImageId,
 		isValidating: validatingImageId
 	} = useMainSWRConfig(currentEndpoint, options);
-
-	// Handle resolved status
-	const handleResolveData = (e) => {
-		e.preventDefault();
-
-		let isMounted = true;
-
-		const resolveValue = e.target.value;
-		const resolveChecked = e.target.checked;
-
-		if (resolveValue === "resolvedStatus" && resolveChecked) {
-			setResolvedStatus(true);
-		} else if (resolveValue === "resolvedStatus" && !resolveChecked) {
-			setResolvedStatus(false);
-		}
-
-		if (resolveValue === "resolvedTls") {
-			setResolvedTls(true);
-		} else {
-			setResolvedTls(false);
-		}
-
-		if (resolveValue === "resolvedMissingAlts") {
-			setResolvedMissingAlts(true);
-		} else {
-			setResolvedMissingAlts(false);
-		}
-
-		(async () => {
-			const body = {
-				id: id,
-				created_at: createdAt,
-				scan_id: scanId,
-				type: type,
-				url: url,
-				status: status,
-				status_adjusted: statusAdjusted,
-				http_status: httpStatus,
-				response_time: responseTime,
-				error: error,
-				size: size,
-				tls_status: tlsStatus,
-				tls_status_adjusted: tlsStatusAdjusted,
-				resolved_status: resolvedStatus,
-				resolved_tls: resolvedTls,
-				missing_alts: missingAlts,
-				missing_alts_adjusted: missingAltsAdjusted,
-				resolved_missing_alts: resolvedMissingAlts,
-				tls: tls,
-				pages: pages
-			};
-
-			const resolveResponse = await handlePutMethod(currentEndpoint, body);
-			const resolveResponseData = resolveResponse?.data ?? null;
-			const resolveResponseStatus = resolveResponse?.status ?? null;
-			const resolveResponseMethod = resolveResponse?.config?.method ?? null;
-
-			if (resolveResponseData !== null && Math.round(resolveResponseStatus / 200) === 1) {
-				// Show alert message after successful 200 OK or 201 Created response is issued
-				setImageIdConfig({
-					isImageId: true,
-					method: resolveResponseMethod,
-					status: resolveResponseStatus
-				});
-
-				mutate(
-					currentEndpoint,
-					{
-						...imageId,
-						data: resolveResponseData
-					},
-					false
-				);
-			} else {
-				// Show alert message after successful 200 OK or 201 Created response is issued
-				setImageIdConfig({
-					isImageId: true,
-					method: resolveResponseMethod,
-					status: resolveResponseStatus
-				});
-
-				mutate(currentEndpoint);
-			}
-		})();
-
-		return () => {
-			isMounted = false;
-		};
-	};
 
 	useMemo(async () => {
 		if (errorImageId) {
@@ -155,7 +69,13 @@ export const useImageId = (querySid = null, queryImageId = null, scanObjId = nul
 	}, [errorImageId]);
 
 	useMemo(async () => {
-		if (imageId?.data) {
+		if (Math.round(imageId?.status) === 200 && imageId?.data && !imageId?.data?.detail) {
+			setImageIdConfig({
+				isImageId: true,
+				method: imageId.config?.method ?? null,
+				status: imageId.status ?? null
+			});
+
 			if (imageId.data?.id) {
 				setId(imageId.data.id);
 			}
@@ -255,6 +175,7 @@ export const useImageId = (querySid = null, queryImageId = null, scanObjId = nul
 		};
 	}, [
 		imageId,
+		id,
 		createdAt,
 		scanId,
 		type,
@@ -275,8 +196,80 @@ export const useImageId = (querySid = null, queryImageId = null, scanObjId = nul
 		pages
 	]);
 
+	// Handle resolved status
+	const handleResolveData = (e) => {
+		e.preventDefault();
+
+		let isMounted = true;
+
+		const resolveValue = e.target.value;
+		const resolveChecked = e.target.checked;
+
+		if (resolveValue === "resolvedStatus" && resolveChecked) {
+			setResolvedStatus(true);
+		} else if (resolveValue === "resolvedStatus" && !resolveChecked) {
+			setResolvedStatus(false);
+		}
+
+		if (resolveValue === "resolvedTls") {
+			setResolvedTls(true);
+		} else {
+			setResolvedTls(false);
+		}
+
+		if (resolveValue === "resolvedMissingAlts") {
+			setResolvedMissingAlts(true);
+		} else {
+			setResolvedMissingAlts(false);
+		}
+
+		(async () => {
+			if (!isMounted) return;
+
+			const body = {
+				id: id,
+				created_at: createdAt,
+				scan_id: scanId,
+				type: type,
+				url: url,
+				status: status,
+				status_adjusted: statusAdjusted,
+				http_status: httpStatus,
+				response_time: responseTime,
+				error: error,
+				size: size,
+				tls_status: tlsStatus,
+				tls_status_adjusted: tlsStatusAdjusted,
+				resolved_status: resolvedStatus,
+				resolved_tls: resolvedTls,
+				missing_alts: missingAlts,
+				missing_alts_adjusted: missingAltsAdjusted,
+				resolved_missing_alts: resolvedMissingAlts,
+				tls: tls,
+				pages: pages
+			};
+
+			const resolveResponse = await handlePutMethod(currentEndpoint, body);
+			const resolveResponseData = resolveResponse?.data ?? null;
+			const resolveResponseStatus = resolveResponse?.status ?? null;
+			const resolveResponseMethod = resolveResponse?.config?.method ?? null;
+
+			if (resolveResponseData !== null && Math.round(resolveResponseStatus / 200) === 1) {
+				mutate(currentEndpoint, {
+					...imageId,
+					data: resolveResponseData
+				});
+			}
+		})();
+
+		return () => {
+			isMounted = false;
+		};
+	};
+
 	return {
 		imageId,
+		id,
 		errorImageId,
 		validatingImageId,
 		createdAt,
