@@ -74,7 +74,7 @@ const BasicPlan = ({ data = null, setPlanId, setPlanName, setOpen }) => {
 								return (
 									<li key={key} className="my-3 flex items-start">
 										<div className="flex-shrink-0">
-											<CheckIcon className="h-6 w-6 text-green-500" />
+											<CheckIcon className="h-5 w-5 text-green-500" />
 										</div>
 										<p className="ml-3 text-base font-medium leading-6 text-gray-500">{val2}</p>
 									</li>

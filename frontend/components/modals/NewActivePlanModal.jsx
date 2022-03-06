@@ -77,7 +77,7 @@ const NewActivePlanModal = ({ planId = null, planName = null, showModal = false,
 								aria-label="Close"
 								onClick={() => setShowModal(false)}
 							>
-								<XIcon className="h-6 w-6" />
+								<XIcon className="h-5 w-5" />
 							</button>
 						</div>
 						<div>
@@ -115,7 +115,7 @@ const NewActivePlanModal = ({ planId = null, planName = null, showModal = false,
 																				return (
 																					<li key={key} className="my-1 flex items-start">
 																						<div className="flex-shrink-0">
-																							<CheckIcon className="h-6 w-6 text-green-500" />
+																							<CheckIcon className="h-5 w-5 text-green-500" />
 																						</div>
 																						<p className="ml-3 text-sm font-medium leading-6 text-gray-500">{val2}</p>
 																					</li>

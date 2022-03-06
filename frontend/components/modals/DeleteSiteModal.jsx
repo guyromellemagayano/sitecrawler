@@ -139,9 +139,9 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 									)}
 								>
 									{!isHidden ? (
-										<XCircleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
+										<XCircleIcon className="h-5 w-5 text-red-600" aria-hidden="true" />
 									) : (
-										<CheckCircleIcon className="h-6 w-6 text-green-600" aria-hidden="true" />
+										<CheckCircleIcon className="h-5 w-5 text-green-600" aria-hidden="true" />
 									)}
 								</div>
 								<div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">

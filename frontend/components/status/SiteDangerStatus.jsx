@@ -10,7 +10,7 @@ import { memo } from "react";
 const SiteDangerStatus = ({ text = null }) => {
 	return text !== null ? (
 		<span className="inline-flex items-center rounded-full text-sm font-semibold leading-5 text-red-800">
-			<XCircleIcon className="mr-2 h-6 w-6" />
+			<XCircleIcon className="mr-2 h-5 w-5" />
 			{text}
 		</span>
 	) : null;

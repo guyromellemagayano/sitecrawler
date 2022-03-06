@@ -53,7 +53,7 @@ const MobileSidebarLayout = ({ openSidebar = false, setOpenSidebar }, ref) => {
 									onClick={() => setOpenSidebar(false)}
 								>
 									<span className="sr-only">{closeSidebar}</span>
-									<XIcon className="h-6 w-6 text-white" />
+									<XIcon className="h-5 w-5 text-white" />
 								</button>
 							</div>
 

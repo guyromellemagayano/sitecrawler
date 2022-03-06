@@ -10,7 +10,7 @@ import { memo } from "react";
 const SiteWarningStatus = ({ text = null }) => {
 	return text !== null ? (
 		<span className="inline-flex items-center rounded-full text-sm font-semibold leading-5 text-yellow-800">
-			<ExclamationIcon className="mr-2 h-6 w-6" />
+			<ExclamationIcon className="mr-2 h-5 w-5" />
 			{text}
 		</span>
 	) : null;

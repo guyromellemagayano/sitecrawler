@@ -46,9 +46,9 @@ const Notification = ({ responseTitle = null, responseText = null, isSuccess = f
 					<div className="flex items-start">
 						<div className="flex-shrink-0">
 							{isSuccess ? (
-								<CheckCircleIcon className="h-6 w-6 text-green-400" aria-hidden="true" />
+								<CheckCircleIcon className="h-5 w-5 text-green-400" aria-hidden="true" />
 							) : (
-								<XCircleIcon className="h-6 w-6 text-red-400" aria-hidden="true" />
+								<XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
 							)}
 						</div>
 						<div className="ml-3 w-0 flex-1 pt-0.5">
