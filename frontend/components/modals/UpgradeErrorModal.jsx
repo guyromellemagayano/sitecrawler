@@ -138,7 +138,10 @@ const UpgradeErrorModal = ({ showModal = false, setShowModal }, ref) => {
 									disabled={isLoading}
 									aria-disabled={isLoading}
 									aria-hidden={isLoading}
-									className="mt-3 inline-flex w-full cursor-pointer justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 sm:mt-0 sm:w-auto sm:text-sm"
+									className={classnames(
+										"mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm",
+										isLoading ? "cursor-not-allowed opacity-50" : "hover:bg-gray-50"
+									)}
 									onClick={isLoading ? () => {} : handleCloseModal}
 								>
 									{closeText}
