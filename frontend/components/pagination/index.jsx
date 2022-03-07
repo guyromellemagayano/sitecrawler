@@ -173,7 +173,7 @@ const DataPagination = () => {
 		!user?.data?.detail &&
 		pageCount &&
 		pageResults ? (
-		<div className="mt-8 mb-4 items-center justify-between bg-white py-4 align-middle lg:flex">
+		<div className="mt-8 mb-4 items-center justify-between py-4 align-middle lg:flex">
 			<div className="mb-8 flex items-center lg:m-0">
 				<div className="mt-2 lg:my-0">
 					<p className="text-center text-sm leading-5 text-gray-500 lg:text-left">

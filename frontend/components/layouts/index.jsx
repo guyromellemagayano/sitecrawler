@@ -71,7 +71,7 @@ export const DashboardLayout = ({ children }) => {
 						/>
 					</div>
 
-					<div className="flex-1">
+					<div className="flex-1 bg-gray-100">
 						<Scrollbars autoHide universal>
 							<div className="absolute left-0 right-0 mx-auto h-full w-full max-w-screen-2xl">
 								<div className="flex h-full flex-col">{children}</div>
