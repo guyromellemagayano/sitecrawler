@@ -24,7 +24,7 @@ const NotAllowedFeatureModal = ({ showModal = false, setShowModal }, ref) => {
 	return (
 		<Transition.Root show={showModal} as={Fragment}>
 			<Dialog as="div" className="fixed inset-0 z-50 overflow-y-auto" initialFocus={ref} onClose={handleCloseModal}>
-				<div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+				<div className="flex min-h-screen items-end justify-center p-4 text-center sm:block sm:p-0">
 					<Transition.Child
 						as={Fragment}
 						enter="ease-out duration-300"

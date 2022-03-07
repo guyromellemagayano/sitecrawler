@@ -62,7 +62,7 @@ const SiteLimitReachedModal = ({ showModal = false, setShowModal }, ref) => {
 				initialFocus={siteLimitReachedModalRef}
 				onClose={!isLoading ? setShowModal : () => {}}
 			>
-				<div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+				<div className="flex min-h-screen items-end justify-center p-4 text-center sm:block sm:p-0">
 					<Transition.Child
 						as={Fragment}
 						enter="ease-out duration-300"
