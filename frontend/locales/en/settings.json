@@ -32,10 +32,11 @@
 	"cardInformationSettings": {
 		"title": "Card Information",
 		"noCurrentCardRegistered": "No current card registered",
-		"addCard": "Add Card",
+		"addCard": "Add New Card",
 		"cardNumber": "Card Number",
 		"expirationDate": "Expiration Date",
 		"cvc": "CVC",
+		"cardDetails": "Card Details",
 		"loadingCardInformation": "Loading card information..."
 	},
 	"subscriptionPlans": {
@@ -81,7 +82,5 @@
 		"processingPayment": "Processing Payment...",
 		"renewsOn": "Renews on",
 		"requested": "Requested"
-	},
-	"saving": "Saving...",
-	"saveChanges": "Save Changes"
+	}
 }
