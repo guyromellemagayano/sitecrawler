@@ -14,7 +14,7 @@ const BillingSettingsAuth = () => {
 	const billingSettings = t("billingSettings");
 
 	// Custom context
-	const { isComponentReady, user } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
 	return isComponentReady ? (
 		<MemoizedLayout>
@@ -28,7 +28,7 @@ const BillingSettingsAuth = () => {
 	);
 };
 
-export default function BillingSettings({ fallback }) {
+export default function BillingSettings() {
 	return (
 		<SWRConfig>
 			<BillingSettingsAuth />
