@@ -29,7 +29,7 @@ export const handleNotificationMessages = ({
 	data,
 	fallback
 }) => {
-	if (typeof data === "object" && Object.keys(data)?.length > 0) {
+	if (typeof data === "object") {
 		dispatch({
 			...state,
 			...(isLinks && { isLinks: isLinks }),
@@ -128,7 +128,7 @@ export const handleNotificationMessages = ({
 			});
 
 			setConfig({
-				...(isLinks && { isLinks: false }),
+				...(isLinks && { isLinks: !isLinks }),
 				...(isLocalTimeDisabled && { isLocalTimeDisabled: !isLocalTimeDisabled }),
 				...(isLocalTimeEnabled && { isLocalTimeEnabled: !isLocalTimeEnabled }),
 				...(isLogin && { isLogin: !isLogin }),
