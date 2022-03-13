@@ -30,7 +30,7 @@ import {
 	StripeSubscriptionsNotificationMessage
 } from "@constants/notificationMessage/stripe";
 import { SupportNotificationMessage } from "@constants/notificationMessage/support";
-import { useMemo, useReducer, useState } from "react";
+import { useCallback, useEffect, useReducer, useState } from "react";
 
 const messagesReducer = (state, action) => {
 	return {
@@ -79,7 +79,8 @@ export const useNotificationMessage = () => {
 	// Custom hooks
 	const [state, dispatch] = useReducer(messagesReducer, config);
 
-	useMemo(() => {
+	// Handle alert/notification messasges
+	const handleNotificationMessages = useCallback(() => {
 		if (config) {
 			const isError = config?.isError ?? false;
 			const isLinks = config?.isLinks ?? false;
@@ -363,6 +364,10 @@ export const useNotificationMessage = () => {
 
 		return { state, config };
 	}, [config]);
+
+	useEffect(() => {
+		handleNotificationMessages();
+	}, [handleNotificationMessages]);
 
 	return { state, setConfig };
 };

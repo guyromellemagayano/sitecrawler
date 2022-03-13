@@ -3,24 +3,24 @@ import { handleConversionStringToLowercase, handleConversionStringToNumber } fro
 import useTranslation from "next-translate/useTranslation";
 import { FalllbackNotificationMessage } from "../fallback";
 
-// Fallback translations
-const {
-	fallback,
-	fallback200OkSuccessResponse,
-	fallback201CreatedSuccessResponse,
-	fallback204NoContentSuccessResponse,
-	fallback400BadRequestErrorResponse,
-	fallback401UnauthorizedErrorResponse,
-	fallback403ForbiddenErrorResponse,
-	fallback404NotFoundErrorResponse,
-	fallback429TooManyRequestsErrorResponse,
-	fallback500InternalServerErrorResponse,
-	fallback502BadGatewayErrorResponse,
-	fallback503ServiceUnavailableErrorResponse,
-	fallback504GatewayTimeoutErrorResponse
-} = FalllbackNotificationMessage();
-
 export const SitesNotificationMessage = ({ dispatch, config, setConfig, state, isSites }) => {
+	// Fallback translations
+	const {
+		fallback,
+		fallback200OkSuccessResponse,
+		fallback201CreatedSuccessResponse,
+		fallback204NoContentSuccessResponse,
+		fallback400BadRequestErrorResponse,
+		fallback401UnauthorizedErrorResponse,
+		fallback403ForbiddenErrorResponse,
+		fallback404NotFoundErrorResponse,
+		fallback429TooManyRequestsErrorResponse,
+		fallback500InternalServerErrorResponse,
+		fallback502BadGatewayErrorResponse,
+		fallback503ServiceUnavailableErrorResponse,
+		fallback504GatewayTimeoutErrorResponse
+	} = FalllbackNotificationMessage();
+
 	// Translations
 	const { t } = useTranslation();
 
@@ -480,6 +480,23 @@ export const SitesNotificationMessage = ({ dispatch, config, setConfig, state, i
 };
 
 export const ScanNotificationMessages = ({ dispatch, config, setConfig, state, isScan }) => {
+	// Fallback translations
+	const {
+		fallback,
+		fallback200OkSuccessResponse,
+		fallback201CreatedSuccessResponse,
+		fallback204NoContentSuccessResponse,
+		fallback400BadRequestErrorResponse,
+		fallback401UnauthorizedErrorResponse,
+		fallback403ForbiddenErrorResponse,
+		fallback404NotFoundErrorResponse,
+		fallback429TooManyRequestsErrorResponse,
+		fallback500InternalServerErrorResponse,
+		fallback502BadGatewayErrorResponse,
+		fallback503ServiceUnavailableErrorResponse,
+		fallback504GatewayTimeoutErrorResponse
+	} = FalllbackNotificationMessage();
+
 	// Translations
 	const { t } = useTranslation();
 
@@ -683,6 +700,23 @@ export const ScanNotificationMessages = ({ dispatch, config, setConfig, state, i
 };
 
 export const StatsNotificationMessage = ({ dispatch, config, setConfig, state, isStats }) => {
+	// Fallback translations
+	const {
+		fallback,
+		fallback200OkSuccessResponse,
+		fallback201CreatedSuccessResponse,
+		fallback204NoContentSuccessResponse,
+		fallback400BadRequestErrorResponse,
+		fallback401UnauthorizedErrorResponse,
+		fallback403ForbiddenErrorResponse,
+		fallback404NotFoundErrorResponse,
+		fallback429TooManyRequestsErrorResponse,
+		fallback500InternalServerErrorResponse,
+		fallback502BadGatewayErrorResponse,
+		fallback503ServiceUnavailableErrorResponse,
+		fallback504GatewayTimeoutErrorResponse
+	} = FalllbackNotificationMessage();
+
 	// Translations
 	const { t } = useTranslation();
 
@@ -886,6 +920,23 @@ export const StatsNotificationMessage = ({ dispatch, config, setConfig, state, i
 };
 
 export const LinksNotificationMessage = ({ dispatch, config, setConfig, state, isLinks }) => {
+	// Fallback translations
+	const {
+		fallback,
+		fallback200OkSuccessResponse,
+		fallback201CreatedSuccessResponse,
+		fallback204NoContentSuccessResponse,
+		fallback400BadRequestErrorResponse,
+		fallback401UnauthorizedErrorResponse,
+		fallback403ForbiddenErrorResponse,
+		fallback404NotFoundErrorResponse,
+		fallback429TooManyRequestsErrorResponse,
+		fallback500InternalServerErrorResponse,
+		fallback502BadGatewayErrorResponse,
+		fallback503ServiceUnavailableErrorResponse,
+		fallback504GatewayTimeoutErrorResponse
+	} = FalllbackNotificationMessage();
+
 	// Translations
 	const { t } = useTranslation();
 
@@ -1172,6 +1223,23 @@ export const LinksNotificationMessage = ({ dispatch, config, setConfig, state, i
 };
 
 export const PagesNotificationMessage = ({ dispatch, config, setConfig, state, isPages }) => {
+	// Fallback translations
+	const {
+		fallback,
+		fallback200OkSuccessResponse,
+		fallback201CreatedSuccessResponse,
+		fallback204NoContentSuccessResponse,
+		fallback400BadRequestErrorResponse,
+		fallback401UnauthorizedErrorResponse,
+		fallback403ForbiddenErrorResponse,
+		fallback404NotFoundErrorResponse,
+		fallback429TooManyRequestsErrorResponse,
+		fallback500InternalServerErrorResponse,
+		fallback502BadGatewayErrorResponse,
+		fallback503ServiceUnavailableErrorResponse,
+		fallback504GatewayTimeoutErrorResponse
+	} = FalllbackNotificationMessage();
+
 	// Translations
 	const { t } = useTranslation();
 
@@ -1375,6 +1443,23 @@ export const PagesNotificationMessage = ({ dispatch, config, setConfig, state, i
 };
 
 export const ImagesNotificationMessage = ({ dispatch, config, setConfig, state, isImages }) => {
+	// Fallback translations
+	const {
+		fallback,
+		fallback200OkSuccessResponse,
+		fallback201CreatedSuccessResponse,
+		fallback204NoContentSuccessResponse,
+		fallback400BadRequestErrorResponse,
+		fallback401UnauthorizedErrorResponse,
+		fallback403ForbiddenErrorResponse,
+		fallback404NotFoundErrorResponse,
+		fallback429TooManyRequestsErrorResponse,
+		fallback500InternalServerErrorResponse,
+		fallback502BadGatewayErrorResponse,
+		fallback503ServiceUnavailableErrorResponse,
+		fallback504GatewayTimeoutErrorResponse
+	} = FalllbackNotificationMessage();
+
 	// Translations
 	const { t } = useTranslation();
 
@@ -1578,6 +1663,23 @@ export const ImagesNotificationMessage = ({ dispatch, config, setConfig, state, 
 };
 
 export const UrlInformationStepNotificationMessage = ({ dispatch, config, setConfig, state, isUrlInformationStep }) => {
+	// Fallback translations
+	const {
+		fallback,
+		fallback200OkSuccessResponse,
+		fallback201CreatedSuccessResponse,
+		fallback204NoContentSuccessResponse,
+		fallback400BadRequestErrorResponse,
+		fallback401UnauthorizedErrorResponse,
+		fallback403ForbiddenErrorResponse,
+		fallback404NotFoundErrorResponse,
+		fallback429TooManyRequestsErrorResponse,
+		fallback500InternalServerErrorResponse,
+		fallback502BadGatewayErrorResponse,
+		fallback503ServiceUnavailableErrorResponse,
+		fallback504GatewayTimeoutErrorResponse
+	} = FalllbackNotificationMessage();
+
 	// Translations
 	const { t } = useTranslation();
 
@@ -1916,6 +2018,23 @@ export const UrlInformationStepNotificationMessage = ({ dispatch, config, setCon
 };
 
 export const VerifyUrlStepNotificationMessage = ({ dispatch, isError, config, setConfig, state, isVerifyUrlStep }) => {
+	// Fallback translations
+	const {
+		fallback,
+		fallback200OkSuccessResponse,
+		fallback201CreatedSuccessResponse,
+		fallback204NoContentSuccessResponse,
+		fallback400BadRequestErrorResponse,
+		fallback401UnauthorizedErrorResponse,
+		fallback403ForbiddenErrorResponse,
+		fallback404NotFoundErrorResponse,
+		fallback429TooManyRequestsErrorResponse,
+		fallback500InternalServerErrorResponse,
+		fallback502BadGatewayErrorResponse,
+		fallback503ServiceUnavailableErrorResponse,
+		fallback504GatewayTimeoutErrorResponse
+	} = FalllbackNotificationMessage();
+
 	// Translations
 	const { t } = useTranslation();
 

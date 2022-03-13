@@ -3,23 +3,6 @@ import { handleConversionStringToLowercase, handleConversionStringToNumber } fro
 import useTranslation from "next-translate/useTranslation";
 import { FalllbackNotificationMessage } from "../fallback";
 
-// Fallback translations
-const {
-	fallback,
-	fallback200OkSuccessResponse,
-	fallback201CreatedSuccessResponse,
-	fallback204NoContentSuccessResponse,
-	fallback400BadRequestErrorResponse,
-	fallback401UnauthorizedErrorResponse,
-	fallback403ForbiddenErrorResponse,
-	fallback404NotFoundErrorResponse,
-	fallback429TooManyRequestsErrorResponse,
-	fallback500InternalServerErrorResponse,
-	fallback502BadGatewayErrorResponse,
-	fallback503ServiceUnavailableErrorResponse,
-	fallback504GatewayTimeoutErrorResponse
-} = FalllbackNotificationMessage();
-
 export const StripePaymentMethodNotificationMessage = ({
 	dispatch,
 	config,
@@ -27,6 +10,23 @@ export const StripePaymentMethodNotificationMessage = ({
 	state,
 	isStripePaymentMethod
 }) => {
+	// Fallback translations
+	const {
+		fallback,
+		fallback200OkSuccessResponse,
+		fallback201CreatedSuccessResponse,
+		fallback204NoContentSuccessResponse,
+		fallback400BadRequestErrorResponse,
+		fallback401UnauthorizedErrorResponse,
+		fallback403ForbiddenErrorResponse,
+		fallback404NotFoundErrorResponse,
+		fallback429TooManyRequestsErrorResponse,
+		fallback500InternalServerErrorResponse,
+		fallback502BadGatewayErrorResponse,
+		fallback503ServiceUnavailableErrorResponse,
+		fallback504GatewayTimeoutErrorResponse
+	} = FalllbackNotificationMessage();
+
 	// Translations
 	const { t } = useTranslation();
 
@@ -274,6 +274,23 @@ export const StripePaymentMethodDefaultNotificationMessage = ({
 	state,
 	isStripePaymentMethodDefault
 }) => {
+	// Fallback translations
+	const {
+		fallback,
+		fallback200OkSuccessResponse,
+		fallback201CreatedSuccessResponse,
+		fallback204NoContentSuccessResponse,
+		fallback400BadRequestErrorResponse,
+		fallback401UnauthorizedErrorResponse,
+		fallback403ForbiddenErrorResponse,
+		fallback404NotFoundErrorResponse,
+		fallback429TooManyRequestsErrorResponse,
+		fallback500InternalServerErrorResponse,
+		fallback502BadGatewayErrorResponse,
+		fallback503ServiceUnavailableErrorResponse,
+		fallback504GatewayTimeoutErrorResponse
+	} = FalllbackNotificationMessage();
+
 	// Translations
 	const { t } = useTranslation();
 
@@ -322,6 +339,23 @@ export const StripeSubscriptionsNotificationMessage = ({
 	state,
 	isStripeSubscriptions
 }) => {
+	// Fallback translations
+	const {
+		fallback,
+		fallback200OkSuccessResponse,
+		fallback201CreatedSuccessResponse,
+		fallback204NoContentSuccessResponse,
+		fallback400BadRequestErrorResponse,
+		fallback401UnauthorizedErrorResponse,
+		fallback403ForbiddenErrorResponse,
+		fallback404NotFoundErrorResponse,
+		fallback429TooManyRequestsErrorResponse,
+		fallback500InternalServerErrorResponse,
+		fallback502BadGatewayErrorResponse,
+		fallback503ServiceUnavailableErrorResponse,
+		fallback504GatewayTimeoutErrorResponse
+	} = FalllbackNotificationMessage();
+
 	// Translations
 	const { t } = useTranslation();
 
@@ -458,6 +492,23 @@ export const StripeSubscriptionsCurrentNotificationMessage = ({
 	state,
 	isStripeSubscriptionsCurrent
 }) => {
+	// Fallback translations
+	const {
+		fallback,
+		fallback200OkSuccessResponse,
+		fallback201CreatedSuccessResponse,
+		fallback204NoContentSuccessResponse,
+		fallback400BadRequestErrorResponse,
+		fallback401UnauthorizedErrorResponse,
+		fallback403ForbiddenErrorResponse,
+		fallback404NotFoundErrorResponse,
+		fallback429TooManyRequestsErrorResponse,
+		fallback500InternalServerErrorResponse,
+		fallback502BadGatewayErrorResponse,
+		fallback503ServiceUnavailableErrorResponse,
+		fallback504GatewayTimeoutErrorResponse
+	} = FalllbackNotificationMessage();
+
 	// Translations
 	const { t } = useTranslation();
 

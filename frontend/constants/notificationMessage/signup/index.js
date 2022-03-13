@@ -3,24 +3,24 @@ import { handleConversionStringToLowercase, handleConversionStringToNumber } fro
 import useTranslation from "next-translate/useTranslation";
 import { FalllbackNotificationMessage } from "../fallback";
 
-// Fallback translations
-const {
-	fallback,
-	fallback200OkSuccessResponse,
-	fallback201CreatedSuccessResponse,
-	fallback204NoContentSuccessResponse,
-	fallback400BadRequestErrorResponse,
-	fallback401UnauthorizedErrorResponse,
-	fallback403ForbiddenErrorResponse,
-	fallback404NotFoundErrorResponse,
-	fallback429TooManyRequestsErrorResponse,
-	fallback500InternalServerErrorResponse,
-	fallback502BadGatewayErrorResponse,
-	fallback503ServiceUnavailableErrorResponse,
-	fallback504GatewayTimeoutErrorResponse
-} = FalllbackNotificationMessage();
-
 export const SignupNotificationMessage = ({ dispatch, config, setConfig, state, isSignup }) => {
+	// Fallback translations
+	const {
+		fallback,
+		fallback200OkSuccessResponse,
+		fallback201CreatedSuccessResponse,
+		fallback204NoContentSuccessResponse,
+		fallback400BadRequestErrorResponse,
+		fallback401UnauthorizedErrorResponse,
+		fallback403ForbiddenErrorResponse,
+		fallback404NotFoundErrorResponse,
+		fallback429TooManyRequestsErrorResponse,
+		fallback500InternalServerErrorResponse,
+		fallback502BadGatewayErrorResponse,
+		fallback503ServiceUnavailableErrorResponse,
+		fallback504GatewayTimeoutErrorResponse
+	} = FalllbackNotificationMessage();
+
 	// Translations
 	const { t } = useTranslation();
 
