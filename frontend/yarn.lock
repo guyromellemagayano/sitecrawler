@@ -514,10 +514,12 @@
     lodash.isplainobject "^4.0.6"
     lodash.merge "^4.6.2"
 
-"@tanem/react-nprogress@^4.0.9":
-  version "4.0.9"
-  resolved "https://registry.yarnpkg.com/@tanem/react-nprogress/-/react-nprogress-4.0.9.tgz#dea4931d2e0168549cad18d25a1b1104d92ec650"
-  integrity sha512-F9hKi8qeumTQ1cdm6ZSFboZiDPwh4gXRxleG3NtPJVuk/KxqMNKaqToexLk9rCtCtYB7NsUvTGUCkugsZpixzg==
+
+"@tanem/react-nprogress@^4.0.10":
+  version "4.0.10"
+  resolved "https://registry.yarnpkg.com/@tanem/react-nprogress/-/react-nprogress-4.0.10.tgz#e0a002324ea79ea9b261c02425d73c8ce80090b4"
+  integrity sha512-LGEMgPdXgLZ9e4XsCzFll3AJE5B6CqHMBaBPqYKmKuRVH+blp8ke2psiiOTqEGOlxuI0F0K/2u3N1qg9wI+p5Q==
+
   dependencies:
     "@babel/runtime" "^7.17.2"
     hoist-non-react-statics "^3.3.2"
