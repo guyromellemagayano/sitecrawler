@@ -1,12 +1,12 @@
 import { handleUnitAmountToRealPrice } from "@helpers/handleUnitAmountToRealPrice";
 import { CheckIcon } from "@heroicons/react/solid";
-import { useCurrentSubscription } from "@hooks/useCurrentSubscription";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import { handleConversionStringToLowercase } from "@utils/convertCase";
 import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useContext } from "react";
 
 /**
  * Custom function to render the "MonthlyPlans" component
@@ -17,32 +17,28 @@ import { memo, useCallback, useEffect, useState } from "react";
  * @param {boolean} loadingProMonthly
  * @param {function} setPlanId
  * @param {function} setPlanName
- * @param {function} setOpen
+ * @param {function} setShowModal
  */
 const MonthlyPlans = ({
 	data = null,
 	disableLocalTime = false,
 	loadingAgencyMonthly = false,
 	loadingProMonthly = false,
-	setOpen,
+	setShowModal,
 	setPlanId,
 	setPlanName
 }) => {
-	const [currentSubscriptionId, setCurrentSubscriptionId] = useState(null);
-	const [currentSubscriptionStatus, setCurrentSubscriptionStatus] = useState(null);
-	const [currentSubscriptionCancelAt, setCurrentSubscriptionCancelAt] = useState(null);
-
 	// Translation
 	const { t } = useTranslation();
-	const subscriptionPlansMonthly = t("settings:subscriptionPlans.monthly");
-	const subscriptionPlansSelectPlan = t("settings:subscriptionPlans.plan.select");
-	const subscriptionPlansCurrentPlan = t("settings:subscriptionPlans.plan.current");
-	const subscriptionPlansMostPopular = t("settings:subscriptionPlans.mostPopular");
-	const subscriptionPlansProcessingPlan = t("settings:subscriptionPlans.processingPlan");
-	const subscriptionPlansEndsOn = t("settings:subscriptionPlans.endsOn");
+	const monthlyText = t("settings:subscriptionPlans.monthly");
+	const selectPlanText = t("settings:subscriptionPlans.plan.select");
+	const currentPlanText = t("settings:subscriptionPlans.plan.current");
+	const mostPopularText = t("settings:subscriptionPlans.mostPopular");
+	const processingPlanText = t("settings:subscriptionPlans.processingPlan");
+	const endsOnText = t("settings:subscriptionPlans.endsOn");
 
-	// SWR hooks
-	const { currentSubscription, errorCurrentSubscription, validatingCurrentSubscription } = useCurrentSubscription();
+	// Custom contexts
+	const { currentSubscription } = useContext(SiteCrawlerAppContext);
 
 	// Calendar and dayJS plugins
 	const calendar = require("dayjs/plugin/calendar");
@@ -66,21 +62,12 @@ const MonthlyPlans = ({
 	const planNameTitle = data?.plan?.name ?? null;
 	const planPrice = handleUnitAmountToRealPrice(data?.price?.unit_amount ?? null);
 	const planFeatures = data?.features ?? null;
-
-	// Handle current subscription
-	const handleCurrentSubscription = useCallback(async () => {
-		if (!validatingCurrentSubscription) {
-			if (!errorCurrentSubscription && typeof currentSubscription !== "undefined" && currentSubscription !== null) {
-				setCurrentSubscriptionId(currentSubscription?.id ?? null);
-				setCurrentSubscriptionStatus(currentSubscription?.status ?? null);
-				setCurrentSubscriptionCancelAt(currentSubscription?.cancel_at ?? null);
-			}
-		}
-	}, [currentSubscription, errorCurrentSubscription, validatingCurrentSubscription]);
-
-	useEffect(() => {
-		handleCurrentSubscription();
-	}, [handleCurrentSubscription]);
+	const currentSubscriptionStatus = currentSubscription?.data?.status ?? null;
+	const currentSubscriptionId = currentSubscription?.data?.id ?? null;
+	const currentSubscriptionCancelAt = currentSubscription?.data?.cancel_at ?? null;
+	const sanitizedCurrentSubscriptionStatus = currentSubscriptionStatus
+		? handleConversionStringToLowercase(currentSubscriptionStatus)
+		: null;
 
 	return planName === "pro" ? (
 		<div className="mx-auto mt-10 max-w-lg lg:col-start-3 lg:col-end-6 lg:row-start-1 lg:row-end-4 lg:mx-0 lg:mt-0 lg:max-w-none">
@@ -89,7 +76,7 @@ const MonthlyPlans = ({
 				<div className="absolute inset-x-0 top-0 translate-y-px transform">
 					<div className="flex -translate-y-1/2 transform justify-center">
 						<span className="inline-flex rounded-full bg-indigo-600 px-4 py-1 text-sm font-semibold uppercase leading-5 tracking-wider text-white">
-							{subscriptionPlansMostPopular}
+							{mostPopularText}
 						</span>
 					</div>
 				</div>
@@ -104,31 +91,32 @@ const MonthlyPlans = ({
 								<span className="mt-2 mr-2 text-4xl font-medium">$</span>
 								<span className="font-bold">{planPrice}</span>
 							</span>
-							<span className="text-2xl font-medium leading-8 text-gray-500">{"/" + subscriptionPlansMonthly}</span>
+							<span className="text-2xl font-medium leading-8 text-gray-500">{"/" + monthlyText}</span>
 						</div>
 					</div>
 				</div>
 				<div className="rounded-b-lg border-t border-gray-300 bg-white px-6 pt-10 pb-8 sm:px-10 sm:py-10">
-					<ul>
-						{planFeatures?.map((val2, key) => {
-							return (
+					{planFeatures ? (
+						<ul>
+							{planFeatures.map((val2, key) => (
 								<li key={key} className="my-3 flex items-start">
 									<div className="flex-shrink-0">
 										<CheckIcon className="h-5 w-5 text-green-500" />
 									</div>
 									<p className="ml-3 text-base font-medium leading-6 text-gray-500">{val2}</p>
 								</li>
-							);
-						}) ?? null}
-					</ul>
+							))}
+						</ul>
+					) : null}
+
 					<div className="mt-10">
 						<div className={classnames("rounded-lg", planId === currentSubscriptionId ? "shadow-none" : "shadow-sm")}>
 							{planId === currentSubscriptionId &&
-							currentSubscriptionStatus === "PAID" &&
-							currentSubscriptionCancelAt !== null ? (
+							sanitizedCurrentSubscriptionStatus === "paid" &&
+							currentSubscriptionCancelAt?.length > 0 ? (
 								<div className="relative flex flex-row flex-wrap justify-center text-sm leading-5">
 									<span className="px-2 py-5 text-center text-gray-600">
-										<p className="text-sm font-medium">{subscriptionPlansEndsOn}</p>
+										<p className="text-sm font-medium">{endsOnText}</p>
 										<p className="text-xs text-gray-500">
 											{!disableLocalTime
 												? dayjs(currentSubscriptionCancelAt).calendar(null, calendarStrings)
@@ -141,26 +129,31 @@ const MonthlyPlans = ({
 
 							<button
 								type="button"
-								disabled={planId === currentSubscriptionId ? true : false}
+								disabled={planId === currentSubscriptionId}
+								aria-disabled={planId === currentSubscriptionId}
+								aria-hidden={planId === currentSubscriptionId}
 								className={classnames(
-									"block w-full rounded-lg border border-transparent px-6 py-4 text-center text-lg font-medium leading-6 text-white focus:outline-none focus:ring-2 focus:ring-offset-2",
+									"block w-full rounded-lg border border-transparent px-6 py-4 text-center text-lg font-medium leading-6  focus:outline-none focus:ring-2 focus:ring-offset-2",
 									planId === currentSubscriptionId
-										? loadingProMonthly
-											? "cursor-not-allowed bg-indigo-600 opacity-50"
-											: "cursor-default border-indigo-700 text-indigo-600"
-										: "cursor-pointer bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500"
+										? "cursor-default border-indigo-700 text-indigo-600"
+										: "cursor-pointer bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500",
+									loadingProMonthly ? "cursor-not-allowed opacity-50" : null
 								)}
-								onClick={() => {
-									setPlanId(planId);
-									setPlanName(planName);
-									setOpen(true);
-								}}
+								onClick={
+									planId === currentSubscriptionId
+										? () => {}
+										: () => {
+												setPlanId(planId);
+												setPlanName(planName);
+												setShowModal(true);
+										  }
+								}
 							>
 								{planId === currentSubscriptionId
-									? subscriptionPlansCurrentPlan
+									? currentPlanText
 									: loadingProMonthly
-									? subscriptionPlansProcessingPlan
-									: subscriptionPlansSelectPlan}
+									? processingPlanText
+									: selectPlanText}
 							</button>
 						</div>
 					</div>
@@ -182,31 +175,34 @@ const MonthlyPlans = ({
 									<span className="mt-2 mr-2 text-4xl font-medium">$</span>
 									<span className="font-bold">{planPrice}</span>
 								</span>
-								<span className="text-xl font-medium leading-7 text-gray-500">{"/" + subscriptionPlansMonthly}</span>
+								<span className="text-xl font-medium leading-7 text-gray-500">{"/" + monthlyText}</span>
 							</div>
 						</div>
 					</div>
 					<div className="flex flex-1 flex-col justify-between border-t border-gray-300 bg-white p-6 sm:p-10 lg:p-6 xl:p-10">
-						<ul>
-							{planFeatures?.map((val2, key) => {
-								return (
-									<li key={key} className="my-3 flex items-start">
-										<div className="flex-shrink-0">
-											<CheckIcon className="h-5 w-5 text-green-500" />
-										</div>
-										<p className="ml-3 text-base font-medium leading-6 text-gray-500">{val2}</p>
-									</li>
-								);
-							})}
-						</ul>
+						{planFeatures ? (
+							<ul>
+								{planFeatures.map((val2, key) => {
+									return (
+										<li key={key} className="my-3 flex items-start">
+											<div className="flex-shrink-0">
+												<CheckIcon className="h-5 w-5 text-green-500" />
+											</div>
+											<p className="ml-3 text-base font-medium leading-6 text-gray-500">{val2}</p>
+										</li>
+									);
+								})}
+							</ul>
+						) : null}
+
 						<div className="mt-8">
 							<div className={classnames("rounded-lg", planId === currentSubscriptionId ? "shadow-none" : "shadow-sm")}>
 								{planId === currentSubscriptionId &&
-								currentSubscriptionStatus === "PAID" &&
-								currentSubscriptionCancelAt !== null ? (
+								sanitizedCurrentSubscriptionStatus === "paid" &&
+								currentSubscriptionCancelAt?.length > 0 ? (
 									<div className="relative flex flex-row flex-wrap justify-center text-sm leading-5">
 										<span className="px-2 py-5 text-center text-gray-600">
-											<p className="text-sm font-medium">{subscriptionPlansEndsOn}</p>
+											<p className="text-sm font-medium">{endsOnText}</p>
 											<p className="text-xs text-gray-500">
 												{!disableLocalTime
 													? dayjs(currentSubscriptionCancelAt).calendar(null, calendarStrings)
@@ -219,26 +215,31 @@ const MonthlyPlans = ({
 
 								<button
 									type="button"
-									disabled={planId === currentSubscriptionId ? true : false}
+									disabled={planId === currentSubscriptionId}
+									aria-disabled={planId === currentSubscriptionId}
+									aria-hidden={planId === currentSubscriptionId}
 									className={classnames(
-										"block w-full rounded-lg border border-transparent px-6 py-4 text-center text-lg font-medium leading-6 text-white focus:outline-none focus:ring-2 focus:ring-offset-2",
+										"block w-full rounded-lg border border-transparent px-6 py-4 text-center text-lg font-medium leading-6  focus:outline-none focus:ring-2 focus:ring-offset-2",
 										planId === currentSubscriptionId
-											? loadingAgencyMonthly
-												? "cursor-not-allowed bg-indigo-600 opacity-50"
-												: "cursor-default border-indigo-700 text-indigo-600"
-											: "cursor-pointer bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500"
+											? "cursor-default border-indigo-700 text-indigo-600"
+											: "cursor-pointer bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500",
+										loadingAgencyMonthly ? "cursor-not-allowed opacity-50" : null
 									)}
-									onClick={() => {
-										setPlanId(planId);
-										setPlanName(planName);
-										setOpen(true);
-									}}
+									onClick={
+										planId === currentSubscriptionId
+											? () => {}
+											: () => {
+													setPlanId(planId);
+													setPlanName(planName);
+													setShowModal(true);
+											  }
+									}
 								>
 									{planId === currentSubscriptionId
-										? subscriptionPlansCurrentPlan
+										? currentPlanText
 										: loadingAgencyMonthly
-										? subscriptionPlansProcessingPlan
-										: subscriptionPlansSelectPlan}
+										? processingPlanText
+										: selectPlanText}
 								</button>
 							</div>
 						</div>
@@ -265,7 +266,7 @@ MonthlyPlans.propTypes = {
 	loadingProMonthly: PropTypes.bool,
 	setPlanId: PropTypes.func,
 	setPlanName: PropTypes.func,
-	setOpen: PropTypes.func
+	setShowModal: PropTypes.func
 };
 
 /**

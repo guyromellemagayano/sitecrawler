@@ -1,22 +1,12 @@
-import { AppLogo } from "@components/logos/AppLogo";
-import { BadgeModalImage, SubscriptionSuccessBadge } from "@constants/GlobalValues";
-import { Transition } from "@headlessui/react";
-import { CheckIcon, XIcon } from "@heroicons/react/solid";
-import { useSubscriptions } from "@hooks/useSubscriptions";
+import { MemoizedAppLogo } from "@components/logos/AppLogo";
+import { BadgeModalImage, Basic, SubscriptionSuccessBadge } from "@constants/GlobalValues";
+import { Dialog, Transition } from "@headlessui/react";
+import { CheckIcon } from "@heroicons/react/solid";
+import { SiteCrawlerAppContext } from "@pages/_app";
+import { handleConversionStringToLowercase } from "@utils/convertCase";
+import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
-import { forwardRef, memo } from "react";
-import { styled } from "styled-components";
-
-const ConfettiBgImgSpan = styled.span`
-	background: url("/images/backgrounds/subscription-success-bg.png");
-	background-size: cover;
-	background-position: top center;
-	background-repeat: no-repeat;
-	min-height: 18rem;
-	width: 100%;
-	position: absolute;
-	z-index: -1;
-`;
+import { forwardRef, Fragment, memo, useContext, useRef } from "react";
 
 /**
  * Custom function to render the `NewActivePlanModal` component
@@ -27,124 +17,176 @@ const ConfettiBgImgSpan = styled.span`
  * @param {function} setShowModal
  */
 const NewActivePlanModal = ({ planId = null, planName = null, showModal = false, setShowModal }, ref) => {
+	// Custom hooks
+	const newActivePlanModalRef = useRef(null);
+
 	// Translation
 	const { t } = useTranslation();
-	const subscriptionPlansCongratulations = t("settings:subscriptionPlans.congratulations");
-	const subscriptionPlansStartCrawling = t("settings:subscriptionPlans.startCrawling");
+	const congratulationsText = t("settings:subscriptionPlans.congratulations");
+	const startCrawlingText = t("settings:subscriptionPlans.startCrawling");
+	const planActiveText = t("settings:subscriptionPlans.planActive");
+	const hasBeenRequestedText = t("settings:subscriptionPlans.hasBeenRequested");
+	const currentPlan = t("settings:subscriptionPlans.plan.current");
+	const currentPlanExpiresOnText = t("settings:subscriptionPlans.currentPlanExpiresOn");
 
-	// SWR hooks
-	const { subscriptions, errorSubscriptions, validatingSubscriptions } = useSubscriptions();
+	// Custom context
+	const { subscriptions, currentSubscription, user } = useContext(SiteCrawlerAppContext);
+
+	// Custom variables
+	const subscriptionsResults = subscriptions?.data?.results ?? null;
+	const currentSubscriptionId = currentSubscription?.data?.id ?? null;
+	const currentSubscriptionStatus = currentSubscription?.data?.status ?? null;
+	const currentSubscriptionCancelAt = currentSubscription?.data?.cancel_at ?? null;
+	const sanitizedCurrentSubscriptionStatus = currentSubscriptionStatus
+		? handleConversionStringToLowercase(currentSubscriptionStatus)
+		: null;
+	const disableLocalTime = user?.data?.settings?.disableLocalTime ?? null;
+
+	// Calendar and dayJS plugins
+	const calendar = require("dayjs/plugin/calendar");
+	const timezone = require("dayjs/plugin/timezone");
+	const utc = require("dayjs/plugin/utc");
+
+	dayjs.extend(calendar);
+	dayjs.extend(utc);
+	dayjs.extend(timezone);
+
+	const calendarStrings = {
+		lastDay: "[Yesterday], dddd [at] hh:mm:ss A",
+		lastWeek: "MMMM DD, YYYY [at] hh:mm:ss A",
+		sameDay: "[Today], dddd [at] hh:mm:ss A",
+		sameElse: "MMMM DD, YYYY [at] hh:mm:ss A"
+	};
+
+	// Handle close modal
+	const handleCloseModal = () => {
+		setShowModal(false);
+	};
+
+	// Handle current plan name
+	const currentPlanName = subscriptionsResults?.find((sub) => sub.id === currentSubscriptionId)?.plan?.name ?? null;
 
 	return (
-		<Transition show={showModal}>
-			<div className="fixed inset-x-0 bottom-0 z-50 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center">
-				<Transition.Child
-					enter="change-to-basic-modal-first-child-enter"
-					enterFrom="change-to-basic-modal-first-child-enter-from"
-					enterTo="change-to-basic-modal-first-child-enter-to"
-					leave="change-to-basic-modal-first-child-leave"
-					leaveFrom="change-to-basic-modal-first-child-leave-from"
-					leaveTo="change-to-basic-modal-first-child-leave-to"
-				>
-					<div className="fixed inset-0 transition-opacity" aria-hidden="true">
-						<div className="absolute inset-0 bg-gray-500 opacity-75"></div>
-					</div>
-				</Transition.Child>
-
-				<span className="hidden sm:inline-block sm:h-screen sm:align-middle">&#8203;</span>
-
-				<Transition.Child
-					enter="change-to-basic-modal-second-child-enter"
-					enterFrom="change-to-basic-modal-second-child-enter-from"
-					enterTo="change-to-basic-modal-second-child-enter-to"
-					leave="change-to-basic-modal-second-child-leave"
-					leaveFrom="change-to-basic-modal-second-child-leave-from"
-					leaveTo="change-to-basic-modal-second-child-leave-to"
-				>
-					<div
-						ref={ref}
-						className="inline-block transform overflow-hidden rounded-lg bg-white px-4 pt-3 pb-4 text-left align-bottom shadow-xl transition-all sm:mx-auto sm:my-8 sm:w-full sm:max-w-xl sm:p-6 sm:align-middle lg:p-0"
-						role="dialog"
-						aria-modal="true"
-						aria-labelledby="modal-headline"
+		<Transition.Root show={showModal} as={Fragment}>
+			<Dialog
+				as="div"
+				className="fixed inset-0 z-50 overflow-y-auto"
+				initialFocus={newActivePlanModalRef}
+				onClose={handleCloseModal}
+			>
+				<div className="flex min-h-screen items-end justify-center p-4 text-center sm:block sm:p-0">
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
 					>
-						<ConfettiBgImgSpan />
+						<Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
 
-						<div className="absolute top-0 right-0 z-50 hidden pt-4 pr-4 sm:block">
-							<button
-								type="button"
-								className="text-gray-400 hover:text-gray-500 focus:text-gray-500 focus:outline-none"
-								aria-label="Close"
-								onClick={() => setShowModal(false)}
-							>
-								<XIcon className="h-5 w-5" />
-							</button>
-						</div>
-						<div>
-							<AppLogo
-								className="mx-auto mt-12 mb-14 inline-flex w-full justify-center"
-								src={SubscriptionSuccessBadge}
-								alt={BadgeModalImage.alt}
-								width={BadgeModalImage.width}
-								height={BadgeModalImage.height}
-							/>
+					{/* This element is to trick the browser into centering the modal contents. */}
+					<span className="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">
+						&#8203;
+					</span>
+
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+						enterTo="opacity-100 translate-y-0 sm:scale-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+						leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+					>
+						<div
+							className="inline-block transform overflow-hidden rounded-lg bg-white px-4 pt-3 pb-4 text-left align-bottom shadow-xl transition-all sm:mx-auto sm:my-8 sm:w-full sm:max-w-xl sm:p-6 sm:align-middle lg:p-0"
+							role="dialog"
+							aria-modal="true"
+							aria-labelledby="modal-headline"
+						>
+							<span className="confetti-bg-img" />
+
+							<div className="mt-12 mb-14 flex w-full items-center justify-center">
+								<MemoizedAppLogo
+									src={SubscriptionSuccessBadge}
+									alt={BadgeModalImage.alt}
+									width={BadgeModalImage.width}
+									height={BadgeModalImage.height}
+								/>
+							</div>
 
 							<div className="text-center sm:mt-3">
 								<h2 className="mb-3 text-3xl font-bold leading-6 text-gray-900" id="modal-headline">
-									{subscriptionPlansCongratulations}
+									{congratulationsText}
 								</h2>
-								<p className="mb-6 text-base font-semibold leading-6">Your {planName} plan is now active.</p>
-								{!validatingSubscriptions
-									? !errorSubscriptions &&
-									  typeof subscriptions !== "undefined" &&
-									  subscriptions !== null &&
-									  !subscriptions?.data?.detail
-										? subscriptions?.results
-												?.filter((result) => result.id === planId)
-												?.map((val, key) => {
-													return (
-														<div
-															key={key}
-															className="mx-auto max-w-md lg:col-start-1 lg:col-end-3 lg:row-start-2 lg:row-end-3 lg:mx-0 lg:max-w-none"
-														>
-															<div className="flex h-full flex-col">
-																<div className="flex flex-1 flex-col">
-																	<div className="flex flex-1 flex-col justify-between bg-white p-6 sm:p-10 lg:p-6 xl:p-6">
-																		<ul className="mb-6 grid grid-cols-2">
-																			{val.features.map((val2, key) => {
-																				return (
-																					<li key={key} className="my-1 flex items-start">
-																						<div className="flex-shrink-0">
-																							<CheckIcon className="h-5 w-5 text-green-500" />
-																						</div>
-																						<p className="ml-3 text-sm font-medium leading-6 text-gray-500">{val2}</p>
-																					</li>
-																				);
-																			})}
-																		</ul>
+								<p className="mb-6 text-base font-semibold leading-6">
+									{planName === Basic ? planName + " " + hasBeenRequestedText : planName + " " + planActiveText}
+								</p>
 
-																		<button
-																			type="button"
-																			className="inline-flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium leading-6 text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:text-sm sm:leading-5"
-																			aria-label="Start Crawling"
-																			onClick={() => setShowModal(false)}
-																		>
-																			{subscriptionPlansStartCrawling}
-																		</button>
-																	</div>
-																</div>
-															</div>
+								{currentPlanName?.length > 0 &&
+								sanitizedCurrentSubscriptionStatus === "paid" &&
+								currentSubscriptionCancelAt?.length > 0 ? (
+									<div className="relative flex flex-row flex-wrap justify-center text-sm leading-5">
+										<span className="px-2 text-center text-gray-600">
+											<span className="text-sm font-medium">{currentPlanName + " " + currentPlanExpiresOnText}</span>
+
+											<p className="text-xs text-gray-500">
+												{!disableLocalTime
+													? dayjs(currentSubscriptionCancelAt).calendar(null, calendarStrings)
+													: dayjs.utc(currentSubscriptionCancelAt).calendar(null, calendarStrings)}
+												<span className="ml-1 font-medium">({!disableLocalTime ? dayjs.tz.guess() : "UTC"})</span>
+											</p>
+										</span>
+									</div>
+								) : null}
+
+								{subscriptionsResults
+									?.filter((result) => result.id === planId && result.plan.name === planName)
+									?.map((val, key) => {
+										return (
+											<div
+												key={key}
+												className="mx-auto max-w-md lg:col-start-1 lg:col-end-3 lg:row-start-2 lg:row-end-3 lg:mx-0 lg:max-w-none"
+											>
+												<div className="flex h-full flex-col">
+													<div className="flex flex-1 flex-col">
+														<div className="flex flex-1 flex-col justify-between bg-white p-6 sm:p-10 lg:p-6 xl:p-6">
+															<ul className="mb-6 grid grid-cols-2">
+																{val.features.map((val2, key) => {
+																	return (
+																		<li key={key} className="my-1 flex items-start">
+																			<div className="flex-shrink-0">
+																				<CheckIcon className="h-5 w-5 text-green-500" />
+																			</div>
+																			<p className="ml-3 text-sm font-medium leading-6 text-gray-500">{val2}</p>
+																		</li>
+																	);
+																})}
+															</ul>
+
+															<button
+																ref={newActivePlanModalRef}
+																type="button"
+																className="inline-flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium leading-6 text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:text-sm sm:leading-5"
+																onClick={handleCloseModal}
+															>
+																{startCrawlingText}
+															</button>
 														</div>
-													);
-												}) ?? null
-										: null
-									: null}
+													</div>
+												</div>
+											</div>
+										);
+									}) ?? null}
 							</div>
 						</div>
-					</div>
-				</Transition.Child>
-			</div>
-		</Transition>
+					</Transition.Child>
+				</div>
+			</Dialog>
+		</Transition.Root>
 	);
 };
 
