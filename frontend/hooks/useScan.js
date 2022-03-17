@@ -20,7 +20,7 @@ export const useScan = (endpoint = null, querySid = null, setConfig, options = n
 	const [isCrawlStarted, setIsCrawlStarted] = useState(false);
 	const [isProcessing, setIsProcessing] = useState(false);
 	const [previousScan, setPreviousScan] = useState(null);
-	const [scanObjId, setScanObjId] = useState(0);
+	const [scanObjId, setScanObjId] = useState(null);
 
 	// DayJS options
 	const calendar = require("dayjs/plugin/calendar");
@@ -95,27 +95,24 @@ export const useScan = (endpoint = null, querySid = null, setConfig, options = n
 	};
 
 	useMemo(() => {
-		if (scan && Math.round(scan.status / 100) === 2 && scan.data && !scan.data?.detail) {
-			let previousScanResult = scan.data.results?.find((result) => result.finished_at && result.force_https) ?? null;
-			let currentScanResult =
-				scan.data.results?.find((result) => result.finished_at == null && result.force_https == null) ?? null;
+		let previousScanResult = scan?.data?.results?.find((result) => result.finished_at && result.force_https) ?? null;
+		let currentScanResult = scan?.data?.results?.find((result) => !result.finished_at && !result.force_https) ?? null;
 
-			setCurrentScan(currentScanResult);
-			setPreviousScan(previousScanResult);
+		setCurrentScan(currentScanResult);
+		setPreviousScan(previousScanResult);
 
-			if (currentScan) {
-				setIsCrawlStarted(true);
-				setIsCrawlFinished(false);
-			} else {
-				setIsCrawlStarted(false);
-				setIsCrawlFinished(true);
-			}
+		if (currentScan) {
+			setIsCrawlStarted(true);
+			setIsCrawlFinished(false);
+		} else {
+			setIsCrawlStarted(false);
+			setIsCrawlFinished(true);
+		}
 
-			if ((currentScan && previousScan) || (currentScan == null && previousScan)) {
-				setScanObjId(previousScan?.id);
-			} else {
-				setScanObjId(currentScan?.id);
-			}
+		if ((currentScan && previousScan) || (!currentScan && previousScan)) {
+			setScanObjId(previousScan?.id ?? null);
+		} else {
+			setScanObjId(currentScan?.id ?? null);
 		}
 
 		return { currentScan, previousScan, scanObjId, isCrawlStarted, isCrawlFinished };

@@ -1,7 +1,6 @@
 import { MemoizedProfileMenuDropdown } from "@components/dropdowns/ProfileMenuDropdown";
 import { ChevronUpIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
-import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import { memo, useContext } from "react";
@@ -13,10 +12,11 @@ import "react-loading-skeleton/dist/skeleton.css";
  */
 const ProfileMenu = () => {
 	// Custom context
-	const { setConfig, isComponentReady } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady, user } = useContext(SiteCrawlerAppContext);
 
-	// SWR hooks
-	const { user, firstname, email } = useUser();
+	// Custom variables
+	const firstName = user?.data?.first_name ?? null;
+	const email = user?.data?.email ?? null;
 
 	// Custom hooks
 	const {
@@ -30,48 +30,32 @@ const ProfileMenu = () => {
 			<button
 				type="button"
 				className={classnames(
-					"flex w-full flex-shrink-0 items-center justify-between bg-gray-900 p-4 transition duration-150 ease-in-out focus:outline-none",
-					isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail
-						? "cursor-pointer hover:bg-gray-1100"
-						: "cursor-default"
+					"group flex w-full flex-shrink-0 items-center justify-between bg-gray-900 px-4 py-5 transition duration-150 ease-in-out focus:outline-none",
+					isComponentReady ? "cursor-pointer hover:bg-gray-1100" : "cursor-default"
 				)}
-				id="options-menu"
 				aria-haspopup="true"
-				aria-expanded={
-					isProfileMenuComponentVisible &&
-					isComponentReady &&
-					user &&
-					Math.round(user?.status / 100) === 2 &&
-					!user?.data?.detail
-						? "true"
-						: "false"
-				}
-				onClick={
-					isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail
-						? () => setIsProfileMenuComponentVisible(!isProfileMenuComponentVisible)
-						: null
-				}
+				aria-expanded={isProfileMenuComponentVisible && isComponentReady ? "true" : "false"}
+				onClick={isComponentReady ? () => setIsProfileMenuComponentVisible(!isProfileMenuComponentVisible) : null}
 			>
 				<div className="flex items-center">
 					<div className="flex flex-col flex-wrap text-left">
-						<p className="truncate-profile-text mb-1 text-sm font-medium leading-tight text-white">
-							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-								firstname
-							) : (
-								<Skeleton duration={2} width={85} height={15} className="mb-1" />
-							)}
-						</p>
-						<p className="truncate-profile-text text-xs font-medium leading-4 text-white transition duration-150 ease-in-out">
-							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-								email
-							) : (
-								<Skeleton duration={2} width={130} height={15} />
-							)}
-						</p>
+						{isComponentReady ? (
+							<p className="truncate-profile-text text-sm font-medium text-white">{firstName}</p>
+						) : (
+							<Skeleton duration={2} width={80} height={15} />
+						)}
+
+						{isComponentReady ? (
+							<p className="truncate-profile-text text-xs font-medium text-indigo-200 group-hover:text-white">
+								{email}
+							</p>
+						) : (
+							<Skeleton duration={2} width={120} height={15} />
+						)}
 					</div>
 				</div>
 
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+				{isComponentReady ? (
 					<div>
 						<ChevronUpIcon className="h-4 w-4 text-white" />
 					</div>

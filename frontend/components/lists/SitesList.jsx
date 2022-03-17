@@ -1,5 +1,3 @@
-import { RevalidationInterval } from "@constants/GlobalValues";
-import { useSites } from "@hooks/useSites";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
@@ -14,23 +12,20 @@ import { MemoizedSiteList } from "./SiteList";
  * @param {function} handleSiteSelectOnClick
  * @param {boolean} isOpen
  */
-const SitesList = ({ isOpen = false }) => {
+const SitesList = ({ isOpen = false, handleSiteSelectOnClick }) => {
 	// Translations
 	const { t } = useTranslation();
 	const noAvailableSites = t("sites:noAvailableSites");
 	const loaderMessage = t("common:loaderMessage");
 
 	// Custom context
-	const { isComponentReady } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady, sites } = useContext(SiteCrawlerAppContext);
 
-	// `sites` SWR hook
-	const { sites, errorSites, sitesCount, sitesResults } = useSites({
-		options: {
-			refreshInterval: RevalidationInterval
-		}
-	});
+	// Custom variables
+	const sitesCount = sites?.data?.count ?? null;
+	const sitesResults = sites?.data?.results ?? null;
 
-	return isComponentReady ? (
+	return isComponentReady && sites ? (
 		sitesCount > 0 && sitesResults?.length > 0 ? (
 			<ul
 				tabIndex="-1"
@@ -40,7 +35,7 @@ const SitesList = ({ isOpen = false }) => {
 			>
 				<Scrollbars autoHide universal>
 					{sitesResults.map((value) => (
-						<MemoizedSiteList key={value.id} data={value} />
+						<MemoizedSiteList key={value.id} data={value} handleSiteSelectOnClick={handleSiteSelectOnClick} />
 					))}
 				</Scrollbars>
 			</ul>
@@ -59,6 +54,7 @@ const SitesList = ({ isOpen = false }) => {
 };
 
 SitesList.propTypes = {
+	handleSiteSelectOnClick: PropTypes.func,
 	isOpen: PropTypes.bool
 };
 

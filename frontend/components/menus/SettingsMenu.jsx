@@ -5,7 +5,6 @@ import { DashboardSitesLink, SettingsSlug } from "@constants/PageLinks";
 import { SidebarMenus } from "@constants/SidebarMenus";
 import { GlobeIcon } from "@heroicons/react/outline";
 import { ArrowLeftIcon, CreditCardIcon, SupportIcon, UserCircleIcon, ViewBoardsIcon } from "@heroicons/react/solid";
-import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
@@ -33,22 +32,12 @@ const SettingsMenu = () => {
 	// Custom context
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
-	// SWR hooks
-	const { user } = useUser();
-
 	return (
 		<Scrollbars autoHide renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />} universal>
 			<div className="flex h-full flex-col py-4 lg:py-8">
 				<div className="mb-0 flex flex-shrink-0 flex-row items-center px-3">
 					<Link href={DashboardSitesLink} passHref>
-						<a
-							className={classnames(
-								"block w-full p-1",
-								isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail
-									? "cursor-pointer"
-									: null
-							)}
-						>
+						<a className={classnames("block w-full p-1", isComponentReady ? "cursor-pointer" : null)}>
 							<SiteLogoWhite className="flex" width={AuthAppLogo.width} height={AuthAppLogo.height} />
 						</a>
 					</Link>
@@ -56,17 +45,13 @@ const SettingsMenu = () => {
 
 				<div className="flex flex-1 flex-col overflow-y-auto">
 					<nav className="flex-1 px-4">
-						{SettingsSidebarMenus.filter((e) => {
-							return !asPath?.includes(SettingsSlug) ? e.slug !== "navigation" : true;
-						}).map((value, index) => {
+						{SettingsSidebarMenus?.filter((e) =>
+							!asPath?.includes(SettingsSlug) ? e.slug !== "navigation" : true
+						).map((value, index) => {
 							return (
 								<div key={index} className="mb-4">
 									<h3 className="mt-8 inline-block text-xs font-semibold uppercase leading-4 tracking-wider text-gray-200">
-										{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-											value.category
-										) : (
-											<Skeleton duration={2} width={128} height={16} />
-										)}
+										{isComponentReady ? value.category : <Skeleton duration={2} width={128} height={16} />}
 									</h3>
 
 									<div className="my-3" role="group">
@@ -77,72 +62,48 @@ const SettingsMenu = () => {
 														<a
 															className={classnames(
 																"group mt-1 flex items-center rounded-md px-3 py-2 text-sm font-medium leading-5",
-																asPath.includes(value2.url) &&
-																	isComponentReady &&
-																	user &&
-																	Math.round(user?.status / 100) === 2 &&
-																	!user?.data?.detail
-																	? "!cursor-default bg-gray-1100"
-																	: null,
+																asPath.includes(value2.url) && isComponentReady ? "!cursor-default bg-gray-1100" : null,
 																asPath.includes(value2.url) ||
 																	(asPath.includes(SettingsSlug) && SettingsSlug.includes(value2.url))
 																	? "text-gray-100"
 																	: "text-gray-400",
-																isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail
+																isComponentReady
 																	? "cursor-pointer transition duration-150 ease-in-out hover:bg-gray-1100 hover:text-gray-100 focus:bg-gray-1100 focus:outline-none"
 																	: "cursor-default"
 															)}
 														>
 															{value2.slug === "profile-settings" ? (
-																isComponentReady &&
-																user &&
-																Math.round(user?.status / 100) === 2 &&
-																!user?.data?.detail ? (
+																isComponentReady ? (
 																	<UserCircleIcon className="mr-3 h-6 w-5" />
 																) : (
 																	<Skeleton duration={2} width={20} height={20} circle={true} className="mr-3" />
 																)
 															) : value2.slug === "subscription-plans" ? (
-																isComponentReady &&
-																user &&
-																Math.round(user?.status / 100) === 2 &&
-																!user?.data?.detail ? (
+																isComponentReady ? (
 																	<ViewBoardsIcon className="mr-3 h-6 w-5" />
 																) : (
 																	<Skeleton duration={2} width={20} height={20} circle={true} className="mr-3" />
 																)
 															) : value2.slug === "billing-settings" ? (
-																isComponentReady &&
-																user &&
-																Math.round(user?.status / 100) === 2 &&
-																!user?.data?.detail ? (
+																isComponentReady ? (
 																	<CreditCardIcon className="mr-3 h-6 w-5" />
 																) : (
 																	<Skeleton duration={2} width={20} height={20} circle={true} className="mr-3" />
 																)
 															) : value2.slug === "global-settings" ? (
-																isComponentReady &&
-																user &&
-																Math.round(user?.status / 100) === 2 &&
-																!user?.data?.detail ? (
+																isComponentReady ? (
 																	<GlobeIcon className="mr-3 h-6 w-5" />
 																) : (
 																	<Skeleton duration={2} width={20} height={20} circle={true} className="mr-3" />
 																)
 															) : value2.slug === "subscription-plans" ? (
-																isComponentReady &&
-																user &&
-																Math.round(user?.status / 100) === 2 &&
-																!user?.data?.detail ? (
+																isComponentReady ? (
 																	<ViewBoardsIcon className="mr-3 h-6 w-5" />
 																) : (
 																	<Skeleton duration={2} width={20} height={20} circle={true} className="mr-3" />
 																)
 															) : value2.slug === "help-support" ? (
-																isComponentReady &&
-																user &&
-																Math.round(user?.status / 100) === 2 &&
-																!user?.data?.detail ? (
+																isComponentReady ? (
 																	<SupportIcon className="mr-3 h-6 w-5" />
 																) : (
 																	<Skeleton duration={2} width={20} height={20} circle={true} className="mr-3" />
@@ -151,14 +112,7 @@ const SettingsMenu = () => {
 
 															{value2.title ? (
 																<span>
-																	{isComponentReady &&
-																	user &&
-																	Math.round(user?.status / 100) === 2 &&
-																	!user?.data?.detail ? (
-																		value2.title
-																	) : (
-																		<Skeleton duration={2} width={128} height={20} />
-																	)}
+																	{isComponentReady ? value2.title : <Skeleton duration={2} width={128} height={20} />}
 																</span>
 															) : null}
 														</a>
@@ -168,15 +122,10 @@ const SettingsMenu = () => {
 														<a
 															className={classnames(
 																"group mt-1 flex items-center rounded-md py-2 text-sm font-medium leading-5 text-gray-400 hover:text-gray-100 focus:text-white focus:outline-none",
-																isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail
-																	? "cursor-pointer"
-																	: null
+																isComponentReady ? "cursor-pointer" : null
 															)}
 														>
-															{isComponentReady &&
-															user &&
-															Math.round(user?.status / 100) === 2 &&
-															!user?.data?.detail ? (
+															{isComponentReady ? (
 																<ArrowLeftIcon className="mr-3 h-6 w-5" />
 															) : (
 																<Skeleton duration={2} width={20} height={20} circle={true} className="mr-3" />
@@ -184,14 +133,7 @@ const SettingsMenu = () => {
 
 															{value2.title ? (
 																<span>
-																	{isComponentReady &&
-																	user &&
-																	Math.round(user?.status / 100) === 2 &&
-																	!user?.data?.detail ? (
-																		value2.title
-																	) : (
-																		<Skeleton duration={2} width={128} height={20} />
-																	)}
+																	{isComponentReady ? value2.title : <Skeleton duration={2} width={128} height={20} />}
 																</span>
 															) : null}
 														</a>

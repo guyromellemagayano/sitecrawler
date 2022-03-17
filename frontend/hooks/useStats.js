@@ -25,49 +25,39 @@ export const useStats = (endpoint = null, setConfig, options = null) => {
 	} = useMainSWRConfig(endpoint, setConfig, options);
 
 	useMemo(() => {
-		let isMounted = true;
+		const currentTotalImages = stats?.data?.num_images ?? 0;
+		const currentTotalLinks = stats?.data?.num_links ?? 0;
+		const currentTotalPages = stats?.data?.num_pages ?? 0;
+		const currentLinkErrors = stats?.data?.num_non_ok_links ?? 0;
+		const currentPageErrors =
+			stats?.data?.num_non_ok_scripts ??
+			0 + stats?.data?.num_non_ok_stylesheets ??
+			0 + stats?.data?.num_pages_without_title ??
+			0 + stats?.data?.num_pages_without_description ??
+			0 + stats?.data?.num_pages_without_h1_first ??
+			0 + stats?.data?.num_pages_without_h1_second ??
+			0 + stats?.data?.num_pages_without_h2_first ??
+			0 + stats?.data?.num_pages_without_h2_second ??
+			0 + stats?.data?.num_pages_tls_non_ok ??
+			0 + stats?.data?.num_pages_duplicated_title ??
+			0 + stats?.data?.num_pages_duplicated_description ??
+			0;
+		const currentImageErrors =
+			stats?.data?.num_non_ok_images ??
+			0 + stats?.data?.num_images_with_missing_alts ??
+			0 + stats?.data?.num_images_tls_non_ok ??
+			0;
+		const currentTotalErrors = currentLinkErrors + currentPageErrors + currentImageErrors;
 
-		(async () => {
-			if (!isMounted) return;
+		setTotalImages(currentTotalImages);
+		setTotalLinks(currentTotalLinks);
+		setTotalPages(currentTotalPages);
+		setLinkErrors(currentLinkErrors);
+		setPageErrors(currentPageErrors);
+		setImageErrors(currentImageErrors);
+		setTotalErrors(currentTotalErrors);
 
-			if (stats) {
-				if (Math.round(stats.status / 100) === 2 && stats.data && !stats.data?.detail) {
-					const currentTotalImages = stats.data.num_images;
-					const currentTotalLinks = stats.data.num_links;
-					const currentTotalPages = stats.data.num_pages;
-					const currentLinkErrors = stats.data.num_non_ok_links;
-					const currentPageErrors =
-						stats.data.num_non_ok_scripts +
-						stats.data.num_non_ok_stylesheets +
-						stats.data.num_pages_without_title +
-						stats.data.num_pages_without_description +
-						stats.data.num_pages_without_h1_first +
-						stats.data.num_pages_without_h1_second +
-						stats.data.num_pages_without_h2_first +
-						stats.data.num_pages_without_h2_second +
-						stats.data.num_pages_tls_non_ok +
-						stats.data.num_pages_duplicated_title +
-						stats.data.num_pages_duplicated_description;
-					const currentImageErrors =
-						stats.data.num_non_ok_images + stats.data.num_images_with_missing_alts + stats.data.num_images_tls_non_ok;
-					const currentTotalErrors = currentLinkErrors + currentPageErrors + currentImageErrors;
-
-					setTotalImages(currentTotalImages);
-					setTotalLinks(currentTotalLinks);
-					setTotalPages(currentTotalPages);
-					setLinkErrors(currentLinkErrors);
-					setPageErrors(currentPageErrors);
-					setImageErrors(currentImageErrors);
-					setTotalErrors(currentTotalErrors);
-				}
-			}
-
-			return { totalImages, totalLinks, totalPages, linkErrors, pageErrors, imageErrors, totalErrors };
-		})();
-
-		return () => {
-			isMounted = false;
-		};
+		return { totalImages, totalLinks, totalPages, linkErrors, pageErrors, imageErrors, totalErrors };
 	}, [stats]);
 
 	return {

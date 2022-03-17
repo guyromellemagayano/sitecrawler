@@ -1,7 +1,6 @@
 import { MemoizedSiteSelectDropdown } from "@components/dropdowns/SiteSelectDropdown";
 import { MemoizedSiteSelectMenu } from "@components/menus/SiteSelectMenu";
 import { useSiteSelection } from "@hooks/useSiteSelection";
-import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
@@ -13,9 +12,6 @@ import "react-loading-skeleton/dist/skeleton.css";
 const SiteSelect = () => {
 	// Custom context
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
-
-	// SWR hooks
-	const { user } = useUser();
 
 	// Custom hooks
 	const {
@@ -34,7 +30,7 @@ const SiteSelect = () => {
 	return (
 		<div className="relative space-y-1">
 			<span className="inline-block w-full rounded-md shadow-sm">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+				{isComponentReady ? (
 					<MemoizedSiteSelectMenu
 						selectedSite={selectedSite}
 						selectedSiteDetails={selectedSiteDetails}
