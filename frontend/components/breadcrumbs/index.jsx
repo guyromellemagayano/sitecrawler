@@ -1,6 +1,5 @@
 import { DashboardSitesLink, SiteOverviewSlug } from "@constants/PageLinks";
 import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
-import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { handleConversionStringToBoolean } from "@utils/convertCase";
 import useTranslation from "next-translate/useTranslation";
@@ -43,13 +42,10 @@ const Breadcrumbs = ({
 	// Custom context
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
-	// SWR hooks
-	const { user } = useUser();
-
 	// Custom variables
-	const sanitizedSid = siteId !== null ? handleConversionStringToBoolean(siteId) : null;
+	const sanitizedSid = siteId ? handleConversionStringToBoolean(siteId) : null;
 	const sitesIdOverviewPageLink =
-		sanitizedSid !== null && !asPath.includes(DashboardSitesLink)
+		sanitizedSid && !asPath.includes(DashboardSitesLink)
 			? `${DashboardSitesLink + sanitizedSid + SiteOverviewSlug}`
 			: null;
 
@@ -58,7 +54,7 @@ const Breadcrumbs = ({
 			<ol className="flex items-center space-x-4">
 				<li>
 					<div>
-						{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+						{isComponentReady ? (
 							<Link href={isOther && siteId == null ? DashboardSitesLink : sitesIdOverviewPageLink} passHref>
 								<a className="text-gray-400 hover:text-gray-500">
 									<HomeIcon className="h-4 w-4 flex-shrink-0" />
@@ -72,16 +68,16 @@ const Breadcrumbs = ({
 				</li>
 				<li>
 					<div className="flex items-center">
-						{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+						{isComponentReady ? (
 							<ChevronRightIcon className="h-4 w-4 flex-shrink-0 text-gray-400" />
 						) : (
 							<Skeleton duration={2} width={20} height={20} />
 						)}
 
-						{pageTitle !== null && pageTitle !== "" ? (
-							pageDetailTitle !== null && pageDetailTitle !== "" ? (
+						{pageTitle && pageTitle?.length > 0 ? (
+							pageDetailTitle && pageDetailTitle?.length > 0 ? (
 								isSites ? (
-									isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+									isComponentReady ? (
 										<Link href={DashboardSitesLink} passHref>
 											<a aria-current="page" className="ml-4 cursor-pointer text-sm text-gray-700">
 												{pageTitle}
@@ -90,7 +86,7 @@ const Breadcrumbs = ({
 									) : (
 										<Skeleton duration={2} width={128} height={20} className="ml-4" />
 									)
-								) : isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+								) : isComponentReady ? (
 									<Link
 										href={`${
 											DashboardSitesLink +
@@ -109,19 +105,15 @@ const Breadcrumbs = ({
 								)
 							) : (
 								<p aria-current="page" className="ml-4 cursor-default text-sm font-medium text-gray-700">
-									{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-										pageTitle
-									) : (
-										<Skeleton duration={2} width={128} height={20} />
-									)}
+									{isComponentReady ? pageTitle : <Skeleton duration={2} width={128} height={20} />}
 								</p>
 							)
 						) : null}
 					</div>
 				</li>
 
-				{pageDetailTitle !== null && pageDetailTitle !== "" ? (
-					isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+				{pageDetailTitle && pageDetailTitle?.length > 0 ? (
+					isComponentReady ? (
 						<li>
 							<div className="flex items-center">
 								<ChevronRightIcon className="h-4 w-4 flex-shrink-0 text-gray-400" />
