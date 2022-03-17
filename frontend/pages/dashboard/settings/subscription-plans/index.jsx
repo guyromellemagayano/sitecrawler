@@ -16,15 +16,17 @@ const SubscriptionPlansAuth = () => {
 	// Custom context
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
-	return isComponentReady ? (
+	return (
 		<MemoizedLayout>
 			<NextSeo title={subscriptionPlansText} />
-			<MemoizedPageLayout pageTitle={subscriptionPlansText}>
-				<MemoizedSubscriptionPlansPageLayout />
-			</MemoizedPageLayout>
+			{isComponentReady ? (
+				<MemoizedPageLayout pageTitle={subscriptionPlansText}>
+					<MemoizedSubscriptionPlansPageLayout />
+				</MemoizedPageLayout>
+			) : (
+				<MemoizedLoader />
+			)}
 		</MemoizedLayout>
-	) : (
-		<MemoizedLoader />
 	);
 };
 
