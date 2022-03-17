@@ -1,6 +1,5 @@
 import { MemoizedBreadcrumbs } from "@components/breadcrumbs";
 import { LoginLink, SubscriptionPlansSlug } from "@constants/PageLinks";
-import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import { useRouter } from "next/router";
@@ -23,9 +22,7 @@ const PageLayout = ({ children, pageTitle = null }) => {
 	// Custom context
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
-	// SWR hooks
-	const { user } = useUser();
-
+	// Prefetch login link for faster loading
 	useEffect(() => {
 		prefetch(LoginLink);
 	}, []);
@@ -42,11 +39,7 @@ const PageLayout = ({ children, pageTitle = null }) => {
 							"text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl"
 						)}
 					>
-						{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-							pageTitle
-						) : (
-							<Skeleton duration={2} width={215} height={36} />
-						)}
+						{isComponentReady ? pageTitle : <Skeleton duration={2} width={215} height={36} />}
 					</h2>
 				</div>
 
