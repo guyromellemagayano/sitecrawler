@@ -1,42 +1,17 @@
 import { handleNotificationMessages } from "@helpers/handleNotificationMessages";
 import { handleConversionStringToLowercase, handleConversionStringToNumber } from "@utils/convertCase";
-import useTranslation from "next-translate/useTranslation";
-import { FalllbackNotificationMessage } from "../fallback";
 
-export const SignupNotificationMessage = ({ dispatch, config, setConfig, state, isSignup }) => {
-	// Fallback translations
-	const {
-		fallback,
-		fallback200OkSuccessResponse,
-		fallback201CreatedSuccessResponse,
-		fallback204NoContentSuccessResponse,
-		fallback400BadRequestErrorResponse,
-		fallback401UnauthorizedErrorResponse,
-		fallback403ForbiddenErrorResponse,
-		fallback404NotFoundErrorResponse,
-		fallback429TooManyRequestsErrorResponse,
-		fallback500InternalServerErrorResponse,
-		fallback502BadGatewayErrorResponse,
-		fallback503ServiceUnavailableErrorResponse,
-		fallback504GatewayTimeoutErrorResponse
-	} = FalllbackNotificationMessage();
-
-	// Translations
-	const { t } = useTranslation();
-
-	// Signup translations
-	const signupPost200OkSuccessResponse = t("alerts:signup.post.200OkSuccessResponse");
-	const signupPost201CreatedSuccessResponse = t("alerts:signup.post.201CreatedSuccessResponse");
-	const signupPost400BadRequestErrorResponse = t("alerts:signup.post.400BadRequestErrorResponse");
-	const signupPost401UnauthorizedErrorResponse = t("alerts:signup.post.401UnauthorizedErrorResponse");
-	const signupPost403ForbiddenErrorResponse = t("alerts:signup.post.403ForbiddenErrorResponse");
-	const signupPost404NotFoundErrorResponse = t("alerts:signup.post.404NotFoundErrorResponse");
-	const signupPost429TooManyRequestsErrorResponse = t("alerts:signup.post.201CreatedSuccessResponse");
-	const signupPost500InternalServerErrorResponse = t("alerts:signup.post.500InternalServerErrorResponse");
-	const signupPost502BadGatewayErrorResponse = t("alerts:signup.post.502BadGatewayErrorResponse");
-	const signupPost503ServiceUnavailableErrorResponse = t("alerts:signup.post.503ServiceUnavailableErrorResponse");
-	const signupPost504GatewayTimeoutErrorResponse = t("alerts:signup.post.504GatewayTimeoutErrorResponse");
-
+export const SignupNotificationMessage = ({
+	locales,
+	fallback,
+	dispatch,
+	config,
+	setConfig,
+	state,
+	isSignup,
+	isAlert,
+	isNotification
+}) => {
 	let responsesArray = [];
 
 	const postResponse = {
@@ -44,68 +19,68 @@ export const SignupNotificationMessage = ({ dispatch, config, setConfig, state, 
 		responses: [
 			{
 				status: 200,
-				title: fallback200OkSuccessResponse,
-				message: signupPost200OkSuccessResponse,
+				title: fallback.okSuccessResponse,
+				message: locales.signupPost200OkSuccessResponse,
 				isSuccess: true
 			},
 			{
 				status: 201,
-				title: fallback201CreatedSuccessResponse,
-				message: signupPost201CreatedSuccessResponse,
+				title: fallback.createdSuccessResponse,
+				message: locales.signupPost201CreatedSuccessResponse,
 				isSuccess: true
 			},
 			{
 				status: 400,
-				title: fallback400BadRequestErrorResponse,
-				message: signupPost400BadRequestErrorResponse,
+				title: fallback.badRequestErrorResponse,
+				message: locales.signupPost400BadRequestErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 401,
-				title: fallback401UnauthorizedErrorResponse,
-				message: signupPost401UnauthorizedErrorResponse,
+				title: fallback.unauthorizedErrorResponse,
+				message: locales.signupPost401UnauthorizedErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 403,
-				title: fallback403ForbiddenErrorResponse,
-				message: signupPost403ForbiddenErrorResponse,
+				title: fallback.forbiddenErrorResponse,
+				message: locales.signupPost403ForbiddenErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 404,
-				title: fallback404NotFoundErrorResponse,
-				message: signupPost404NotFoundErrorResponse,
+				title: fallback.notFoundErrorResponse,
+				message: locales.signupPost404NotFoundErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 429,
-				title: fallback429TooManyRequestsErrorResponse,
-				message: signupPost429TooManyRequestsErrorResponse,
+				title: fallback.tooManyRequestsErrorResponse,
+				message: locales.signupPost429TooManyRequestsErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 500,
-				title: fallback500InternalServerErrorResponse,
-				message: signupPost500InternalServerErrorResponse,
+				title: fallback.internalServerErrorResponse,
+				message: locales.signupPost500InternalServerErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 502,
-				title: fallback502BadGatewayErrorResponse,
-				message: signupPost502BadGatewayErrorResponse,
+				title: fallback.badGatewayErrorResponse,
+				message: locales.signupPost502BadGatewayErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 503,
-				title: fallback503ServiceUnavailableErrorResponse,
-				message: signupPost503ServiceUnavailableErrorResponse,
+				title: fallback.serviceUnavailableErrorResponse,
+				message: locales.signupPost503ServiceUnavailableErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 504,
-				title: fallback504GatewayTimeoutErrorResponse,
-				message: signupPost504GatewayTimeoutErrorResponse,
+				title: fallback.gatewayTimeoutErrorResponse,
+				message: locales.signupPost504GatewayTimeoutErrorResponse,
 				isSuccess: false
 			}
 		]
@@ -126,6 +101,8 @@ export const SignupNotificationMessage = ({ dispatch, config, setConfig, state, 
 
 	data = {
 		method: dataMethod.method,
+		isAlert: isAlert,
+		isNotification: isNotification,
 		...dataResponse
 	};
 

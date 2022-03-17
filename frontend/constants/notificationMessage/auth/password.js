@@ -1,52 +1,17 @@
 import { handleNotificationMessages } from "@helpers/handleNotificationMessages";
 import { handleConversionStringToLowercase, handleConversionStringToNumber } from "@utils/convertCase";
-import useTranslation from "next-translate/useTranslation";
-import { FalllbackNotificationMessage } from "../fallback";
 
-export const PasswordResetNotificationMessage = ({ dispatch, config, setConfig, state, isPasswordReset }) => {
-	// Fallback translations
-	const {
-		fallback,
-		fallback200OkSuccessResponse,
-		fallback201CreatedSuccessResponse,
-		fallback204NoContentSuccessResponse,
-		fallback400BadRequestErrorResponse,
-		fallback401UnauthorizedErrorResponse,
-		fallback403ForbiddenErrorResponse,
-		fallback404NotFoundErrorResponse,
-		fallback429TooManyRequestsErrorResponse,
-		fallback500InternalServerErrorResponse,
-		fallback502BadGatewayErrorResponse,
-		fallback503ServiceUnavailableErrorResponse,
-		fallback504GatewayTimeoutErrorResponse
-	} = FalllbackNotificationMessage();
-
-	// Translations
-	const { t } = useTranslation();
-
-	// Password reset translations
-	const passwordResetPost200OkSuccessResponse = t("alerts:auth.password.reset.post.200OkSuccessResponse");
-	const passwordResetPost201CreatedSuccessResponse = t("alerts:auth.password.reset.post.201CreatedSuccessResponse");
-	const passwordResetPost400BadRequestErrorResponse = t("alerts:auth.password.reset.post.400BadRequestErrorResponse");
-	const passwordResetPost401UnauthorizedErrorResponse = t(
-		"alerts:auth.password.reset.post.401UnauthorizedErrorResponse"
-	);
-	const passwordResetPost403ForbiddenErrorResponse = t("alerts:auth.password.reset.post.403ForbiddenErrorResponse");
-	const passwordResetPost404NotFoundErrorResponse = t("alerts:auth.password.reset.post.404NotFoundErrorResponse");
-	const passwordResetPost429TooManyRequestsErrorResponse = t(
-		"alerts:auth.password.reset.post.201CreatedSuccessResponse"
-	);
-	const passwordResetPost500InternalServerErrorResponse = t(
-		"alerts:auth.password.reset.post.500InternalServerErrorResponse"
-	);
-	const passwordResetPost502BadGatewayErrorResponse = t("alerts:auth.password.reset.post.502BadGatewayErrorResponse");
-	const passwordResetPost503ServiceUnavailableErrorResponse = t(
-		"alerts:auth.password.reset.post.503ServiceUnavailableErrorResponse"
-	);
-	const passwordResetPost504GatewayTimeoutErrorResponse = t(
-		"alerts:auth.password.reset.post.504GatewayTimeoutErrorResponse"
-	);
-
+export const PasswordResetNotificationMessage = ({
+	locales,
+	fallback,
+	dispatch,
+	config,
+	setConfig,
+	state,
+	isPasswordReset,
+	isAlert,
+	isNotification
+}) => {
 	let responsesArray = [];
 
 	const postResponse = {
@@ -54,68 +19,68 @@ export const PasswordResetNotificationMessage = ({ dispatch, config, setConfig, 
 		responses: [
 			{
 				status: 200,
-				title: fallback200OkSuccessResponse,
-				message: passwordResetPost200OkSuccessResponse,
+				title: fallback.okSuccessResponse,
+				message: locales.passwordResetPost200OkSuccessResponse,
 				isSuccess: true
 			},
 			{
 				status: 201,
-				title: fallback201CreatedSuccessResponse,
-				message: passwordResetPost201CreatedSuccessResponse,
+				title: fallback.createdSuccessResponse,
+				message: locales.passwordResetPost201CreatedSuccessResponse,
 				isSuccess: true
 			},
 			{
 				status: 400,
-				title: fallback400BadRequestErrorResponse,
-				message: passwordResetPost400BadRequestErrorResponse,
+				title: fallback.badRequestErrorResponse,
+				message: locales.passwordResetPost400BadRequestErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 401,
-				title: fallback401UnauthorizedErrorResponse,
-				message: passwordResetPost401UnauthorizedErrorResponse,
+				title: fallback.unauthorizedErrorResponse,
+				message: locales.passwordResetPost401UnauthorizedErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 403,
-				title: fallback403ForbiddenErrorResponse,
-				message: passwordResetPost403ForbiddenErrorResponse,
+				title: fallback.forbiddenErrorResponse,
+				message: locales.passwordResetPost403ForbiddenErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 404,
-				title: fallback404NotFoundErrorResponse,
-				message: passwordResetPost404NotFoundErrorResponse,
+				title: fallback.notFoundErrorResponse,
+				message: locales.passwordResetPost404NotFoundErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 429,
-				title: fallback429TooManyRequestsErrorResponse,
-				message: passwordResetPost429TooManyRequestsErrorResponse,
+				title: fallback.tooManyRequestsErrorResponse,
+				message: locales.passwordResetPost429TooManyRequestsErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 500,
-				title: fallback500InternalServerErrorResponse,
-				message: passwordResetPost500InternalServerErrorResponse,
+				title: fallback.internalServerErrorResponse,
+				message: locales.passwordResetPost500InternalServerErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 502,
-				title: fallback502BadGatewayErrorResponse,
-				message: passwordResetPost502BadGatewayErrorResponse,
+				title: fallback.badGatewayErrorResponse,
+				message: locales.passwordResetPost502BadGatewayErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 503,
-				title: fallback503ServiceUnavailableErrorResponse,
-				message: passwordResetPost503ServiceUnavailableErrorResponse,
+				title: fallback.serviceUnavailableErrorResponse,
+				message: locales.passwordResetPost503ServiceUnavailableErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 504,
-				title: fallback504GatewayTimeoutErrorResponse,
-				message: passwordResetPost504GatewayTimeoutErrorResponse,
+				title: fallback.gatewayTimeoutErrorResponse,
+				message: locales.passwordResetPost504GatewayTimeoutErrorResponse,
 				isSuccess: false
 			}
 		]
@@ -136,6 +101,8 @@ export const PasswordResetNotificationMessage = ({ dispatch, config, setConfig, 
 
 	data = {
 		method: dataMethod.method,
+		isAlert: isAlert,
+		isNotification: isNotification,
 		...dataResponse
 	};
 
@@ -151,67 +118,16 @@ export const PasswordResetNotificationMessage = ({ dispatch, config, setConfig, 
 };
 
 export const PasswordResetConfirmNotificationMessage = ({
+	locales,
+	fallback,
 	dispatch,
 	config,
 	setConfig,
 	state,
-	isPasswordResetConfirm
+	isPasswordResetConfirm,
+	isAlert,
+	isNotification
 }) => {
-	// Fallback translations
-	const {
-		fallback,
-		fallback200OkSuccessResponse,
-		fallback201CreatedSuccessResponse,
-		fallback204NoContentSuccessResponse,
-		fallback400BadRequestErrorResponse,
-		fallback401UnauthorizedErrorResponse,
-		fallback403ForbiddenErrorResponse,
-		fallback404NotFoundErrorResponse,
-		fallback429TooManyRequestsErrorResponse,
-		fallback500InternalServerErrorResponse,
-		fallback502BadGatewayErrorResponse,
-		fallback503ServiceUnavailableErrorResponse,
-		fallback504GatewayTimeoutErrorResponse
-	} = FalllbackNotificationMessage();
-
-	// Translations
-	const { t } = useTranslation();
-
-	// Password reset confirm translations
-	const passwordResetConfirmPost200OkSuccessResponse = t(
-		"alerts:auth.password.reset.confirm.post.200OkSuccessResponse"
-	);
-	const passwordResetConfirmPost201CreatedSuccessResponse = t(
-		"alerts:auth.password.reset.confirm.post.201CreatedSuccessResponse"
-	);
-	const passwordResetConfirmPost400BadRequestErrorResponse = t(
-		"alerts:auth.password.reset.confirm.post.400BadRequestErrorResponse"
-	);
-	const passwordResetConfirmPost401UnauthorizedErrorResponse = t(
-		"alerts:auth.password.reset.confirm.post.401UnauthorizedErrorResponse"
-	);
-	const passwordResetConfirmPost403ForbiddenErrorResponse = t(
-		"alerts:auth.password.reset.confirm.post.403ForbiddenErrorResponse"
-	);
-	const passwordResetConfirmPost404NotFoundErrorResponse = t(
-		"alerts:auth.password.reset.confirm.post.404NotFoundErrorResponse"
-	);
-	const passwordResetConfirmPost429TooManyRequestsErrorResponse = t(
-		"alerts:auth.password.reset.confirm.post.201CreatedSuccessResponse"
-	);
-	const passwordResetConfirmPost500InternalServerErrorResponse = t(
-		"alerts:auth.password.reset.confirm.post.500InternalServerErrorResponse"
-	);
-	const passwordResetConfirmPost502BadGatewayErrorResponse = t(
-		"alerts:auth.password.reset.confirm.post.502BadGatewayErrorResponse"
-	);
-	const passwordResetConfirmPost503ServiceUnavailableErrorResponse = t(
-		"alerts:auth.password.reset.confirm.post.503ServiceUnavailableErrorResponse"
-	);
-	const passwordResetConfirmPost504GatewayTimeoutErrorResponse = t(
-		"alerts:auth.password.reset.confirm.post.504GatewayTimeoutErrorResponse"
-	);
-
 	let responsesArray = [];
 
 	const postResponse = {
@@ -219,68 +135,68 @@ export const PasswordResetConfirmNotificationMessage = ({
 		responses: [
 			{
 				status: 200,
-				title: fallback200OkSuccessResponse,
-				message: passwordResetConfirmPost200OkSuccessResponse,
+				title: fallback.okSuccessResponse,
+				message: locales.passwordResetConfirmPost200OkSuccessResponse,
 				isSuccess: true
 			},
 			{
 				status: 201,
-				title: fallback201CreatedSuccessResponse,
-				message: passwordResetConfirmPost201CreatedSuccessResponse,
+				title: fallback.createdSuccessResponse,
+				message: locales.passwordResetConfirmPost201CreatedSuccessResponse,
 				isSuccess: true
 			},
 			{
 				status: 400,
-				title: fallback400BadRequestErrorResponse,
-				message: passwordResetConfirmPost400BadRequestErrorResponse,
+				title: fallback.badRequestErrorResponse,
+				message: locales.passwordResetConfirmPost400BadRequestErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 401,
-				title: fallback401UnauthorizedErrorResponse,
-				message: passwordResetConfirmPost401UnauthorizedErrorResponse,
+				title: fallback.unauthorizedErrorResponse,
+				message: locales.passwordResetConfirmPost401UnauthorizedErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 403,
-				title: fallback403ForbiddenErrorResponse,
-				message: passwordResetConfirmPost403ForbiddenErrorResponse,
+				title: fallback.forbiddenErrorResponse,
+				message: locales.passwordResetConfirmPost403ForbiddenErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 404,
-				title: fallback404NotFoundErrorResponse,
-				message: passwordResetConfirmPost404NotFoundErrorResponse,
+				title: fallback.notFoundErrorResponse,
+				message: locales.passwordResetConfirmPost404NotFoundErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 429,
-				title: fallback429TooManyRequestsErrorResponse,
-				message: passwordResetConfirmPost429TooManyRequestsErrorResponse,
+				title: fallback.tooManyRequestsErrorResponse,
+				message: locales.passwordResetConfirmPost429TooManyRequestsErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 500,
-				title: fallback500InternalServerErrorResponse,
-				message: passwordResetConfirmPost500InternalServerErrorResponse,
+				title: fallback.internalServerErrorResponse,
+				message: locales.passwordResetConfirmPost500InternalServerErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 502,
-				title: fallback502BadGatewayErrorResponse,
-				message: passwordResetConfirmPost502BadGatewayErrorResponse,
+				title: fallback.badGatewayErrorResponse,
+				message: locales.passwordResetConfirmPost502BadGatewayErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 503,
-				title: fallback503ServiceUnavailableErrorResponse,
-				message: passwordResetConfirmPost503ServiceUnavailableErrorResponse,
+				title: fallback.serviceUnavailableErrorResponse,
+				message: locales.passwordResetConfirmPost503ServiceUnavailableErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 504,
-				title: fallback504GatewayTimeoutErrorResponse,
-				message: passwordResetConfirmPost504GatewayTimeoutErrorResponse,
+				title: fallback.gatewayTimeoutErrorResponse,
+				message: locales.passwordResetConfirmPost504GatewayTimeoutErrorResponse,
 				isSuccess: false
 			}
 		]
@@ -301,6 +217,8 @@ export const PasswordResetConfirmNotificationMessage = ({
 
 	data = {
 		method: dataMethod.method,
+		isAlert: isAlert,
+		isNotification: isNotification,
 		...dataResponse
 	};
 
@@ -315,50 +233,17 @@ export const PasswordResetConfirmNotificationMessage = ({
 	});
 };
 
-export const PasswordChangeNotificationMessage = ({ dispatch, config, setConfig, state, isPasswordChange }) => {
-	// Fallback translations
-	const {
-		fallback,
-		fallback200OkSuccessResponse,
-		fallback201CreatedSuccessResponse,
-		fallback204NoContentSuccessResponse,
-		fallback400BadRequestErrorResponse,
-		fallback401UnauthorizedErrorResponse,
-		fallback403ForbiddenErrorResponse,
-		fallback404NotFoundErrorResponse,
-		fallback429TooManyRequestsErrorResponse,
-		fallback500InternalServerErrorResponse,
-		fallback502BadGatewayErrorResponse,
-		fallback503ServiceUnavailableErrorResponse,
-		fallback504GatewayTimeoutErrorResponse
-	} = FalllbackNotificationMessage();
-
-	// Translations
-	const { t } = useTranslation();
-
-	// Password change translations
-	const passwordChangePost200OkSuccessResponse = t("alerts:auth.password.change.post.200OkSuccessResponse");
-	const passwordChangePost201CreatedSuccessResponse = t("alerts:auth.password.change.post.201CreatedSuccessResponse");
-	const passwordChangePost400BadRequestErrorResponse = t("alerts:auth.password.change.post.400BadRequestErrorResponse");
-	const passwordChangePost401UnauthorizedErrorResponse = t(
-		"alerts:auth.password.change.post.401UnauthorizedErrorResponse"
-	);
-	const passwordChangePost403ForbiddenErrorResponse = t("alerts:auth.password.change.post.403ForbiddenErrorResponse");
-	const passwordChangePost404NotFoundErrorResponse = t("alerts:auth.password.change.post.404NotFoundErrorResponse");
-	const passwordChangePost429TooManyRequestsErrorResponse = t(
-		"alerts:auth.password.change.post.201CreatedSuccessResponse"
-	);
-	const passwordChangePost500InternalServerErrorResponse = t(
-		"alerts:auth.password.change.post.500InternalServerErrorResponse"
-	);
-	const passwordChangePost502BadGatewayErrorResponse = t("alerts:auth.password.change.post.502BadGatewayErrorResponse");
-	const passwordChangePost503ServiceUnavailableErrorResponse = t(
-		"alerts:auth.password.change.post.503ServiceUnavailableErrorResponse"
-	);
-	const passwordChangePost504GatewayTimeoutErrorResponse = t(
-		"alerts:auth.password.change.post.504GatewayTimeoutErrorResponse"
-	);
-
+export const PasswordChangeNotificationMessage = ({
+	locales,
+	fallback,
+	dispatch,
+	config,
+	setConfig,
+	state,
+	isPasswordChange,
+	isAlert,
+	isNotification
+}) => {
 	let responsesArray = [];
 
 	const postResponse = {
@@ -366,68 +251,68 @@ export const PasswordChangeNotificationMessage = ({ dispatch, config, setConfig,
 		responses: [
 			{
 				status: 200,
-				title: fallback200OkSuccessResponse,
-				message: passwordChangePost200OkSuccessResponse,
+				title: fallback.okSuccessResponse,
+				message: locales.passwordChangePost200OkSuccessResponse,
 				isSuccess: true
 			},
 			{
 				status: 201,
-				title: fallback201CreatedSuccessResponse,
-				message: passwordChangePost201CreatedSuccessResponse,
+				title: fallback.createdSuccessResponse,
+				message: locales.passwordChangePost201CreatedSuccessResponse,
 				isSuccess: true
 			},
 			{
 				status: 400,
-				title: fallback400BadRequestErrorResponse,
-				message: passwordChangePost400BadRequestErrorResponse,
+				title: fallback.badRequestErrorResponse,
+				message: locales.passwordChangePost400BadRequestErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 401,
-				title: fallback401UnauthorizedErrorResponse,
-				message: passwordChangePost401UnauthorizedErrorResponse,
+				title: fallback.unauthorizedErrorResponse,
+				message: locales.passwordChangePost401UnauthorizedErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 403,
-				title: fallback403ForbiddenErrorResponse,
-				message: passwordChangePost403ForbiddenErrorResponse,
+				title: fallback.forbiddenErrorResponse,
+				message: locales.passwordChangePost403ForbiddenErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 404,
-				title: fallback404NotFoundErrorResponse,
-				message: passwordChangePost404NotFoundErrorResponse,
+				title: fallback.notFoundErrorResponse,
+				message: locales.passwordChangePost404NotFoundErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 429,
-				title: fallback429TooManyRequestsErrorResponse,
-				message: passwordChangePost429TooManyRequestsErrorResponse,
+				title: fallback.tooManyRequestsErrorResponse,
+				message: locales.passwordChangePost429TooManyRequestsErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 500,
-				title: fallback500InternalServerErrorResponse,
-				message: passwordChangePost500InternalServerErrorResponse,
+				title: fallback.internalServerErrorResponse,
+				message: locales.passwordChangePost500InternalServerErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 502,
-				title: fallback502BadGatewayErrorResponse,
-				message: passwordChangePost502BadGatewayErrorResponse,
+				title: fallback.badGatewayErrorResponse,
+				message: locales.passwordChangePost502BadGatewayErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 503,
-				title: fallback503ServiceUnavailableErrorResponse,
-				message: passwordChangePost503ServiceUnavailableErrorResponse,
+				title: fallback.serviceUnavailableErrorResponse,
+				message: locales.passwordChangePost503ServiceUnavailableErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 504,
-				title: fallback504GatewayTimeoutErrorResponse,
-				message: passwordChangePost504GatewayTimeoutErrorResponse,
+				title: fallback.gatewayTimeoutErrorResponse,
+				message: locales.passwordChangePost504GatewayTimeoutErrorResponse,
 				isSuccess: false
 			}
 		]
@@ -448,6 +333,8 @@ export const PasswordChangeNotificationMessage = ({ dispatch, config, setConfig,
 
 	data = {
 		method: dataMethod.method,
+		isAlert: isAlert,
+		isNotification: isNotification,
 		...dataResponse
 	};
 
