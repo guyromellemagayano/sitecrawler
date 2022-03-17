@@ -6,7 +6,7 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  * @param {string} endpoint
  * @param {function} setConfig
  * @param {object} options
- * @returns {object} paymentMethods, errorPaymentMethods, validatingPaymentMethods, paymentMethodResults, setPaymentMethodsConfig
+ * @returns {object} paymentMethods, errorPaymentMethods, validatingPaymentMethods
  */
 export const usePaymentMethods = (endpoint = null, setConfig, options = null) => {
 	// SWR hook

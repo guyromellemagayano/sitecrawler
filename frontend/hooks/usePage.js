@@ -17,7 +17,7 @@ export const usePage = (endpoint = null, options = null) => {
 	const { setConfig: setPageConfig } = useContext(SiteCrawlerAppContext);
 
 	// Custom variables
-	const currentEndpoint = endpoint !== null && typeof endpoint === "string" && endpoint !== "" ? endpoint : null;
+	const currentEndpoint = endpoint && typeof endpoint === "string" && endpoint !== "" ? endpoint : null;
 
 	// SWR hook
 	const { data: page, error: errorPage, isValidating: validatingPage } = useMainSWRConfig(currentEndpoint, options);
