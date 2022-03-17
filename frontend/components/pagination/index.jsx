@@ -167,64 +167,61 @@ const DataPagination = () => {
 		return element;
 	};
 
-	return isComponentReady &&
-		user &&
-		Math.round(user?.status / 100) === 2 &&
-		!user?.data?.detail &&
-		pageCount &&
-		pageResults ? (
-		<div className="mt-8 mb-4 items-center justify-between py-4 align-middle lg:flex">
-			<div className="mb-8 flex items-center lg:m-0">
-				<div className="mt-2 lg:my-0">
-					<p className="text-center text-sm leading-5 text-gray-500 lg:text-left">
-						{showingText}
-						<span className="px-1 font-medium">{paginatedItems[0] || 0}</span>
-						{toText}
-						<span className="px-1 font-medium">{paginatedItems[paginatedItems.length - 1] || 0}</span>
-						{ofText}
-						<span className="px-1 font-medium">{pageCount || 0}</span>
-						{resultsText}
-					</p>
+	return isComponentReady ? (
+		pageCount && pageResults ? (
+			<div className="mt-8 mb-4 items-center justify-between py-4 align-middle lg:flex">
+				<div className="mb-8 flex items-center lg:m-0">
+					<div className="mt-2 lg:my-0">
+						<p className="text-center text-sm leading-5 text-gray-500 lg:text-left">
+							{showingText}
+							<span className="px-1 font-medium">{paginatedItems[0] || 0}</span>
+							{toText}
+							<span className="px-1 font-medium">{paginatedItems[paginatedItems.length - 1] || 0}</span>
+							{ofText}
+							<span className="px-1 font-medium">{pageCount || 0}</span>
+							{resultsText}
+						</p>
+					</div>
+				</div>
+
+				<Pagination
+					showPrevNextJumpers={true}
+					current={currentPage}
+					defaultCurrent={currentPage}
+					defaultPageSize={pageNumbers[0]}
+					disabled={!isComponentReady && user && Math.round(user?.status / 100) === 4 && user?.data?.detail}
+					onChange={handlePageChange}
+					pageSize={linksPerPage}
+					locale={PaginationLocale}
+					total={totalPages * linksPerPage}
+					pageSizeOptions={linksPerPageOptions}
+					itemRender={navigationItemRender}
+				/>
+
+				<div className="mt-4 flex items-center lg:m-0">
+					<h1 className="-mt-px inline-flex items-center pr-4 text-sm font-normal leading-5 text-gray-500">
+						{rowsPerPageText}
+					</h1>
+					<div>
+						<select
+							onChange={handleRowsPerPageChange}
+							value={linksPerPage}
+							className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base leading-6 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm sm:leading-5"
+						>
+							{linksPerPageOptions.map((val, key) => {
+								return (
+									<option key={key} value={val}>
+										{val}
+									</option>
+								);
+							})}
+						</select>
+					</div>
 				</div>
 			</div>
-
-			<Pagination
-				showPrevNextJumpers={true}
-				current={currentPage}
-				defaultCurrent={currentPage}
-				defaultPageSize={pageNumbers[0]}
-				disabled={!isComponentReady && user && Math.round(user?.status / 100) === 4 && user?.data?.detail}
-				onChange={handlePageChange}
-				pageSize={linksPerPage}
-				locale={PaginationLocale}
-				total={totalPages * linksPerPage}
-				pageSizeOptions={linksPerPageOptions}
-				itemRender={navigationItemRender}
-			/>
-
-			<div className="mt-4 flex items-center lg:m-0">
-				<h1 className="-mt-px inline-flex items-center pr-4 text-sm font-normal leading-5 text-gray-500">
-					{rowsPerPageText}
-				</h1>
-				<div>
-					<select
-						onChange={handleRowsPerPageChange}
-						value={linksPerPage}
-						className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base leading-6 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm sm:leading-5"
-					>
-						{linksPerPageOptions.map((val, key) => {
-							return (
-								<option key={key} value={val}>
-									{val}
-								</option>
-							);
-						})}
-					</select>
-				</div>
-			</div>
-		</div>
+		) : null
 	) : (
-		<div className="mt-8 mb-4 items-center justify-between bg-white py-4 align-middle lg:flex">
+		<div className="mt-8 mb-4 items-center justify-between  py-4 align-middle lg:flex">
 			<div className="flex flex-1">
 				<Skeleton duration={2} width={120} />
 			</div>
