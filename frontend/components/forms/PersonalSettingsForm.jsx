@@ -19,23 +19,19 @@ const PersonalSettingsForm = () => {
 
 	// Translations
 	const { t } = useTranslation();
-	const saving = t("settings:saving");
-	const saveChanges = t("settings:saveChanges");
+	const saving = t("common:saving");
+	const saveChanges = t("common:save");
 	const firstName = t("common:firstName");
 	const lastName = t("common:lastName");
 	const userName = t("common:userName");
 	const emailAddress = t("common:emailAddress");
-	const update = t("common:update");
+	const updateText = t("common:update");
 	const requiredField = t("common:requiredField");
 	const tooShort = t("common:tooShort");
 	const tooLong = t("common:tooLong");
 
 	// Custom context
-	const {
-		isComponentReady,
-
-		setConfig
-	} = useContext(SiteCrawlerAppContext);
+	const { isComponentReady, setConfig } = useContext(SiteCrawlerAppContext);
 
 	// SWR hooks
 	const {
@@ -100,7 +96,7 @@ const PersonalSettingsForm = () => {
 				const personalSettingsResponseStatus = personalSettingsResponse?.status ?? null;
 				const personalSettingsResponseMethod = personalSettingsResponse?.config?.method ?? null;
 
-				if (personalSettingsResponseData !== null && Math.round(personalSettingsResponseStatus / 200) === 1) {
+				if (personalSettingsResponseData && Math.round(personalSettingsResponseStatus / 200) === 1) {
 					// Disable submission and disable form as soon as 200 OK or 201 Created response was issued
 					setSubmitting(false);
 					setDisableForm(!disableForm);
@@ -278,7 +274,7 @@ const PersonalSettingsForm = () => {
 															: "hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
 													)}
 												>
-													{isSubmitting ? saving : !disableForm ? saveChanges : update}
+													{isSubmitting ? saving : !disableForm ? saveChanges : updateText}
 												</button>
 											) : (
 												<button
@@ -292,7 +288,7 @@ const PersonalSettingsForm = () => {
 													)}
 													onClick={() => setDisableForm(!disableForm)}
 												>
-													{isSubmitting ? saving : !disableForm ? saveChanges : update}
+													{isSubmitting ? saving : !disableForm ? saveChanges : updateText}
 												</button>
 											)
 										) : (

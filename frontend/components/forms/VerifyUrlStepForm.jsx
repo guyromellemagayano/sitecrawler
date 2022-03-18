@@ -58,10 +58,12 @@ const VerifyUrlStepForm = ({ sid = null, step = null, verified = false, setDisab
 	};
 
 	// Handle site data selection based on the given "siteData" prop value
-	useMemo(async () => {
-		if (sitesResults) {
+	useMemo(() => {
+		if (sitesResults && sid) {
 			setSiteData(sitesResults.filter((site) => site.id === sid));
 		}
+
+		return { siteData };
 	}, [sid, sitesResults]);
 
 	return (
@@ -82,9 +84,7 @@ const VerifyUrlStepForm = ({ sid = null, step = null, verified = false, setDisab
 						const verifyUrlStepStatus = verifyUrlStepResponse?.status ?? null;
 						const verifyUrlStepMethod = verifyUrlStepResponse?.config?.method ?? null;
 
-						console.log(verifyUrlStepResponse);
-
-						if (verifyUrlStepData !== null && Math.round(verifyUrlStepStatus / 200) === 1) {
+						if (verifyUrlStepData && Math.round(verifyUrlStepStatus / 200) === 1) {
 							if (verifyUrlStepData?.verified) {
 								// Disable submission as soon as 200 OK or 201 Created response was issued
 								setSubmitting(false);
@@ -143,9 +143,9 @@ const VerifyUrlStepForm = ({ sid = null, step = null, verified = false, setDisab
 								!user?.data?.detail &&
 								step === 3 &&
 								verified &&
-								sid !== null ? (
+								sid ? (
 									<span className="inline-flex">
-										{siteData !== null && Object.keys(siteData)?.length > 0 ? (
+										{siteData && Object.keys(siteData)?.length > 0 ? (
 											<Link
 												href={DashboardSitesLink + "[id]" + SiteOverviewSlug}
 												as={DashboardSitesLink + sid + SiteOverviewSlug}
@@ -166,7 +166,7 @@ const VerifyUrlStepForm = ({ sid = null, step = null, verified = false, setDisab
 								  !user?.data?.detail &&
 								  step === 2 &&
 								  !verified &&
-								  sid !== null ? (
+								  sid ? (
 									<>
 										<div className="inline-flex items-center justify-start">
 											<input

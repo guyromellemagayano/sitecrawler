@@ -1,4 +1,5 @@
 import { DefaultPaymentMethodApiEndpoint, PaymentMethodApiEndpoint } from "@constants/ApiEndpoints";
+import { NotificationDisplayInterval } from "@constants/GlobalValues";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { CardCvcElement, CardExpiryElement, CardNumberElement, useElements, useStripe } from "@stripe/react-stripe-js";
@@ -25,9 +26,7 @@ const CardInformationForm = () => {
 	const addCardText = t("settings:cardInformationSettings.addCard");
 	const addingText = t("common:adding");
 	const cardNumberText = t("settings:cardInformationSettings.cardNumber");
-	const closeText = t("common:close");
 	const cvcText = t("settings:cardInformationSettings.cvc");
-	const emailAddress = t("common:emailAddress");
 	const expirationDateText = t("settings:cardInformationSettings.expirationDate");
 	const firstName = t("common:firstName");
 	const lastName = t("common:lastName");
@@ -59,13 +58,13 @@ const CardInformationForm = () => {
 	const stripe = useStripe();
 	const elements = useElements();
 
-	// Handle `currentPaymentMethod` state
+	// Handle `disableForm` and `currentPaymentMethod` states
 	useEffect(() => {
-		defaultPaymentMethod?.data?.id && paymentMethods?.data
-			? Array.isArray(paymentMethods.data)
+		disableForm
+			? Array.isArray(paymentMethods?.data)
 				? setCurrentPaymentMethod(
-						paymentMethods.data
-							.filter((paymentMethod) => paymentMethod.id === defaultPaymentMethod.data.id)
+						paymentMethods?.data
+							.filter((paymentMethod) => paymentMethod.id === defaultPaymentMethod?.data?.id)
 							.map(
 								(paymentMethod) =>
 									handleConversionStringToUppercase(paymentMethod.card.brand.charAt(0)) +
@@ -75,19 +74,19 @@ const CardInformationForm = () => {
 									"****" +
 									" " +
 									paymentMethod.card.last4
-							) ?? noCurrentCardRegisteredText
+							)
 				  )
 				: setCurrentPaymentMethod(
-						handleConversionStringToUppercase(paymentMethods.data.card.brand.charAt(0)) +
-							paymentMethods.data.card.brand.slice(1) +
+						handleConversionStringToUppercase(paymentMethods?.data?.card?.brand?.charAt(0)) +
+							paymentMethods?.data?.card?.brand?.slice(1) +
 							" - " +
 							" " +
 							"****" +
 							" " +
-							paymentMethods.data.card.last4
+							paymentMethods?.data?.card?.last4
 				  )
-			: loadingCardInformationText;
-	}, [defaultPaymentMethod, paymentMethods]);
+			: setCurrentPaymentMethod(noCurrentCardRegisteredText);
+	}, [disableForm, defaultPaymentMethod, paymentMethods]);
 
 	// Handle form events
 	const handleFormEvents = (e) => {
@@ -135,7 +134,7 @@ const CardInformationForm = () => {
 				cardExpiry: "",
 				cardCvc: ""
 			}}
-			onSubmit={async (values, { setSubmitting, resetForm, setErrors }) => {
+			onSubmit={async (values, { setSubmitting, resetForm }) => {
 				if (stripe && elements) {
 					const payload = await stripe.createPaymentMethod({
 						type: "card",
@@ -154,20 +153,26 @@ const CardInformationForm = () => {
 
 						// Show alert message after successful 200 OK or 201 Created response is issued
 						setConfig({
-							isPaymentMethod: true,
+							isStripePaymentMethod: true,
 							method: paymentMethodResponseMethod,
-							status: paymentMethodResponseStatus
+							status: paymentMethodResponseStatus,
+							isAlert: false,
+							isNotification: false
 						});
-
-						if (paymentMethodResponseData !== null && Math.round(paymentMethodResponseStatus / 200) === 1) {
-							// Mutate `defaultPaymentMethod` endpoint after successful 200 OK or 201 Created response is issued
-							mutate(PaymentMethodApiEndpoint, { ...paymentMethods, data: paymentMethodResponseData }, false);
-							mutate(DefaultPaymentMethodApiEndpoint);
-						}
 
 						// Disable submission and reset form as soon as 200 OK or 201 Created response is issued
 						setSubmitting(false);
 						resetForm({ values: "" });
+
+						if (paymentMethodResponseData && Math.round(paymentMethodResponseStatus / 200) === 1) {
+							// Mutate `defaultPaymentMethod` endpoint after successful 200 OK or 201 Created response is issued
+							mutate(PaymentMethodApiEndpoint, { ...paymentMethods, data: paymentMethodResponseData }, false);
+							mutate(DefaultPaymentMethodApiEndpoint);
+
+							return setTimeout(() => setDisableForm(!disableForm), NotificationDisplayInterval);
+						}
+					} else {
+						console.log(payload.error);
 					}
 				}
 			}}
@@ -322,7 +327,6 @@ const CardInformationForm = () => {
 										) : (
 											<>
 												<Skeleton duration={2} width={82.39} height={38} className="py-2 px-4" />
-
 												<Skeleton duration={2} width={82.39} height={38} className="py-2 px-4" />
 											</>
 										)}
@@ -348,7 +352,7 @@ const CardInformationForm = () => {
 
 					<div className="relative mt-1 rounded-md shadow-sm">
 						{isComponentReady && stripe && elements ? (
-							<div className="min-h-[38px] overflow-hidden rounded-md border border-gray-300 bg-white py-3 px-3.5 text-xs leading-5 text-gray-700 shadow-sm sm:text-sm">
+							<div className="min-h-[38px] overflow-hidden rounded-md border border-gray-300 bg-white py-3 px-3.5 text-xs leading-5 text-gray-700 opacity-50 shadow-sm sm:text-sm">
 								{currentPaymentMethod}
 							</div>
 						) : (

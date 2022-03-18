@@ -54,7 +54,7 @@ const LoginForm = () => {
 				username: "",
 				password: ""
 			}}
-			validationSchema={Yup.object({
+			validationSchema={Yup.object().shape({
 				username: Yup.string().required(requiredField),
 				password: Yup.string().required(requiredField)
 			})}
@@ -75,7 +75,7 @@ const LoginForm = () => {
 				const loginResponseStatus = loginResponse?.status ?? null;
 				const loginResponseMethod = loginResponse?.config?.method ?? null;
 
-				if (loginResponseData !== null && Math.round(loginResponseStatus / 200) === 1) {
+				if (loginResponseData && Math.round(loginResponseStatus / 200) === 1) {
 					// Reenable submission as soon as 200 OK or 201 Created response is issued
 					setSubmitting(false);
 

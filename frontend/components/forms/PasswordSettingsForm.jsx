@@ -20,8 +20,8 @@ const PasswordSettingsForm = () => {
 
 	// Translations
 	const { t } = useTranslation();
-	const saveChanges = t("settings:saveChanges");
-	const saving = t("settings:saving");
+	const saveChanges = t("common:save");
+	const saving = t("common:saving");
 	const newPassword = t("common:newPassword");
 	const confirmPassword = t("common:confirmPassword");
 	const update = t("common:update");
@@ -65,7 +65,7 @@ const PasswordSettingsForm = () => {
 				const passwordSettingsResponseStatus = passwordSettingsResponse?.status ?? null;
 				const passwordSettingsResponseMethod = passwordSettingsResponse?.config?.method ?? null;
 
-				if (passwordSettingsResponseData !== null && Math.round(passwordSettingsResponseStatus / 200) === 1) {
+				if (passwordSettingsResponseData && Math.round(passwordSettingsResponseStatus / 200) === 1) {
 					// Disable submission, reset, and disable form as soon as 200 OK or 201 Created response was issued
 					setSubmitting(false);
 					resetForm({ values: "" });

@@ -32,7 +32,7 @@ const HelpSupportSettingsForm = () => {
 			initialValues={{
 				message: ""
 			}}
-			validationSchema={Yup.object({
+			validationSchema={Yup.object().shape({
 				message: Yup.string().required(requiredField)
 			})}
 			onSubmit={async (values, { setSubmitting, resetForm }) => {
@@ -45,7 +45,7 @@ const HelpSupportSettingsForm = () => {
 				const helpSupportResponseStatus = helpSupportResponse?.status ?? null;
 				const helpSupportResponseMethod = helpSupportResponse?.config?.method ?? null;
 
-				if (helpSupportResponseData !== null && Math.round(helpSupportResponseStatus / 200) === 1) {
+				if (helpSupportResponseData && Math.round(helpSupportResponseStatus / 200) === 1) {
 					// Disable submission and disable form as soon as 200 OK or 201 Created response was issued
 					setSubmitting(false);
 					resetForm({ values: "" });

@@ -61,43 +61,27 @@ const UrlInformationStepForm = (props) => {
 	const { user, largePageSizeThreshold } = useUser();
 	const { sites, sitesResults } = useSites();
 
-	useMemo(async () => {
-		let isMounted = true;
-
-		if (isMounted) {
-			// Update "editMode" state when "edit" prop changes
-			if (edit && step === 1 && sid && !verified) {
-				setEditMode(edit);
-			}
-
-			return { editMode };
+	useMemo(() => {
+		// Update "editMode" state when "edit" prop changes
+		if (edit && step === 1 && sid && !verified) {
+			setEditMode(edit);
 		}
 
-		return () => {
-			isMounted = false;
-		};
+		return { editMode };
 	}, [edit, step, sid, verified]);
 
-	useMemo(async () => {
-		let isMounted = true;
+	useMemo(() => {
+		if (editMode) {
+			if (sitesResults?.length > 0) {
+				const siteResult = sitesResults.find((site) => site.id === sid);
 
-		if (isMounted) {
-			if (editMode) {
-				if (sitesResults?.length > 0) {
-					const siteResult = sitesResults.find((site) => site.id === sid);
-
-					setSiteUrl(siteResult.url);
-					setSiteName(siteResult.name);
-					setSiteUrlProtocol(siteResult.url.split("://")[0] + "://");
-				}
+				setSiteUrl(siteResult.url);
+				setSiteName(siteResult.name);
+				setSiteUrlProtocol(siteResult.url.split("://")[0] + "://");
 			}
-
-			return { siteUrl, siteName, siteUrlProtocol };
 		}
 
-		return () => {
-			isMounted = false;
-		};
+		return { siteUrl, siteName, siteUrlProtocol };
 	}, [editMode, sitesResults, sid]);
 
 	const urlRegex = new RegExp(
@@ -112,7 +96,7 @@ const UrlInformationStepForm = (props) => {
 				siteurl: editMode ? siteUrl?.replace(/^\/\/|^.*?:(\/\/)?/, "") : "",
 				sitename: editMode ? siteName : ""
 			}}
-			validationSchema={Yup.object({
+			validationSchema={Yup.object().shape({
 				siteurl: Yup.string().matches(urlRegex, enterValidSiteUrl).max(2048, tooLong).required(requiredField),
 				sitename: Yup.string().min(1, tooShort).max(255, tooLong).required(requiredField)
 			})}

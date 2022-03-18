@@ -49,7 +49,7 @@ const RegistrationForm = () => {
 				password1: "",
 				password2: ""
 			}}
-			validationSchema={Yup.object({
+			validationSchema={Yup.object().shape({
 				firstname: Yup.string().required(requiredField),
 				lastname: Yup.string().required(requiredField),
 				username: Yup.string()
@@ -83,7 +83,7 @@ const RegistrationForm = () => {
 				const registrationResponseStatus = registrationResponse?.status ?? null;
 				const registrationResponseMethod = registrationResponse?.config?.method ?? null;
 
-				if (registrationResponseData !== null && Math.round(registrationResponseStatus / 200) === 1) {
+				if (registrationResponseData && Math.round(registrationResponseStatus / 200) === 1) {
 					// Disable submission and reset form as soon as 200 OK or 201 Created response is issued
 					setSubmitting(false);
 					resetForm({ values: "" });
