@@ -56,17 +56,16 @@ const SiteList = ({ data = null, handleSiteSelectOnClick }) => {
 	const customScanApiEndpoint = SitesApiEndpoint + siteId + ScanSlug;
 	const fullCustomScanApiEndpoint = customScanApiEndpoint + customScanApiEndpointQuery;
 
-	// SWR hooks
-	const { scan, currentScan, previousScan, scanObjId } = useScan(fullCustomScanApiEndpoint, siteId, {
+	// `scan` SWR hooks
+	const { scan, currentScan, previousScan, scanObjId } = useScan(fullCustomScanApiEndpoint, {
 		refreshInterval: RevalidationInterval
 	});
 
 	// Custom `stats` API endpoint
 	const customStatsApiEndpoint = scanObjId ? customScanApiEndpoint + scanObjId : null;
 
-	const { totalImages, totalLinks, totalPages } = useStats(customStatsApiEndpoint, {
-		refreshInterval: RevalidationInterval
-	});
+	// `stats` SWR hooks
+	const { totalImages, totalLinks, totalPages } = useStats(customStatsApiEndpoint);
 
 	// Custom variables
 	const scanCount = scan?.data?.count ?? null;

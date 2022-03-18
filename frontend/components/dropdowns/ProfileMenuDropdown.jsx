@@ -1,8 +1,7 @@
-import { Basic, Pro } from "@constants/GlobalValues";
+import { Agency, Basic, Pro } from "@constants/GlobalValues";
 import { SubscriptionPlansSettingsLink } from "@constants/PageLinks";
 import { SidebarMenus } from "@constants/SidebarMenus";
 import { Transition } from "@headlessui/react";
-import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
@@ -27,10 +26,7 @@ const ProfileMenuDropdown = ({ isComponentVisible = false }) => {
 	const { ProfileSidebarMenus } = SidebarMenus();
 
 	// Custom context
-	const { isComponentReady } = useContext(SiteCrawlerAppContext);
-
-	// SWR hooks
-	const { user, group } = useUser();
+	const { isComponentReady, user } = useContext(SiteCrawlerAppContext);
 
 	return (
 		<Transition
@@ -46,30 +42,34 @@ const ProfileMenuDropdown = ({ isComponentVisible = false }) => {
 				<div className="rounded-md bg-white" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
 					<div className="py-1">
 						<span className="group my-1 flex items-center justify-between px-4 py-2">
-							<span
-								className={classnames(
-									"text-sm font-medium leading-5",
-									group.name === Basic ? "text-green-800" : group.name === Pro ? "text-blue-800" : "text-red-800"
-								)}
-							>
-								{isComponentReady &&
-								user &&
-								Math.round(user?.status / 100) === 2 &&
-								!user?.data?.detail &&
-								group.name ? (
-									group.name + " " + plan
-								) : (
-									<Skeleton duration={2} width={67} height={20} />
-								)}
-							</span>
+							{isComponentReady && user?.data?.group?.name ? (
+								<span
+									className={classnames(
+										"text-sm font-medium leading-5",
+										user.data.group.name === Basic
+											? "text-green-800"
+											: user.data.group.name === Pro
+											? "text-blue-800"
+											: user.data.group.name === Agency
+											? "text-red-800"
+											: "text-gray-800"
+									)}
+								>
+									{user.data.group.name ? (
+										user.data.group.name + " " + plan
+									) : (
+										<Skeleton duration={2} width={67} height={20} />
+									)}
+								</span>
+							) : null}
 
-							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && group.name ? (
-								group.name === Basic || group.name === Pro ? (
+							{isComponentReady && user?.data?.group?.name ? (
+								user.data.group.name === Basic || user.data.group.name === Pro ? (
 									<Link href={SubscriptionPlansSettingsLink} passHref>
 										<a
 											className={classnames(
 												"inline-flex cursor-pointer items-center rounded px-2 py-1 text-xs font-medium leading-4 transition duration-150 ease-in-out hover:text-white",
-												group.name === Basic
+												user.data.group.name === Basic
 													? "bg-green-200 text-green-800 hover:bg-green-600"
 													: "bg-blue-200 text-blue-800 hover:bg-blue-600"
 											)}

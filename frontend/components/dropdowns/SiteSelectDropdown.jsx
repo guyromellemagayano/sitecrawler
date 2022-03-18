@@ -6,13 +6,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Transition } from "@headlessui/react";
 import { PlusIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
-import { useSites } from "@hooks/useSites";
-import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { forwardRef, memo, useContext, useMemo, useState } from "react";
+import { forwardRef, memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
@@ -24,8 +22,6 @@ import "react-loading-skeleton/dist/skeleton.css";
  * @param {boolean} openDropdown
  */
 const SiteSelectDropdown = ({ handleSiteSelectOnClick, openDropdown = false }, ref) => {
-	const [hasSiteLimitReached, setHasSiteLimitReached] = useState(false);
-
 	// Sidebar Menu Labels
 	const labelsArray = SidebarMenuLabels();
 
@@ -37,11 +33,7 @@ const SiteSelectDropdown = ({ handleSiteSelectOnClick, openDropdown = false }, r
 	const addNewSite = t("addNewSite");
 
 	// Custom context
-	const { isComponentReady } = useContext(SiteCrawlerAppContext);
-
-	// SWR hooks
-	const { user, maxSiteLimit } = useUser();
-	const { sitesCount } = useSites();
+	const { isComponentReady, user, sites, hasSiteLimitReached } = useContext(SiteCrawlerAppContext);
 
 	// Custom hooks
 	const {
@@ -49,26 +41,6 @@ const SiteSelectDropdown = ({ handleSiteSelectOnClick, openDropdown = false }, r
 		isComponentVisible: isSiteLimitComponentVisible,
 		setIsComponentVisible: setIsSiteLimitComponentVisible
 	} = useComponentVisible(false);
-
-	// Update `hasSiteLimitReached` state value
-	useMemo(async () => {
-		let isMounted = true;
-
-		(async () => {
-			if (!isMounted) return;
-
-			// Handle `hasSiteLimitReached` value
-			if (maxSiteLimit && sitesCount) {
-				setHasSiteLimitReached(sitesCount >= maxSiteLimit);
-			}
-
-			return hasSiteLimitReached;
-		})();
-
-		return () => {
-			isMounted = false;
-		};
-	}, [sitesCount, maxSiteLimit]);
 
 	return (
 		<>
@@ -88,9 +60,9 @@ const SiteSelectDropdown = ({ handleSiteSelectOnClick, openDropdown = false }, r
 				leaveTo="transform opacity-0 scale-95"
 			>
 				<div ref={ref} className="absolute z-50 mt-1 w-full overflow-hidden rounded-md bg-white shadow-lg">
-					<MemoizedSitesList isOpen={openDropdown} />
+					<MemoizedSitesList isOpen={openDropdown} handleSiteSelectOnClick={handleSiteSelectOnClick} />
 					<span className="relative m-2 flex justify-center rounded-md shadow-sm">
-						{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+						{isComponentReady ? (
 							hasSiteLimitReached ? (
 								<button
 									type="button"
