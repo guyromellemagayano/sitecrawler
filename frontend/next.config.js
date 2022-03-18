@@ -21,7 +21,8 @@ const NextConfig = {
 		LOGROCKET_APP_ID: "epic-design-labs/link-app"
 	},
 	compiler: {
-		styledComponents: true
+		styledComponents: true,
+		removeConsole: process.env.NODE_ENV === "production" ? true : false
 	},
 	experimental: {
 		outputStandalone: true
