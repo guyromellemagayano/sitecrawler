@@ -6,13 +6,13 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  * @param {object} options
  * @returns {object} currentSubscription, errorCurrentSubscription, validatingCurrentSubscription
  */
-export const useCurrentSubscription = (endpoint = null, setConfig, options = null) => {
+export const useCurrentSubscription = (endpoint = null, options = null) => {
 	// SWR hook
 	const {
 		data: currentSubscription,
 		error: errorCurrentSubscription,
 		isValidating: validatingCurrentSubscription
-	} = useMainSWRConfig(endpoint, setConfig, options);
+	} = useMainSWRConfig(endpoint, options);
 
 	return {
 		currentSubscription,

@@ -14,7 +14,7 @@ const { createContext, useContext } = require("react");
  * @param {object} options
  * @returns {object} data, error, isValidating
  */
-export const useMainSWRConfig = (endpoint = null, setConfig, options = null) => {
+export const useMainSWRConfig = (endpoint = null, options = null) => {
 	// Router
 	const router = useRouter();
 

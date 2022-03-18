@@ -4,17 +4,12 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  * SWR React hook that will handle a site's `links` information
  *
  * @param {string} endpoint
- * @param {function} setConfig
  * @param {object} options
  * @returns {object} links, errorLinks, validatingLinks
  */
-export const useLinks = (endpoint = null, setConfig, options = null) => {
+export const useLinks = (endpoint = null, options = null) => {
 	// SWR hook
-	const {
-		data: links,
-		error: errorLinks,
-		isValidating: validatingLinks
-	} = useMainSWRConfig(endpoint, setConfig, options);
+	const { data: links, error: errorLinks, isValidating: validatingLinks } = useMainSWRConfig(endpoint, options);
 
 	return { links, errorLinks, validatingLinks };
 };

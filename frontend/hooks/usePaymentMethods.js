@@ -4,17 +4,16 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  * SWR React hook that will handle all the payment methods
  *
  * @param {string} endpoint
- * @param {function} setConfig
  * @param {object} options
  * @returns {object} paymentMethods, errorPaymentMethods, validatingPaymentMethods
  */
-export const usePaymentMethods = (endpoint = null, setConfig, options = null) => {
+export const usePaymentMethods = (endpoint = null, options = null) => {
 	// SWR hook
 	const {
 		data: paymentMethods,
 		error: errorPaymentMethods,
 		isValidating: validatingPaymentMethods
-	} = useMainSWRConfig(endpoint, setConfig, options);
+	} = useMainSWRConfig(endpoint, options);
 
 	return {
 		paymentMethods,

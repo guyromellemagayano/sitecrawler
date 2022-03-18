@@ -7,13 +7,9 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  * @param {object} options
  * @returns {object} siteId, errorSiteId, validatingSiteId
  */
-export const useSiteId = (endpoint = null, setConfig, options = null) => {
+export const useSiteId = (endpoint = null, options = null) => {
 	// SWR hook
-	const {
-		data: siteId,
-		error: errorSiteId,
-		isValidating: validatingSiteId
-	} = useMainSWRConfig(endpoint, setConfig, options);
+	const { data: siteId, error: errorSiteId, isValidating: validatingSiteId } = useMainSWRConfig(endpoint, options);
 
 	return { siteId, errorSiteId, validatingSiteId };
 };
