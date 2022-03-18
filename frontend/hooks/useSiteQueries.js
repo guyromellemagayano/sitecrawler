@@ -1,7 +1,7 @@
 import { MinSitesPerPage } from "@constants/GlobalValues";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import { useRouter } from "next/router";
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 /**
  * Custom hook that handles the site queries
@@ -16,23 +16,14 @@ export const useSiteQueries = () => {
 	// Router
 	const { asPath, query } = useRouter();
 
-	useMemo(() => {
-		let isMounted = true;
+	useEffect(() => {
+		handleRemoveUrlParameter(asPath, "page").includes("?")
+			? setPagePath(`${handleRemoveUrlParameter(asPath, "page")}&`)
+			: setPagePath(`${handleRemoveUrlParameter(asPath, "page")}?`);
 
-		// Handle the queries
-		(async () => {
-			handleRemoveUrlParameter(asPath, "page").includes("?")
-				? setPagePath(`${handleRemoveUrlParameter(asPath, "page")}&`)
-				: setPagePath(`${handleRemoveUrlParameter(asPath, "page")}?`);
-
-			query?.search ? setSearchKey(query.search) : null;
-			query?.per_page ? setLinksPerPage(parseInt(query.per_page)) : null;
-		})();
-
-		return () => {
-			isMounted = false;
-		};
-	}, [query, pagePath]);
+		query?.search ? setSearchKey(query.search) : null;
+		query?.per_page ? setLinksPerPage(parseInt(query.per_page)) : null;
+	}, [query]);
 
 	return { linksPerPage, setLinksPerPage, pagePath, setPagePath, searchKey, setSearchKey };
 };
