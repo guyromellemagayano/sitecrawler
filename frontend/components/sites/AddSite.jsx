@@ -8,14 +8,12 @@ import { PlusIcon, SearchIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
 import { useSiteQueries } from "@hooks/useSiteQueries";
-import { useSites } from "@hooks/useSites";
-import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import { memo, useContext, useMemo, useState } from "react";
+import { memo, useContext, useState } from "react";
 import { isBrowser } from "react-device-detect";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -27,7 +25,6 @@ import { useSWRConfig } from "swr";
  * @param {function} handleOpenSidebar
  */
 const AddSite = ({ handleOpenSidebar }) => {
-	const [hasSiteLimitReached, setHasSiteLimitReached] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 
 	// Translations
@@ -44,20 +41,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 	const { mutate } = useSWRConfig();
 
 	// Custom context
-	const { isComponentReady } = useContext(SiteCrawlerAppContext);
-
-	// SWR hooks
-	const { user, maxSiteLimit } = useUser();
-	const { sitesCount } = useSites();
-
-	useMemo(async () => {
-		// Handle `hasSiteLimitReached` value
-		if (maxSiteLimit && sitesCount) {
-			setHasSiteLimitReached(sitesCount >= maxSiteLimit);
-		}
-
-		return hasSiteLimitReached;
-	}, [sitesCount, maxSiteLimit]);
+	const { isComponentReady, user, sites, hasSiteLimitReached } = useContext(SiteCrawlerAppContext);
 
 	// Custom hooks
 	const {
@@ -76,7 +60,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 	const { scanApiEndpoint } = useScanApiEndpoint(linksPerPage);
 
 	// Custom hook that handles site search
-	const useHandleSiteSearch = async (e) => {
+	const useHandleSiteSearch = (e) => {
 		const searchTargetValue = e.target.value;
 
 		if (e.keyCode !== 13) return false;
@@ -142,14 +126,14 @@ const AddSite = ({ handleOpenSidebar }) => {
 								</label>
 								<div className="relative flex w-full items-center text-gray-400 focus-within:text-gray-600">
 									<div className="pointer-events-none absolute inset-y-0 left-0 flex items-center">
-										{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+										{isComponentReady ? (
 											<SearchIcon className="h-4 w-4 text-gray-400" />
 										) : (
 											<Skeleton duration={2} width={20} height={20} />
 										)}
 									</div>
-									{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-										sitesCount > 0 ? (
+									{isComponentReady ? (
+										sites?.data?.count > 0 ? (
 											<input
 												type="search"
 												name="search-sites"
@@ -171,7 +155,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 					</div>
 				</div>
 				<div className="ml-4 flex items-center space-x-2 p-4 lg:ml-6 xl:p-0">
-					{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+					{isComponentReady ? (
 						hasSiteLimitReached ? (
 							<button
 								type="button"

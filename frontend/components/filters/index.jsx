@@ -338,7 +338,9 @@ const Filter = ({
 				setUnverifiedFilter(false);
 				setAllSitesFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "verified");
+				filterQueryString?.delete("verified") ?? null;
+
+				if (newPath.includes("verified")) newPath = handleRemoveUrlParameter(newPath, "verified");
 
 				if (newPath.includes("?")) newPath += `&verified=true`;
 				else newPath += `?verified=true`;
@@ -347,7 +349,9 @@ const Filter = ({
 				setUnverifiedFilter(true);
 				setAllSitesFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "verified");
+				filterQueryString?.delete("verified") ?? null;
+
+				if (newPath.includes("verified")) newPath = handleRemoveUrlParameter(newPath, "verified");
 
 				if (newPath.includes("?")) newPath += `&verified=false`;
 				else newPath += `?verified=false`;
@@ -363,11 +367,11 @@ const Filter = ({
 		if (newPath.includes("?")) setPagePath(`${newPath}&`);
 		else setPagePath(`${newPath}?`);
 
-		// Mutate function here
-		mutate(scanApiEndpoint);
-
 		// Push new path
 		push(newPath);
+
+		// Mutate function here
+		mutate(scanApiEndpoint);
 	};
 
 	// Handle filters on load

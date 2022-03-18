@@ -1,4 +1,5 @@
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
+import { orderingByNameQuery } from "@constants/GlobalValues";
 import {
 	SiteImageSlug,
 	SiteImagesSlug,
@@ -23,23 +24,24 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 	const { asPath, query } = useRouter();
 
 	// Custom context
-	const { isUserReady, querySiteId, sites, customScanApiEndpoint } = useContext(SiteCrawlerAppContext);
-
-	// Site `scan` SWR hook
-	const { scan, scanObjId } = useScan(customScanApiEndpoint);
+	const { isUserReady, customScanApiEndpoint } = useContext(SiteCrawlerAppContext);
 
 	// Custom variables
-	let scanApiEndpoint = customScanApiEndpoint ?? SitesApiEndpoint;
+	let scanApiEndpoint = "";
 	let queryString = "";
 	let filterQueryString = "";
 
+	// Site `scan` SWR hook
+	const { scanObjId } = useScan(customScanApiEndpoint);
+
 	scanObjId && asPath.includes(SiteLinksSlug)
-		? (scanApiEndpoint += scanObjId + SiteLinkSlug)
+		? (scanApiEndpoint += customScanApiEndpoint + scanObjId + SiteLinkSlug)
 		: scanObjId && asPath.includes(SitePagesSlug)
-		? (scanApiEndpoint += scanObjId + SitePageSlug)
+		? (scanApiEndpoint += customScanApiEndpoint + scanObjId + SitePageSlug)
 		: scanObjId && asPath.includes(SiteImagesSlug)
-		? (scanApiEndpoint += scanObjId + SiteImageSlug)
-		: null;
+		? (scanApiEndpoint += customScanApiEndpoint + scanObjId + SiteImageSlug)
+		: (scanApiEndpoint +=
+				SitesApiEndpoint + (scanApiEndpoint.includes("?") ? "&" : "?") + `${orderingByNameQuery + "name"}`);
 
 	const typeString = query?.type ? (Array.isArray(query?.type) ? query.type.join("&type=") : query.type) : "";
 
@@ -124,6 +126,8 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 	queryString += orderingQuery;
 
 	scanApiEndpoint += queryString;
+
+	console.log(scanApiEndpoint);
 
 	return { scanApiEndpoint, queryString, filterQueryString };
 };
