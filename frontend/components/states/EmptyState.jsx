@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { memo, useState } from "react";
 
-const EmptyState = () => {
+const EmptyState = ({ isSites = false }) => {
 	const [isLoading, setIsLoading] = useState(false);
 
 	// Translations
@@ -32,7 +32,7 @@ const EmptyState = () => {
 
 		setIsLoading(!isLoading);
 
-		if (asPath === DashboardSitesLink) {
+		if (asPath === DashboardSitesLink && isSites) {
 			push(addNewSitePage);
 		} else {
 			push(SubscriptionPlansSettingsLink);
@@ -45,17 +45,17 @@ const EmptyState = () => {
 
 	return (
 		<div className="text-center">
-			{asPath !== DashboardSitesLink ? (
+			{asPath !== DashboardSitesLink && !isSites ? (
 				<ExclamationIcon className="mx-auto h-12 w-12 text-yellow-400" />
 			) : (
 				<FolderAddIcon className="mx-auto h-12 w-12 text-gray-400" />
 			)}
 
 			<h3 className="mt-2 text-sm font-medium text-gray-900">
-				{asPath !== DashboardSitesLink ? siteFeatureNotAvailableTitleText : noAvailableSitesText}
+				{asPath !== DashboardSitesLink && !isSites ? siteFeatureNotAvailableTitleText : noAvailableSitesText}
 			</h3>
 			<p className="mt-1 text-sm text-gray-500">
-				{asPath !== DashboardSitesLink ? siteFeatureNotAvailableMessageText : addNewSiteMessageText}
+				{asPath !== DashboardSitesLink && !isSites ? siteFeatureNotAvailableMessageText : addNewSiteMessageText}
 			</p>
 			<div className="mt-6">
 				<Link href="/" passHref>
@@ -66,7 +66,7 @@ const EmptyState = () => {
 						aria-hidden="true"
 						className={classnames(
 							"inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm ",
-							asPath !== DashboardSitesLink
+							asPath !== DashboardSitesLink && !isSites
 								? isLoading
 									? "cursor-not-allowed bg-yellow-500 opacity-50"
 									: "cursor-pointer bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
@@ -75,16 +75,18 @@ const EmptyState = () => {
 								: "cursor-pointer bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
 						)}
 					>
-						{asPath !== DashboardSitesLink && !isLoading ? (
-							<>
-								<ViewBoardsIcon className="-ml-1 mr-2 h-4 w-4" aria-hidden="true" />
-								{upgradePlanText}
-							</>
-						) : asPath === DashboardSitesLink && !isLoading ? (
-							<>
-								<PlusIcon className="-ml-1 mr-2 h-4 w-4" aria-hidden="true" />
-								{addNewSiteText}
-							</>
+						{!isLoading ? (
+							asPath !== DashboardSitesLink && !isSites ? (
+								<>
+									<ViewBoardsIcon className="-ml-1 mr-2 h-4 w-4" aria-hidden="true" />
+									{upgradePlanText}
+								</>
+							) : (
+								<>
+									<PlusIcon className="-ml-1 mr-2 h-4 w-4" aria-hidden="true" />
+									{addNewSiteText}
+								</>
+							)
 						) : (
 							loaderMessage
 						)}

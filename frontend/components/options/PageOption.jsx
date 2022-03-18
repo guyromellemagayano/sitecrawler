@@ -1,7 +1,7 @@
-// import { MemoizedFilter } from "@components/filters";
+import { MemoizedFilter } from "@components/filters";
 import { MemoizedSiteVerifyErrorModal } from "@components/modals/SiteVerifyErrorModal";
 import { MemoizedUpgradeErrorModal } from "@components/modals/UpgradeErrorModal";
-import { RedirectInterval } from "@constants/GlobalValues";
+import { RedirectInterval, RevalidationInterval } from "@constants/GlobalValues";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DocumentTextIcon, ExternalLinkIcon, LinkIcon } from "@heroicons/react/outline";
 import { DownloadIcon, GlobeIcon } from "@heroicons/react/solid";
@@ -14,10 +14,9 @@ import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
 import { useSiteId } from "@hooks/useSiteId";
 import { useSiteQueries } from "@hooks/useSiteQueries";
 import { useSites } from "@hooks/useSites";
-import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
-import { handleConversionStringToLowercase, handleConversionStringToNumber } from "@utils/convertCase";
+import { handleConversionStringToLowercase } from "@utils/convertCase";
 import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
@@ -49,39 +48,13 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 	const crawlText = t("sites:crawlSite");
 	const downloadingText = t("sites:downloading");
 	const siteCrawlingInProcessText = t("sites:siteCrawlingInProcess");
-
-	// Custom context
-	const { isComponentReady } = useContext(SiteCrawlerAppContext);
+	const noAvailableSitesText = t("sites:noAvailableSites");
+	const noAvailablePagesText = t("sites:noAvailablePages");
+	const noAvailableImagesText = t("sites:noAvailableImages");
+	const noAvailableLinksText = t("sites:noAvailableLinks");
 
 	// Router
-	const { query, asPath } = useRouter();
-	const { siteId } = query;
-
-	// Custom variables
-	const sanitizedSiteId = handleConversionStringToNumber(siteId);
-
-	// Helper functions
-	const { linksPerPage } = useSiteQueries();
-	const {
-		scanObjId,
-		currentScan,
-		previousScan,
-		handleCrawl,
-		scanCount,
-		isCrawlStarted,
-		isCrawlFinished,
-		isProcessing,
-		selectedSiteRef
-	} = useScan(sanitizedSiteId);
-	const { scanApiEndpoint, queryString } = useScanApiEndpoint(linksPerPage);
-
-	// SWR hooks
-	const { user, disableLocalTime, permissions } = useUser();
-	const { siteIdVerified, siteName, siteUrl } = useSiteId(sanitizedSiteId);
-	const { sitesCount, sitesResults, validatingSites } = useSites(scanApiEndpoint);
-	const { linksCount, linksResults, validatingLinks } = useLinks(scanApiEndpoint, sanitizedSiteId, scanObjId);
-	const { pagesCount, pagesResults, validatingPages } = usePages(scanApiEndpoint, sanitizedSiteId, scanObjId);
-	const { imagesCount, imagesResults, validatingImages } = useImages(scanApiEndpoint, sanitizedSiteId, scanObjId);
+	const { asPath } = useRouter();
 
 	// Custom hooks
 	const {
@@ -94,6 +67,53 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 		isComponentVisible: isSiteVerifyErrorModalVisible,
 		setIsComponentVisible: setIsSiteVerifyErrorModalVisible
 	} = useComponentVisible(false);
+
+	// Custom context
+	const { isComponentReady, isUserReady, querySiteId, user, customSitesIdApiEndpoint, customScanApiEndpoint } =
+		useContext(SiteCrawlerAppContext);
+
+	// Helper functions
+	const { linksPerPage } = useSiteQueries();
+	const { scanApiEndpoint, queryString } = useScanApiEndpoint(linksPerPage);
+
+	// `scan` SWR hooks
+	const {
+		scan,
+		currentScan,
+		previousScan,
+		scanObjId,
+		selectedSiteRef,
+		isCrawlStarted,
+		isCrawlFinished,
+		handleCrawl,
+		isProcessing
+	} = useScan(customScanApiEndpoint, {
+		refreshInterval: RevalidationInterval
+	});
+
+	const { siteId } = useSiteId(customSitesIdApiEndpoint);
+	const { sites } = useSites(scanApiEndpoint);
+	const { links } = useLinks(scanApiEndpoint);
+	const { pages } = usePages(scanApiEndpoint);
+	const { images } = useImages(scanApiEndpoint);
+
+	// Custom variables
+	const disableLocalTime = user?.data?.settings?.disableLocalTime ?? false;
+	const permissions = user?.data?.permissions ?? null;
+	const siteIdVerified = siteId?.data?.verified ?? null;
+	const siteName = siteId?.data?.name ?? null;
+	const siteUrl = siteId?.data?.url ?? null;
+	const scanCount = scan?.data?.count ?? null;
+	const scanResults = scan?.data?.results ?? null;
+	const sitesCount = sites?.data?.count ?? null;
+	const sitesResults = sites?.data?.results ?? null;
+	const linksCount = links?.data?.count ?? null;
+	const linksResults = links?.data?.results ?? null;
+	const pagesCount = pages?.data?.count ?? null;
+	const pagesResults = pages?.data?.results ?? null;
+	const imagesCount = images?.data?.count ?? null;
+	const imagesResults = images?.data?.results ?? null;
+	const previousScanFinishedAt = previousScan?.finished_at ?? null;
 
 	const calendar = require("dayjs/plugin/calendar");
 	const timezone = require("dayjs/plugin/timezone");
@@ -128,22 +148,11 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 			window.location.assign(downloadLink);
 		}
 
-		return () => {
-			clearTimeout(timeout);
-		};
+		return () => clearTimeout(timeout);
 	};
 
 	return (
-		<div
-			className={classnames(
-				(isLinks && linksCount > 0 && linksResults?.length > 0) ||
-					(isSites && sitesCount > 0 && sitesResults?.length > 0) ||
-					(isPages && pagesCount > 0 && pagesResults?.length > 0) ||
-					(isImages && imagesCount > 0 && imagesResults?.length > 0)
-					? "flex-none px-4 sm:px-6 md:flex md:items-center md:justify-between md:px-0"
-					: "hidden"
-			)}
-		>
+		<div className="flex-none px-4 sm:px-6 md:flex md:items-center md:justify-between md:px-0">
 			{!isSites ? (
 				<>
 					<MemoizedUpgradeErrorModal
@@ -166,12 +175,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 						{!isSites ? (
 							<>
 								<div className="flex items-center space-x-2 text-sm text-gray-500">
-									{isComponentReady &&
-									user &&
-									Math.round(user?.status / 100) === 2 &&
-									!user?.data?.detail &&
-									siteName &&
-									siteUrl ? (
+									{isComponentReady ? (
 										<>
 											<GlobeIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
 											<span className="text-sm font-semibold leading-6 text-gray-500">
@@ -195,12 +199,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 								</div>
 
 								<div className="flex items-center space-x-2 text-sm text-gray-500">
-									{isComponentReady &&
-									user &&
-									Math.round(user?.status / 100) === 2 &&
-									!user?.data?.detail &&
-									scanCount &&
-									(previousScan || currentScan) ? (
+									{isComponentReady ? (
 										<>
 											<FontAwesomeIcon
 												icon={["fas", "spider"]}
@@ -210,20 +209,16 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 											<span className="text-sm leading-6 text-gray-500">
 												{scanCount > 1 ? (
 													!disableLocalTime ? (
-														dayjs(
-															currentScan !== null ? previousScan?.finished_at : previousScan?.finished_at
-														).calendar(null, calendarStrings)
+														dayjs(previousScanFinishedAt).calendar(null, calendarStrings)
 													) : (
-														dayjs
-															.utc(currentScan !== null ? previousScan?.finished_at : previousScan?.finished_at)
-															.calendar(null, calendarStrings)
+														dayjs.utc(previousScanFinishedAt).calendar(null, calendarStrings)
 													)
-												) : scanCount === 1 && currentScan !== null ? (
+												) : scanCount === 1 && currentScan ? (
 													<span className="text-sm leading-5 text-gray-500">{siteCrawlingInProcessText}</span>
 												) : !disableLocalTime ? (
-													dayjs(previousScan?.finished_at).calendar(null, calendarStrings)
+													dayjs(previousScanFinishedAt).calendar(null, calendarStrings)
 												) : (
-													dayjs.utc(previousScan?.finished_at).calendar(null, calendarStrings)
+													dayjs.utc(previousScanFinishedAt).calendar(null, calendarStrings)
 												)}
 											</span>
 										</>
@@ -238,35 +233,39 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 						) : null}
 
 						<div className="flex items-center space-x-2 text-sm text-gray-500">
-							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-								isLinks && linksCount > 0 ? (
-									<>
-										<LinkIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
-										<span className="text-sm leading-6 text-gray-500">
-											{linksCount > 1
-												? linksCount + " " + handleConversionStringToLowercase(linksText)
-												: linksCount + " " + linkText}
-										</span>
-									</>
-								) : isSites && sitesCount > 0 ? (
-									<>
-										<ExternalLinkIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
-										<span className="text-sm leading-6 text-gray-500">
-											{sitesCount > 1
-												? sitesCount + " " + handleConversionStringToLowercase(sitesText)
-												: sitesCount + " " + siteText}
-										</span>
-									</>
-								) : isPages && pagesCount > 0 ? (
-									<>
-										<DocumentTextIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
-										<span className="text-sm leading-6 text-gray-500">
-											{pagesCount > 1
-												? pagesCount + " " + handleConversionStringToLowercase(pagesText)
-												: pagesCount + " " + siteText}
-										</span>
-									</>
-								) : null
+							{isComponentReady && isLinks ? (
+								<>
+									<LinkIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
+									<span className="text-sm leading-6 text-gray-500">
+										{linksCount > 1
+											? linksCount + " " + handleConversionStringToLowercase(linksText)
+											: linksCount === 1
+											? linksCount + " " + linkText
+											: noAvailableLinksText}
+									</span>
+								</>
+							) : isComponentReady && isSites ? (
+								<>
+									<ExternalLinkIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
+									<span className="text-sm leading-6 text-gray-500">
+										{sitesCount > 1
+											? sitesCount + " " + handleConversionStringToLowercase(sitesText)
+											: sitesCount === 1
+											? sitesCount + " " + siteText
+											: noAvailableSitesText}
+									</span>
+								</>
+							) : isComponentReady && isPages ? (
+								<>
+									<DocumentTextIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
+									<span className="text-sm leading-6 text-gray-500">
+										{pagesCount > 1
+											? pagesCount + " " + handleConversionStringToLowercase(pagesText)
+											: pagesCount === 1
+											? pagesCount + " " + siteText
+											: noAvailablePagesText}
+									</span>
+								</>
 							) : (
 								<>
 									<Skeleton duration={2} width={20} height={20} className="flex-shrink-0" />
@@ -279,9 +278,6 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 					{!isSites ? (
 						<div className="mt-4 flex md:mt-0 md:ml-4">
 							{isComponentReady &&
-							user &&
-							Math.round(user?.status / 100) === 2 &&
-							!user?.data?.detail &&
 							(linksCount || sitesCount || pagesCount) &&
 							(isCrawlStarted || !isCrawlStarted || isCrawlFinished || !isCrawlFinished) ? (
 								permissions.includes("can_start_scan") &&
@@ -335,11 +331,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 							)}
 
 							{!isSites ? (
-								isComponentReady &&
-								user &&
-								Math.round(user?.status / 100) === 2 &&
-								!user?.data?.detail &&
-								(linksCount || sitesCount || pagesCount) ? (
+								isComponentReady && (linksCount || sitesCount || pagesCount) ? (
 									siteIdVerified ? (
 										<button
 											type="button"
@@ -376,6 +368,8 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 						</div>
 					) : null}
 				</div>
+
+				{isSites ? <MemoizedFilter isSitesFilter /> : null}
 
 				{/* {isLinks ? (
 					<MemoizedFilter isSitesLinksFilter />

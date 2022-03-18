@@ -1,7 +1,5 @@
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
-import { orderingByNameQuery, perPageQuery } from "@constants/GlobalValues";
 import {
-	ScanSlug,
 	SiteImageSlug,
 	SiteImagesSlug,
 	SiteLinkSlug,
@@ -9,8 +7,9 @@ import {
 	SitePageSlug,
 	SitePagesSlug
 } from "@constants/PageLinks";
-import { handleConversionStringToNumber } from "@utils/convertCase";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import { useRouter } from "next/router";
+import { useContext } from "react";
 import { useScan } from "./useScan";
 
 /**
@@ -22,28 +21,25 @@ import { useScan } from "./useScan";
 export const useScanApiEndpoint = (linksPerPage = null) => {
 	// Router
 	const { asPath, query } = useRouter();
-	const { siteId } = query;
 
-	// Custom variables
-	const sanitizedSiteId = handleConversionStringToNumber(siteId);
+	// Custom context
+	const { isUserReady, querySiteId, sites, customScanApiEndpoint } = useContext(SiteCrawlerAppContext);
 
 	// Site `scan` SWR hook
-	const { scan, scanObjId } = useScan(sanitizedSiteId);
+	const { scan, scanObjId } = useScan(customScanApiEndpoint);
 
 	// Custom variables
-	let scanApiEndpoint = SitesApiEndpoint;
+	let scanApiEndpoint = customScanApiEndpoint ?? SitesApiEndpoint;
 	let queryString = "";
 	let filterQueryString = "";
 
-	if (asPath.includes(SiteLinksSlug)) {
-		scanApiEndpoint += sanitizedSiteId + ScanSlug + scanObjId + SiteLinkSlug;
-	} else if (asPath.includes(SitePagesSlug)) {
-		scanApiEndpoint += sanitizedSiteId + ScanSlug + scanObjId + SitePageSlug;
-	} else if (asPath.includes(SiteImagesSlug)) {
-		scanApiEndpoint += sanitizedSiteId + ScanSlug + scanObjId + SiteImageSlug;
-	}
-
-	scanApiEndpoint += "?" + perPageQuery + linksPerPage;
+	scanObjId && asPath.includes(SiteLinksSlug)
+		? (scanApiEndpoint += scanObjId + SiteLinkSlug)
+		: scanObjId && asPath.includes(SitePagesSlug)
+		? (scanApiEndpoint += scanObjId + SitePageSlug)
+		: scanObjId && asPath.includes(SiteImagesSlug)
+		? (scanApiEndpoint += scanObjId + SiteImageSlug)
+		: null;
 
 	const typeString = query?.type ? (Array.isArray(query?.type) ? query.type.join("&type=") : query.type) : "";
 
@@ -113,7 +109,7 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 		? scanApiEndpoint.includes("?")
 			? `&ordering=${query.ordering}`
 			: `?ordering=${query.ordering}`
-		: "&" + orderingByNameQuery + "name";
+		: "";
 
 	queryString += verifiedQuery;
 	queryString += statusNeqQuery;

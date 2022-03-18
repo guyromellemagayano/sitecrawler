@@ -256,20 +256,20 @@ export const FilterData = () => {
 	filtersArray.push(imagesTlsStatusData);
 	filtersArray.push(scriptsTlsStatusData);
 	filtersArray.push(stylesheetsTlsStatusData);
-	// filtersArray.push(totalOkLinksData);
-	// filtersArray.push(totalNonOkLinksData);
-	// filtersArray.push(totalOkImagesData);
-	// filtersArray.push(totalNonOkImagesData);
-	// filtersArray.push(totalOkScriptsData);
-	// filtersArray.push(totalNonOkScriptsData);
-	// filtersArray.push(totalOkStylesheetsData);
-	// filtersArray.push(totalNonOkStylesheetsData);
-	// filtersArray.push(securedImagesData);
-	// filtersArray.push(unsecuredImagesData);
-	// filtersArray.push(securedScriptsData);
-	// filtersArray.push(unsecuredScriptsData);
-	// filtersArray.push(securedStylesheetsData);
-	// filtersArray.push(unsecuredStylesheetsData);
+	filtersArray.push(totalOkLinksData);
+	filtersArray.push(totalNonOkLinksData);
+	filtersArray.push(totalOkImagesData);
+	filtersArray.push(totalNonOkImagesData);
+	filtersArray.push(totalOkScriptsData);
+	filtersArray.push(totalNonOkScriptsData);
+	filtersArray.push(totalOkStylesheetsData);
+	filtersArray.push(totalNonOkStylesheetsData);
+	filtersArray.push(securedImagesData);
+	filtersArray.push(unsecuredImagesData);
+	filtersArray.push(securedScriptsData);
+	filtersArray.push(unsecuredScriptsData);
+	filtersArray.push(securedStylesheetsData);
+	filtersArray.push(unsecuredStylesheetsData);
 
 	return {
 		filtersArray,

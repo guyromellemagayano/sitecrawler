@@ -36,39 +36,37 @@ const SitesTable = ({ count = 0, results = [] }) => {
 		<section
 			className={classnames(
 				"flex h-full min-h-full w-full flex-col",
-				count > 0 && results?.length > 0 ? "justify-start" : "justify-center"
+				isComponentReady && count > 0 && results?.length > 0 ? "justify-start" : "justify-center"
 			)}
 		>
-			{isComponentReady ? (
-				count > 0 && results?.length > 0 ? (
-					<table className="relative w-full">
-						<thead>
-							<tr>
-								{labelsArray?.map((label) => (
-									<th
-										key={label.label}
-										className="border-b border-gray-200 px-6 py-3 text-left text-xs font-medium uppercase leading-4 tracking-wider text-gray-500"
-									>
-										<span className="flex items-center justify-start">
-											<MemoizedDataSorting slug={label.slug} labels={labelsArray} />
-											<span className="flex items-center">{label.label}</span>
-										</span>
-									</th>
-								)) ?? null}
-							</tr>
-						</thead>
+			{isComponentReady && count > 0 && results?.length > 0 ? (
+				<table className="relative w-full">
+					<thead>
+						<tr>
+							{labelsArray?.map((label) => (
+								<th
+									key={label.label}
+									className="border-b border-gray-200 px-6 py-3 text-left text-xs font-medium uppercase leading-4 tracking-wider text-gray-500"
+								>
+									<span className="flex items-center justify-start">
+										<MemoizedDataSorting slug={label.slug} labels={labelsArray} />
+										<span className="flex items-center">{label.label}</span>
+									</span>
+								</th>
+							)) ?? null}
+						</tr>
+					</thead>
 
-						<tbody className="relative divide-y divide-gray-200">
-							{results?.map((result) => {
-								return <MemoizedSitesData key={result.id} site={result} />;
-							}) ?? null}
-						</tbody>
-					</table>
-				) : count === 0 && results?.length === 0 ? (
-					<div className="flex items-center justify-center px-4 py-5 sm:p-6">
-						<MemoizedEmptyState />
-					</div>
-				) : null
+					<tbody className="relative divide-y divide-gray-200">
+						{results.map((result) => (
+							<MemoizedSitesData key={result.id} site={result} />
+						))}
+					</tbody>
+				</table>
+			) : isComponentReady && count === 0 && results?.length === 0 ? (
+				<div className="flex items-center justify-center px-4 py-5 sm:p-6">
+					<MemoizedEmptyState isSites />
+				</div>
 			) : (
 				<div className="flex items-center justify-center px-4 py-5 sm:p-6">
 					<MemoizedLoadingMessage message={loaderMessage} />
