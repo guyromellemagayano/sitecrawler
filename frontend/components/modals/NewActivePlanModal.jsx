@@ -40,7 +40,7 @@ const NewActivePlanModal = ({ planId = null, planName = null, showModal = false,
 	const sanitizedCurrentSubscriptionStatus = currentSubscriptionStatus
 		? handleConversionStringToLowercase(currentSubscriptionStatus)
 		: null;
-	const disableLocalTime = user?.data?.settings?.disableLocalTime ?? null;
+	const disableLocalTime = user?.data?.settings?.disableLocalTime ?? false;
 
 	// Calendar and dayJS plugins
 	const calendar = require("dayjs/plugin/calendar");

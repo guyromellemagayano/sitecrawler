@@ -60,7 +60,7 @@ const SiteLimitReachedModal = ({ showModal = false, setShowModal }, ref) => {
 				as="div"
 				className="fixed inset-0 z-50 overflow-y-auto"
 				initialFocus={siteLimitReachedModalRef}
-				onClose={!isLoading ? setShowModal : () => {}}
+				onClose={isLoading ? () => {} : handleCloseModal}
 			>
 				<div className="flex min-h-screen items-end justify-center p-4 text-center sm:block sm:p-0">
 					<Transition.Child
