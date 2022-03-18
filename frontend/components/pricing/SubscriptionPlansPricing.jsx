@@ -52,7 +52,7 @@ const SubscriptionPlansPricing = ({
 
 	// Custom variables
 	const subscriptionsResults = subscriptions?.data?.results ?? null;
-	const disableLocalTime = user?.data?.settings?.disableLocalTime ?? null;
+	const disableLocalTime = user?.data?.settings?.disableLocalTime ?? false;
 
 	return (
 		<div className="flex h-full w-full flex-col items-center justify-center">
