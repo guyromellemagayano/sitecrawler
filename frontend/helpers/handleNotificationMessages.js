@@ -54,6 +54,8 @@ export const handleNotificationMessages = ({
 			...(isVerifyUrlStep && { isVerifyUrlStep: isVerifyUrlStep }),
 			method: handleConversionStringToUppercase(data.method),
 			status: data.status,
+			isAlert: data.isAlert,
+			isNotification: data.isNotification,
 			responses: [
 				...state.responses,
 				{
@@ -78,7 +80,7 @@ export const handleNotificationMessages = ({
 			]
 		});
 
-		const timeout = setTimeout(() => {
+		const hideMessageTimeout = setTimeout(() => {
 			dispatch({
 				...state,
 				...(isLinks && { isLinks: false }),
@@ -148,13 +150,15 @@ export const handleNotificationMessages = ({
 				...(isUrlInformationStep && { isUrlInformationStep: !isUrlInformationStep }),
 				...(isUser && { isUser: !isUser }),
 				...(isVerifyUrlStep && { isVerifyUrlStep: !isVerifyUrlStep }),
+				isAlert: null,
+				isNotification: null,
 				method: null,
 				status: null
 			});
 		}, NotificationDisplayInterval);
 
 		return () => {
-			clearTimeout(timeout);
+			clearTimeout(hideMessageTimeout);
 		};
 	}
 
