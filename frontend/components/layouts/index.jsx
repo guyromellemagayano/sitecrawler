@@ -29,12 +29,12 @@ export const DashboardLayout = ({ children }) => {
 
 	return (
 		<>
-			{state?.responses?.length > 0 ? (
+			{state?.responses?.length > 0 && state?.isNotification ? (
 				<div
 					aria-live="assertive"
 					className={classnames(
-						"right-3 top-3 bottom-3 z-50 flex w-full max-w-xs flex-col items-end justify-start gap-4 overflow-y-auto",
-						state?.responses?.length > 0 ? "fixed" : "hidden"
+						"right-5 top-5 bottom-5 z-50 flex w-full max-w-xs flex-col items-end justify-end gap-4 overflow-y-auto",
+						state?.responses?.length > 0 && state?.isNotification ? "fixed" : "hidden"
 					)}
 				>
 					<div className="flex w-full flex-col items-center space-y-4 sm:items-end">
@@ -71,7 +71,7 @@ export const DashboardLayout = ({ children }) => {
 						/>
 					</div>
 
-					<div className="flex-1 bg-gray-100">
+					<div className="flex-1 bg-white">
 						<Scrollbars autoHide universal>
 							<div className="absolute left-0 right-0 mx-auto h-full w-full max-w-screen-2xl">
 								<div className="flex h-full flex-col">{children}</div>
@@ -112,24 +112,22 @@ export const StaticLayout = ({ children }) => {
 
 	return (
 		<>
-			{state?.responses?.length > 0 ? (
+			{state?.responses?.length > 0 && state?.isAlert ? (
 				<div
 					aria-live="assertive"
 					className={classnames(
-						"right-3 top-3 bottom-3 z-50 flex w-full max-w-xs flex-col items-end justify-start gap-4 overflow-y-auto",
-						state?.responses?.length > 0 ? "fixed" : "hidden"
+						"right-5 top-5 bottom-5 z-50 flex w-full max-w-xs flex-col items-end justify-end gap-4 overflow-y-auto",
+						state?.responses?.length > 0 && state?.isAlert ? "fixed" : "hidden"
 					)}
 				>
 					<div className="flex w-full flex-col items-center space-y-4 sm:items-end">
-						{state?.responses?.length > 0
-							? state.responses.map((value, key) => {
-									// Alert Messsages
-									const responseText = value.responseText ?? null;
-									const isSuccess = value.isSuccess ?? null;
+						{state.responses.map((value, key) => {
+							// Alert Messsages
+							const responseText = value.responseText ?? null;
+							const isSuccess = value.isSuccess ?? null;
 
-									return <MemoizedAlert key={key} responseText={responseText} isSuccess={isSuccess} />;
-							  }) ?? null
-							: null}
+							return <MemoizedAlert key={key} responseText={responseText} isSuccess={isSuccess} />;
+						}) ?? null}
 					</div>
 				</div>
 			) : null}

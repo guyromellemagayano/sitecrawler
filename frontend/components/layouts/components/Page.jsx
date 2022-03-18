@@ -22,7 +22,6 @@ const PageLayout = ({ children, pageTitle = null }) => {
 	// Custom context
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
-	// Prefetch login link for faster loading
 	useEffect(() => {
 		prefetch(LoginLink);
 	}, []);
