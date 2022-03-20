@@ -30,7 +30,7 @@ import {
 	StripeSubscriptionsNotificationMessage
 } from "@constants/notificationMessage/stripe";
 import { SupportNotificationMessage } from "@constants/notificationMessage/support";
-import { useMemo, useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { useAlertTranslations } from "./useAlertTranslations";
 
 const messagesReducer = (state, action) => {
@@ -551,7 +551,7 @@ export const useNotificationMessage = () => {
 	} = useAlertTranslations();
 
 	// Handle alert/notification messasges
-	useMemo(() => {
+	useEffect(() => {
 		if (config) {
 			const isAlert = config?.isAlert ?? false;
 			const isConfirmEmail = config?.isConfirmEmail ?? false;
@@ -784,8 +784,24 @@ export const useNotificationMessage = () => {
 						isNotification
 					});
 				} else if (isRegistration) {
+					const locales = {
+						registrationPost200OkSuccessResponse,
+						registrationPost201CreatedSuccessResponse,
+						registrationPost400BadRequestErrorResponse,
+						registrationPost401UnauthorizedErrorResponse,
+						registrationPost403ForbiddenErrorResponse,
+						registrationPost404NotFoundErrorResponse,
+						registrationPost429TooManyRequestsErrorResponse,
+						registrationPost500InternalServerErrorResponse,
+						registrationPost502BadGatewayErrorResponse,
+						registrationPost503ServiceUnavailableErrorResponse,
+						registrationPost504GatewayTimeoutErrorResponse
+					};
+
 					// Registration
 					return RegistrationNotificationMessage({
+						locales,
+						fallback,
 						dispatch,
 						config,
 						setConfig,

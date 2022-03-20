@@ -1,6 +1,5 @@
 import { handleNotificationMessages } from "@helpers/handleNotificationMessages";
 import { handleConversionStringToLowercase, handleConversionStringToNumber } from "@utils/convertCase";
-import useTranslation from "next-translate/useTranslation";
 
 export const RegistrationNotificationMessage = ({
 	locales,
@@ -13,9 +12,6 @@ export const RegistrationNotificationMessage = ({
 	isAlert,
 	isNotification
 }) => {
-	// Translations
-	const { t } = useTranslation();
-
 	let responsesArray = [];
 
 	const postResponse = {
