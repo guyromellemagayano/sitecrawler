@@ -22,7 +22,7 @@ const PersonalSettingsForm = () => {
 	const [email, setEmail] = useState("");
 	const [settings, setSettings] = useState({});
 	const [largePageSizeThreshold, setLargePageSizeThreshold] = useState(0);
-	const [isLoading, setIsLoading] = useState(false);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	// Translations
 	const { t } = useTranslation();
@@ -65,22 +65,6 @@ const PersonalSettingsForm = () => {
 		return { firstname, lastname, username, email, settings, largePageSizeThreshold };
 	}, [user]);
 
-	const handleUserNameInputChange = (e) => {
-		setUsername(e.target.value);
-	};
-
-	const handleFirstNameInputChange = (e) => {
-		setFirstname(e.target.value);
-	};
-
-	const handleLastNameInputChange = (e) => {
-		setLastname(e.target.value);
-	};
-
-	const handleEmailInputChange = (e) => {
-		setEmail(e.target.value);
-	};
-
 	return (
 		<Formik
 			enableReinitialize={true}
@@ -107,7 +91,7 @@ const PersonalSettingsForm = () => {
 					.required(requiredField)
 			})}
 			onSubmit={async (values, { resetForm }) => {
-				setIsLoading(true);
+				setIsSubmitting(true);
 
 				const body = {
 					username: values.username,
@@ -138,12 +122,12 @@ const PersonalSettingsForm = () => {
 						mutate(UserApiEndpoint, { ...user, data: personalSettingsResponseData }, false);
 
 						// Disable submission and disable form as soon as 200 OK or 201 Created response was issued
-						setIsLoading(false);
+						setIsSubmitting(false);
 						resetForm({ values: "" });
 						setDisableForm(!disableForm);
 					} else {
 						// Disable submission as soon as 200 OK or 201 Created response was not issued
-						setIsLoading(false);
+						setIsSubmitting(false);
 					}
 				}, NotificationDisplayInterval);
 
@@ -152,7 +136,7 @@ const PersonalSettingsForm = () => {
 				};
 			}}
 		>
-			{({ errors, handleBlur, handleSubmit, isSubmitting, values }) => (
+			{({ errors, handleBlur, handleChange, handleSubmit, handleReset, values }) => (
 				<form className="space-y-8" onSubmit={handleSubmit}>
 					<div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4">
 						<div className="sm:col-span-1">
@@ -166,14 +150,14 @@ const PersonalSettingsForm = () => {
 										id="firstname"
 										value={values.firstname}
 										name="firstname"
-										disabled={isSubmitting || isLoading || disableForm}
+										disabled={isSubmitting || disableForm}
 										className={classnames(
 											"block w-full rounded-md focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
-											(isSubmitting || isLoading || disableForm) && "cursor-not-allowed bg-gray-300 opacity-50",
+											(isSubmitting || disableForm) && "cursor-not-allowed bg-gray-300 opacity-50",
 											errors.firstname ? "border-red-300" : "border-gray-300"
 										)}
 										aria-describedby="firstname"
-										onChange={handleFirstNameInputChange}
+										onChange={handleChange}
 										onBlur={handleBlur}
 									/>
 								) : (
@@ -197,14 +181,14 @@ const PersonalSettingsForm = () => {
 										id="lastname"
 										value={values.lastname}
 										name="lastname"
-										disabled={isSubmitting || isLoading || disableForm}
+										disabled={isSubmitting || disableForm}
 										className={classnames(
 											"block w-full rounded-md focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
-											(isSubmitting || isLoading || disableForm) && "cursor-not-allowed bg-gray-300 opacity-50",
+											(isSubmitting || disableForm) && "cursor-not-allowed bg-gray-300 opacity-50",
 											errors.lastname ? "border-red-300" : "border-gray-300"
 										)}
 										aria-describedby="lastname"
-										onChange={handleLastNameInputChange}
+										onChange={handleChange}
 										onBlur={handleBlur}
 									/>
 								) : (
@@ -228,14 +212,14 @@ const PersonalSettingsForm = () => {
 										id="username"
 										value={values.username}
 										name="username"
-										disabled={isSubmitting || isLoading || disableForm}
+										disabled={isSubmitting || disableForm}
 										className={classnames(
 											"block w-full rounded-md focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
-											(isSubmitting || isLoading || disableForm) && "cursor-not-allowed bg-gray-300 opacity-50",
+											(isSubmitting || disableForm) && "cursor-not-allowed bg-gray-300 opacity-50",
 											errors.username ? "border-red-300" : "border-gray-300"
 										)}
 										aria-describedby="username"
-										onChange={handleUserNameInputChange}
+										onChange={handleChange}
 										onBlur={handleBlur}
 									/>
 								) : (
@@ -261,7 +245,7 @@ const PersonalSettingsForm = () => {
 										disabled={true}
 										className="block w-full cursor-not-allowed rounded-md border-gray-300 bg-gray-300 opacity-50 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 										aria-describedby="email"
-										onChange={handleEmailInputChange}
+										onChange={handleChange}
 									/>
 								) : (
 									<Skeleton duration={2} height={38} />
@@ -302,31 +286,61 @@ const PersonalSettingsForm = () => {
 												<>
 													<button
 														type="button"
-														disabled={isSubmitting || isLoading || disableForm}
+														disabled={isSubmitting || disableForm}
 														className={classnames(
 															"rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm",
-															isSubmitting || isLoading || disableForm
+															isSubmitting || disableForm
 																? "cursor-not-allowed opacity-50"
 																: "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 														)}
-														onClick={() => setDisableForm(!disableForm)}
+														onClick={() => {
+															handleReset();
+															setDisableForm(!disableForm);
+														}}
 													>
 														{cancelText}
 													</button>
 
 													<button
 														type="submit"
-														disabled={isSubmitting || isLoading || disableForm}
-														aria-disabled={isSubmitting || isLoading || disableForm}
-														aria-hidden={isSubmitting || isLoading || disableForm}
-														className={classnames(
-															"ml-3 inline-flex justify-center rounded-md border border-transparent bg-green-600 py-2 px-4 text-sm font-medium text-white shadow-sm",
+														disabled={
 															isSubmitting ||
-																isLoading ||
-																Object.keys(errors).length > 0 ||
+															Object.keys(errors).length > 0 ||
+															!(
+																disableForm ||
 																values.firstname !== firstname ||
 																values.lastname !== lastname ||
 																values.username !== username
+															)
+														}
+														aria-disabled={
+															isSubmitting ||
+															Object.keys(errors).length > 0 ||
+															!(
+																disableForm ||
+																values.firstname !== firstname ||
+																values.lastname !== lastname ||
+																values.username !== username
+															)
+														}
+														aria-hidden={
+															isSubmitting ||
+															Object.keys(errors).length > 0 ||
+															!(
+																disableForm ||
+																values.firstname !== firstname ||
+																values.lastname !== lastname ||
+																values.username !== username
+															)
+														}
+														className={classnames(
+															"ml-3 inline-flex justify-center rounded-md border border-transparent bg-green-600 py-2 px-4 text-sm font-medium text-white shadow-sm",
+															isSubmitting ||
+																Object.keys(errors).length > 0 ||
+																!(disableForm,
+																values.firstname !== firstname ||
+																	values.lastname !== lastname ||
+																	values.username !== username)
 																? "cursor-not-allowed opacity-50"
 																: "hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
 														)}
@@ -344,7 +358,10 @@ const PersonalSettingsForm = () => {
 															? "cursor-not-allowed opacity-50"
 															: "hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 													)}
-													onClick={() => setDisableForm(!disableForm)}
+													onClick={() => {
+														handleReset();
+														setDisableForm(!disableForm);
+													}}
 												>
 													{updateText}
 												</button>

@@ -17,7 +17,7 @@ import * as Yup from "yup";
  */
 const PasswordSettingsForm = () => {
 	const [disableForm, setDisableForm] = useState(true);
-	const [isLoading, setIsLoading] = useState(false);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	// Translations
 	const { t } = useTranslation();
@@ -54,7 +54,7 @@ const PasswordSettingsForm = () => {
 					.required(requiredField)
 			})}
 			onSubmit={async (values, { resetForm }) => {
-				setIsLoading(true);
+				setIsSubmitting(true);
 
 				const body = {
 					new_password1: values.password1,
@@ -81,12 +81,12 @@ const PasswordSettingsForm = () => {
 						mutate(PasswordChangeApiEndpoint);
 
 						// Disable submission, reset, and disable form as soon as 200 OK or 201 Created response was issued
-						setIsLoading(false);
+						setIsSubmitting(false);
 						resetForm({ values: "" });
 						setDisableForm(!disableForm);
 					} else {
 						// Disable submission, reset, and disable form as soon as 200 OK or 201 Created response was not issued
-						setIsLoading(false);
+						setIsSubmitting(false);
 					}
 				}, NotificationDisplayInterval);
 
@@ -95,7 +95,7 @@ const PasswordSettingsForm = () => {
 				};
 			}}
 		>
-			{({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+			{({ errors, handleBlur, handleChange, handleSubmit, values, handleReset }) => (
 				<form className="space-y-8" onSubmit={handleSubmit}>
 					<div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4">
 						<div className="sm:col-span-1">
@@ -110,10 +110,10 @@ const PasswordSettingsForm = () => {
 										value={values.password1}
 										autoComplete="current-password"
 										name="password1"
-										disabled={isSubmitting || isLoading || disableForm}
+										disabled={isSubmitting || disableForm}
 										className={classnames(
 											"block w-full rounded-md focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
-											isSubmitting || isLoading || disableForm ? "cursor-not-allowed bg-gray-300 opacity-50" : null,
+											isSubmitting || disableForm ? "cursor-not-allowed bg-gray-300 opacity-50" : null,
 											errors.password1 ? "border-red-300" : "border-gray-300"
 										)}
 										aria-describedby="password1"
@@ -144,10 +144,10 @@ const PasswordSettingsForm = () => {
 										id="password2"
 										value={values.password2}
 										name="password2"
-										disabled={isSubmitting || isLoading || disableForm}
+										disabled={isSubmitting || disableForm}
 										className={classnames(
 											"block w-full rounded-md focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
-											(isSubmitting || isLoading || disableForm) && "cursor-not-allowed bg-gray-300 opacity-50",
+											(isSubmitting || disableForm) && "cursor-not-allowed bg-gray-300 opacity-50",
 											errors.password2 ? "border-red-300" : "border-gray-300"
 										)}
 										aria-describedby="password2"
@@ -197,30 +197,43 @@ const PasswordSettingsForm = () => {
 												<>
 													<button
 														type="button"
-														disabled={isSubmitting || isLoading || Object.keys(errors).length > 0}
+														disabled={isSubmitting}
 														className={classnames(
 															"rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm",
-															isSubmitting || isLoading || Object.keys(errors).length > 0
+															isSubmitting
 																? "cursor-not-allowed opacity-50"
 																: "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 														)}
-														onClick={() => setDisableForm(!disableForm)}
+														onClick={() => {
+															handleReset();
+															setDisableForm(!disableForm);
+														}}
 													>
 														{cancelText}
 													</button>
 
 													<button
 														type="submit"
-														disabled={isSubmitting || isLoading || (values.password1 === "" && values.password2 === "")}
+														disabled={
+															isSubmitting ||
+															Object.keys(errors).length > 0 ||
+															!(values.password1 !== "" || values.password2 !== "")
+														}
 														aria-disabled={
-															isSubmitting || isLoading || (values.password1 === "" && values.password2 === "")
+															isSubmitting ||
+															Object.keys(errors).length > 0 ||
+															!(values.password1 !== "" || values.password2 !== "")
 														}
 														aria-hidden={
-															isSubmitting || isLoading || (values.password1 === "" && values.password2 === "")
+															isSubmitting ||
+															Object.keys(errors).length > 0 ||
+															!(values.password1 !== "" || values.password2 !== "")
 														}
 														className={classnames(
 															"ml-3 inline-flex justify-center rounded-md border border-transparent bg-green-600 py-2 px-4 text-sm font-medium text-white shadow-sm",
-															isSubmitting || isLoading || (values.password1 === "" && values.password2 === "")
+															isSubmitting ||
+																Object.keys(errors).length > 0 ||
+																!(values.password1 !== "" || values.password2 !== "")
 																? "cursor-not-allowed opacity-50"
 																: "hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
 														)}
@@ -238,7 +251,10 @@ const PasswordSettingsForm = () => {
 															? "cursor-not-allowed opacity-50"
 															: "hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 													)}
-													onClick={() => setDisableForm(!disableForm)}
+													onClick={() => {
+														handleReset();
+														setDisableForm(!disableForm);
+													}}
 												>
 													{isSubmitting ? saving : !disableForm ? saveChanges : update}
 												</button>
