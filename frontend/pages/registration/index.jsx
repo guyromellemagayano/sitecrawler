@@ -22,7 +22,7 @@ const RegistrationAuth = () => {
 	return (
 		<MemoizedLayout>
 			<NextSeo title={registrationText} />
-			{isComponentReady ? <MemoizedRegistrationPageLayout /> : <MemoizedLoader />}
+			{isComponentReady && isUserNotLoaded ? <MemoizedRegistrationPageLayout /> : <MemoizedLoader />}
 		</MemoizedLayout>
 	);
 };
