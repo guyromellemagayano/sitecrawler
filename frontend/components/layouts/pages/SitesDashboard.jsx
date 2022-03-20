@@ -5,11 +5,9 @@ import { RevalidationInterval } from "@constants/GlobalValues";
 import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
 import { useSiteQueries } from "@hooks/useSiteQueries";
 import { useSites } from "@hooks/useSites";
-import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import { memo, useContext } from "react";
-import "react-loading-skeleton/dist/skeleton.css";
 
 /**
  * Custom function to render the `SitesDashboardPageLayout` component
@@ -23,10 +21,13 @@ const SitesDashboardPageLayout = () => {
 	const { scanApiEndpoint } = useScanApiEndpoint(linksPerPage);
 
 	// SWR hooks
-	const { user } = useUser();
-	const { sitesCount, sitesResults } = useSites(scanApiEndpoint, {
+	const { sites } = useSites(scanApiEndpoint, {
 		refreshInterval: RevalidationInterval
 	});
+
+	// Custom variables
+	const sitesCount = sites?.data?.count ?? null;
+	const sitesResults = sites?.data?.results ?? null;
 
 	return (
 		<>
@@ -34,7 +35,7 @@ const SitesDashboardPageLayout = () => {
 			<div
 				className={classnames(
 					"flex-grow px-4 pt-8 focus:outline-none sm:px-6 md:px-0",
-					isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && sitesCount === 0
+					isComponentReady && sitesCount === 0 && sitesResults?.length === 0
 						? "flex flex-auto flex-col items-center justify-center"
 						: null
 				)}
@@ -42,7 +43,7 @@ const SitesDashboardPageLayout = () => {
 				<div
 					className={classnames(
 						"h-full w-full flex-1 overflow-y-hidden py-2",
-						isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && sitesCount === 0
+						isComponentReady && sitesCount === 0 && sitesResults?.length === 0
 							? "flex items-center justify-center"
 							: null
 					)}
@@ -51,7 +52,11 @@ const SitesDashboardPageLayout = () => {
 				</div>
 			</div>
 
-			<div className="flex-none">
+			<div
+				className={classnames(
+					isComponentReady && sitesCount === 0 && sitesResults?.length === 0 ? "hidden" : "flex-none"
+				)}
+			>
 				<MemoizedDataPagination />
 			</div>
 		</>

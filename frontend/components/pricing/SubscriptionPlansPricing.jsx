@@ -2,8 +2,6 @@
 import { MemoizedBasicPlan } from "@components/plans/BasicPlan";
 import { MemoizedMonthlyPlans } from "@components/plans/MonthlyPlans";
 import { MemoizedSemiAnnualPlans } from "@components/plans/SemiAnnualPlans";
-import { useSubscriptions } from "@hooks/useSubscriptions";
-import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
@@ -16,6 +14,7 @@ import "react-loading-skeleton/dist/skeleton.css";
  * Custom function to render the `SubscriptionPlansPricing` component
  *
  * @param {boolean} disableLocalTime
+ * @param {boolean} loadingBasic
  * @param {boolean} loadingAgencySemiAnnually
  * @param {boolean} loadingProSemiAnnually
  * @param {boolean} loadingAgencyMonthly
@@ -24,62 +23,57 @@ import "react-loading-skeleton/dist/skeleton.css";
  * @param {function} setTogglePaymentPeriod
  * @param {function} setPlanId
  * @param {function} setPlanName
- * @param {function} setOpen
+ * @param {function} setShowModal
+ * @param {function} setShowChangeToBasicModal
  */
 const SubscriptionPlansPricing = ({
 	setPlanId,
 	setPlanName,
-	setOpen,
+	setShowModal,
 	setTogglePaymentPeriod,
 	togglePaymentPeriod,
+	loadingBasic,
 	loadingAgencySemiAnnually,
 	loadingAgencyMonthly,
 	loadingProSemiAnnually,
-	loadingProMonthly
+	loadingProMonthly,
+	setShowChangeToBasicModal
 }) => {
 	// Translations
 	const { t } = useTranslation();
-	const subscriptionPlanLabelHeadline = t("settings:subscriptionPlans.headline");
-	const subscriptionPlanLabelSubheadline = t("settings:subscriptionPlans.subHeadline");
-	const subscriptionPlanBillMonthly = t("settings:subscriptionPlans.bill.monthly");
-	const subscriptionPlanBillSemiAnnual = t("settings:subscriptionPlans.bill.semiAnnual");
-	const subscriptionCreditDebitCardRequired = t("settings:subscriptionPlans.creditDebitCardRequired");
+	const labelHeadlineText = t("settings:subscriptionPlans.headline");
+	const labelSubheadlineText = t("settings:subscriptionPlans.subHeadline");
+	const billMonthlyText = t("settings:subscriptionPlans.bill.monthly");
+	const billSemiAnnualText = t("settings:subscriptionPlans.bill.semiAnnual");
+	const creditDebitCardRequiredText = t("settings:subscriptionPlans.creditDebitCardRequired");
 
 	// Custom context
-	const { setConfig, isComponentReady } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady, user, subscriptions } = useContext(SiteCrawlerAppContext);
 
-	// SWR hooks
-	const { user, disableLocalTime } = useUser();
-	const { subscriptions } = useSubscriptions();
+	// Custom variables
+	const subscriptionsResults = subscriptions?.data?.results ?? null;
+	const disableLocalTime = user?.data?.settings?.disableLocalTime ?? false;
 
 	return (
 		<div className="flex h-full w-full flex-col items-center justify-center">
 			<div className="flex flex-col flex-wrap items-center px-4 pt-12 sm:px-6 lg:px-8 lg:pt-20">
 				<div className="mb-10 text-center">
 					<p className="text-xl font-bold leading-9 tracking-tight text-gray-900 sm:text-3xl sm:leading-10">
-						{isComponentReady ? subscriptionPlanLabelHeadline : <Skeleton duration={2} width={460} height={40} />}
+						{isComponentReady ? labelHeadlineText : <Skeleton duration={2} width={460} height={40} />}
 					</p>
 					<p className="mx-auto mt-3 max-w-4xl text-base leading-7 text-gray-600 sm:mt-5 sm:text-xl sm:leading-8">
-						{isComponentReady ? subscriptionPlanLabelSubheadline : <Skeleton duration={2} width={300} height={32} />}
+						{isComponentReady ? labelSubheadlineText : <Skeleton duration={2} width={300} height={32} />}
 					</p>
 				</div>
 
 				<div className="flex items-center justify-center">
-					<p className="mx-4 text-base font-medium leading-7 text-gray-500">
-						{isComponentReady &&
-						subscriptions &&
-						Math.round(subscriptions?.status / 100) === 2 &&
-						!subscriptions?.data?.detail ? (
-							subscriptionPlanBillMonthly
-						) : (
-							<Skeleton duration={2} width={87} height={28} />
-						)}
-					</p>
+					{isComponentReady ? (
+						<p className="mx-4 text-base font-medium leading-7 text-gray-500">{billMonthlyText}</p>
+					) : (
+						<Skeleton duration={2} width={87} height={28} className="mx-4" />
+					)}
 
-					{isComponentReady &&
-					subscriptions &&
-					Math.round(subscriptions?.status / 100) === 2 &&
-					!subscriptions?.data?.detail ? (
+					{isComponentReady ? (
 						<span
 							role="checkbox"
 							tabIndex="0"
@@ -104,29 +98,19 @@ const SubscriptionPlansPricing = ({
 						<Skeleton duration={2} width={48} height={24} />
 					)}
 
-					<p className="mx-4 text-base font-medium leading-7 text-gray-500">
-						{isComponentReady &&
-						subscriptions &&
-						Math.round(subscriptions?.status / 100) === 2 &&
-						!subscriptions?.data?.detail ? (
-							subscriptionPlanBillSemiAnnual
-						) : (
-							<Skeleton duration={2} width={126} height={28} />
-						)}
-					</p>
+					{isComponentReady ? (
+						<p className="mx-4 text-base font-medium leading-7 text-gray-500">{billSemiAnnualText}</p>
+					) : (
+						<Skeleton duration={2} width={126} height={28} className="mx-4" />
+					)}
 				</div>
 
 				<div className="mt-10 mb-2">
-					<p className="text-center text-red-400">
-						{isComponentReady &&
-						subscriptions &&
-						Math.round(subscriptions?.status / 100) === 2 &&
-						!subscriptions?.data?.detail ? (
-							"*" + subscriptionCreditDebitCardRequired
-						) : (
-							<Skeleton duration={2} width={196} height={24} />
-						)}
-					</p>
+					{isComponentReady ? (
+						<p className="text-center text-red-400">{"*" + creditDebitCardRequiredText}</p>
+					) : (
+						<Skeleton duration={2} width={196} height={24} />
+					)}
 				</div>
 			</div>
 
@@ -135,33 +119,25 @@ const SubscriptionPlansPricing = ({
 					<div className="absolute inset-0 h-5/6 lg:h-2/3"></div>
 					<div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
 						<div className="relative lg:grid lg:grid-cols-7">
-							{isComponentReady &&
-							subscriptions &&
-							Math.round(subscriptions?.status / 100) === 2 &&
-							!subscriptions?.data?.detail ? (
-								subscriptions?.data?.results
-									?.filter((result) => result.plan.name === "Basic")
-									?.map((val, key) => (
-										<MemoizedBasicPlan
-											key={key}
-											data={val}
-											setOpen={setOpen}
-											setPlanId={setPlanId}
-											setPlanName={setPlanName}
-										/>
-									)) ?? null
-							) : (
+							{subscriptionsResults
+								?.filter((result) => result.plan.name === "Basic")
+								?.map((val, key) => (
+									<MemoizedBasicPlan
+										key={key}
+										data={val}
+										setShowModal={setShowChangeToBasicModal}
+										loadingBasic={loadingBasic}
+										setPlanId={setPlanId}
+										setPlanName={setPlanName}
+									/>
+								)) ?? (
 								<span className="mx-auto max-w-md lg:col-start-1 lg:col-end-3 lg:row-start-2 lg:row-end-3 lg:mx-0 lg:max-w-none">
 									<Skeleton duration={2} width={347.41} height={553} />
 								</span>
 							)}
 
-							{togglePaymentPeriod ? (
-								isComponentReady &&
-								subscriptions &&
-								Math.round(subscriptions?.status / 100) === 2 &&
-								!subscriptions?.data?.detail ? (
-									subscriptions?.data?.results
+							{togglePaymentPeriod
+								? subscriptionsResults
 										?.filter((result) => result.price.recurring.interval_count === 6)
 										?.map((val, key) => (
 											<MemoizedSemiAnnualPlans
@@ -170,49 +146,43 @@ const SubscriptionPlansPricing = ({
 												disableLocalTime={disableLocalTime}
 												loadingAgencySemiAnnually={loadingAgencySemiAnnually}
 												loadingProSemiAnnually={loadingProSemiAnnually}
-												setOpen={setOpen}
+												setShowModal={setShowModal}
 												setPlanId={setPlanId}
 												setPlanName={setPlanName}
 											/>
-										)) ?? null
-								) : (
-									<>
-										<span className="mx-auto mt-10 max-w-lg lg:col-start-3 lg:col-end-6 lg:row-start-1 lg:row-end-4 lg:mx-0 lg:mt-0 lg:max-w-none">
-											<Skeleton duration={2} width={521.11} height={811} />
-										</span>
-										<span className="mx-auto mt-10 max-w-md lg:col-start-6 lg:col-end-8 lg:row-start-2 lg:row-end-3 lg:m-0 lg:max-w-none">
-											<Skeleton duration={2} width={347.41} height={553} />
-										</span>
-									</>
-								)
-							) : isComponentReady &&
-							  subscriptions &&
-							  Math.round(subscriptions?.status / 100) === 2 &&
-							  !subscriptions?.data?.detail ? (
-								subscriptions?.data?.results
-									?.filter((result) => result.price.recurring.interval_count === 1)
-									?.map((val, key) => (
-										<MemoizedMonthlyPlans
-											key={key}
-											data={val}
-											disableLocalTime={disableLocalTime}
-											loadingAgencyMonthly={loadingAgencyMonthly}
-											loadingProMonthly={loadingProMonthly}
-											setOpen={setOpen}
-											setPlanId={setPlanId}
-											setPlanName={setPlanName}
-										/>
-									)) ?? null
-							) : (
-								<>
-									<span className="mx-auto mt-10 max-w-lg lg:col-start-3 lg:col-end-6 lg:row-start-1 lg:row-end-4 lg:mx-0 lg:mt-0 lg:max-w-none">
-										<Skeleton duration={2} width={521.11} height={811} />
-									</span>
-									<span className="mx-auto mt-10 max-w-md lg:col-start-6 lg:col-end-8 lg:row-start-2 lg:row-end-3 lg:m-0 lg:max-w-none">
-										<Skeleton duration={2} width={347.41} height={553} />
-									</span>
-								</>
-							)}
+										)) ?? (
+										<>
+											<span className="mx-auto mt-10 max-w-lg lg:col-start-3 lg:col-end-6 lg:row-start-1 lg:row-end-4 lg:mx-0 lg:mt-0 lg:max-w-none">
+												<Skeleton duration={2} width={521.11} height={811} />
+											</span>
+											<span className="mx-auto mt-10 max-w-md lg:col-start-6 lg:col-end-8 lg:row-start-2 lg:row-end-3 lg:m-0 lg:max-w-none">
+												<Skeleton duration={2} width={347.41} height={553} />
+											</span>
+										</>
+								  )
+								: subscriptionsResults
+										?.filter((result) => result.price.recurring.interval_count === 1)
+										?.map((val, key) => (
+											<MemoizedMonthlyPlans
+												key={key}
+												data={val}
+												disableLocalTime={disableLocalTime}
+												loadingAgencyMonthly={loadingAgencyMonthly}
+												loadingProMonthly={loadingProMonthly}
+												setShowModal={setShowModal}
+												setPlanId={setPlanId}
+												setPlanName={setPlanName}
+											/>
+										)) ?? (
+										<>
+											<span className="mx-auto mt-10 max-w-lg lg:col-start-3 lg:col-end-6 lg:row-start-1 lg:row-end-4 lg:mx-0 lg:mt-0 lg:max-w-none">
+												<Skeleton duration={2} width={521.11} height={811} />
+											</span>
+											<span className="mx-auto mt-10 max-w-md lg:col-start-6 lg:col-end-8 lg:row-start-2 lg:row-end-3 lg:m-0 lg:max-w-none">
+												<Skeleton duration={2} width={347.41} height={553} />
+											</span>
+										</>
+								  )}
 						</div>
 					</div>
 				</div>
@@ -224,11 +194,12 @@ const SubscriptionPlansPricing = ({
 SubscriptionPlansPricing.propTypes = {
 	loadingAgencyMonthly: PropTypes.bool,
 	loadingAgencySemiAnnually: PropTypes.bool,
+	loadingBasic: PropTypes.bool,
 	loadingProMonthly: PropTypes.bool,
 	loadingProSemiAnnually: PropTypes.bool,
-	setOpen: PropTypes.func,
 	setPlanId: PropTypes.func,
 	setPlanName: PropTypes.func,
+	setShowModal: PropTypes.func,
 	setTogglePaymentPeriod: PropTypes.func,
 	togglePaymentPeriod: PropTypes.bool
 };

@@ -1,20 +1,25 @@
-import { DashboardSitesLink, SiteOverviewSlug } from "@constants/PageLinks";
+import { SitesApiEndpoint } from "@constants/ApiEndpoints";
+import { orderingByNameQuery, RevalidationInterval, sortByFinishedAtDescending } from "@constants/GlobalValues";
+import { DashboardSitesLink, ScanSlug, SiteOverviewSlug } from "@constants/PageLinks";
 import { useScan } from "@hooks/useScan";
 import { useStats } from "@hooks/useStats";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import PropTypes from "prop-types";
-import { memo } from "react";
+import { memo, useContext } from "react";
+import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
 /**
  * Custom function to render the `SiteList` component
  *
  * @param {object} data
+ * @param {function} handleSiteSelectOnClick
  */
-const SiteList = ({ data = null }) => {
+const SiteList = ({ data = null, handleSiteSelectOnClick }) => {
 	// Site data props
 	const siteId = data?.id ?? null;
 	const siteName = data?.name ?? null;
@@ -43,45 +48,35 @@ const SiteList = ({ data = null }) => {
 		sameElse: "MMMM DD, YYYY [at] hh:mm:ss A"
 	};
 
-	// SWR hooks
-	const { scan, setScanConfig, currentScan, previousScan, scanObjId, scanCount } = useScan(siteId);
+	// Custom context
+	const { isComponentReady, isUserReady } = useContext(SiteCrawlerAppContext);
 
-	// SWR hooks
-	const { stats } = useStats(siteId, scanObjId);
+	// Custom `scan` API endpoint
+	let customScanApiEndpointQuery = "?" + orderingByNameQuery + sortByFinishedAtDescending;
+	const customScanApiEndpoint = SitesApiEndpoint + siteId + ScanSlug;
+	const fullCustomScanApiEndpoint = customScanApiEndpoint + customScanApiEndpointQuery;
 
-	return (
-		<li
-			id={`listbox-item-${siteId}`}
-			role="option"
-			aria-selected={
-				scanCount > 0 && (stats?.data?.num_links > 0 || stats?.data?.num_pages > 0 || stats?.data?.num_images > 0)
-					? true
-					: false
-			}
-		>
-			<Link
-				href={
-					scanCount > 0
-						? {
-								pathname: `${DashboardSitesLink}[siteId]${SiteOverviewSlug}`,
-								query: {
-									siteId: siteId
-								}
-						  }
-						: {
-								pathname: "/"
-						  }
-				}
-				passHref
-			>
+	// `scan` SWR hooks
+	const { scan, currentScan, previousScan, scanObjId } = useScan(fullCustomScanApiEndpoint, {
+		refreshInterval: RevalidationInterval
+	});
+
+	// Custom `stats` API endpoint
+	const customStatsApiEndpoint = scanObjId ? customScanApiEndpoint + scanObjId : null;
+
+	// `stats` SWR hooks
+	const { totalImages, totalLinks, totalPages } = useStats(customStatsApiEndpoint);
+
+	// Custom variables
+	const scanCount = scan?.data?.count ?? null;
+
+	return isComponentReady ? (
+		<li id={`listbox-item-${siteId}`}>
+			<Link href={scanCount > 0 ? `${DashboardSitesLink + siteId + SiteOverviewSlug}` : "/"} passHref>
 				<a
 					className={classnames(
 						"relative block w-full select-none py-2 pl-3 pr-9 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none",
-						stats?.data?.num_links > 0 ||
-							stats?.data?.num_pages > 0 ||
-							stats?.data?.num_images > 0 ||
-							siteVerified ||
-							(!siteVerified && scanCount > 0)
+						totalLinks > 0 || totalPages > 0 || totalImages > 0 || siteVerified || (!siteVerified && scanCount > 0)
 							? "cursor-pointer"
 							: "cursor-not-allowed"
 					)}
@@ -89,17 +84,17 @@ const SiteList = ({ data = null }) => {
 					<div className="flex items-center space-x-3">
 						<span
 							aria-label={
-								siteVerified && currentScan == null
+								siteVerified && !currentScan
 									? "Verified"
-									: siteVerified && currentScan !== null
+									: siteVerified && currentScan
 									? "Recrawling in Process"
 									: "Not Verified"
 							}
 							className={classnames(
 								"inline-block h-2 w-2 flex-shrink-0 rounded-full",
-								siteVerified && currentScan == null
+								siteVerified && !currentScan
 									? "bg-green-400"
-									: siteVerified && currentScan !== null
+									: siteVerified && currentScan
 									? "bg-yellow-400"
 									: "bg-red-400"
 							)}
@@ -111,11 +106,20 @@ const SiteList = ({ data = null }) => {
 								siteVerified && scanCount > 0 ? "text-gray-500" : "text-gray-400"
 							)}
 						>
-							{data.name}
+							{siteName}
 						</span>
 					</div>
 				</a>
 			</Link>
+		</li>
+	) : (
+		<li>
+			<span className="relative block w-full select-none py-2 pl-3 pr-9">
+				<div className="flex items-center space-x-3">
+					<Skeleton circle={true} duration={2} width={10} height={10} tw="inline-block h-2 w-2 flex-shrink-0" />
+					<Skeleton duration={2} width={130} className="block" />
+				</div>
+			</span>
 		</li>
 	);
 };

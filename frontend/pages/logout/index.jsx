@@ -18,17 +18,13 @@ export default function Logout() {
 	const { mutate } = useSWRConfig();
 
 	useEffect(() => {
-		let isMounted = true;
-
 		(async () => {
-			if (!isMounted) return;
-
 			const logoutResponse = await handlePostMethod(LogoutApiEndpoint);
 			const logoutResponseData = logoutResponse?.data ?? null;
 			const logoutResponseStatus = logoutResponse?.status ?? null;
 			const logoutResponseMethod = logoutResponse?.config?.method ?? null;
 
-			if (logoutResponseData !== null && Math.round(logoutResponseStatus / 200) === 1) {
+			if (logoutResponseData && Math.round(logoutResponseStatus / 200) === 1) {
 				// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
 				mutate(UserApiEndpoint);
 
@@ -39,9 +35,7 @@ export default function Logout() {
 			}
 		})();
 
-		return () => {
-			isMounted = false;
-		};
+		return;
 	}, []);
 
 	// Translations

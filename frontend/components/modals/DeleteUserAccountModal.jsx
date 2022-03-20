@@ -4,7 +4,6 @@ import { LoginLink } from "@constants/PageLinks";
 import { Dialog, Transition } from "@headlessui/react";
 import { handleDeleteMethod } from "@helpers/handleHttpMethods";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/outline";
-import { TrashIcon } from "@heroicons/react/solid";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
@@ -30,7 +29,7 @@ const DeleteUserAccountModal = ({ setShowModal, showModal = false }, ref) => {
 	const closeText = t("common:close");
 	const proceedText = t("common:proceed");
 	const processingText = t("common:processing");
-	const loaderMessage = t("loaderMessage");
+	const loaderMessage = t("common:loaderMessage");
 
 	// Router
 	const { push } = useRouter();
@@ -49,13 +48,9 @@ const DeleteUserAccountModal = ({ setShowModal, showModal = false }, ref) => {
 
 	// Handle user deletion
 	const handleUserDeletion = () => {
-		let isMounted = true;
-
 		setIsLoading(true);
 
 		(async () => {
-			if (!isMounted) return;
-
 			const deleteUserAccountResponse = await handleDeleteMethod(userIdApiEndpoint);
 			const deleteUserAccountResponseData = deleteUserAccountResponse?.data ?? null;
 			const deleteUserAccountResponseStatus = deleteUserAccountResponse?.status ?? null;
@@ -65,7 +60,9 @@ const DeleteUserAccountModal = ({ setShowModal, showModal = false }, ref) => {
 			setConfig({
 				isUser: true,
 				method: deleteUserAccountResponseMethod,
-				status: deleteUserAccountResponseStatus
+				status: deleteUserAccountResponseStatus,
+				isAlert: false,
+				isNotification: false
 			});
 
 			if (deleteUserAccountResponseData !== null && Math.round(deleteUserAccountResponseStatus / 200) === 1) {
@@ -84,13 +81,15 @@ const DeleteUserAccountModal = ({ setShowModal, showModal = false }, ref) => {
 					clearTimeout(timeout);
 				};
 			} else {
-				setIsLoading(false);
+				const timeout = setTimeout(() => {
+					setIsLoading(false);
+				}, ModalDisplayInterval);
+
+				return () => {
+					clearTimeout(timeout);
+				};
 			}
 		})();
-
-		return () => {
-			isMounted = false;
-		};
 	};
 
 	// Handle close modal
@@ -106,7 +105,7 @@ const DeleteUserAccountModal = ({ setShowModal, showModal = false }, ref) => {
 				initialFocus={userDeletionRef}
 				onClose={isLoading ? () => {} : handleCloseModal}
 			>
-				<div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+				<div className="flex min-h-screen items-end justify-center p-4 text-center sm:block sm:p-0">
 					<Transition.Child
 						as={Fragment}
 						enter="ease-out duration-300"
@@ -142,9 +141,9 @@ const DeleteUserAccountModal = ({ setShowModal, showModal = false }, ref) => {
 									)}
 								>
 									{!isHidden ? (
-										<XCircleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
+										<XCircleIcon className="h-5 w-5 text-red-600" aria-hidden="true" />
 									) : (
-										<CheckCircleIcon className="h-6 w-6 text-green-600" aria-hidden="true" />
+										<CheckCircleIcon className="h-5 w-5 text-green-600" aria-hidden="true" />
 									)}
 								</div>
 								<div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
@@ -163,16 +162,16 @@ const DeleteUserAccountModal = ({ setShowModal, showModal = false }, ref) => {
 											{deleteUserAccountSubheadingText}
 										</Dialog.Description>
 
-										{state?.responses?.length > 0 ? (
+										{state?.isUser && state?.responses?.length > 0 ? (
 											<div className="my-5 block">
 												<div className="flex justify-center sm:justify-start">
 													{state.responses.map((value, key) => {
 														// Alert Messsages
-														const responseText = value?.responseText ?? null;
-														const isSuccess = value?.isSuccess ?? null;
+														const responseText = value.responseText;
+														const isSuccess = value.isSuccess;
 
 														return (
-															<p
+															<h3
 																key={key}
 																className={classnames(
 																	"break-words text-sm font-medium leading-5",
@@ -180,7 +179,7 @@ const DeleteUserAccountModal = ({ setShowModal, showModal = false }, ref) => {
 																)}
 															>
 																{responseText}
-															</p>
+															</h3>
 														);
 													}) ?? null}
 												</div>
@@ -194,6 +193,7 @@ const DeleteUserAccountModal = ({ setShowModal, showModal = false }, ref) => {
 								<button
 									ref={userDeletionRef}
 									type="button"
+									disabled={isLoading}
 									aria-disabled={isLoading}
 									aria-hidden={isLoading}
 									className={classnames(
@@ -202,18 +202,9 @@ const DeleteUserAccountModal = ({ setShowModal, showModal = false }, ref) => {
 											? "cursor-not-allowed opacity-50"
 											: "hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
 									)}
-									onClick={handleUserDeletion}
+									onClick={isLoading ? () => {} : handleUserDeletion}
 								>
-									<span className="flex items-center space-x-2">
-										{isLoading ? (
-											processingText
-										) : (
-											<>
-												<TrashIcon className="mr-2 h-4 w-4" aria-hidden="true" />
-												{proceedText}
-											</>
-										)}
-									</span>
+									<span className="flex items-center space-x-2">{isLoading ? processingText : proceedText}</span>
 								</button>
 
 								<button
@@ -222,11 +213,10 @@ const DeleteUserAccountModal = ({ setShowModal, showModal = false }, ref) => {
 									aria-disabled={isLoading}
 									aria-hidden={isLoading}
 									className={classnames(
-										"mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm",
+										"mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm",
 										isLoading ? "cursor-not-allowed opacity-50" : "hover:bg-gray-50"
 									)}
 									onClick={isLoading ? () => {} : handleCloseModal}
-									ref={ref}
 								>
 									{closeText}
 								</button>

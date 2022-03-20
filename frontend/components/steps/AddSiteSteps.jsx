@@ -1,4 +1,3 @@
-import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
@@ -29,9 +28,6 @@ const AddSiteSteps = (props) => {
 	// Custom context
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
-	// SWR hooks
-	const { user } = useUser();
-
 	const stepsData = [
 		{
 			title: step1,
@@ -52,8 +48,8 @@ const AddSiteSteps = (props) => {
 			<div className="w-full xl:flex-grow xl:border-r xl:border-gray-200 xl:pr-8">
 				<nav aria-label={dismiss} className="w-full pt-8 pb-4">
 					<ol className="space-y-4 md:flex md:space-y-0 md:space-x-8">
-						{stepsData.map((value, key) => {
-							return isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+						{stepsData?.map((value, key) =>
+							isComponentReady ? (
 								<li key={key} className="md:flex-1">
 									<span
 										className={classnames(
@@ -74,8 +70,8 @@ const AddSiteSteps = (props) => {
 										<Skeleton duration={2} width={150} height={20} />
 									</span>
 								</div>
-							);
-						})}
+							)
+						) ?? null}
 					</ol>
 				</nav>
 

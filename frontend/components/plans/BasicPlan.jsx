@@ -1,11 +1,12 @@
+import { Basic } from "@constants/GlobalValues";
 import { handleUnitAmountToRealPrice } from "@helpers/handleUnitAmountToRealPrice";
 import { CheckIcon } from "@heroicons/react/solid";
-import { useCurrentSubscription } from "@hooks/useCurrentSubscription";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import { handleConversionStringToLowercase } from "@utils/convertCase";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useContext } from "react";
 
 /**
  * Custom function to render the `BasicPlan` component
@@ -13,21 +14,18 @@ import { memo, useCallback, useEffect, useState } from "react";
  * @param {object} data
  * @param {function} setPlanId
  * @param {function} setPlanName
- * @param {function} setOpen
+ * @param {function} setShowModal
  */
-const BasicPlan = ({ data = null, setPlanId, setPlanName, setOpen }) => {
-	const [currentSubscriptionId, setCurrentSubscriptionId] = useState(null);
-	const [currentSubscriptionCancelAt, setCurrentSubscriptionCancelAt] = useState(null);
-
+const BasicPlan = ({ data = null, setPlanId, setPlanName, setShowModal, loadingBasic = false }) => {
 	// Translation
 	const { t } = useTranslation();
-	const subscriptionPlansMonthly = t("settings:subscriptionPlans.monthly");
-	const subscriptionPlansSelectPlan = t("settings:subscriptionPlans.plan.select");
-	const subscriptionPlansCurrentPlan = t("settings:subscriptionPlans.plan.current");
-	const subscriptionPlansRequested = t("settings:subscriptionPlans.requested");
+	const monthlyText = t("settings:subscriptionPlans.monthly");
+	const selectPlanText = t("settings:subscriptionPlans.plan.select");
+	const currentPlanText = t("settings:subscriptionPlans.plan.current");
+	const requestedText = t("settings:subscriptionPlans.requested");
 
-	// SWR hooks
-	const { currentSubscription, errorCurrentSubscription, validatingCurrentSubscription } = useCurrentSubscription();
+	// Custom contexts
+	const { currentSubscription } = useContext(SiteCrawlerAppContext);
 
 	// Custom variables
 	const planId = data?.id ?? null;
@@ -35,20 +33,13 @@ const BasicPlan = ({ data = null, setPlanId, setPlanName, setOpen }) => {
 	const planNameTitle = data?.plan?.name ?? null;
 	const planPrice = handleUnitAmountToRealPrice(data?.price?.unit_amount ?? null);
 	const planFeatures = data?.features ?? null;
-
-	// Handle current subscription
-	const handleCurrentSubscription = useCallback(async () => {
-		if (!validatingCurrentSubscription) {
-			if (!errorCurrentSubscription && typeof currentSubscription !== "undefined" && currentSubscription !== null) {
-				setCurrentSubscriptionId(currentSubscription?.id ?? null);
-				setCurrentSubscriptionCancelAt(currentSubscription?.cancel_at ?? null);
-			}
-		}
-	}, [currentSubscription, errorCurrentSubscription, validatingCurrentSubscription]);
-
-	useEffect(() => {
-		handleCurrentSubscription();
-	}, [handleCurrentSubscription]);
+	const currentSubscriptionStatus = currentSubscription?.data?.status ?? null;
+	const currentSubscriptionId = currentSubscription?.data?.id ?? null;
+	const currentSubscriptionCancelAt = currentSubscription?.data?.cancel_at ?? null;
+	const sanitizedCurrentSubscriptionStatus = currentSubscriptionStatus
+		? handleConversionStringToLowercase(currentSubscriptionStatus)
+		: null;
+	const sanitizedBasicPlanText = handleConversionStringToLowercase(Basic);
 
 	return (
 		<div className="mx-auto max-w-md lg:col-start-1 lg:col-end-3 lg:row-start-2 lg:row-end-3 lg:mx-0 lg:max-w-none">
@@ -64,52 +55,62 @@ const BasicPlan = ({ data = null, setPlanId, setPlanName, setOpen }) => {
 									<span className="mt-2 mr-2 text-4xl font-medium">{"$"}</span>
 									<span className="font-bold">{planPrice}</span>
 								</span>
-								<span className="text-xl font-medium leading-7 text-gray-500">{"/" + subscriptionPlansMonthly}</span>
+								<span className="text-xl font-medium leading-7 text-gray-500">{"/" + monthlyText}</span>
 							</div>
 						</div>
 					</div>
 					<div className="flex flex-1 flex-col justify-between border-t border-gray-300 bg-white p-6 sm:p-10 lg:p-6 xl:p-10">
-						<ul>
-							{planFeatures?.map((val2, key) => {
-								return (
-									<li key={key} className="my-3 flex items-start">
-										<div className="flex-shrink-0">
-											<CheckIcon className="h-6 w-6 text-green-500" />
-										</div>
-										<p className="ml-3 text-base font-medium leading-6 text-gray-500">{val2}</p>
-									</li>
-								);
-							}) ?? null}
-						</ul>
+						{planFeatures ? (
+							<ul>
+								{planFeatures.map((val2, key) => {
+									return (
+										<li key={key} className="my-3 flex items-start">
+											<div className="flex-shrink-0">
+												<CheckIcon className="h-5 w-5 text-green-500" />
+											</div>
+											<p className="ml-3 text-base font-medium leading-6 text-gray-500">{val2}</p>
+										</li>
+									);
+								})}
+							</ul>
+						) : null}
+
 						<div className="mt-8">
 							<div
 								className={classnames(
 									"rounded-lg",
-									planName === "basic" && currentSubscriptionId == null ? "shadow-none" : "shadow-sm"
+									currentSubscriptionId == null || currentSubscriptionCancelAt ? "shadow-none" : "shadow-sm"
 								)}
 							>
 								<button
 									type="button"
-									disabled={planName === "basic" && currentSubscriptionId == null ? true : false}
+									disabled={currentSubscriptionId == null || currentSubscriptionCancelAt}
+									aria-disabled={currentSubscriptionId == null || currentSubscriptionCancelAt}
+									aria-hidden={currentSubscriptionId == null || currentSubscriptionCancelAt}
 									className={classnames(
-										"block w-full rounded-lg border border-transparent px-6 py-4 text-center text-lg font-medium leading-6 text-white focus:outline-none focus:ring-2 focus:ring-offset-2",
-										planName === "basic" && currentSubscriptionId == null
-											? currentSubscriptionCancelAt == null
-												? "cursor-default border-indigo-700 text-indigo-600"
-												: "cursor-default bg-yellow-600 hover:bg-yellow-700 focus:ring-yellow-500"
-											: "cursor-pointer bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500"
+										"block w-full rounded-lg border border-transparent px-6 py-4 text-center text-lg font-medium leading-6  focus:outline-none focus:ring-2 focus:ring-offset-2",
+										currentSubscriptionId == null
+											? "cursor-default border-indigo-700 text-indigo-600"
+											: currentSubscriptionCancelAt
+											? "cursor-not-allowed bg-yellow-600 text-white opacity-50"
+											: "cursor-pointer bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500",
+										loadingBasic ? "cursor-not-allowed opacity-50" : null
 									)}
-									onClick={() => {
-										setPlanId(planId);
-										setPlanName(planName);
-										setOpen(true);
-									}}
+									onClick={
+										currentSubscriptionId == null || currentSubscriptionCancelAt
+											? () => {}
+											: () => {
+													setPlanId(planId);
+													setPlanName(planName);
+													setShowModal(true);
+											  }
+									}
 								>
-									{planId === "basic" && currentSubscriptionId == null
-										? subscriptionPlansCurrentPlan
-										: currentSubscriptionCancelAt !== null
-										? subscriptionPlansRequested
-										: subscriptionPlansSelectPlan}
+									{currentSubscriptionId == null
+										? currentPlanText
+										: currentSubscriptionCancelAt
+										? requestedText
+										: selectPlanText}
 								</button>
 							</div>
 						</div>
@@ -133,7 +134,7 @@ BasicPlan.propTypes = {
 	}),
 	setPlanId: PropTypes.func,
 	setPlanName: PropTypes.func,
-	setOpen: PropTypes.func
+	setShowModal: PropTypes.func
 };
 
 /**

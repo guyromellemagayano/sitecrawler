@@ -1,28 +1,24 @@
-import { SitesApiEndpoint } from "@constants/ApiEndpoints";
-import { orderingByNameQuery, sortByFinishedAtDescending } from "@constants/GlobalValues";
-import { ScanSlug } from "@constants/PageLinks";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
-import { SiteCrawlerAppContext } from "@pages/_app";
 import dayjs from "dayjs";
-import { useContext, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import { useSWRConfig } from "swr";
 import { useMainSWRConfig } from "./useMainSWRConfig";
+import { useNotificationMessage } from "./useNotificationMessage";
 
 /**
  * SWR React hook that will handle a site's `scan` information
  *
- * @param {number} querySid
+ * @param {string} endpoint
  * @param {object} options
- * @returns {object} currentScan, errorScan, handleCrawl, isCrawlFinished, isCrawlStarted, isProcessing, previousScan, scan, scanCount, scanObjId, scanResults, setCurrentScan, setIsCrawlFinished, setIsCrawlStarted, setIsProcessing, setPreviousScan, setScanConfig, setScanCount, setScanObjId, setScanResults, validatingScan
+ * @returns {object} currentScan, errorScan, handleCrawl, isCrawlFinished, isCrawlStarted, isProcessing, previousScan, scan, scanObjId, selectedSiteRef, validatingScan
  */
-export const useScan = (querySid = null, options = null) => {
+export const useScan = (endpoint = null, options = null) => {
 	const [currentScan, setCurrentScan] = useState(null);
 	const [isCrawlFinished, setIsCrawlFinished] = useState(true);
 	const [isCrawlStarted, setIsCrawlStarted] = useState(false);
 	const [isProcessing, setIsProcessing] = useState(false);
 	const [previousScan, setPreviousScan] = useState(null);
-	const [scanCount, setScanCount] = useState(0);
-	const [scanResults, setScanResults] = useState([]);
-	const [scanObjId, setScanObjId] = useState(0);
+	const [scanObjId, setScanObjId] = useState(null);
 
 	// DayJS options
 	const calendar = require("dayjs/plugin/calendar");
@@ -40,120 +36,88 @@ export const useScan = (querySid = null, options = null) => {
 		sameElse: "MMMM DD, YYYY [at] hh:mm:ss A"
 	};
 
-	// Custom context
-	const { setConfig: setScanConfig } = useContext(SiteCrawlerAppContext);
-
 	// Custom hooks
 	const selectedSiteRef = useRef(null);
 
-	// Custom variables
-	const currentEndpoint =
-		querySid !== null && typeof querySid === "number" && querySid > 0
-			? SitesApiEndpoint + querySid + ScanSlug + "?" + orderingByNameQuery + sortByFinishedAtDescending
-			: null;
+	// Custom context
+	const { setConfig } = useNotificationMessage();
+
+	// SWR hook for global mutations
+	const { mutate } = useSWRConfig();
 
 	// SWR hook
-	const { data: scan, error: errorScan, isValidating: validatingScan } = useMainSWRConfig(currentEndpoint, options);
+	const { data: scan, error: errorScan, isValidating: validatingScan } = useMainSWRConfig(endpoint, options);
 
 	// Handle crawl process
-	const handleCrawl = async (e) => {
-		e.preventDefault();
-
-		// Set `isProcessing` state
-		setIsProcessing(true);
-
+	const handleCrawl = async (e, site) => {
 		if (selectedSiteRef?.current && selectedSiteRef?.current?.contains(e.target)) {
-			const startScanSlug = "/start_scan/";
-			let endpoint = `${SitesApiEndpoint + querySid + startScanSlug}`;
+			// Set `isProcessing` state
+			setIsProcessing(true);
 
-			const currentScanResponse = await handlePostMethod(endpoint);
+			const startScanSlug = "/start_scan/";
+			site += startScanSlug;
+
+			const currentScanResponse = await handlePostMethod(site);
 			const currentScanResponseData = currentScanResponse?.data ?? null;
 			const currentScanResponseStatus = currentScanResponse?.status ?? null;
 			const currentScanResponseMethod = currentScanResponse?.config?.method ?? null;
 
-			if (currentScanResponseData !== null && Math.round(currentScanResponseStatus / 200) === 1) {
+			if (currentScanResponseData && Math.round(currentScanResponseStatus / 200) === 1) {
 				// Set `isCrawlStarted` state
 				setIsCrawlStarted(true);
 
 				// Unset `isCrawledFinished` state
 				setIsCrawlFinished(false);
-
-				// Show alert message after successful `user` SWR hook fetch
-				setScanConfig({
-					isScan: true,
-					method: currentScanResponseData?.config?.method ?? null,
-					status: currentScanResponseData?.status ?? null
-				});
 			} else {
-				// Set `isProcessing` state
-				setIsProcessing(false);
-
 				// Unset `isCrawlStarted` state
 				setIsCrawlStarted(false);
 
 				// Set `isCrawledFinished` state
 				setIsCrawlFinished(true);
-
-				// Show alert message after failed `user` SWR hook fetch
-				setScanConfig({
-					isScan: true,
-					method: currentScanResponseData?.config?.method ?? null,
-					status: currentScanResponseData?.status ?? null
-				});
 			}
+
+			// Mutate `scan` state
+			mutate(site, { ...scan, data: currentScanResponseData });
+
+			// Set `isProcessing` state
+			setIsProcessing(false);
+
+			// Show alert message after successful `user` SWR hook fetch
+			setConfig({
+				isScan: true,
+				method: currentScanResponseData?.config?.method ?? null,
+				status: currentScanResponseData?.status ?? null
+			});
 		}
 
 		return { isCrawlStarted, isCrawlFinished, isProcessing };
 	};
 
-	useMemo(async () => {
-		if (errorScan) {
-			// Show alert message after failed `user` SWR hook fetch
-			errorScan
-				? setScanConfig({
-						isScan: true,
-						method: errorScan?.config?.method ?? null,
-						status: errorScan?.status ?? null
-				  })
-				: null;
-		}
-	}, [errorScan]);
+	useMemo(() => {
+		const previousScanResult = scan?.data?.results?.find((result) => result.finished_at && result.force_https) ?? null;
+		const currentScanResult =
+			scan?.data?.results?.find((result) => result.finished_at == null && result.force_https == null) ?? null;
 
-	useMemo(async () => {
-		if (scan?.data) {
-			if (scan.data?.count) {
-				setScanCount(scan.data.count);
-			}
+		setCurrentScan(currentScanResult);
+		setPreviousScan(previousScanResult);
 
-			if (scan.data?.results) {
-				setScanResults(scan.data.results);
-			}
+		currentScan
+			? () => {
+					setIsCrawlStarted(true);
+					setIsCrawlFinished(false);
+			  }
+			: () => {
+					setIsCrawlStarted(false);
+					setIsCrawlFinished(true);
+			  };
 
-			let previousScanResult =
-				scanResults?.find((result) => result.finished_at !== null && result.force_https !== null) ?? null;
-			let currentScanResult =
-				scanResults?.find((result) => result.finished_at == null && result.force_https == null) ?? null;
+		// Set `scanObjId` state
+		(currentScan && previousScan) || (!currentScan && previousScan)
+			? setScanObjId(previousScan?.id)
+			: setScanObjId(currentScan?.id);
 
-			setCurrentScan(currentScanResult);
-			setPreviousScan(previousScanResult);
-
-			if (currentScan !== null) {
-				setIsCrawlStarted(true);
-				setIsCrawlFinished(false);
-			} else {
-				setIsCrawlStarted(false);
-				setIsCrawlFinished(true);
-			}
-
-			if ((currentScan !== null && previousScan !== null) || (currentScan == null && previousScan !== null)) {
-				setScanObjId(previousScan?.id);
-			} else {
-				setScanObjId(currentScan?.id);
-			}
-		}
-
-		return { scanResults, scanCount, currentScan, previousScan, scanObjId, isCrawlStarted, isCrawlFinished };
-	}, [scan, scanResults, scanCount, currentScan, previousScan, scanObjId, isCrawlStarted, isCrawlFinished]);
+		return { currentScan, previousScan, scanObjId, isCrawlStarted, isCrawlFinished };
+	}, [scan]);
 
 	return {
 		currentScan,
@@ -164,19 +128,8 @@ export const useScan = (querySid = null, options = null) => {
 		isProcessing,
 		previousScan,
 		scan,
-		scanCount,
 		scanObjId,
-		scanResults,
 		selectedSiteRef,
-		setCurrentScan,
-		setIsCrawlFinished,
-		setIsCrawlStarted,
-		setIsProcessing,
-		setPreviousScan,
-		setScanConfig,
-		setScanCount,
-		setScanObjId,
-		setScanResults,
 		validatingScan
 	};
 };

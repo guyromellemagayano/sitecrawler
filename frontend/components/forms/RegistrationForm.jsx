@@ -3,14 +3,15 @@ import {
 	FormPasswordMaxChars,
 	FormPasswordMinChars,
 	FormStringMaxChars,
-	FormStringMinChars
+	FormStringMinChars,
+	NotificationDisplayInterval
 } from "@constants/GlobalValues";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
-import { memo, useContext } from "react";
+import { memo, useContext, useState } from "react";
 import PasswordStrengthBar from "react-password-strength-bar";
 import * as Yup from "yup";
 
@@ -18,6 +19,8 @@ import * as Yup from "yup";
  * Custom function to render the `RegistrationForm` component
  */
 const RegistrationForm = () => {
+	const [isSubmitting, setIsSubmitting] = useState(false);
+
 	// Translations
 	const { t } = useTranslation();
 	const firstName = t("common:firstName");
@@ -49,9 +52,15 @@ const RegistrationForm = () => {
 				password1: "",
 				password2: ""
 			}}
-			validationSchema={Yup.object({
-				firstname: Yup.string().required(requiredField),
-				lastname: Yup.string().required(requiredField),
+			validationSchema={Yup.object().shape({
+				firstname: Yup.string()
+					.min(FormStringMinChars, tooShort)
+					.max(FormStringMaxChars, tooLong)
+					.required(requiredField),
+				lastname: Yup.string()
+					.min(FormStringMinChars, tooShort)
+					.max(FormStringMaxChars, tooLong)
+					.required(requiredField),
 				username: Yup.string()
 					.min(FormStringMinChars, tooShort)
 					.max(FormStringMaxChars, tooLong)
@@ -68,7 +77,9 @@ const RegistrationForm = () => {
 					})
 					.required(requiredField)
 			})}
-			onSubmit={async (values, { setSubmitting, resetForm, setErrors }) => {
+			onSubmit={async (values, { resetForm, setErrors }) => {
+				setIsSubmitting(true);
+
 				const body = {
 					username: values.username,
 					email: values.email,
@@ -83,37 +94,38 @@ const RegistrationForm = () => {
 				const registrationResponseStatus = registrationResponse?.status ?? null;
 				const registrationResponseMethod = registrationResponse?.config?.method ?? null;
 
-				if (registrationResponseData !== null && Math.round(registrationResponseStatus / 200) === 1) {
-					// Disable submission and reset form as soon as 200 OK or 201 Created response is issued
-					setSubmitting(false);
-					resetForm({ values: "" });
+				// Show alert message after successful 200 OK or 201 Created response is issued
+				setConfig({
+					isRegistration: true,
+					method: registrationResponseMethod,
+					status: registrationResponseStatus,
+					isAlert: true,
+					isNotification: false
+				});
 
-					// Show alert message after successful 200 OK or 201 Created response is issued
-					setConfig({
-						isRegistration: true,
-						method: registrationResponseMethod,
-						status: registrationResponseStatus
-					});
-				} else {
-					// Disable submission and reset form as soon as 200 OK or 201 Created response was not issued
-					setSubmitting(false);
+				const registrationResponseTimeout = setTimeout(() => {
+					if (registrationResponseData && Math.round(registrationResponseStatus / 200) === 1) {
+						// Disable submission and reset form as soon as 200 OK or 201 Created response is issued
+						setIsSubmitting(false);
+						resetForm({ values: "" });
+					} else {
+						// Disable submission and reset form as soon as 200 OK or 201 Created response was not issued
+						setIsSubmitting(false);
 
-					// Show alert message after failed response is issued
-					setConfig({
-						isRegistration: true,
-						method: registrationResponseMethod,
-						status: registrationResponseStatus
-					});
+						registrationResponseData.username
+							? setErrors({ username: registrationUsernameAlreadyExistsError })
+							: registrationResponseData.email
+							? setErrors({ email: registrationEmailAlreadyExistsError })
+							: null;
+					}
+				}, NotificationDisplayInterval);
 
-					registrationResponseData.username
-						? setErrors({ username: registrationUsernameAlreadyExistsError })
-						: registrationResponseData.email
-						? setErrors({ email: registrationEmailAlreadyExistsError })
-						: null;
-				}
+				return () => {
+					clearTimeout(registrationResponseTimeout);
+				};
 			}}
 		>
-			{({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
+			{({ values, errors, handleChange, handleBlur, handleSubmit }) => (
 				<form onSubmit={handleSubmit}>
 					<div className="mt-1">
 						<label htmlFor="firstname" className="block text-sm font-medium text-gray-700">
@@ -125,6 +137,8 @@ const RegistrationForm = () => {
 								type="text"
 								name="firstname"
 								disabled={isSubmitting}
+								aria-disabled={isSubmitting}
+								aria-hidden={isSubmitting}
 								className={classnames(
 									"block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
 									isSubmitting && "pointer-events-none cursor-not-allowed bg-gray-300 opacity-50",
@@ -137,8 +151,8 @@ const RegistrationForm = () => {
 							/>
 						</div>
 
-						{errors.firstname || touched.firstname ? (
-							<span className="mt-2 block text-xs leading-5 text-red-700">{errors.firstname || touched.firstname}</span>
+						{errors.firstname ? (
+							<span className="mt-2 block text-xs leading-5 text-red-700">{errors.firstname}</span>
 						) : null}
 					</div>
 
@@ -152,6 +166,8 @@ const RegistrationForm = () => {
 								type="text"
 								name="lastname"
 								disabled={isSubmitting}
+								aria-disabled={isSubmitting}
+								aria-hidden={isSubmitting}
 								className={classnames(
 									"block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
 									isSubmitting && "pointer-events-none cursor-not-allowed bg-gray-300 opacity-50",
@@ -164,8 +180,8 @@ const RegistrationForm = () => {
 							/>
 						</div>
 
-						{errors.lastname || touched.lastname ? (
-							<span className="mt-2 block text-xs leading-5 text-red-700">{errors.lastname || touched.lastname}</span>
+						{errors.lastname ? (
+							<span className="mt-2 block text-xs leading-5 text-red-700">{errors.lastname}</span>
 						) : null}
 					</div>
 
@@ -179,6 +195,8 @@ const RegistrationForm = () => {
 								type="text"
 								name="username"
 								disabled={isSubmitting}
+								aria-disabled={isSubmitting}
+								aria-hidden={isSubmitting}
 								className={classnames(
 									"block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
 									isSubmitting && "pointer-events-none cursor-not-allowed bg-gray-300 opacity-50",
@@ -191,8 +209,8 @@ const RegistrationForm = () => {
 							/>
 						</div>
 
-						{errors.username || touched.username ? (
-							<span className="mt-2 block text-xs leading-5 text-red-700">{errors.username || touched.username}</span>
+						{errors.username ? (
+							<span className="mt-2 block text-xs leading-5 text-red-700">{errors.username}</span>
 						) : null}
 					</div>
 
@@ -206,6 +224,8 @@ const RegistrationForm = () => {
 								type="email"
 								name="email"
 								disabled={isSubmitting}
+								aria-disabled={isSubmitting}
+								aria-hidden={isSubmitting}
 								className={classnames(
 									"block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
 									isSubmitting && "pointer-events-none cursor-not-allowed bg-gray-300 opacity-50 ",
@@ -218,9 +238,7 @@ const RegistrationForm = () => {
 							/>
 						</div>
 
-						{errors.email || touched.email ? (
-							<span className="mt-2 block text-xs leading-5 text-red-700">{errors.email || touched.email}</span>
-						) : null}
+						{errors.email ? <span className="mt-2 block text-xs leading-5 text-red-700">{errors.email}</span> : null}
 					</div>
 
 					<div className="mt-6">
@@ -233,6 +251,8 @@ const RegistrationForm = () => {
 								type="password"
 								name="password1"
 								disabled={isSubmitting}
+								aria-disabled={isSubmitting}
+								aria-hidden={isSubmitting}
 								className={classnames(
 									"block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
 									isSubmitting && "pointer-events-none cursor-not-allowed bg-gray-300 opacity-50",
@@ -246,8 +266,8 @@ const RegistrationForm = () => {
 						</div>
 						<PasswordStrengthBar password={values.password1} />
 
-						{errors.password1 || touched.password1 ? (
-							<span className="mt-2 block text-xs leading-5 text-red-700">{errors.password1 || touched.password1}</span>
+						{errors.password1 ? (
+							<span className="mt-2 block text-xs leading-5 text-red-700">{errors.password1}</span>
 						) : null}
 					</div>
 
@@ -261,6 +281,8 @@ const RegistrationForm = () => {
 								type="password"
 								name="password2"
 								disabled={isSubmitting}
+								aria-disabled={isSubmitting}
+								aria-hidden={isSubmitting}
 								className={classnames(
 									"block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm sm:leading-5",
 									isSubmitting && "pointer-events-none cursor-not-allowed bg-gray-300 opacity-50",
@@ -273,8 +295,8 @@ const RegistrationForm = () => {
 							/>
 						</div>
 
-						{errors.password2 || touched.password2 ? (
-							<span className="mt-2 block text-xs leading-5 text-red-700">{errors.password2 || touched.password2}</span>
+						{errors.password2 ? (
+							<span className="mt-2 block text-xs leading-5 text-red-700">{errors.password2}</span>
 						) : null}
 					</div>
 
@@ -283,6 +305,8 @@ const RegistrationForm = () => {
 							<button
 								type="submit"
 								disabled={isSubmitting}
+								aria-disabled={isSubmitting}
+								aria-hidden={isSubmitting}
 								className={classnames(
 									"flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm",
 									isSubmitting

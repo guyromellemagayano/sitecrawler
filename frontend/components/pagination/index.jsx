@@ -92,7 +92,7 @@ const DataPagination = () => {
 	};
 
 	// Handle table rows per page change
-	const handleRowsPerPageChange = async (e) => {
+	const handleRowsPerPageChange = (e) => {
 		e.preventDefault();
 
 		const countValue = parseInt(e.target.value);
@@ -167,13 +167,8 @@ const DataPagination = () => {
 		return element;
 	};
 
-	return isComponentReady &&
-		user &&
-		Math.round(user?.status / 100) === 2 &&
-		!user?.data?.detail &&
-		pageCount &&
-		pageResults ? (
-		<div className="mt-8 mb-4 items-center justify-between bg-white py-4 align-middle lg:flex">
+	return isComponentReady && pageCount > 0 && pageResults?.length > 0 ? (
+		<div className="mt-8 mb-4 items-center justify-between py-4 align-middle lg:flex">
 			<div className="mb-8 flex items-center lg:m-0">
 				<div className="mt-2 lg:my-0">
 					<p className="text-center text-sm leading-5 text-gray-500 lg:text-left">
@@ -223,8 +218,8 @@ const DataPagination = () => {
 				</div>
 			</div>
 		</div>
-	) : (
-		<div className="mt-8 mb-4 items-center justify-between bg-white py-4 align-middle lg:flex">
+	) : isComponentReady && pageCount === 0 && pageResults?.length === 0 ? null : (
+		<div className="mt-8 mb-4 items-center justify-between  py-4 align-middle lg:flex">
 			<div className="flex flex-1">
 				<Skeleton duration={2} width={120} />
 			</div>

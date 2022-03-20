@@ -10,7 +10,7 @@ import { memo } from "react";
 const SiteSuccessStatus = ({ text = null }) => {
 	return text !== null ? (
 		<span className="inline-flex items-center rounded-full text-sm font-semibold leading-5 text-green-800">
-			<CheckCircleIcon className="mr-2 h-6 w-6" />
+			<CheckCircleIcon className="mr-2 h-5 w-5" />
 			{text}
 		</span>
 	) : null;

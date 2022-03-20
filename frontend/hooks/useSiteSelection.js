@@ -1,7 +1,7 @@
-import { handleConversionStringToBoolean, handleConversionStringToNumber } from "@utils/convertCase";
-import dynamic from "next/dynamic";
+import { SiteCrawlerAppContext } from "@pages/_app";
+import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useComponentVisible } from "./useComponentVisible";
 
 /**
@@ -13,6 +13,16 @@ export const useSiteSelection = () => {
 	const [selectedSite, setSelectedSite] = useState(null);
 	const [selectedSiteDetails, setSelectedSiteDetails] = useState(null);
 	const [selectedSiteId, setSelectedSiteId] = useState(null);
+
+	// Translations
+	const { t } = useTranslation();
+	const loaderMessage = t("common:loaderMessage");
+
+	// Custom contexts
+	const { sites, validatingSites, querySiteId } = useContext(SiteCrawlerAppContext);
+
+	// Custom variables
+	const sitesResults = sites?.data?.results ?? null;
 
 	// Router
 	const { query } = useRouter();
@@ -29,61 +39,22 @@ export const useSiteSelection = () => {
 		console.log(siteId, isSiteVerified, scanCount);
 	};
 
-	// Handle site selection on load
 	useEffect(() => {
-		let isMounted = true;
-
-		(async () => {
-			if (!isMounted) return;
-
-			const sanitizedSiteId = query?.siteId?.length ? handleConversionStringToNumber(query.siteId) : null;
-
-			if (sanitizedSiteId !== null) {
-				const handleSiteSelectOnLoad = (siteId) => {
-					const { sites, errorSites, validatingSites } = dynamic(() => import("@hooks/useSites"));
-
-					if (validatingSites) return;
-					else {
-						if (!errorSites && sites?.data?.results?.length > 0 && !sites?.data?.detail) {
-							if (query?.siteId?.length > 0) {
-								for (let i = 0; i < sites.data.results.length; i++) {
-									if (sites.data.results[i]?.id === handleConversionStringToBoolean(query.siteId)) {
-										setSelectedSite(sites.data.results[i].name);
-									}
-								}
-
-								if (selectedSite?.length > 0) {
-									let currentSite =
-										sites.data.results.find((result) => result.id === handleConversionStringToNumber(query.siteId)) ||
-										null;
-
-									if (currentSite !== null) {
-										setSelectedSite(currentSite.name);
-									}
-								}
-							}
-
-							if (selectedSite?.length > 0) {
-								sites.data.results
-									.filter((result) => result.name === selectedSite)
-									.map((val) => {
-										setSelectedSiteDetails(val);
-									});
-							}
-						}
-
-						return;
-					}
-				};
-
-				handleSiteSelectOnLoad(sanitizedSiteId);
-			}
-		})();
-
-		return () => {
-			isMounted = false;
-		};
-	}, [query]);
+		!validatingSites
+			? () => (
+					<span className="flex h-48 w-full items-center justify-center">
+						<p className="pt-6 pb-2 text-sm font-medium leading-6 text-gray-500">{loaderMessage}</p>
+					</span>
+			  )
+			: querySiteId
+			? sitesResults
+					?.filter((site) => site.id === querySiteId)
+					?.map((site) => {
+						setSelectedSite(site.name);
+						setSelectedSiteDetails(site);
+					})
+			: null;
+	}, [querySiteId]);
 
 	return {
 		siteSelectRef,

@@ -49,6 +49,17 @@ tr div {
 	border-radius: 3px;
 }
 
+.confetti-bg-img {
+	background: url("/images/backgrounds/subscription-success-bg.png");
+	background-size: cover;
+	background-position: top center;
+	background-repeat: no-repeat;
+	min-height: 18rem;
+	width: 100%;
+	position: absolute;
+	z-index: -1;
+}
+
 /* Custom vendor overrides */
 .react-loading-skeleton {
 	@apply !relative !rounded-md;

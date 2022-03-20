@@ -35,7 +35,7 @@ export const useMainSWRConfig = (endpoint = null, options = null) => {
 						}
 					}
 				}
-			}
+			} else return;
 		},
 		onError: (err, key) => {
 			// Capture unknown errors and send to Sentry
@@ -62,11 +62,7 @@ export const useMainSWRConfig = (endpoint = null, options = null) => {
 	};
 
 	// Custom options
-	let customOptions = { ...defaultOptions };
-
-	if (options !== null) {
-		customOptions = { ...defaultOptions, ...options };
-	}
+	let customOptions = { ...defaultOptions, ...options };
 
 	// SWR hook for global mutations
 	const { data, error, isValidating } = useSWR(endpoint, handleGetMethod, {

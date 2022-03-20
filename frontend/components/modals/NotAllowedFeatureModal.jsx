@@ -1,7 +1,7 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationIcon } from "@heroicons/react/outline";
 import useTranslation from "next-translate/useTranslation";
-import { forwardRef, Fragment, memo } from "react";
+import { forwardRef, Fragment, memo, useRef } from "react";
 
 /**
  * Custom function to render the `NotAllowedFeatureModal` component
@@ -16,6 +16,9 @@ const NotAllowedFeatureModal = ({ showModal = false, setShowModal }, ref) => {
 	const notAllowedFeatureMessage = t("notAllowedFeatureMessage");
 	const closeText = t("close");
 
+	// Custom hooks
+	const NotAllowedFeatureModalRef = useRef(null);
+
 	// Handle close modal
 	const handleCloseModal = () => {
 		setShowModal(false);
@@ -23,8 +26,13 @@ const NotAllowedFeatureModal = ({ showModal = false, setShowModal }, ref) => {
 
 	return (
 		<Transition.Root show={showModal} as={Fragment}>
-			<Dialog as="div" className="fixed inset-0 z-50 overflow-y-auto" initialFocus={ref} onClose={handleCloseModal}>
-				<div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+			<Dialog
+				as="div"
+				className="fixed inset-0 z-50 overflow-y-auto"
+				initialFocus={NotAllowedFeatureModalRef}
+				onClose={handleCloseModal}
+			>
+				<div className="flex min-h-screen items-end justify-center p-4 text-center sm:block sm:p-0">
 					<Transition.Child
 						as={Fragment}
 						enter="ease-out duration-300"
@@ -54,7 +62,7 @@ const NotAllowedFeatureModal = ({ showModal = false, setShowModal }, ref) => {
 						<div className="inline-block transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6 sm:align-middle">
 							<div className="sm:flex sm:items-start">
 								<div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-									<ExclamationIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
+									<ExclamationIcon className="h-5 w-5 text-red-600" aria-hidden="true" />
 								</div>
 								<div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
 									<Dialog.Title as="h3" className="text-lg font-medium text-gray-900">
@@ -72,8 +80,9 @@ const NotAllowedFeatureModal = ({ showModal = false, setShowModal }, ref) => {
 							<div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
 								<button
 									type="button"
-									className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
+									className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300  bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50   focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
 									onClick={handleCloseModal}
+									ref={ref}
 								>
 									{closeText}
 								</button>

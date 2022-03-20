@@ -2,9 +2,7 @@ import { FilterData } from "@constants/FilterData";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
 import { useSiteQueries } from "@hooks/useSiteQueries";
-import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
-import { handleConversionStringToBoolean } from "@utils/convertCase";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import { memo, useContext, useEffect } from "react";
@@ -97,9 +95,6 @@ const Filter = ({
 	// Custom context
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
-	// SWR hooks
-	const { user } = useUser();
-
 	// Router
 	const { query, asPath, push } = useRouter();
 
@@ -125,6 +120,8 @@ const Filter = ({
 
 	// Handle filter URLs
 	const handleFilterUrl = (e) => {
+		e.preventDefault();
+
 		const filterValue = e.target.value;
 		const filterChecked = e.target.checked;
 
@@ -336,41 +333,29 @@ const Filter = ({
 			}
 		} else {
 			// Sites filter
-			if (filterValue === "verified" && filterChecked) {
+			if (filterValue === "verified") {
 				setVerifiedFilter(true);
 				setUnverifiedFilter(false);
 				setAllSitesFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "verified=false");
-
-				if (newPath.includes("?")) newPath += `&verified`;
-				else newPath += `?verified`;
-			} else if (filterValue === "verified" && !filterChecked) {
 				filterQueryString?.delete("verified") ?? null;
 
 				if (newPath.includes("verified")) newPath = handleRemoveUrlParameter(newPath, "verified");
 
-				setVerifiedFilter(false);
-			}
-
-			if (filterValue === "unverified" && filterChecked) {
+				if (newPath.includes("?")) newPath += `&verified=true`;
+				else newPath += `?verified=true`;
+			} else if (filterValue === "unverified") {
 				setVerifiedFilter(false);
 				setUnverifiedFilter(true);
 				setAllSitesFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "verified");
-
-				if (newPath.includes("?")) newPath += `&verified=false`;
-				else newPath += `?verified=false`;
-			} else if (filterValue === "unverified" && !filterChecked) {
 				filterQueryString?.delete("verified") ?? null;
 
 				if (newPath.includes("verified")) newPath = handleRemoveUrlParameter(newPath, "verified");
 
-				setUnverifiedFilter(false);
-			}
-
-			if (filterValue === "allSites" && filterChecked) {
+				if (newPath.includes("?")) newPath += `&verified=false`;
+				else newPath += `?verified=false`;
+			} else {
 				setVerifiedFilter(false);
 				setUnverifiedFilter(false);
 				setAllSitesFilter(true);
@@ -386,147 +371,146 @@ const Filter = ({
 		push(newPath);
 
 		// Mutate function here
-		mutate(scanApiEndpoint, false);
+		mutate(scanApiEndpoint);
 	};
 
 	// Handle filters on load
 	useEffect(() => {
 		if (filterQueryString) {
-			if (filterType === "links") {
-				if (filterQueryString.has("status__neq=OK")) {
-					setLinksWithIssuesFilter(true);
-				} else {
-					setLinksWithIssuesFilter(false);
-				}
+			switch (filterType) {
+				case "links":
+					if (filterQueryString.has("status__neq=OK")) {
+						setLinksWithIssuesFilter(true);
+					} else {
+						setLinksWithIssuesFilter(false);
+					}
 
-				if (filterQueryString.has("status=OK")) {
-					setNoLinkIssuesFilter(true);
-				} else {
-					setNoLinkIssuesFilter(false);
-				}
+					if (filterQueryString.has("status=OK")) {
+						setNoLinkIssuesFilter(true);
+					} else {
+						setNoLinkIssuesFilter(false);
+					}
 
-				if (filterQueryString.has("type") === "PAGE") {
-					setInternalLinksFilter(true);
-				} else {
-					setInternalLinksFilter(false);
-				}
+					if (filterQueryString.has("type") === "PAGE") {
+						setInternalLinksFilter(true);
+					} else {
+						setInternalLinksFilter(false);
+					}
 
-				if (filterQueryString.has("type") === "EXTERNAL") {
-					setExternalLinksFilter(true);
-				} else {
-					setExternalLinksFilter(false);
-				}
+					if (filterQueryString.has("type") === "EXTERNAL") {
+						setExternalLinksFilter(true);
+					} else {
+						setExternalLinksFilter(false);
+					}
 
-				if (filterQueryString.has("type") === "EXTERNALOTHER") {
-					setExternalLinksFilter(true);
-				} else {
-					setExternalLinksFilter(false);
-				}
+					if (filterQueryString.has("type") === "EXTERNALOTHER") {
+						setExternalLinksFilter(true);
+					} else {
+						setExternalLinksFilter(false);
+					}
 
-				if (filterQueryString.has("type") === "NON_WEB") {
-					setNonWebLinksFilter(true);
-				} else {
-					setNonWebLinksFilter(false);
-				}
+					if (filterQueryString.has("type") === "NON_WEB") {
+						setNonWebLinksFilter(true);
+					} else {
+						setNonWebLinksFilter(false);
+					}
 
-				if (
-					!filterQueryString.has("type") &&
-					!filterQueryString.has("status") &&
-					!filterQueryString.has("status__neq")
-				) {
-					setAllLinksFilter(true);
-				} else {
-					setAllLinksFilter(false);
-				}
+					if (
+						!filterQueryString.has("type") &&
+						!filterQueryString.has("status") &&
+						!filterQueryString.has("status__neq")
+					) {
+						setAllLinksFilter(true);
+					} else {
+						setAllLinksFilter(false);
+					}
 
-				return {
-					noLinkIssuesFilter,
-					linksWithIssuesFilter,
-					internalLinksFilter,
-					externalLinksFilter,
-					nonWebLinksFilter,
-					allLinksFilter
-				};
-			} else if (filterType === "pages") {
-				if (filterQueryString.has("tls_status")) {
-					setTlsStatusFilter(true);
-				} else {
-					setTlsStatusFilter(false);
-				}
+					return {
+						noLinkIssuesFilter,
+						linksWithIssuesFilter,
+						internalLinksFilter,
+						externalLinksFilter,
+						nonWebLinksFilter,
+						allLinksFilter
+					};
+				case "pages":
+					if (filterQueryString.has("tls_status")) {
+						setTlsStatusFilter(true);
+					} else {
+						setTlsStatusFilter(false);
+					}
 
-				if (filterQueryString.has("tls_images")) {
-					setImagesTlsStatusFilter(true);
-				} else {
-					setImagesTlsStatusFilter(false);
-				}
+					if (filterQueryString.has("tls_images")) {
+						setImagesTlsStatusFilter(true);
+					} else {
+						setImagesTlsStatusFilter(false);
+					}
 
-				if (filterQueryString.has("tls_scripts")) {
-					setScriptsTlsStatusFilter(true);
-				} else {
-					setScriptsTlsStatusFilter(false);
-				}
+					if (filterQueryString.has("tls_scripts")) {
+						setScriptsTlsStatusFilter(true);
+					} else {
+						setScriptsTlsStatusFilter(false);
+					}
 
-				if (filterQueryString.has("tls_stylesheets")) {
-					setStylesheetsTlsStatusFilter(true);
-				} else {
-					setStylesheetsTlsStatusFilter(false);
-				}
+					if (filterQueryString.has("tls_stylesheets")) {
+						setStylesheetsTlsStatusFilter(true);
+					} else {
+						setStylesheetsTlsStatusFilter(false);
+					}
 
-				if (
-					!filterQueryString.has("tls_status") &&
-					!filterQueryString.has("tls_images") &&
-					!filterQueryString.has("tls_scripts") &&
-					!filterQueryString.has("tls_stylesheets")
-				) {
-					setAllPagesFilter(true);
-				} else {
-					setAllPagesFilter(false);
-				}
+					if (
+						!filterQueryString.has("tls_status") &&
+						!filterQueryString.has("tls_images") &&
+						!filterQueryString.has("tls_scripts") &&
+						!filterQueryString.has("tls_stylesheets")
+					) {
+						setAllPagesFilter(true);
+					} else {
+						setAllPagesFilter(false);
+					}
 
-				return {
-					tlsStatusFilter,
-					imagesTlsStatusFilter,
-					scriptsTlsStatusFilter,
-					stylesheetsTlsStatusFilter,
-					allPagesFilter
-				};
-			} else {
-				const verified = handleConversionStringToBoolean(query.verified);
+					return {
+						tlsStatusFilter,
+						imagesTlsStatusFilter,
+						scriptsTlsStatusFilter,
+						stylesheetsTlsStatusFilter,
+						allPagesFilter
+					};
+				default:
+					(() => {
+						const sanitizedFilterQueryString = filterQueryString.get("verified");
 
-				if (filterQueryString.has("verified=true")) {
-					setVerifiedFilter(true);
-				} else {
-					setVerifiedFilter(false);
-				}
+						if (sanitizedFilterQueryString === "true") {
+							setVerifiedFilter(true);
+							setUnverifiedFilter(false);
+							setAllSitesFilter(false);
+						} else if (sanitizedFilterQueryString === "false") {
+							setVerifiedFilter(false);
+							setUnverifiedFilter(true);
+							setAllSitesFilter(false);
+						} else {
+							setVerifiedFilter(false);
+							setUnverifiedFilter(false);
+							setAllSitesFilter(true);
+						}
 
-				if (filterQueryString.has("verified=false")) {
-					setUnverifiedFilter(true);
-				} else {
-					setUnverifiedFilter(false);
-				}
-
-				if (!filterQueryString.has("verified")) {
-					setAllSitesFilter(true);
-				} else {
-					setAllSitesFilter(false);
-				}
-
-				return {
-					verifiedFilter,
-					unverifiedFilter,
-					allSitesFilter
-				};
+						return {
+							verifiedFilter,
+							unverifiedFilter,
+							allSitesFilter
+						};
+					})();
 			}
 		}
 	}, []);
 
-	return isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-		<form className="rounded-lg border border-gray-300 bg-white px-4 py-5 sm:px-6 lg:flex lg:justify-between">
+	return isComponentReady ? (
+		<form className="rounded-lg border border-gray-300 px-4 py-5 sm:px-6 lg:flex lg:justify-between">
 			<div className="-ml-4 flex-wrap items-center sm:flex-nowrap lg:-mt-2 lg:flex">
 				<h4 className="ml-4 mb-4 mt-2 mr-1 font-semibold leading-4 text-gray-600 lg:mb-0">{filterText}</h4>
 
 				{filtersArray
-					.filter(
+					?.filter(
 						(e) =>
 							e.type === filterType &&
 							e.value !== "allSites" &&
@@ -535,7 +519,7 @@ const Filter = ({
 							e.value !== "allImages" &&
 							e.value !== "allSeo"
 					)
-					.map((value, key) => (
+					?.map((value, key) => (
 						<div key={key} className="ml-4 mt-2">
 							<label className="flex items-center space-x-2">
 								<input
@@ -548,12 +532,12 @@ const Filter = ({
 								<span className="ml-2 text-left text-xs font-normal leading-4 text-gray-500">{value.label}</span>
 							</label>
 						</div>
-					))}
+					)) ?? null}
 			</div>
 
 			<div className="flex-wrap items-center justify-end space-x-4 sm:flex-nowrap lg:-mt-2 lg:flex">
 				{filtersArray
-					.filter(
+					?.filter(
 						(e) =>
 							e.type === filterType &&
 							(e.value === "allSites" ||
@@ -562,7 +546,7 @@ const Filter = ({
 								e.value === "allImages" ||
 								e.value === "allSeo")
 					)
-					.map((value, key) => (
+					?.map((value, key) => (
 						<div key={key} className="ml-4 mt-2">
 							<label className="flex items-center space-x-2">
 								<input
@@ -575,16 +559,16 @@ const Filter = ({
 								<span className="text-left text-xs font-normal leading-4 text-gray-500">{value.label}</span>
 							</label>
 						</div>
-					))}
+					)) ?? null}
 			</div>
 		</form>
 	) : (
-		<div className="rounded-lg border border-gray-300 bg-white px-4 py-5 sm:px-6 lg:flex lg:justify-between">
+		<div className="rounded-lg border border-gray-300 px-4 py-5 sm:px-6 lg:flex lg:justify-between">
 			<div className="-ml-4 flex-wrap items-center sm:flex-nowrap lg:-mt-2 lg:flex">
 				<Skeleton duration={2} width={50} height={16} className="my-4 ml-4 mr-1 lg:mb-0" />
 
 				{filtersArray
-					.filter(
+					?.filter(
 						(e) =>
 							e.type === filterType &&
 							e.value !== "allSites" &&
@@ -593,7 +577,7 @@ const Filter = ({
 							e.value !== "allImages" &&
 							e.value !== "allSeo"
 					)
-					.map((value, key) => (
+					?.map((value, key) => (
 						<div key={key} className="ml-4 mt-2">
 							<div className="flex items-center space-x-2">
 								<Skeleton duration={2} width={16} height={16} className="h-4 w-4 rounded" />
@@ -605,7 +589,7 @@ const Filter = ({
 
 			<div className="flex-wrap items-center justify-end space-x-4 sm:flex-nowrap lg:-mt-2 lg:flex">
 				{filtersArray
-					.filter(
+					?.filter(
 						(e) =>
 							e.type === filterType &&
 							(e.value === "allSites" ||
@@ -614,7 +598,7 @@ const Filter = ({
 								e.value === "allImages" ||
 								e.value === "allSeo")
 					)
-					.map((value, key) => (
+					?.map((value, key) => (
 						<div key={key} className="ml-4 mt-2">
 							<div className="flex items-center space-x-2">
 								<Skeleton duration={2} width={16} height={16} className="h-4 w-4 rounded" />

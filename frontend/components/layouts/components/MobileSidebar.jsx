@@ -1,9 +1,9 @@
 import { MemoizedMainMenu } from "@components/menus/MainMenu";
 import { MemoizedProfileMenu } from "@components/menus/ProfileMenu";
-import { Transition } from "@headlessui/react";
+import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
 import useTranslation from "next-translate/useTranslation";
-import { forwardRef, memo } from "react";
+import { forwardRef, Fragment, memo } from "react";
 
 /**
  * Custom function to render the `MobileSidebarLayout` component
@@ -14,12 +14,13 @@ import { forwardRef, memo } from "react";
 const MobileSidebarLayout = ({ openSidebar = false, setOpenSidebar }, ref) => {
 	// Translations
 	const { t } = useTranslation("sidebar");
-	const closeSidebar = t("closeSidebar");
+	const closeSidebarText = t("closeSidebar");
 
 	return (
-		<Transition show={openSidebar} className="flex flex-shrink-0 lg:hidden">
-			<div ref={ref} className="fixed inset-0 z-50 flex lg:hidden" role="dialog" aria-modal="true">
+		<Transition.Root show={openSidebar} as={Fragment}>
+			<Dialog as="div" className="fixed inset-0 z-50 flex md:hidden" onClose={setOpenSidebar}>
 				<Transition.Child
+					as={Fragment}
 					enter="transition-opacity ease-linear duration-300"
 					enterFrom="opacity-0"
 					enterTo="opacity-100"
@@ -27,10 +28,10 @@ const MobileSidebarLayout = ({ openSidebar = false, setOpenSidebar }, ref) => {
 					leaveFrom="opacity-100"
 					leaveTo="opacity-0"
 				>
-					<div className="fixed inset-0 bg-gray-600 bg-opacity-75" aria-hidden="true"></div>
+					<Dialog.Overlay className="fixed inset-0 bg-gray-600 bg-opacity-75" />
 				</Transition.Child>
-
 				<Transition.Child
+					as={Fragment}
 					enter="transition ease-in-out duration-300 transform"
 					enterFrom="-translate-x-full"
 					enterTo="translate-x-0"
@@ -38,7 +39,7 @@ const MobileSidebarLayout = ({ openSidebar = false, setOpenSidebar }, ref) => {
 					leaveFrom="translate-x-0"
 					leaveTo="-translate-x-full"
 				>
-					<div className="relative flex h-0 w-64 flex-1 flex-col ">
+					<div className="relative flex w-full max-w-xs flex-1 flex-col bg-gray-1000">
 						<Transition.Child
 							enter="ease-in-out duration-300"
 							enterFrom="opacity-0"
@@ -49,26 +50,26 @@ const MobileSidebarLayout = ({ openSidebar = false, setOpenSidebar }, ref) => {
 						>
 							<div className="absolute top-0 right-0 -mr-12 pt-2">
 								<button
+									type="button"
 									className="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
 									onClick={() => setOpenSidebar(false)}
 								>
-									<span className="sr-only">{closeSidebar}</span>
-									<XIcon className="h-6 w-6 text-white" />
+									<span className="sr-only">{closeSidebarText}</span>
+									<XIcon className="h-5 w-5 text-white" aria-hidden="true" />
 								</button>
 							</div>
-
-							<div className="flex h-screen w-full flex-col bg-gray-1000">
-								<div className="flex flex-1 flex-col overflow-y-auto ">
-									<MemoizedMainMenu />
-								</div>
-
-								<MemoizedProfileMenu />
-							</div>
 						</Transition.Child>
+						<div className="h-0 flex-1 overflow-y-auto pt-5 pb-4">
+							<MemoizedMainMenu />
+						</div>
+						<MemoizedProfileMenu />
 					</div>
 				</Transition.Child>
-			</div>
-		</Transition>
+				<div className="w-14 flex-shrink-0" aria-hidden="true">
+					{/* Force sidebar to shrink to fit close icon */}
+				</div>
+			</Dialog>
+		</Transition.Root>
 	);
 };
 

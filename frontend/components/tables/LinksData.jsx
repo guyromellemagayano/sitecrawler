@@ -1,6 +1,6 @@
 import { MemoizedBadge } from "@components/badges";
 import { useComponentVisible } from "@hooks/useComponentVisible";
-import { useLinkDetail } from "@hooks/useLinkDetail";
+import { useLinkId } from "@hooks/useLinkId";
 import { useScan } from "@hooks/useScan";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
@@ -54,8 +54,8 @@ const LinksData = ({ link = null }) => {
 
 	// SWR hooks
 	const { user, disableLocalTime, permissions } = useUser();
-	const { scanObjId, selectedSiteRef } = useScan(sanitizedSiteId);
-	const { linkDetail, linkDetailId, linkDetailPages } = useLinkDetail(sanitizedSiteId, scanObjId, linkId);
+	const { scanObjId } = useScan(sanitizedSiteId);
+	const { pages } = useLinkId(sanitizedSiteId, linkId, scanObjId);
 
 	// Custom hooks
 	const {
@@ -86,7 +86,7 @@ const LinksData = ({ link = null }) => {
 	};
 
 	return (
-		<tr ref={selectedSiteRef}>
+		<tr>
 			<td className="flex-none whitespace-nowrap p-4">
 				<div className="flex flex-col items-start">
 					<div>
@@ -122,7 +122,7 @@ const LinksData = ({ link = null }) => {
 									<span className="flex justify-start space-x-2 text-sm leading-5 text-gray-500">
 										<Link
 											href="/dashboard/sites/[siteId]/links/[linkId]/"
-											as={`/dashboard/sites/${sanitizedSiteId}/links/${linkDetailId}/`}
+											as={`/dashboard/sites/${sanitizedSiteId}/links/${linkId}/`}
 											title={linkUrl}
 											passHref
 										>
@@ -231,23 +231,19 @@ const LinksData = ({ link = null }) => {
 			</td>
 			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-					linkDetailPages?.length > 0 ? (
+					pages?.length > 0 ? (
 						<Link
 							href="/dashboard/sites/[siteId]/links/[linkId]/"
-							as={`/dashboard/sites/${sanitizedSiteId}/links/${linkDetailId}/`}
+							as={`/dashboard/sites/${sanitizedSiteId}/links/${linkId}/`}
 							passHref
 						>
 							<a className="mr-3 flex items-center text-sm font-semibold leading-6 text-indigo-600 outline-none transition duration-150 ease-in-out hover:text-indigo-500 focus:outline-none">
-								<span className="truncate-link">
-									{linkDetailPages[0]?.url === linkUrl ? "/" : linkDetailPages[0]?.url}
-								</span>
+								<span className="truncate-link">{pages[0]?.url === linkUrl ? "/" : pages[0]?.url}</span>
 								&nbsp;
-								{linkDetailPages.length - 1 > 0
-									? "+" + handleConversionStringToNumber(linkDetailPages.length - 1)
-									: null}{" "}
-								{linkDetailPages.length - 1 > 1
+								{pages.length - 1 > 0 ? "+" + handleConversionStringToNumber(pages.length - 1) : null}{" "}
+								{pages.length - 1 > 1
 									? handleConversionStringToLowercase(othersText)
-									: linkDetailPages.length - 1 === 1
+									: pages.length - 1 === 1
 									? handleConversionStringToLowercase(otherText)
 									: null}
 							</a>

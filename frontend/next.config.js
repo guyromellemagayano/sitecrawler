@@ -21,7 +21,8 @@ const NextConfig = {
 		LOGROCKET_APP_ID: "epic-design-labs/link-app"
 	},
 	compiler: {
-		styledComponents: true
+		styledComponents: true,
+		removeConsole: process.env.NODE_ENV === "production" ? true : false
 	},
 	experimental: {
 		outputStandalone: true
@@ -40,12 +41,12 @@ const NextConfig = {
 			},
 			{
 				source: "/dashboard/site/:siteId",
-				destination: "/dashboard/sites/:siteId/overview",
-				permanent: false
+				destination: "/dashboard/sites/:siteId",
+				permanent: true
 			},
 			{
-				source: "/dashboard/sites/:siteId",
-				destination: "/dashboard/sites/:siteId/overview",
+				source: "/dashboard/sites/:siteId/overview",
+				destination: "/dashboard/sites/:siteId",
 				permanent: false
 			}
 		];

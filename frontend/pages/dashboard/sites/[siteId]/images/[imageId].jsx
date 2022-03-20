@@ -1,6 +1,7 @@
 import { MemoizedLayout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
-import { MemoizedSiteOverviewPageLayout } from "@components/layouts/pages/SiteOverview";
+import { MemoizedComingSoonPageLayout } from "@components/layouts/pages/ComingSoon";
+import { MemoizedLoader } from "@components/loaders";
 import { SitesApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { DashboardSitesLink, LoginLink } from "@constants/PageLinks";
 import { SSR_SITE_URL } from "@constants/ServerEnv";
@@ -70,10 +71,10 @@ export async function getServerSideProps({ req, query }) {
 	}
 }
 
-const SiteOverviewAuth = ({ siteName }) => {
+const SiteImageDetailAuth = ({ siteName }) => {
 	// Translations
 	const { t } = useTranslation("sites");
-	const sitesOverviewText = t("sitesOverview");
+	const sitesLinksText = t("sitesLinks");
 
 	// Custom context
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
@@ -82,24 +83,26 @@ const SiteOverviewAuth = ({ siteName }) => {
 	const { user } = useUser("/api/auth/user/");
 
 	// Custom variables
-	const sitesOverviewPageTitle = sitesOverviewText + " - " + siteName;
+	const sitesLinksPageTitle = sitesLinksText + " - " + siteName;
 
 	return isComponentReady && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 		<MemoizedLayout>
-			<NextSeo title={sitesOverviewPageTitle} />
-			<MemoizedPageLayout pageTitle={sitesOverviewText}>
-				<MemoizedSiteOverviewPageLayout />
+			<NextSeo title={sitesLinksPageTitle} />
+			<MemoizedPageLayout pageTitle={sitesLinksText}>
+				<MemoizedComingSoonPageLayout />
 			</MemoizedPageLayout>
 		</MemoizedLayout>
-	) : null;
+	) : (
+		<MemoizedLoader />
+	);
 };
 
-export default function SiteOverview({ siteName, fallback }) {
+export default function SiteImageDetail({ siteName, fallback }) {
 	return (
 		<SWRConfig value={{ fallback }}>
-			<SiteOverviewAuth siteName={siteName} />
+			<SiteImageDetailAuth siteName={siteName} />
 		</SWRConfig>
 	);
 }
 
-SiteOverview.getLayout = (page) => page;
+SiteImageDetail.getLayout = (page) => page;

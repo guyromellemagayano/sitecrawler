@@ -1,6 +1,6 @@
 FROM golang:1 AS dev
 WORKDIR /app
-RUN go get github.com/codegangsta/gin
+RUN go install github.com/codegangsta/gin@latest
 
 COPY go.mod .
 COPY go.sum .

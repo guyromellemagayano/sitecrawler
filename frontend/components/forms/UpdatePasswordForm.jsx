@@ -57,7 +57,7 @@ const UpdatePasswordForm = () => {
 				uid: uid,
 				token: token
 			}}
-			validationSchema={Yup.object({
+			validationSchema={Yup.object().shape({
 				password1: Yup.string()
 					.min(FormPasswordMinChars, tooShort)
 					.max(FormPasswordMaxChars, tooLong)

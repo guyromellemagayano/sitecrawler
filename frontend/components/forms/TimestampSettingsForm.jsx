@@ -1,11 +1,11 @@
 import { UserApiEndpoint } from "@constants/ApiEndpoints";
+import { NotificationDisplayInterval } from "@constants/GlobalValues";
 import { Switch } from "@headlessui/react";
 import { handlePutMethod } from "@helpers/handleHttpMethods";
-import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
-import { memo, useContext } from "react";
+import { memo, useContext, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useSWRConfig } from "swr";
@@ -21,24 +21,15 @@ const TimestampSettingsForm = () => {
 	const timestampSettingsDisableLocalTime = t("settings:timestampSettings.disableLocalTime");
 
 	// Custom context
-	const { isComponentReady } = useContext(SiteCrawlerAppContext);
-
-	// SWR hooks
-	const {
-		user,
-		userId,
-		username,
-		email,
-		permissions,
-		largePageSizeThreshold,
-		disableLocalTime,
-		setDisableLocalTime,
-		settings,
-		setUserConfig
-	} = useUser();
+	const { isComponentReady, user, state, setConfig } = useContext(SiteCrawlerAppContext);
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
+
+	// Custom variables
+	const loadedDisableLocalTime = user?.data?.settings?.disableLocalTime ?? false;
+
+	const [disableLocalTime, setDisableLocalTime] = useState(loadedDisableLocalTime);
 
 	return (
 		<div className="space-y-8 divide-y divide-gray-200">
@@ -46,7 +37,7 @@ const TimestampSettingsForm = () => {
 				<div className="sm:col-span-3">
 					<div className="relative flex items-center">
 						<div className="absolute flex h-5 items-center">
-							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+							{isComponentReady ? (
 								<Switch
 									checked={!disableLocalTime}
 									onChange={() => {
@@ -55,11 +46,7 @@ const TimestampSettingsForm = () => {
 										// Mutate updated "disabledLocalTime" user setting
 										(async () => {
 											const body = {
-												id: userId,
-												username: username,
-												email: email,
-												permissions: permissions,
-												large_page_size_threshold: largePageSizeThreshold,
+												...user?.data,
 												settings: {
 													disableLocalTime: !disableLocalTime
 												}
@@ -70,43 +57,47 @@ const TimestampSettingsForm = () => {
 											const timestampSettingsResponseStatus = timestampSettingsResponse?.status ?? null;
 											const timestampSettingsResponseMethod = timestampSettingsResponse?.config?.method ?? null;
 
-											if (
-												timestampSettingsResponseData !== null &&
-												Math.round(timestampSettingsResponseStatus / 200) === 1
-											) {
-												// Show alert message after successful 200 OK or 201 Created response is issued
-												if (!disableLocalTime) {
-													setUserConfig({
-														isLocalTimeDisabled: true,
-														method: timestampSettingsResponseMethod,
-														status: timestampSettingsResponseStatus
-													});
-												} else {
-													setUserConfig({
-														isLocalTimeEnabled: true,
-														method: timestampSettingsResponseMethod,
-														status: timestampSettingsResponseStatus
-													});
-												}
-
-												mutate(
-													UserApiEndpoint,
-													{
-														...user,
-														data: timestampSettingsResponseData
-													},
-													false
-												);
-											} else {
-												// Show alert message after unsuccessful 200 OK or 201 Created response is issued
-												setUserConfig({
-													isUser: true,
+											// Show alert message after successful 200 OK or 201 Created response is issued
+											if (!disableLocalTime) {
+												setConfig({
+													isLocalTimeDisabled: true,
 													method: timestampSettingsResponseMethod,
-													status: timestampSettingsResponseStatus
+													status: timestampSettingsResponseStatus,
+													isAlert: false,
+													isNotification: false
 												});
-
-												mutate(UserApiEndpoint);
+											} else {
+												setConfig({
+													isLocalTimeEnabled: true,
+													method: timestampSettingsResponseMethod,
+													status: timestampSettingsResponseStatus,
+													isAlert: false,
+													isNotification: false
+												});
 											}
+
+											const personalSettingsResponseTimeout = setTimeout(() => {
+												if (
+													timestampSettingsResponseData !== null &&
+													Math.round(timestampSettingsResponseStatus / 200) === 1
+												) {
+													mutate(
+														UserApiEndpoint,
+														{
+															...user,
+															data: timestampSettingsResponseData
+														},
+														false
+													);
+												} else {
+													mutate(UserApiEndpoint);
+													setDisableLocalTime(!disableLocalTime);
+												}
+											}, NotificationDisplayInterval);
+
+											return () => {
+												clearTimeout(personalSettingsResponseTimeout);
+											};
 										})();
 									}}
 									className={classnames(
@@ -118,7 +109,7 @@ const TimestampSettingsForm = () => {
 									<span
 										className={classnames(
 											!disableLocalTime ? "translate-x-5" : "translate-x-0",
-											"pointer-events-none relative inline-block h-4 w-4 transform rounded-full bg-white shadow transition duration-200 ease-in-out"
+											"pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
 										)}
 									>
 										<span
@@ -155,24 +146,41 @@ const TimestampSettingsForm = () => {
 								<Skeleton duration={2} width={44} height={20} />
 							)}
 						</div>
+
 						<div className="ml-2 pl-12 text-sm leading-5">
 							<label htmlFor="candidates" className="font-medium text-gray-700">
-								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-									timestampSettingsHeadline
-								) : (
-									<Skeleton duration={2} width={125} height={15} />
-								)}
+								{isComponentReady ? timestampSettingsHeadline : <Skeleton duration={2} width={125} height={15} />}
 							</label>
 							<p className="text-gray-500">
-								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-									timestampSettingsSubheadline
-								) : (
-									<Skeleton duration={2} width={250} height={15} />
-								)}
+								{isComponentReady ? timestampSettingsSubheadline : <Skeleton duration={2} width={250} height={15} />}
 							</p>
 						</div>
 					</div>
 				</div>
+
+				{(state?.isLocalTimeDisabled || state?.isLocalTimeEnabled) && state?.responses?.length > 0 ? (
+					<div className="sm:col-span-3">
+						<div className="relative mt-1">
+							{state.responses.map((value, key) => {
+								// Alert Messsages
+								const responseText = value.responseText;
+								const isSuccess = value.isSuccess;
+
+								return (
+									<span
+										key={key}
+										className={classnames(
+											"block break-words text-sm font-medium leading-5",
+											isSuccess ? "text-green-800" : "text-red-800"
+										)}
+									>
+										{responseText}
+									</span>
+								);
+							})}
+						</div>
+					</div>
+				) : null}
 			</div>
 		</div>
 	);

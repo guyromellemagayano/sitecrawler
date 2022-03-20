@@ -15,13 +15,15 @@ export const handleNotificationMessages = ({
 	isPasswordChange = false,
 	isPasswordReset = false,
 	isPasswordResetConfirm = false,
-	isPaymentMethod = false,
+	isStripePaymentMethod = false,
+	isStripePaymentMethodDefault = false,
 	isRegistration = false,
 	isScan = false,
 	isSignup = false,
 	isSites = false,
 	isStats = false,
-	isSubscriptions = false,
+	isStripeSubscriptions = false,
+	isStripeSubscriptionsCurrent = false,
 	isSupport = false,
 	isUrlInformationStep = false,
 	isUser = false,
@@ -29,7 +31,7 @@ export const handleNotificationMessages = ({
 	data,
 	fallback
 }) => {
-	if (typeof data === "object" && Object.keys(data)?.length > 0) {
+	if (typeof data === "object") {
 		dispatch({
 			...state,
 			...(isLinks && { isLinks: isLinks }),
@@ -41,19 +43,23 @@ export const handleNotificationMessages = ({
 			...(isPasswordChange && { isPasswordChange: isPasswordChange }),
 			...(isPasswordReset && { isPasswordReset: isPasswordReset }),
 			...(isPasswordResetConfirm && { isPasswordResetConfirm: isPasswordResetConfirm }),
-			...(isPaymentMethod && { isPaymentMethod: isPaymentMethod }),
+			...(isStripePaymentMethod && { isStripePaymentMethod: isStripePaymentMethod }),
+			...(isStripePaymentMethodDefault && { isStripePaymentMethodDefault: isStripePaymentMethodDefault }),
 			...(isRegistration && { isRegistration: isRegistration }),
 			...(isScan && { isScan: isScan }),
 			...(isSignup && { isSignup: isSignup }),
 			...(isSites && { isSites: isSites }),
 			...(isStats && { isStats: isStats }),
-			...(isSubscriptions && { isSubscriptions: isSubscriptions }),
+			...(isStripeSubscriptions && { isStripeSubscriptions: isStripeSubscriptions }),
+			...(isStripeSubscriptionsCurrent && { isStripeSubscriptionsCurrent: isStripeSubscriptionsCurrent }),
 			...(isSupport && { isSupport: isSupport }),
 			...(isUrlInformationStep && { isUrlInformationStep: isUrlInformationStep }),
 			...(isUser && { isUser: isUser }),
 			...(isVerifyUrlStep && { isVerifyUrlStep: isVerifyUrlStep }),
 			method: handleConversionStringToUppercase(data.method),
 			status: data.status,
+			isAlert: data.isAlert,
+			isNotification: data.isNotification,
 			responses: [
 				...state.responses,
 				{
@@ -78,7 +84,7 @@ export const handleNotificationMessages = ({
 			]
 		});
 
-		const timeout = setTimeout(() => {
+		const hideMessageTimeout = setTimeout(() => {
 			dispatch({
 				...state,
 				...(isLinks && { isLinks: false }),
@@ -90,13 +96,15 @@ export const handleNotificationMessages = ({
 				...(isPasswordChange && { isPasswordChange: !isPasswordChange }),
 				...(isPasswordReset && { isPasswordReset: !isPasswordReset }),
 				...(isPasswordResetConfirm && { isPasswordResetConfirm: !isPasswordResetConfirm }),
-				...(isPaymentMethod && { isPaymentMethod: !isPaymentMethod }),
+				...(isStripePaymentMethod && { isStripePaymentMethod: !isStripePaymentMethod }),
+				...(isStripePaymentMethodDefault && { isStripePaymentMethodDefault: !isStripePaymentMethodDefault }),
 				...(isRegistration && { isRegistration: !isRegistration }),
 				...(isScan && { isScan: !isScan }),
 				...(isSignup && { isSignup: !isSignup }),
 				...(isSites && { isSites: !isSites }),
 				...(isStats && { isStats: !isStats }),
-				...(isSubscriptions && { isSubscriptions: !isSubscriptions }),
+				...(isStripeSubscriptions && { isStripeSubscriptions: !isStripeSubscriptions }),
+				...(isStripeSubscriptionsCurrent && { isStripeSubscriptionsCurrent: !isStripeSubscriptionsCurrent }),
 				...(isSupport && { isSupport: !isSupport }),
 				...(isUrlInformationStep && { isUrlInformationStep: !isUrlInformationStep }),
 				...(isUser && { isUser: !isUser }),
@@ -128,7 +136,7 @@ export const handleNotificationMessages = ({
 			});
 
 			setConfig({
-				...(isLinks && { isLinks: false }),
+				...(isLinks && { isLinks: !isLinks }),
 				...(isLocalTimeDisabled && { isLocalTimeDisabled: !isLocalTimeDisabled }),
 				...(isLocalTimeEnabled && { isLocalTimeEnabled: !isLocalTimeEnabled }),
 				...(isLogin && { isLogin: !isLogin }),
@@ -137,24 +145,28 @@ export const handleNotificationMessages = ({
 				...(isPasswordChange && { isPasswordChange: !isPasswordChange }),
 				...(isPasswordReset && { isPasswordReset: !isPasswordReset }),
 				...(isPasswordResetConfirm && { isPasswordResetConfirm: !isPasswordResetConfirm }),
-				...(isPaymentMethod && { isPaymentMethod: !isPaymentMethod }),
+				...(isStripePaymentMethod && { isStripePaymentMethod: !isStripePaymentMethod }),
+				...(isStripePaymentMethodDefault && { isStripePaymentMethodDefault: !isStripePaymentMethodDefault }),
 				...(isRegistration && { isRegistration: !isRegistration }),
 				...(isScan && { isScan: !isScan }),
 				...(isSignup && { isSignup: !isSignup }),
 				...(isSites && { isSites: !isSites }),
 				...(isStats && { isStats: !isStats }),
-				...(isSubscriptions && { isSubscriptions: !isSubscriptions }),
+				...(isStripeSubscriptions && { isStripeSubscriptions: !isStripeSubscriptions }),
+				...(isStripeSubscriptionsCurrent && { isStripeSubscriptionsCurrent: !isStripeSubscriptionsCurrent }),
 				...(isSupport && { isSupport: !isSupport }),
 				...(isUrlInformationStep && { isUrlInformationStep: !isUrlInformationStep }),
 				...(isUser && { isUser: !isUser }),
 				...(isVerifyUrlStep && { isVerifyUrlStep: !isVerifyUrlStep }),
+				isAlert: null,
+				isNotification: null,
 				method: null,
 				status: null
 			});
 		}, NotificationDisplayInterval);
 
 		return () => {
-			clearTimeout(timeout);
+			clearTimeout(hideMessageTimeout);
 		};
 	}
 

@@ -20,7 +20,7 @@ const MobileSidebarButton = ({ handleOpenSidebar }) => {
 		>
 			<div className="flex-1">
 				<span className="sr-only">{openSidebarText}</span>
-				<MenuIcon className="h-6 w-6" />
+				<MenuIcon className="h-5 w-5" />
 			</div>
 		</button>
 	);

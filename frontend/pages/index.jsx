@@ -1,8 +1,8 @@
+import { MemoizedLayout } from "@components/layouts";
 import { MemoizedLoader } from "@components/loaders";
 import { UserApiEndpoint } from "@constants/ApiEndpoints";
 import { DashboardSitesLink, LoginLink } from "@constants/PageLinks";
 import { SSR_SITE_URL } from "@constants/ServerEnv";
-import { useUser } from "@hooks/useUser";
 import AppAxiosInstance from "@utils/axios";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
@@ -50,20 +50,17 @@ const HomeAuth = () => {
 	// Custom context
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
-	// SWR hooks
-	const { user } = useUser("/api/auth/user/");
-
 	return (
-		<>
+		<MemoizedLayout>
 			<NextSeo title={homeText} />
 			<MemoizedLoader />
-		</>
+		</MemoizedLayout>
 	);
 };
 
-export default function Home({ fallback }) {
+export default function Home() {
 	return (
-		<SWRConfig value={{ fallback }}>
+		<SWRConfig>
 			<HomeAuth />
 		</SWRConfig>
 	);

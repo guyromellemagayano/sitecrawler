@@ -11,7 +11,7 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  */
 export const useUptimeSummary = (querySid = null, options = null) => {
 	const currentEndpoint =
-		querySid !== null && typeof querySid === "number" && querySid > 0
+		querySid && typeof querySid === "number" && querySid > 0
 			? SitesApiEndpoint + querySid + UptimeSlug + SummarySlug
 			: null;
 

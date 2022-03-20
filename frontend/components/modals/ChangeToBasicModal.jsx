@@ -1,140 +1,142 @@
-import { Transition } from "@headlessui/react";
+import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationIcon } from "@heroicons/react/outline";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
-import PropTypes from "prop-types";
-import { forwardRef, memo } from "react";
+import { forwardRef, Fragment, memo, useContext, useRef } from "react";
 
 /**
  * Custom function to render the `ChangeToBasicModal` component
  *
+ * @param {function} handlePlanSelect
  * @param {number} planId
  * @param {string} planName
- * @param {object} defaultPaymentMethod
- * @param {boolean} disableDowngradeToBasicPlan
- * @param {function} handlePlanSelect
  * @param {boolean} showModal
  * @param {function} setShowModal
+ * @param {boolean} isProcessingPayment
  */
 const ChangeToBasicModal = (
-	{
-		planId = null,
-		planName = null,
-		defaultPaymentMethod = null,
-		disableDowngradeToBasicPlan = false,
-		handlePlanSelect,
-		showModal = false,
-		setShowModal
-	},
+	{ handlePlanSelect, planId = null, planName = null, showModal = false, setShowModal, isProcessingPayment = false },
 	ref
 ) => {
 	// Translation
 	const { t } = useTranslation();
-	const subscriptionPlansDowngradeToBasicLabel = t("settings:subscriptionPlans.downgradeToBasicPlan.label");
-	const subscriptionPlansDowngradeToBasicDescription = t("settings:subscriptionPlans.downgradeToBasicPlan.description");
-	const processing = t("common:processing");
-	const close = t("common:close");
-	const proceed = t("common:proceed");
+	const downgradeToBasicLabelText = t("settings:subscriptionPlans.downgradeToBasicPlan.label");
+	const downgradeToBasicDescriptionText = t("settings:subscriptionPlans.downgradeToBasicPlan.description");
+	const closeText = t("common:close");
+	const cancelText = t("common:cancel");
+	const subscriptionPlansProcessingPayment = t("settings:subscriptionPlans.processingPayment");
+	const downgradePlanText = t("common:downgradePlan");
 
-	// Handle plan selection
-	const handlePlanSelection = async (id, name, method) => {
-		handlePlanSelect(id, name, method);
+	// Custom context
+	const { defaultPaymentMethod } = useContext(SiteCrawlerAppContext);
+
+	// Custom variables
+	const defaultPaymentMethodId = defaultPaymentMethod?.data?.id ?? null;
+
+	// Custom hooks
+	const changeToBasicRef = useRef(null);
+
+	// Handle close modal
+	const handleCloseModal = () => {
 		setShowModal(false);
 	};
 
 	return (
-		<Transition show={showModal}>
-			<div className="fixed inset-x-0 bottom-0 z-50 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center">
-				<Transition.Child
-					enter="change-to-basic-modal-first-child-enter"
-					enterFrom="change-to-basic-modal-first-child-enter-from"
-					enterTo="change-to-basic-modal-first-child-enter-to"
-					leave="change-to-basic-modal-first-child-leave"
-					leaveFrom="change-to-basic-modal-first-child-leave-from"
-					leaveTo="change-to-basic-modal-first-child-leave-to"
-				>
-					<div className="fixed inset-0 transition-opacity" aria-hidden="true">
-						<div className="absolute inset-0 bg-gray-500 opacity-75"></div>
-					</div>
-				</Transition.Child>
-
-				<span className="hidden sm:inline-block sm:h-screen sm:align-middle">&#8203;</span>
-
-				<Transition.Child
-					enter="change-to-basic-modal-second-child-enter"
-					enterFrom="change-to-basic-modal-second-child-enter-from"
-					enterTo="change-to-basic-modal-second-child-enter-to"
-					leave="change-to-basic-modal-second-child-leave"
-					leaveFrom="change-to-basic-modal-second-child-leave-from"
-					leaveTo="change-to-basic-modal-second-child-leave-to"
-				>
-					<div
-						ref={ref}
-						className="transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 transition-all sm:w-full sm:max-w-lg sm:p-6"
-						role="dialog"
-						aria-modal="true"
-						aria-labelledby="modal-headline"
+		<Transition.Root show={showModal} as={Fragment}>
+			<Dialog
+				as="div"
+				className="fixed inset-0 z-50 overflow-y-auto"
+				initialFocus={changeToBasicRef}
+				onClose={isProcessingPayment ? () => {} : handleCloseModal}
+			>
+				<div className="flex min-h-screen items-end justify-center p-4 text-center sm:block sm:p-0">
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
 					>
-						<div className="sm:flex sm:items-start">
-							<div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-yellow-100 sm:mx-0 sm:h-10 sm:w-10">
-								<ExclamationIcon className="h-6 w-6 text-yellow-600" />
-							</div>
-							<div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-								<h3 className="text-lg font-medium leading-6 text-gray-900" id="modal-headline">
-									{subscriptionPlansDowngradeToBasicLabel}
-								</h3>
-								<div className="my-2">
-									<p className="text-sm leading-5 text-gray-500">{subscriptionPlansDowngradeToBasicDescription}</p>
+						<Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+					</Transition.Child>
+
+					{/* This element is to trick the browser into centering the modal contents. */}
+					<span className="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">
+						&#8203;
+					</span>
+
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+						enterTo="opacity-100 translate-y-0 sm:scale-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+						leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+					>
+						<div className="inline-block transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6 sm:align-middle">
+							<div className="sm:flex sm:items-start">
+								<div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-yellow-100 sm:mx-0 sm:h-10 sm:w-10">
+									<ExclamationIcon className="h-5 w-5 text-yellow-600" aria-hidden="true" />
+								</div>
+								<div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+									<Dialog.Title as="h3" className="text-lg font-medium text-gray-900">
+										{downgradeToBasicLabelText}
+									</Dialog.Title>
+
+									<div className="my-2">
+										<Dialog.Description as="p" className="mb-3 text-sm text-gray-500">
+											{downgradeToBasicDescriptionText}
+										</Dialog.Description>
+									</div>
 								</div>
 							</div>
-						</div>
 
-						<div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-							<span className="flex w-full sm:w-auto">
+							<div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+								{defaultPaymentMethodId ? (
+									<button
+										ref={changeToBasicRef}
+										type="button"
+										disabled={isProcessingPayment}
+										aria-disabled={isProcessingPayment}
+										aria-hidden={isProcessingPayment}
+										className={classnames(
+											"inline-flex w-full justify-center rounded-md border border-transparent bg-yellow-600 px-4 py-2 text-base font-medium text-white shadow-sm sm:ml-3 sm:w-auto sm:text-sm",
+											isProcessingPayment
+												? "cursor-not-allowed opacity-50"
+												: "hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+										)}
+										onClick={isProcessingPayment ? () => {} : () => handlePlanSelect(planId, planName)}
+									>
+										{isProcessingPayment ? subscriptionPlansProcessingPayment : downgradePlanText}
+									</button>
+								) : null}
+
 								<button
 									type="button"
-									disabled={disableDowngradeToBasicPlan}
+									disabled={isProcessingPayment}
+									aria-disabled={isProcessingPayment}
+									aria-hidden={isProcessingPayment}
 									className={classnames(
-										"inline-flex w-full cursor-pointer justify-center rounded-md border border-gray-300 bg-yellow-600 px-4 py-2 text-sm font-medium leading-5 text-white shadow-sm transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 sm:ml-3 sm:text-sm sm:leading-5",
-										disableDowngradeToBasicPlan
+										"mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm sm:mt-0 sm:w-auto sm:text-sm",
+										isProcessingPayment
 											? "cursor-not-allowed opacity-50"
-											: "hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 active:bg-yellow-700"
+											: "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 									)}
-									aria-label="Downgrade to Basic Plan"
-									onClick={handlePlanSelection(planId, planName, defaultPaymentMethod)}
+									onClick={isProcessingPayment ? () => {} : handleCloseModal}
 								>
-									{disableDowngradeToBasicPlan ? processing : proceed}
+									{closeText}
 								</button>
-
-								<button
-									type="button"
-									className={classnames(
-										"inline-flex w-full cursor-pointer justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium leading-5 text-gray-700 shadow-sm sm:ml-3 sm:text-sm sm:leading-5",
-										disableDowngradeToBasicPlan
-											? "cursor-not-allowed opacity-50"
-											: "transition duration-150 ease-in-out hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-									)}
-									onClick={() => setShowModal(false)}
-								>
-									{close}
-								</button>
-							</span>
+							</div>
 						</div>
-					</div>
-				</Transition.Child>
-			</div>
-		</Transition>
+					</Transition.Child>
+				</div>
+			</Dialog>
+		</Transition.Root>
 	);
-};
-
-ChangeToBasicModal.propTypes = {
-	defaultPaymentMethod: PropTypes.object,
-	disableDowngradeToBasicPlan: PropTypes.bool,
-	handlePlanSelect: PropTypes.func,
-	planId: PropTypes.number,
-	planName: PropTypes.string,
-	setShowModal: PropTypes.func,
-	showModal: PropTypes.bool
 };
 
 /**

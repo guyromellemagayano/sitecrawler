@@ -24,16 +24,17 @@ const DataSorting = ({ slug = null, labels = null }) => {
 	const [sortOrder, setSortOrder] = useState(initialOrder);
 
 	// Router
-	const { query, asPath, push } = useRouter();
+	const { asPath, query, push } = useRouter();
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
 
+	// Custom hooks
 	const { linksPerPage, setPagePath } = useSiteQueries();
 	const { scanApiEndpoint } = useScanApiEndpoint(linksPerPage);
 
 	// Handle sort
-	const handleSort = async (slug, dir) => {
+	const handleSort = (slug, dir) => {
 		setSortOrder({ ...initialOrder });
 
 		// Remove `ordering` URL parameter
@@ -64,11 +65,11 @@ const DataSorting = ({ slug = null, labels = null }) => {
 		if (newPath.includes("?")) setPagePath(`${handleRemoveUrlParameter(newPath, "page")}&`);
 		else setPagePath(`${handleRemoveUrlParameter(newPath, "page")}?`);
 
-		// Push new path
-		push(newPath);
-
 		// Mutate function here
 		mutate(scanApiEndpoint);
+
+		// Push new path
+		push(newPath);
 	};
 
 	return slug ? (

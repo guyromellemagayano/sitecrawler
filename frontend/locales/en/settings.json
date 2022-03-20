@@ -32,10 +32,12 @@
 	"cardInformationSettings": {
 		"title": "Card Information",
 		"noCurrentCardRegistered": "No current card registered",
-		"addCard": "Add Card",
+		"addCard": "Add New Card",
 		"cardNumber": "Card Number",
 		"expirationDate": "Expiration Date",
 		"cvc": "CVC",
+		"cardDetails": "Card Details",
+		"updateCard": "Update Card",
 		"loadingCardInformation": "Loading card information..."
 	},
 	"subscriptionPlans": {
@@ -59,18 +61,13 @@
 		"goToPaymentMethod": "Go to Payment Method",
 		"congratulations": "Congratulations!",
 		"startCrawling": "Start Crawling",
-		"downgradePlan": {
-			"label": "Are you sure of this?",
-			"description": "Downgrading your plan will cancel your current subscription and you will be charged for the remaining period."
-		},
 		"upgradePlan": {
 			"label": "Upgrade Plan",
-			"description": "User generated content in real-time will have multiple touchpoints for offshoring."
+			"description": "Downgrading your plan will cancel your current subscription and you will be charged for the remaining period. Continue?"
 		},
 		"downgradeToBasicPlan": {
-			"title": "Downgrade to Basic Plan",
-			"label": "Are you sure you want to downgrade to Basic Plan?",
-			"description": "Downgrading to the Basic plan will disable most of your current premium features."
+			"label": "Downgrade to Basic Plan",
+			"description": "Downgrading to the Basic plan will disable most of your current premium features. Continue?"
 		},
 		"subscriptions": "Subscriptions",
 		"mostPopular": "Most Popular",
@@ -80,8 +77,9 @@
 		"processingPlan": "Processing Plan...",
 		"processingPayment": "Processing Payment...",
 		"renewsOn": "Renews on",
-		"requested": "Requested"
-	},
-	"saving": "Saving...",
-	"saveChanges": "Save Changes"
+		"requested": "Requested",
+		"hasBeenRequested": "plan has been requested successfully",
+		"planActive": "plan is now active",
+		"currentPlanExpiresOn": "plan expires on"
+	}
 }

@@ -103,7 +103,7 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 				initialFocus={deleteSiteRef}
 				onClose={isLoading ? () => {} : handleCloseModal}
 			>
-				<div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+				<div className="flex min-h-screen items-end justify-center p-4 text-center sm:block sm:p-0">
 					<Transition.Child
 						as={Fragment}
 						enter="ease-out duration-300"
@@ -139,9 +139,9 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 									)}
 								>
 									{!isHidden ? (
-										<XCircleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
+										<XCircleIcon className="h-5 w-5 text-red-600" aria-hidden="true" />
 									) : (
-										<CheckCircleIcon className="h-6 w-6 text-green-600" aria-hidden="true" />
+										<CheckCircleIcon className="h-5 w-5 text-green-600" aria-hidden="true" />
 									)}
 								</div>
 								<div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">

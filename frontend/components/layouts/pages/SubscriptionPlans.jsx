@@ -1,16 +1,17 @@
-// import { MemoizedChangeToBasicModal } from "@components/modals/ChangeToBasicModal";
-// import { MemoizedNewActivePlanModal } from "@components/modals/NewActivePlanModal";
+import { MemoizedChangeToBasicModal } from "@components/modals/ChangeToBasicModal";
+import { MemoizedNewActivePlanModal } from "@components/modals/NewActivePlanModal";
 import { MemoizedPaymentMethodModal } from "@components/modals/PaymentMethodModal";
 import { MemoizedSubscriptionPlansPricing } from "@components/pricing/SubscriptionPlansPricing";
-import { CurrentSubscriptionApiEndpoint, PaymentMethodApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
-import { Basic } from "@constants/GlobalValues";
+import { CurrentSubscriptionApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
+import { Agency, Basic, ModalDisplayInterval, Pro } from "@constants/GlobalValues";
 import { handleDeleteMethod, handlePostMethod } from "@helpers/handleHttpMethods";
 import { useComponentVisible } from "@hooks/useComponentVisible";
-import { useCurrentSubscription } from "@hooks/useCurrentSubscription";
-import { useNotificationMessage } from "@hooks/useNotificationMessage";
-import { useSubscriptions } from "@hooks/useSubscriptions";
+import { SiteCrawlerAppContext } from "@pages/_app";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 import { handleConversionStringToLowercase } from "@utils/convertCase";
-import { memo, useEffect, useState } from "react";
+import useTranslation from "next-translate/useTranslation";
+import { memo, useContext, useEffect, useMemo, useState } from "react";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useSWRConfig } from "swr";
 
@@ -22,26 +23,51 @@ const SubscriptionPlansPageLayout = () => {
 	const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 	const [loadingAgencyMonthly, setLoadingAgencyMonthly] = useState(false);
 	const [loadingAgencySemiAnnually, setLoadingAgencySemiAnnually] = useState(false);
-	const [loadingBasicMonthly, setLoadingBasicMonthly] = useState(false);
+	const [loadingBasic, setLoadingBasic] = useState(false);
 	const [loadingProMonthly, setLoadingProMonthly] = useState(false);
 	const [loadingProSemiAnnually, setLoadingProSemiAnnually] = useState(false);
 	const [planId, setPlanId] = useState(null);
 	const [planName, setPlanName] = useState(null);
 	const [togglePaymentPeriod, setTogglePaymentPeriod] = useState(false);
 
-	// SWR hooks
-	const { subscriptions, errorSubscriptions } = useSubscriptions();
-	const { currentSubscription, errorCurrentSubscription } = useCurrentSubscription();
+	// Translations
+	const { t } = useTranslation();
+	const loadingCardInformationText = t("settings:cardInformationSettings.loadingCardInformation");
+
+	// Custom states
+	const [currentPaymentMethod, setCurrentPaymentMethod] = useState(loadingCardInformationText);
+
+	// Custom context
+	const { isComponentReady, stripePromise, subscriptions, currentSubscription, setConfig } =
+		useContext(SiteCrawlerAppContext);
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
 
+	// `stripePromise` data state
+	const stripePromiseData = useMemo(() => {
+		if (isComponentReady && stripePromise) {
+			// Handle `stripe` promise data
+			const stripePromisePublishableKey = stripePromise?.data?.publishable_key ?? null;
+
+			if (stripePromisePublishableKey) {
+				const data = loadStripe(stripePromisePublishableKey);
+
+				return data;
+			}
+		}
+	}, [stripePromise, isComponentReady]);
+
 	// Custom hooks
-	const { state, setConfig } = useNotificationMessage();
 	const {
 		ref: newActivePlanModalRef,
 		isComponentVisible: isNewActivePlanModalVisible,
 		setIsComponentVisible: setIsNewActivePlanModalVisible
+	} = useComponentVisible(false);
+	const {
+		ref: changeToBasicModalRef,
+		isComponentVisible: isChangeToBasicModalVisible,
+		setIsComponentVisible: setIsChangeToBasicModalVisible
 	} = useComponentVisible(false);
 	const {
 		ref: paymentMethodModalRef,
@@ -49,73 +75,87 @@ const SubscriptionPlansPageLayout = () => {
 		setIsComponentVisible: setIsPaymentMethodModalVisible
 	} = useComponentVisible(false);
 
+	// Custom variables
+	const currentSubscriptionId = currentSubscription?.data?.id ?? null;
+	const subscriptionsResults = subscriptions?.data?.results ?? null;
+
+	// Handle `subscription` results
+	useEffect(() => {
+		currentSubscriptionId
+			? subscriptionsResults
+					?.filter((sub) => sub.id === currentSubscription.data.id)
+					?.map((val) => setIntervalCount(val.price.recurring.interval_count)) ?? null
+			: null;
+	}, [currentSubscription]);
+
+	// Handle `togglePaymentPeriod` state
+	useEffect(() => (intervalCount > 1 ? setTogglePaymentPeriod(true) : setTogglePaymentPeriod(false)), [intervalCount]);
+
 	// Handle `subscription` update
-	const handleSubscriptionUpdate = async (subId) => {
-		const body = {
-			id: subId
-		};
+	const handleSubscriptionUpdate = (id, name) => {
+		(async () => {
+			const body = {
+				id: id
+			};
 
-		const currentSubscriptionResponse = await handlePostMethod(CurrentSubscriptionApiEndpoint, body);
-		const currentSubscriptionResponseData = currentSubscriptionResponse?.data ?? null;
-		const currentSubscriptionResponseDataStatus = currentSubscriptionResponseData?.status ?? null;
-		const currentSubscriptionResponseStatus = currentSubscriptionResponse?.status ?? null;
-		const currentSubscriptionResponseMethod = currentSubscriptionResponse?.config?.method ?? null;
-
-		if (
-			currentSubscriptionResponseData !== null &&
-			currentSubscriptionResponseDataStatus === "PAID" &&
-			Math.round(currentSubscriptionResponseStatus / 200) === 1
-		) {
-			// Mutate `currentSubscription` endpoint after successful 200 OK or 201 Created response is issued
-			mutate(CurrentSubscriptionApiEndpoint);
-
-			if (
-				!errorSubscriptions &&
-				typeof subscriptions !== "undefined" &&
-				subscriptions !== null &&
-				!subscriptions?.data?.detail
-			) {
-				// Update plan name and id to reflect the updated subscription plan
-				subscriptions
-					?.filter((sub) => sub.id === subId)
-					?.map((val) => {
-						setPlanName(val.plan.name);
-						setPlanId(val.id);
-					}) ?? null;
-
-				// Update `isProcessingPayment` state to false
-				setIsProcessingPayment(false);
-			}
-		} else {
-			// Update `isPaymentMethodModalVisible` state to false
-			setIsPaymentMethodModalVisible(false);
-
-			// Show alert message after unsuccessful 200 OK or 201 Created response is not issued
-			setConfig({
-				isCurrentSubscription: true,
-				method: currentSubscriptionResponseMethod,
-				status: currentSubscriptionResponseStatus
-			});
-		}
-	};
-
-	// Handle plan select
-	const handlePlanSelect = async (id, name, selectedPaymentMethod) => {
-		if (name === Basic) {
-			const currentSubscriptionResponse = await handleDeleteMethod(CurrentSubscriptionApiEndpoint);
+			const currentSubscriptionResponse = await handlePostMethod(CurrentSubscriptionApiEndpoint, body);
 			const currentSubscriptionResponseData = currentSubscriptionResponse?.data ?? null;
-			const currentSubscriptionResponseDataStatus = currentSubscriptionResponseData?.status ?? null;
 			const currentSubscriptionResponseStatus = currentSubscriptionResponse?.status ?? null;
 			const currentSubscriptionResponseMethod = currentSubscriptionResponse?.config?.method ?? null;
 
-			if (currentSubscriptionResponseData !== null && Math.round(currentSubscriptionResponseStatus / 200) === 1) {
-				if (currentSubscriptionResponseDataStatus === "PAID") {
+			if (currentSubscriptionResponseData && Math.round(currentSubscriptionResponseStatus / 100) === 2) {
+				const currentSubscriptionResponseDataStatus = currentSubscriptionResponseData?.status
+					? handleConversionStringToLowercase(currentSubscriptionResponseData.status)
+					: null;
+
+				if (currentSubscriptionResponseDataStatus === "paid") {
 					// Mutate `currentSubscription` endpoint after successful 200 OK or 201 Created response is issued
-					mutate(CurrentSubscriptionApiEndpoint);
+					mutate(CurrentSubscriptionApiEndpoint, { ...currentSubscription, data: currentSubscriptionResponseData });
 
-					const cancelAtCurrentSubscription = currentSubscriptionResponse?.cancel_at ?? null;
+					// Update plan name and id to reflect the updated subscription plan
+					await subscriptions?.data?.results
+						?.filter((sub) => sub.id === id)
+						?.map((val) => {
+							setPlanName(val.plan.name);
+							setPlanId(val.id);
+						});
 
-					if (cancelAtCurrentSubscription !== null) {
+					// Load monthly `Basic` plan
+					setLoadingBasic(false);
+
+					// Don't load monthly `Pro` plan
+					setLoadingProMonthly(false);
+
+					// Don't load monthly `Agency` plan
+					setLoadingAgencyMonthly(false);
+
+					// Don't load semi-annually `Pro` plan
+					setLoadingProSemiAnnually(false);
+
+					// Don't load semi-annually `Agency` plan
+					setLoadingAgencySemiAnnually(false);
+
+					// Update `isProcessingPayment` state to false
+					setIsProcessingPayment(false);
+
+					// Update `isPaymentMethodModalVisible` state to false
+					setIsPaymentMethodModalVisible(false);
+
+					const newActivePlanModalVisibleTimeout = setTimeout(() => {
+						// Show the `newActivePlanModal` component
+						setIsNewActivePlanModalVisible(true);
+					}, ModalDisplayInterval);
+
+					return () => clearTimeout(newActivePlanModalVisibleTimeout);
+				} else {
+					if (currentSubscriptionResponseDataStatus === "waiting_payment") {
+						console.log("WAITING_PAYMENT", currentSubscriptionResponseDataStatus);
+					} else {
+						console.log("PAYMENT_FAILED", currentSubscriptionResponseDataStatus);
+
+						// Load monthly `Basic` plan
+						setLoadingBasic(false);
+
 						// Don't load monthly `Pro` plan
 						setLoadingProMonthly(false);
 
@@ -128,240 +168,276 @@ const SubscriptionPlansPageLayout = () => {
 						// Don't load semi-annually `Agency` plan
 						setLoadingAgencySemiAnnually(false);
 
-						// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-						mutate(UserApiEndpoint);
-
-						// Show alert message after successful 200 OK or 201 Created response is issued
-						setConfig({
-							isCurrentSubscription: true,
-							method: currentSubscriptionResponseMethod,
-							status: currentSubscriptionResponseStatus
-						});
+						// Update `isProcessingPayment` state to false
+						setIsProcessingPayment(false);
 					}
 				}
-			} else {
-				// Show alert message after unsuccessful 200 OK or 201 Created response is not issued
-				setConfig({
-					isCurrentSubscription: true,
-					method: currentSubscriptionResponseMethod,
-					status: currentSubscriptionResponseStatus
-				});
 			}
-		} else if (typeof selectedPaymentMethod !== "undefined" && selectedPaymentMethod !== null) {
-			const body = {
-				id: selectedPaymentMethod
-			};
 
-			// Update `isProcessingPayment` state to true
-			setIsProcessingPayment(true);
+			// Show alert message after unsuccessful 200 OK or 201 Created response is not issued
+			setConfig({
+				isStripeSubscriptionsCurrent: true,
+				method: currentSubscriptionResponseMethod,
+				status: currentSubscriptionResponseStatus,
+				isAlert: false,
+				isNotification: false
+			});
+		})();
 
-			const paymentMethodResponse = await handlePostMethod(PaymentMethodApiEndpoint, body);
-			const paymentMethodResponseData = paymentMethodResponse?.data ?? null;
-			const paymentMethodResponseDataStatus = paymentMethodResponseData?.status ?? null;
-			const paymentMethodResponseDataMethod = paymentMethodResponse?.config?.method ?? null;
-
-			if (paymentMethodResponseData !== null && Math.round(paymentMethodResponseDataStatus / 200) === 1) {
-				const subscriptionResults = subscriptions?.results ?? null;
-
-				if (subscriptionResults !== null) {
-					subscriptionResults
-						?.filter((sub) => sub.id === id)
-						?.map((value) => {
-							const subscriptionPlanName = handleConversionStringToLowercase(value?.plan?.name ?? null);
-							const subscriptionPlanPriceRecurringInterval = handleConversionStringToLowercase(
-								value?.price?.recurring?.interval ?? null
-							);
-							const subscriptionPlanPriceRecurringIntervalCount = value?.price?.recurring?.interval_count ?? null;
-
-							if (subscriptionPlanPriceRecurringInterval === "month") {
-								if (subscriptionPlanPriceRecurringIntervalCount === 1) {
-									if (subscriptionPlanName === "pro") {
-										// Don't load monthly `Basic` plan
-										setLoadingBasicMonthly(false);
-
-										// Load monthly `Pro` plan
-										setLoadingProMonthly(true);
-
-										// Don't load monthly `Agency` plan
-										setLoadingAgencyMonthly(false);
-
-										// Don't load semi-annually `Pro` plan
-										setLoadingProSemiAnnually(false);
-
-										// Don't load semi-annually `Agency` plan
-										setLoadingAgencySemiAnnually(false);
-
-										return;
-									} else if (subscriptionPlanName === "agency") {
-										// Don't load monthly `Basic` plan
-										setLoadingBasicMonthly(false);
-
-										// Don't load monthly `Pro` plan
-										setLoadingProMonthly(false);
-
-										// Load monthly `Agency` plan
-										setLoadingAgencyMonthly(true);
-
-										// Don't load semi-annually `Pro` plan
-										setLoadingProSemiAnnually(false);
-
-										// Don't load semi-annually `Agency` plan
-										setLoadingAgencySemiAnnually(false);
-
-										return;
-									} else {
-										// Load monthly `Basic` plan
-										setLoadingBasicMonthly(true);
-
-										// Don't load monthly `Pro` plan
-										setLoadingProMonthly(false);
-
-										// Don't load monthly `Agency` plan
-										setLoadingAgencyMonthly(false);
-
-										// Don't load semi-annually `Pro` plan
-										setLoadingProSemiAnnually(false);
-
-										// Don't load semi-annually `Agency` plan
-										setLoadingAgencySemiAnnually(false);
-
-										return;
-									}
-								} else {
-									if (subscriptionPlanName === "pro") {
-										// Don't load monthly `Pro` plan
-										setLoadingProMonthly(false);
-
-										// Don't load monthly `Agency` plan
-										setLoadingAgencyMonthly(false);
-
-										// Load semi-annually `Pro` plan
-										setLoadingProSemiAnnually(true);
-
-										// Don't load semi-annually `Agency` plan
-										setLoadingAgencySemiAnnually(false);
-
-										return;
-									} else if (subscriptionPlanName === "agency") {
-										// Don't load monthly `Pro` plan
-										setLoadingProMonthly(false);
-
-										// Don't load monthly `Agency` plan
-										setLoadingAgencyMonthly(false);
-
-										// Don't load semi-annually `Pro` plan
-										setLoadingProSemiAnnually(false);
-
-										// Load semi-annually `Agency` plan
-										setLoadingAgencySemiAnnually(true);
-
-										return;
-									} else {
-										// Don't load monthly `Pro` plan
-										setLoadingProMonthly(false);
-
-										// Don't load monthly `Agency` plan
-										setLoadingAgencyMonthly(false);
-
-										// Don't load semi-annually `Pro` plan
-										setLoadingProSemiAnnually(false);
-
-										// Don't load semi-annually `Agency` plan
-										setLoadingAgencySemiAnnually(false);
-
-										return;
-									}
-								}
-							}
-
-							// Handle `subscription` update custom function here
-							handleSubscriptionUpdate(id);
-						});
-				}
-			} else {
-				// Update `isProcessingPayment` state to true
-				setIsProcessingPayment(false);
-
-				// Show alert message after unsuccessful 200 OK or 201 Created response is not issued
-				setConfig({
-					isPaymentMethod: true,
-					method: paymentMethodResponseDataMethod,
-					status: paymentMethodResponseDataStatus
-				});
-			}
-		} else return;
+		return () => setIsProcessingPayment(false);
 	};
 
-	// Handle `subscription` results
-	useEffect(() => {
-		if (!errorCurrentSubscription && currentSubscription && !errorSubscriptions && subscriptions) {
-			const subscriptionResults = subscriptions?.data?.results ?? null;
+	// Handle plan select
+	const handlePlanSelect = (id, name) => {
+		// Update `isProcessingPayment` state to true
+		setIsProcessingPayment(true);
 
-			if (subscriptionResults !== null) {
-				subscriptionResults
-					.filter((sub) => sub.id === currentSubscription?.data?.id)
-					.map((val) => {
-						setIntervalCount(val.price.recurring.interval_count);
-					}) || null;
-			}
+		// Custom variables
+		const sanitizedBasicPlan = handleConversionStringToLowercase(Basic);
+		const sanitizedProPlan = handleConversionStringToLowercase(Pro);
+		const sanitizedAgencyPlan = handleConversionStringToLowercase(Agency);
+		const subscriptionsResults = subscriptions?.data?.results ?? null;
+
+		switch (name) {
+			case sanitizedBasicPlan:
+				(async () => {
+					const body = {
+						id: id
+					};
+
+					const changeToBasicPlanResponse = await handleDeleteMethod(CurrentSubscriptionApiEndpoint, body);
+					const changeToBasicPlanResponseData = changeToBasicPlanResponse?.data ?? null;
+					const changeToBasicPlanResponseStatus = changeToBasicPlanResponse?.status ?? null;
+					const changeToBasicPlanResponseMethod = changeToBasicPlanResponse?.config?.method ?? null;
+
+					if (changeToBasicPlanResponseData && Math.round(changeToBasicPlanResponseStatus / 100) === 2) {
+						// Mutate `currentSubscription` endpoint after successful 200 OK or 201 Created response is issued
+						mutate(CurrentSubscriptionApiEndpoint, { ...currentSubscription, data: changeToBasicPlanResponseData });
+
+						const sanitizedChangeToBasicPlanResponseDataStatus = changeToBasicPlanResponseData?.status
+							? handleConversionStringToLowercase(changeToBasicPlanResponseData.status)
+							: null;
+
+						if (sanitizedChangeToBasicPlanResponseDataStatus === "paid") {
+							// Mutate `currentSubscription` endpoint after successful 200 OK or 201 Created response is issued
+							mutate(CurrentSubscriptionApiEndpoint, { ...currentSubscription, data: changeToBasicPlanResponseData });
+
+							// Update plan name and id to reflect the updated subscription plan
+							await subscriptions?.data?.results
+								?.filter((sub) => sub.id === id)
+								?.map((val) => {
+									setPlanName(val.plan.name);
+									setPlanId(val.id);
+								});
+
+							// Don't load monthly `Basic` plan
+							setLoadingBasic(true);
+
+							// Don't load monthly `Pro` plan
+							setLoadingProMonthly(false);
+
+							// Don't load monthly `Agency` plan
+							setLoadingAgencyMonthly(false);
+
+							// Don't load semi-annually `Pro` plan
+							setLoadingProSemiAnnually(false);
+
+							// Don't load semi-annually `Agency` plan
+							setLoadingAgencySemiAnnually(false);
+
+							// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
+							mutate(UserApiEndpoint);
+
+							// Don't load monthly `Basic` plan
+							setLoadingBasic(false);
+
+							// Update `isProcessingPayment` state to false
+							setIsProcessingPayment(false);
+
+							// Update `isNewActivePlanModalVisible` state to false
+							setIsNewActivePlanModalVisible(false);
+						} else if (sanitizedChangeToBasicPlanResponseDataStatus === "waiting_payment") {
+							console.log("WAITING_PAYMENT", sanitizedChangeToBasicPlanResponseDataStatus);
+						} else {
+							console.log("PAYMENT_FAILED", sanitizedChangeToBasicPlanResponseDataStatus);
+
+							// Load monthly `Basic` plan
+							setLoadingBasic(false);
+
+							// Don't load monthly `Pro` plan
+							setLoadingProMonthly(false);
+
+							// Don't load monthly `Agency` plan
+							setLoadingAgencyMonthly(false);
+
+							// Don't load semi-annually `Pro` plan
+							setLoadingProSemiAnnually(false);
+
+							// Don't load semi-annually `Agency` plan
+							setLoadingAgencySemiAnnually(false);
+
+							// Update `isProcessingPayment` state to false
+							setIsProcessingPayment(false);
+						}
+
+						// Update `isPaymentMethodModalVisible` state to false
+						setIsChangeToBasicModalVisible(false);
+
+						const newActivePlanModalVisibleTimeout = setTimeout(() => {
+							// Show the `newActivePlanModal` component
+							setIsNewActivePlanModalVisible(true);
+						}, ModalDisplayInterval);
+
+						return () => clearTimeout(newActivePlanModalVisibleTimeout);
+					}
+				})();
+				break;
+			case sanitizedProPlan:
+				subscriptionsResults
+					?.filter((sub) => sub.id === id && handleConversionStringToLowercase(sub.plan.name) === sanitizedProPlan)
+					?.map((val) => {
+						const subscriptionPlanName = handleConversionStringToLowercase(val.plan.name);
+						const subscriptionPlanPriceRecurringIntervalCount = val.price.recurring.interval_count;
+
+						if (subscriptionPlanPriceRecurringIntervalCount === 1) {
+							if (subscriptionPlanName === sanitizedProPlan) {
+								// Don't load monthly `Basic` plan
+								setLoadingBasic(false);
+
+								// Load monthly `Pro` plan
+								setLoadingProMonthly(true);
+
+								// Don't load monthly `Agency` plan
+								setLoadingAgencyMonthly(false);
+
+								// Don't load semi-annually `Pro` plan
+								setLoadingProSemiAnnually(false);
+
+								// Don't load semi-annually `Agency` plan
+								setLoadingAgencySemiAnnually(false);
+							}
+						} else {
+							if (subscriptionPlanName === sanitizedProPlan) {
+								// Don't load monthly `Basic` plan
+								setLoadingBasic(false);
+
+								// Don't load monthly `Pro` plan
+								setLoadingProMonthly(false);
+
+								// Don't load monthly `Agency` plan
+								setLoadingAgencyMonthly(false);
+
+								// Load semi-annually `Pro` plan
+								setLoadingProSemiAnnually(true);
+
+								// Don't load semi-annually `Agency` plan
+								setLoadingAgencySemiAnnually(false);
+							}
+						}
+					});
+
+				// Handle `subscription` update custom function here
+				return handleSubscriptionUpdate(id, name);
+			case sanitizedAgencyPlan:
+				subscriptionsResults
+					?.filter((sub) => sub.id === id && sub.plan.name === sanitizedAgencyPlan)
+					?.map((val) => {
+						const subscriptionPlanName = handleConversionStringToLowercase(val.plan.name);
+						const subscriptionPlanPriceRecurringIntervalCount = val.price.recurring.interval_count;
+
+						if (subscriptionPlanPriceRecurringIntervalCount === 1) {
+							if (subscriptionPlanName === sanitizedAgencyPlan) {
+								// Don't load monthly `Basic` plan
+								setLoadingBasic(false);
+
+								// Don't load monthly `Pro` plan
+								setLoadingProMonthly(false);
+
+								// Load monthly `Agency` plan
+								setLoadingAgencyMonthly(true);
+
+								// Don't load semi-annually `Pro` plan
+								setLoadingProSemiAnnually(false);
+
+								// Don't load semi-annually `Agency` plan
+								setLoadingAgencySemiAnnually(false);
+							}
+						} else {
+							if (subscriptionPlanName === sanitizedAgencyPlan) {
+								// Load monthly `Basic` plan
+								setLoadingBasic(false);
+
+								// Don't load monthly `Pro` plan
+								setLoadingProMonthly(false);
+
+								// Don't load monthly `Agency` plan
+								setLoadingAgencyMonthly(false);
+
+								// Don't load semi-annually `Pro` plan
+								setLoadingProSemiAnnually(false);
+
+								// Load semi-annually `Agency` plan
+								setLoadingAgencySemiAnnually(true);
+							}
+						}
+					});
+
+				// Handle `subscription` update custom function here
+				return handleSubscriptionUpdate(id, name);
+			default:
+				break;
 		}
-	}, [currentSubscription, errorCurrentSubscription, subscriptions, errorSubscriptions]);
+	};
 
-	// Handle `togglePaymentPeriod` state
-	useEffect(() => {
-		if (intervalCount > 1) {
-			setTogglePaymentPeriod(true);
-		} else {
-			setTogglePaymentPeriod(false);
-		}
-	}, [intervalCount]);
-
-	return (
-		<>
+	return stripePromiseData ? (
+		<Elements stripe={stripePromiseData}>
 			<MemoizedPaymentMethodModal
 				ref={paymentMethodModalRef}
 				handlePlanSelect={handlePlanSelect}
 				isProcessingPayment={isProcessingPayment}
 				planId={planId}
 				planName={planName}
-				setOpen={setIsPaymentMethodModalVisible}
-				open={isPaymentMethodModalVisible}
+				setShowModal={setIsPaymentMethodModalVisible}
+				showModal={isPaymentMethodModalVisible}
+				currentPaymentMethod={currentPaymentMethod}
+				setCurrentPaymentMethod={setCurrentPaymentMethod}
 			/>
 
-			{/* <MemoizedNewActivePlanModal
+			<MemoizedNewActivePlanModal
 				ref={newActivePlanModalRef}
 				planId={planId}
 				planName={planName}
-				setOpen={setIsNewActivePlanModalVisible}
-				open={isNewActivePlanModalVisible}
-				subscriptions={subscriptions}
-			/> */}
+				setShowModal={setIsNewActivePlanModalVisible}
+				showModal={isNewActivePlanModalVisible}
+			/>
 
-			{/* <MemoizedChangeToBasicModal
-				ref={changeToBasicPlanModalRef}
+			<MemoizedChangeToBasicModal
+				ref={changeToBasicModalRef}
 				planId={planId}
 				planName={planName}
+				isProcessingPayment={isProcessingPayment}
 				handlePlanSelect={handlePlanSelect}
-				setOpen={setIsChangeToBasicPlanModalVisible}
-				open={isChangeToBasicPlanModalVisible}
-			/> */}
+				setShowModal={setIsChangeToBasicModalVisible}
+				showModal={isChangeToBasicModalVisible}
+			/>
 
 			<div className="flex w-full items-start py-4">
 				<MemoizedSubscriptionPlansPricing
 					setPlanId={setPlanId}
 					setPlanName={setPlanName}
-					loadingBasicMonthly={loadingBasicMonthly}
+					loadingBasic={loadingBasic}
 					loadingProMonthly={loadingProMonthly}
 					loadingAgencyMonthly={loadingAgencyMonthly}
 					loadingProSemiAnnually={loadingProSemiAnnually}
 					loadingAgencySemiAnnually={loadingAgencySemiAnnually}
-					setOpen={setIsPaymentMethodModalVisible}
+					setShowModal={setIsPaymentMethodModalVisible}
+					setShowChangeToBasicModal={setIsChangeToBasicModalVisible}
 					setTogglePaymentPeriod={setTogglePaymentPeriod}
 					togglePaymentPeriod={togglePaymentPeriod}
 				/>
 			</div>
-		</>
-	);
+		</Elements>
+	) : null;
 };
 
 /**

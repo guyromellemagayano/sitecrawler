@@ -1,7 +1,3 @@
-import { SitesApiEndpoint } from "@constants/ApiEndpoints";
-import { orderingByNameQuery, sortByNameAscending } from "@constants/GlobalValues";
-import { SiteCrawlerAppContext } from "@pages/_app";
-import { useContext, useMemo, useState } from "react";
 import { useMainSWRConfig } from "./useMainSWRConfig";
 
 /**
@@ -9,50 +5,11 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  *
  * @param {string} endpoint
  * @param {object} options
- * @returns {object} sites, validatingSites, sitesResults, sitesCount
+ * @returns {object} sites, errorSites, validatingSites
  */
 export const useSites = (endpoint = null, options = null) => {
-	const [sitesCount, setSitesCount] = useState(0);
-	const [sitesResults, setSitesResults] = useState([]);
-
-	// Custom context
-	const { setConfig } = useContext(SiteCrawlerAppContext);
-
-	// Custom variables
-	const currentEndpoint =
-		endpoint !== null && typeof endpoint === "string" && endpoint !== ""
-			? endpoint
-			: SitesApiEndpoint + `?${orderingByNameQuery + sortByNameAscending}`;
-
 	// SWR hook
-	const { data: sites, error: errorSites, isValidating: validatingSites } = useMainSWRConfig(currentEndpoint, options);
+	const { data: sites, error: errorSites, isValidating: validatingSites } = useMainSWRConfig(endpoint, options);
 
-	useMemo(async () => {
-		if (errorSites) {
-			// Show alert message after failed `user` SWR hook fetch
-			errorSites
-				? setConfig({
-						isSites: true,
-						method: errorSites?.config?.method ?? null,
-						status: errorSites?.status ?? null
-				  })
-				: null;
-		}
-	}, [errorSites]);
-
-	useMemo(async () => {
-		if (sites?.data) {
-			if (sites.data?.count) {
-				setSitesCount(sites.data.count);
-			}
-
-			if (sites.data?.results) {
-				setSitesResults(sites.data.results);
-			}
-		}
-
-		return { sitesResults, sitesCount };
-	}, [sites, sitesResults, sitesCount]);
-
-	return { sites, validatingSites, sitesResults, sitesCount };
+	return { sites, errorSites, validatingSites };
 };
