@@ -11,7 +11,7 @@ import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { memo, useContext } from "react";
+import { memo, useContext, useState } from "react";
 import { useSWRConfig } from "swr";
 import * as Yup from "yup";
 
@@ -19,6 +19,8 @@ import * as Yup from "yup";
  * Custom function to render the `LoginForm` component
  */
 const LoginForm = () => {
+	const [isSubmitting, setIsSubmitting] = useState(false);
+
 	// Translations
 	const { t } = useTranslation();
 	const username = t("common:userName");
@@ -62,7 +64,9 @@ const LoginForm = () => {
 				username: Yup.string().required(requiredField),
 				password: Yup.string().required(requiredField)
 			})}
-			onSubmit={async (values, { isSubmitting, setSubmitting, resetForm }) => {
+			onSubmit={async (values, { resetForm }) => {
+				setIsSubmitting(true);
+
 				// Form body values
 				const body = {
 					username: values.username,
@@ -103,7 +107,7 @@ const LoginForm = () => {
 						);
 
 						// Disable submission and disable form as soon as 200 OK or 201 Created response was issued
-						setSubmitting(false);
+						setIsSubmitting(false);
 
 						// Redirect to sites dashboard page after successful 200 OK response is established
 						return setTimeout(() => {
@@ -111,7 +115,7 @@ const LoginForm = () => {
 						}, RedirectInterval);
 					} else {
 						// Disable submission and disable form as soon as 200 OK or 201 Created response was issued
-						setSubmitting(false);
+						setIsSubmitting(false);
 					}
 				}, NotificationDisplayInterval);
 
@@ -120,7 +124,7 @@ const LoginForm = () => {
 				};
 			}}
 		>
-			{({ values, errors, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
+			{({ values, errors, handleChange, handleBlur, handleSubmit }) => (
 				<>
 					<form onSubmit={handleSubmit}>
 						<div className="mt-1">
