@@ -1,5 +1,5 @@
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
-import { NotificationDisplayInterval, ResetCopyStateTimeout } from "@constants/GlobalValues";
+import { ModalDisplayInterval, NotificationDisplayInterval, ResetCopyStateTimeout } from "@constants/GlobalValues";
 import { Dialog, Transition } from "@headlessui/react";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
 import { InformationCircleIcon } from "@heroicons/react/outline";
@@ -38,7 +38,6 @@ const SiteVerifyModal = (
 	const [copyValue, setCopyValue] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 	const [enableNextStep, setEnableNextStep] = useState(false);
-	const [siteVerifyId, setSiteVerifyId] = useState(siteId);
 
 	// Translations
 	const { t } = useTranslation();
@@ -56,7 +55,7 @@ const SiteVerifyModal = (
 	const goToSiteOverviewText = t("sites:goToSiteOverview");
 
 	// Custom variables
-	const siteVerifyApiEndpoint = `${SitesApiEndpoint + siteId}/verify/`;
+	const customSiteIdVerifyApiEndpoint = SitesApiEndpoint + siteId + "/verify/";
 	let instructionHtmlText = `1. ${instruction1}: ` + siteUrl + "\n\n";
 	instructionHtmlText += `2. ${instruction2}: ` + "\n" + copyValue + "\n\n";
 	instructionHtmlText += `3. ${instruction3}.` + "\n\n";
@@ -80,11 +79,6 @@ const SiteVerifyModal = (
 		setCopyValue({ copyValue, copied });
 	};
 
-	// Handle hidden input change
-	const handleHiddenInputChange = (e) => {
-		setSiteVerifyId({ value: e.currentTarget.site_verify_id.value });
-	};
-
 	// Handle input copy
 	const handleInputCopy = () => {
 		setCopied(true);
@@ -105,32 +99,30 @@ const SiteVerifyModal = (
 
 	// Handle site verification
 	const handleSiteVerification = () => {
-		let isMounted = true;
-
 		setIsLoading(true);
 
 		(async () => {
-			if (!isMounted) return;
-
 			const body = {
-				sid: siteVerifyId
+				sid: siteId
 			};
 
-			const siteVerifyResponse = await handlePostMethod(siteVerifyApiEndpoint, body);
+			const siteVerifyResponse = await handlePostMethod(customSiteIdVerifyApiEndpoint, body);
 			const siteVerifyResponseData = siteVerifyResponse?.data ?? null;
 			const siteVerifyResponseStatus = siteVerifyResponse?.status ?? null;
 			const siteVerifyResponseMethod = siteVerifyResponse?.config?.method ?? null;
 
 			if (siteVerifyResponseData !== null && Math.round(siteVerifyResponseStatus / 200) === 1) {
-				if (siteVerifyResponseData?.verified) {
-					// Show alert message after successful 200 OK or 201 Created response is issued
-					setConfig({
-						isVerifyUrlStep: true,
-						method: siteVerifyResponseMethod,
-						status: siteVerifyResponseStatus,
-						isError: false
-					});
+				// Show alert message after successful 200 OK or 201 Created response is issued
+				setConfig({
+					isVerifyUrlStep: true,
+					method: siteVerifyResponseMethod,
+					status: siteVerifyResponseStatus,
+					isAlert: false,
+					isNotification: false,
+					isError: siteVerifyResponseData?.verified ? false : true
+				});
 
+				if (siteVerifyResponseData?.verified) {
 					// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
 					const timeout = setTimeout(() => {
 						setEnableNextStep(true);
@@ -141,14 +133,6 @@ const SiteVerifyModal = (
 						clearTimeout(timeout);
 					};
 				} else {
-					// Show alert message after successful 200 OK or 201 Created response is issued
-					setConfig({
-						isVerifyUrlStep: true,
-						method: siteVerifyResponseMethod,
-						status: siteVerifyResponseStatus,
-						isError: true
-					});
-
 					// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
 					const timeout = setTimeout(() => {
 						setIsLoading(false);
@@ -163,7 +147,9 @@ const SiteVerifyModal = (
 				setConfig({
 					isVerifyUrlStep: true,
 					method: siteVerifyResponseMethod,
-					status: siteVerifyResponseStatus
+					status: siteVerifyResponseStatus,
+					isAlert: false,
+					isNotification: false
 				});
 
 				// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
@@ -176,15 +162,17 @@ const SiteVerifyModal = (
 				};
 			}
 		})();
-
-		return () => {
-			isMounted = false;
-		};
 	};
 
 	// Handle close modal
 	const handleCloseModal = () => {
 		setShowModal(false);
+
+		if (enableNextStep) {
+			setTimeout(() => {
+				setEnableNextStep(false);
+			}, ModalDisplayInterval);
+		}
 	};
 
 	return (
@@ -246,62 +234,66 @@ const SiteVerifyModal = (
 											</a>
 										</span>
 
-										<Dialog.Description as="p" className="mt-4 mb-3 text-sm text-gray-500">
-											{instructionsText}
-										</Dialog.Description>
+										{!enableNextStep ? (
+											<>
+												<Dialog.Description as="p" className="mt-4 mb-3 text-sm text-gray-500">
+													{instructionsText}
+												</Dialog.Description>
 
-										<ol className="ml-4 list-decimal space-y-2">
-											<li className="text-sm leading-6 text-gray-500">{instruction1}</li>
-											<li className="text-sm leading-6 text-gray-500">
-												{instruction2}
+												<ol className="ml-4 list-decimal space-y-2">
+													<li className="text-sm leading-6 text-gray-500">{instruction1}</li>
+													<li className="text-sm leading-6 text-gray-500">
+														{instruction2}
 
-												<div className="block w-full">
-													<label htmlFor="verify-id-meta-tag" className="sr-only">
-														{verifyIdMetaTagText}
-													</label>
-													<div className="mt-1 flex">
-														<div className="relative flex flex-grow items-stretch focus-within:z-10">
-															<input
-																type="text"
-																name="verify-id-meta-tag"
-																className={classnames(
-																	"block w-full rounded-none rounded-l-md border-gray-300 text-gray-400 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
-																	isLoading && "cursor-not-allowed bg-gray-300 opacity-50"
-																)}
-																value={copyValue}
-																onChange={handleInputChange}
-																autoComplete="off"
-															/>
+														<div className="block w-full">
+															<label htmlFor="verify-id-meta-tag" className="sr-only">
+																{verifyIdMetaTagText}
+															</label>
+															<div className="mt-1 flex">
+																<div className="relative flex flex-grow items-stretch focus-within:z-10">
+																	<input
+																		type="text"
+																		name="verify-id-meta-tag"
+																		className={classnames(
+																			"block w-full rounded-none rounded-l-md border-gray-300 text-gray-400 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+																			isLoading && "cursor-not-allowed bg-gray-300 opacity-50"
+																		)}
+																		value={copyValue}
+																		onChange={handleInputChange}
+																		autoComplete="off"
+																	/>
 
-															<CopyToClipboard onCopy={isLoading ? () => {} : handleInputCopy} text={copyValue}>
-																<button
-																	ref={siteVerifyRef}
-																	className={classnames(
-																		"relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700",
-																		isLoading
-																			? "cursor-not-allowed opacity-50"
-																			: "hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500  focus:ring-offset-2"
-																	)}
-																>
-																	<ClipboardIcon className="h-4 w-4 text-gray-400" />
-																	<span>{copied ? copiedText : copyText}</span>
-																</button>
-															</CopyToClipboard>
+																	<CopyToClipboard onCopy={isLoading ? () => {} : handleInputCopy} text={copyValue}>
+																		<button
+																			ref={siteVerifyRef}
+																			className={classnames(
+																				"relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700",
+																				isLoading
+																					? "cursor-not-allowed opacity-50"
+																					: "hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500  focus:ring-offset-2"
+																			)}
+																		>
+																			<ClipboardIcon className="h-4 w-4 text-gray-400" />
+																			<span>{copied ? copiedText : copyText}</span>
+																		</button>
+																	</CopyToClipboard>
+																</div>
+															</div>
 														</div>
-													</div>
-												</div>
-											</li>
-											<li className="text-sm leading-6 text-gray-500">{instruction3}</li>
-											<li className="text-sm leading-6 text-gray-500">{instruction4}</li>
-										</ol>
+													</li>
+													<li className="text-sm leading-6 text-gray-500">{instruction3}</li>
+													<li className="text-sm leading-6 text-gray-500">{instruction4}</li>
+												</ol>
+											</>
+										) : null}
 
-										{state?.responses?.length > 0 ? (
+										{state?.isVerifyUrlStep && state?.responses?.length > 0 ? (
 											<div className="my-5 block">
 												<div className="flex justify-center sm:justify-start">
 													{state.responses.map((value, key) => {
 														// Alert Messsages
-														const responseText = value?.responseText ?? null;
-														const isSuccess = value?.isSuccess ?? null;
+														const responseText = value.responseText;
+														const isSuccess = value.isSuccess;
 
 														return (
 															<h3
