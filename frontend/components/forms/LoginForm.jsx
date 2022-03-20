@@ -1,7 +1,6 @@
-import { LoginApiEndpoint } from "@constants/ApiEndpoints";
-import { RedirectInterval } from "@constants/GlobalValues";
+import { GoogleLoginApiEndpoint, LoginApiEndpoint } from "@constants/ApiEndpoints";
+import { NotificationDisplayInterval, RedirectInterval } from "@constants/GlobalValues";
 import { DashboardSitesLink, ResetPasswordLink } from "@constants/PageLinks";
-import { SocialLoginLinks } from "@constants/SocialLogin";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
 import { useShowPassword } from "@hooks/useShowPassword";
@@ -32,21 +31,35 @@ const LoginForm = () => {
 	const signingIn = t("login:signingIn");
 	const signIn = t("login:signIn");
 	const continueWith = t("login:continueWith");
+	const googleSignIn = t("login:googleSignIn");
 
 	// Social media links array
-	const linksArray = SocialLoginLinks();
+	const linksArray = [
+		{
+			label: googleSignIn,
+			icon: ["fab", "google"],
+			disabled: false
+		}
+	];
 
 	// Custom hooks
 	const { passwordRef, isPasswordShown, setIsPasswordShown } = useShowPassword(false);
 
 	// Custom context
-	const { setConfig } = useContext(SiteCrawlerAppContext);
+	const { setConfig, isComponentReady } = useContext(SiteCrawlerAppContext);
 
 	// Router
 	const { push } = useRouter();
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
+
+	// Handle social login
+	const handleSocialLogin = (e) => {
+		e.preventDefault();
+
+		return isComponentReady ? (async () => await handlePostMethod(GoogleLoginApiEndpoint))() : null;
+	};
 
 	return (
 		<Formik
@@ -75,42 +88,48 @@ const LoginForm = () => {
 				const loginResponseStatus = loginResponse?.status ?? null;
 				const loginResponseMethod = loginResponse?.config?.method ?? null;
 
-				if (loginResponseData && Math.round(loginResponseStatus / 200) === 1) {
-					// Reenable submission as soon as 200 OK or 201 Created response is issued
-					setSubmitting(false);
+				// Show alert message after failed response is issued
+				setConfig({
+					isLogin: true,
+					method: loginResponseMethod,
+					status: loginResponseStatus,
+					isAlert: true,
+					isNotification: false
+				});
 
-					// Mutate `login` endpoint after successful 200 OK or 201 Created response is issued
-					mutate(LoginApiEndpoint, loginResponseData.key);
+				const loginResponseTimeout = setTimeout(() => {
+					if (loginResponseData && Math.round(loginResponseStatus / 200) === 1) {
+						// Mutate `login` endpoint after successful 200 OK or 201 Created response is issued
+						mutate(LoginApiEndpoint, { data: loginResponseData.key }, false);
 
-					// Collect user data and send to Sentry
-					Sentry.configureScope((scope) =>
-						scope.setUser({
-							id: loginResponseData?.id,
-							username: loginResponseData?.username,
-							email: loginResponseData?.email
-						})
-					);
+						// Collect user data and send to Sentry
+						Sentry.configureScope((scope) =>
+							scope.setUser({
+								id: loginResponseData?.id,
+								username: loginResponseData?.username,
+								email: loginResponseData?.email
+							})
+						);
 
-					// Redirect to sites dashboard page after successful 200 OK response is established
-					if (!isSubmitting) {
-						setTimeout(() => {
+						// Disable submission and disable form as soon as 200 OK or 201 Created response was issued
+						setSubmitting(false);
+
+						// Redirect to sites dashboard page after successful 200 OK response is established
+						return setTimeout(() => {
 							push(DashboardSitesLink);
 						}, RedirectInterval);
+					} else {
+						// Disable submission and disable form as soon as 200 OK or 201 Created response was issued
+						setSubmitting(false);
 					}
-				} else {
-					// Reenable submission and reset form as soon as 200 OK or 201 Created response was not issued
-					setSubmitting(false);
+				}, NotificationDisplayInterval);
 
-					// Show alert message after failed response is issued
-					setConfig({
-						isLogin: true,
-						method: loginResponseMethod,
-						status: loginResponseStatus
-					});
-				}
+				return () => {
+					clearTimeout(loginResponseTimeout);
+				};
 			}}
 		>
-			{({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
+			{({ values, errors, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
 				<>
 					<form onSubmit={handleSubmit}>
 						<div className="mt-1">
@@ -124,6 +143,8 @@ const LoginForm = () => {
 									type="text"
 									autoComplete="username"
 									disabled={isSubmitting}
+									aria-disabled={isSubmitting}
+									aria-hidden={isSubmitting}
 									className={classnames(
 										"block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
 										isSubmitting && "pointer-events-none cursor-not-allowed bg-gray-300 opacity-50",
@@ -136,8 +157,8 @@ const LoginForm = () => {
 								/>
 							</div>
 
-							{errors.username || touched.username ? (
-								<span className="mt-2 block text-xs leading-5 text-red-700">{errors.username || touched.username}</span>
+							{errors.username ? (
+								<span className="mt-2 block text-xs leading-5 text-red-700">{errors.username}</span>
 							) : null}
 						</div>
 
@@ -167,6 +188,8 @@ const LoginForm = () => {
 									type="password"
 									autoComplete="current-password"
 									disabled={isSubmitting}
+									aria-disabled={isSubmitting}
+									aria-hidden={isSubmitting}
 									className={classnames(
 										"block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
 										isSubmitting && "pointer-events-none cursor-not-allowed bg-gray-300 opacity-50",
@@ -179,8 +202,8 @@ const LoginForm = () => {
 								/>
 							</div>
 
-							{errors.password || touched.password ? (
-								<span className="mt-2 block text-xs leading-5 text-red-700">{errors.password || touched.password}</span>
+							{errors.password ? (
+								<span className="mt-2 block text-xs leading-5 text-red-700">{errors.password}</span>
 							) : null}
 						</div>
 
@@ -191,6 +214,8 @@ const LoginForm = () => {
 									name="rememberme"
 									type="checkbox"
 									disabled={isSubmitting}
+									aria-disabled={isSubmitting}
+									aria-hidden={isSubmitting}
 									className={classnames(
 										"h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500",
 										isSubmitting && "pointer-events-none cursor-not-allowed bg-gray-300 opacity-50"
@@ -223,6 +248,8 @@ const LoginForm = () => {
 								<button
 									type="submit"
 									disabled={isSubmitting}
+									aria-disabled={isSubmitting}
+									aria-hidden={isSubmitting}
 									className={classnames(
 										"flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm",
 										isSubmitting
@@ -247,27 +274,18 @@ const LoginForm = () => {
 						</div>
 
 						<div className="mt-6 grid grid-cols-1 gap-3">
-							{linksArray.map((links, key) => {
-								return (
-									<div key={key}>
-										<span className="inline-flex w-full rounded-md shadow-sm">
-											<a
-												href={links.href}
-												disabled={links.disabled}
-												title={links.label}
-												className={classnames(
-													"inline-flex w-full items-center justify-center rounded-md border border-gray-300 py-2 px-4 text-sm font-medium text-gray-500 shadow-sm",
-													links.disabled ? "pointer-events-none cursor-not-allowed bg-gray-300 opacity-50" : "bg-white",
-													isSubmitting ? "pointer-events-none cursor-not-allowed bg-gray-300" : "hover:bg-gray-50"
-												)}
-											>
-												<FontAwesomeIcon icon={links.icon} className="-ml-0.5 mr-3 h-4 w-4" />
-												{links.label}
-											</a>
-										</span>
-									</div>
-								);
-							})}
+							<form onSubmit={handleSocialLogin}>
+								<div className="inline-flex w-full rounded-md shadow-sm">
+									<button
+										type="submit"
+										title={googleSignIn}
+										className="inline-flex w-full items-center justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
+									>
+										<FontAwesomeIcon icon={["fab", "google"]} className="-ml-0.5 mr-3 h-4 w-4" />
+										{googleSignIn}
+									</button>
+								</div>
+							</form>
 						</div>
 					</div>
 				</>
