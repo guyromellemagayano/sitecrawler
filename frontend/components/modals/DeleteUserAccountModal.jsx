@@ -30,7 +30,7 @@ const DeleteUserAccountModal = ({ setShowModal, showModal = false }, ref) => {
 	const closeText = t("common:close");
 	const proceedText = t("common:proceed");
 	const processingText = t("common:processing");
-	const loaderMessage = t("loaderMessage");
+	const loaderMessage = t("common:loaderMessage");
 
 	// Router
 	const { push } = useRouter();
