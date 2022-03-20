@@ -20,6 +20,7 @@ const CardInformationForm = () => {
 	const [cardNumberError, setCardNumberError] = useState(null);
 	const [cardExpiryError, setCardExpiryError] = useState(null);
 	const [cardCvcError, setCardCvcError] = useState(null);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	// Translations
 	const { t } = useTranslation();
@@ -133,7 +134,9 @@ const CardInformationForm = () => {
 				cardExpiry: "",
 				cardCvc: ""
 			}}
-			onSubmit={async (values, { setSubmitting }) => {
+			onSubmit={async (values) => {
+				setIsSubmitting(true);
+
 				if (stripe && elements) {
 					const payload = await stripe.createPaymentMethod({
 						type: "card",
@@ -159,28 +162,29 @@ const CardInformationForm = () => {
 							isNotification: false
 						});
 
-						if (paymentMethodResponseData && Math.round(paymentMethodResponseStatus / 200) === 1) {
-							// Mutate `defaultPaymentMethod` endpoint after successful 200 OK or 201 Created response is issued
-							mutate(PaymentMethodApiEndpoint, { ...paymentMethods, data: paymentMethodResponseData }, false);
-							mutate(DefaultPaymentMethodApiEndpoint);
+						const paymentMethodResponseTimeout = setTimeout(() => {
+							if (paymentMethodResponseData && Math.round(paymentMethodResponseStatus / 200) === 1) {
+								// Mutate `defaultPaymentMethod` endpoint after successful 200 OK or 201 Created response is issued
+								mutate(PaymentMethodApiEndpoint, { ...paymentMethods, data: paymentMethodResponseData }, false);
+								mutate(DefaultPaymentMethodApiEndpoint);
 
-							return setTimeout(() => {
 								// Disable submission form and as soon as 200 OK or 201 Created response is issued
-								setSubmitting(false);
+								setIsSubmitting(false);
 								setDisableForm(!disableForm);
-							}, NotificationDisplayInterval);
-						}
-					} else {
-						// [TODO] - Handle error response
-						console.log(payload.error);
+							} else {
+								// Disable submission, reset, and disable form as soon as 200 OK or 201 Created response was not issued
+								setIsSubmitting(false);
+							}
+						}, NotificationDisplayInterval);
 
-						// Disable submission and as soon as 200 OK or 201 Created response is issued
-						setSubmitting(false);
+						return () => {
+							clearTimeout(paymentMethodResponseTimeout);
+						};
 					}
 				}
 			}}
 		>
-			{({ handleSubmit, isSubmitting }) => (
+			{({ handleSubmit }) => (
 				<form className="space-y-8 divide-y divide-gray-200" onSubmit={handleSubmit}>
 					<div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4">
 						<div className="sm:col-span-1">
@@ -213,7 +217,6 @@ const CardInformationForm = () => {
 								<span className="mt-2 block text-xs leading-5 text-red-700">{cardNumberError}</span>
 							) : null}
 						</div>
-
 						<div className="sm:col-span-1">
 							<label htmlFor="cardExpiry" className="block text-sm font-medium leading-5 text-gray-700">
 								{isComponentReady && stripe && elements ? (
@@ -244,7 +247,6 @@ const CardInformationForm = () => {
 								<span className="mt-2 block text-xs leading-5 text-red-700">{cardExpiryError}</span>
 							) : null}
 						</div>
-
 						<div className="sm:col-span-1">
 							<label htmlFor="cardCvc" className="block text-sm font-medium leading-5 text-gray-700">
 								{isComponentReady && stripe && elements ? cvcText : <Skeleton duration={2} width={150} height={20} />}
@@ -270,7 +272,7 @@ const CardInformationForm = () => {
 							{cardCvcError ? <span className="mt-2 block text-xs leading-5 text-red-700">{cardCvcError}</span> : null}
 						</div>
 
-						{state?.isStripePaymentMethod && state?.responses?.length > 0 ? (
+						{state?.responses?.length > 0 ? (
 							<div className="sm:col-span-1">
 								<div className="relative mt-1">
 									{state.responses.map((value, key) => {
@@ -309,7 +311,12 @@ const CardInformationForm = () => {
 															? "cursor-not-allowed opacity-50"
 															: "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 													)}
-													onClick={() => setDisableForm(!disableForm)}
+													onClick={() => {
+														setCardNumberError(null);
+														setCardExpiryError(null);
+														setCardCvcError(null);
+														setDisableForm(!disableForm);
+													}}
 												>
 													{cancelText}
 												</button>
