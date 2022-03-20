@@ -178,8 +178,6 @@ export const StripePaymentMethodNotificationMessage = ({
 		...dataResponse
 	};
 
-	console.log(data);
-
 	return handleNotificationMessages({
 		dispatch,
 		config,
