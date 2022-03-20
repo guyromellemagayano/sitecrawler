@@ -47,7 +47,7 @@ export const useNotificationMessage = () => {
 	const [config, setConfig] = useState({
 		isAlert: false,
 		isConfirmEmail: false,
-		isError: false,
+		isError: null,
 		isImages: false,
 		isLinks: false,
 		isLocalTimeDisabled: false,
@@ -469,6 +469,7 @@ export const useNotificationMessage = () => {
 		verifyUrlStepPost502BadGatewayErrorResponse,
 		verifyUrlStepPost503ServiceUnavailableErrorResponse,
 		verifyUrlStepPost504GatewayTimeoutErrorResponse,
+		verifyUrlStepPostMiscSiteVerificationFailedErrorResponse,
 		stripePaymentMethodGet200OkSuccessResponse,
 		stripePaymentMethodGet201CreatedSuccessResponse,
 		stripePaymentMethodGet400BadRequestErrorResponse,
@@ -554,7 +555,7 @@ export const useNotificationMessage = () => {
 		if (config) {
 			const isAlert = config?.isAlert ?? false;
 			const isConfirmEmail = config?.isConfirmEmail ?? false;
-			const isError = config?.isError ?? false;
+			const isError = config?.isError ?? null;
 			const isImages = config?.isImages ?? false;
 			const isLinks = config?.isLinks ?? false;
 			const isLocalTimeDisabled = config?.isLocalTimeDisabled ?? false;
@@ -1212,7 +1213,8 @@ export const useNotificationMessage = () => {
 						verifyUrlStepPost500InternalServerErrorResponse,
 						verifyUrlStepPost502BadGatewayErrorResponse,
 						verifyUrlStepPost503ServiceUnavailableErrorResponse,
-						verifyUrlStepPost504GatewayTimeoutErrorResponse
+						verifyUrlStepPost504GatewayTimeoutErrorResponse,
+						verifyUrlStepPostMiscSiteVerificationFailedErrorResponse
 					};
 
 					// Verify url step

@@ -173,7 +173,9 @@ export const useAlertTranslations = () => {
 	const confirmEmailPost401UnauthorizedErrorResponse = t("alerts:auth.confirmEmail.post.401UnauthorizedErrorResponse");
 	const confirmEmailPost403ForbiddenErrorResponse = t("alerts:auth.confirmEmail.post.403ForbiddenErrorResponse");
 	const confirmEmailPost404NotFoundErrorResponse = t("alerts:auth.confirmEmail.post.404NotFoundErrorResponse");
-	const confirmEmailPost429TooManyRequestsErrorResponse = t("alerts:auth.confirmEmail.post.201CreatedSuccessResponse");
+	const confirmEmailPost429TooManyRequestsErrorResponse = t(
+		"alerts:auth.confirmEmail.post.429TooManyRequestsErrorResponse"
+	);
 	const confirmEmailPost500InternalServerErrorResponse = t(
 		"alerts:auth.confirmEmail.post.500InternalServerErrorResponse"
 	);
@@ -205,7 +207,7 @@ export const useAlertTranslations = () => {
 	const logoutPost401UnauthorizedErrorResponse = t("alerts:auth.logout.post.401UnauthorizedErrorResponse");
 	const logoutPost403ForbiddenErrorResponse = t("alerts:auth.logout.post.403ForbiddenErrorResponse");
 	const logoutPost404NotFoundErrorResponse = t("alerts:auth.logout.post.404NotFoundErrorResponse");
-	const logoutPost429TooManyRequestsErrorResponse = t("alerts:auth.logout.post.201CreatedSuccessResponse");
+	const logoutPost429TooManyRequestsErrorResponse = t("alerts:auth.logout.post.429TooManyRequestsErrorResponse");
 	const logoutPost500InternalServerErrorResponse = t("alerts:auth.logout.post.500InternalServerErrorResponse");
 	const logoutPost502BadGatewayErrorResponse = t("alerts:auth.logout.post.502BadGatewayErrorResponse");
 	const logoutPost503ServiceUnavailableErrorResponse = t("alerts:auth.logout.post.503ServiceUnavailableErrorResponse");
@@ -221,7 +223,7 @@ export const useAlertTranslations = () => {
 	const passwordResetPost403ForbiddenErrorResponse = t("alerts:auth.password.reset.post.403ForbiddenErrorResponse");
 	const passwordResetPost404NotFoundErrorResponse = t("alerts:auth.password.reset.post.404NotFoundErrorResponse");
 	const passwordResetPost429TooManyRequestsErrorResponse = t(
-		"alerts:auth.password.reset.post.201CreatedSuccessResponse"
+		"alerts:auth.password.reset.post.429TooManyRequestsErrorResponse"
 	);
 	const passwordResetPost500InternalServerErrorResponse = t(
 		"alerts:auth.password.reset.post.500InternalServerErrorResponse"
@@ -254,7 +256,7 @@ export const useAlertTranslations = () => {
 		"alerts:auth.password.reset.confirm.post.404NotFoundErrorResponse"
 	);
 	const passwordResetConfirmPost429TooManyRequestsErrorResponse = t(
-		"alerts:auth.password.reset.confirm.post.201CreatedSuccessResponse"
+		"alerts:auth.password.reset.confirm.post.429TooManyRequestsErrorResponse"
 	);
 	const passwordResetConfirmPost500InternalServerErrorResponse = t(
 		"alerts:auth.password.reset.confirm.post.500InternalServerErrorResponse"
@@ -279,7 +281,7 @@ export const useAlertTranslations = () => {
 	const passwordChangePost403ForbiddenErrorResponse = t("alerts:auth.password.change.post.403ForbiddenErrorResponse");
 	const passwordChangePost404NotFoundErrorResponse = t("alerts:auth.password.change.post.404NotFoundErrorResponse");
 	const passwordChangePost429TooManyRequestsErrorResponse = t(
-		"alerts:auth.password.change.post.201CreatedSuccessResponse"
+		"alerts:auth.password.change.post.429TooManyRequestsErrorResponse"
 	);
 	const passwordChangePost500InternalServerErrorResponse = t(
 		"alerts:auth.password.change.post.500InternalServerErrorResponse"
@@ -299,7 +301,9 @@ export const useAlertTranslations = () => {
 	const registrationPost401UnauthorizedErrorResponse = t("alerts:auth.registration.post.401UnauthorizedErrorResponse");
 	const registrationPost403ForbiddenErrorResponse = t("alerts:auth.registration.post.403ForbiddenErrorResponse");
 	const registrationPost404NotFoundErrorResponse = t("alerts:auth.registration.post.404NotFoundErrorResponse");
-	const registrationPost429TooManyRequestsErrorResponse = t("alerts:auth.registration.post.201CreatedSuccessResponse");
+	const registrationPost429TooManyRequestsErrorResponse = t(
+		"alerts:auth.registration.post.429TooManyRequestsErrorResponse"
+	);
 	const registrationPost500InternalServerErrorResponse = t(
 		"alerts:auth.registration.post.500InternalServerErrorResponse"
 	);
@@ -318,7 +322,7 @@ export const useAlertTranslations = () => {
 	const signupPost401UnauthorizedErrorResponse = t("alerts:signup.post.401UnauthorizedErrorResponse");
 	const signupPost403ForbiddenErrorResponse = t("alerts:signup.post.403ForbiddenErrorResponse");
 	const signupPost404NotFoundErrorResponse = t("alerts:signup.post.404NotFoundErrorResponse");
-	const signupPost429TooManyRequestsErrorResponse = t("alerts:signup.post.201CreatedSuccessResponse");
+	const signupPost429TooManyRequestsErrorResponse = t("alerts:signup.post.429TooManyRequestsErrorResponse");
 	const signupPost500InternalServerErrorResponse = t("alerts:signup.post.500InternalServerErrorResponse");
 	const signupPost502BadGatewayErrorResponse = t("alerts:signup.post.502BadGatewayErrorResponse");
 	const signupPost503ServiceUnavailableErrorResponse = t("alerts:signup.post.503ServiceUnavailableErrorResponse");
@@ -331,7 +335,7 @@ export const useAlertTranslations = () => {
 	const supportPost401UnauthorizedErrorResponse = t("alerts:support.post.401UnauthorizedErrorResponse");
 	const supportPost403ForbiddenErrorResponse = t("alerts:support.post.403ForbiddenErrorResponse");
 	const supportPost404NotFoundErrorResponse = t("alerts:support.post.404NotFoundErrorResponse");
-	const supportPost429TooManyRequestsErrorResponse = t("alerts:support.post.201CreatedSuccessResponse");
+	const supportPost429TooManyRequestsErrorResponse = t("alerts:support.post.429TooManyRequestsErrorResponse");
 	const supportPost500InternalServerErrorResponse = t("alerts:support.post.500InternalServerErrorResponse");
 	const supportPost502BadGatewayErrorResponse = t("alerts:support.post.502BadGatewayErrorResponse");
 	const supportPost503ServiceUnavailableErrorResponse = t("alerts:support.post.503ServiceUnavailableErrorResponse");
@@ -622,7 +626,9 @@ export const useAlertTranslations = () => {
 	const verifyUrlStepPost401UnauthorizedErrorResponse = t("alerts:sites.verifyUrl.post.401UnauthorizedErrorResponse");
 	const verifyUrlStepPost403ForbiddenErrorResponse = t("alerts:sites.verifyUrl.post.403ForbiddenErrorResponse");
 	const verifyUrlStepPost404NotFoundErrorResponse = t("alerts:sites.verifyUrl.post.404NotFoundErrorResponse");
-	const verifyUrlStepPost429TooManyRequestsErrorResponse = t("alerts:sites.verifyUrl.post.201CreatedSuccessResponse");
+	const verifyUrlStepPost429TooManyRequestsErrorResponse = t(
+		"alerts:sites.verifyUrl.post.429TooManyRequestsErrorResponse"
+	);
 	const verifyUrlStepPost500InternalServerErrorResponse = t(
 		"alerts:sites.verifyUrl.post.500InternalServerErrorResponse"
 	);
@@ -1257,6 +1263,7 @@ export const useAlertTranslations = () => {
 		verifyUrlStepPost502BadGatewayErrorResponse,
 		verifyUrlStepPost503ServiceUnavailableErrorResponse,
 		verifyUrlStepPost504GatewayTimeoutErrorResponse,
+		verifyUrlStepPostMiscSiteVerificationFailedErrorResponse,
 		stripePaymentMethodGet200OkSuccessResponse,
 		stripePaymentMethodGet201CreatedSuccessResponse,
 		stripePaymentMethodGet400BadRequestErrorResponse,
