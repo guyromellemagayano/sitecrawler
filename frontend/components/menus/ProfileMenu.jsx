@@ -30,7 +30,7 @@ const ProfileMenu = () => {
 			<button
 				type="button"
 				className={classnames(
-					"group flex w-full flex-shrink-0 items-center justify-between bg-gray-900 px-4 py-5 transition duration-150 ease-in-out focus:outline-none",
+					"group flex w-full flex-shrink-0 items-center justify-between bg-gray-900 p-4 transition duration-150 ease-in-out focus:outline-none",
 					isComponentReady ? "cursor-pointer hover:bg-gray-1100" : "cursor-default"
 				)}
 				aria-haspopup="true"
