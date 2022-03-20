@@ -45,7 +45,7 @@ const CardInformationForm = () => {
 	const cancelText = t("common:cancel");
 
 	// `currentPaymentMethod` state
-	const [currentPaymentMethod, setCurrentPaymentMethod] = useState(loadingCardInformationText);
+	const [currentPaymentMethod, setCurrentPaymentMethod] = useState(null);
 
 	// Custom context
 	const { state, isComponentReady, paymentMethods, defaultPaymentMethod, setConfig } =
@@ -58,35 +58,34 @@ const CardInformationForm = () => {
 	const stripe = useStripe();
 	const elements = useElements();
 
-	// Handle `disableForm` and `currentPaymentMethod` states
+	// Custom variables
+	const paymentMethodsData = paymentMethods?.data ?? null;
+	const defaultPaymentMethodData = defaultPaymentMethod?.data ?? null;
+
+	// Handle `disableForm` and `currentPaymentMethod` state
 	useEffect(() => {
-		disableForm
-			? Array.isArray(paymentMethods?.data)
-				? setCurrentPaymentMethod(
-						paymentMethods?.data
-							.filter((paymentMethod) => paymentMethod.id === defaultPaymentMethod?.data?.id)
-							.map(
-								(paymentMethod) =>
-									handleConversionStringToUppercase(paymentMethod.card.brand.charAt(0)) +
-									paymentMethod.card.brand.slice(1) +
-									" - " +
-									" " +
-									"****" +
-									" " +
-									paymentMethod.card.last4
-							)
-				  )
-				: setCurrentPaymentMethod(
-						handleConversionStringToUppercase(paymentMethods?.data?.card?.brand?.charAt(0)) +
-							paymentMethods?.data?.card?.brand?.slice(1) +
-							" - " +
-							" " +
-							"****" +
-							" " +
-							paymentMethods?.data?.card?.last4
-				  )
-			: setCurrentPaymentMethod(noCurrentCardRegisteredText);
-	}, [disableForm, defaultPaymentMethod, paymentMethods]);
+		const selectedCurrentPaymentMethod = Array.isArray(paymentMethodsData)
+			? () => {
+					const dataFound =
+						paymentMethodsData?.find((paymentMethod) => paymentMethod.id === defaultPaymentMethodData?.id) ??
+						noCurrentCardRegisteredText;
+
+					return Object.keys(dataFound)?.length > 0
+						? handleConversionStringToUppercase(dataFound?.card?.brand?.charAt(0)) +
+								dataFound?.card?.brand.slice(1) +
+								" - " +
+								" " +
+								"****" +
+								" " +
+								dataFound?.card?.last4
+						: dataFound;
+			  }
+			: loadingCardInformationText;
+
+		disableForm ? setCurrentPaymentMethod(selectedCurrentPaymentMethod) : null;
+
+		return { currentPaymentMethod };
+	}, [disableForm, defaultPaymentMethodData, paymentMethods]);
 
 	// Handle form events
 	const handleFormEvents = (e) => {
@@ -134,7 +133,7 @@ const CardInformationForm = () => {
 				cardExpiry: "",
 				cardCvc: ""
 			}}
-			onSubmit={async (values, { setSubmitting, resetForm }) => {
+			onSubmit={async (values, { setSubmitting }) => {
 				if (stripe && elements) {
 					const payload = await stripe.createPaymentMethod({
 						type: "card",
@@ -160,19 +159,23 @@ const CardInformationForm = () => {
 							isNotification: false
 						});
 
-						// Disable submission and reset form as soon as 200 OK or 201 Created response is issued
-						setSubmitting(false);
-						resetForm({ values: "" });
-
 						if (paymentMethodResponseData && Math.round(paymentMethodResponseStatus / 200) === 1) {
 							// Mutate `defaultPaymentMethod` endpoint after successful 200 OK or 201 Created response is issued
 							mutate(PaymentMethodApiEndpoint, { ...paymentMethods, data: paymentMethodResponseData }, false);
 							mutate(DefaultPaymentMethodApiEndpoint);
 
-							return setTimeout(() => setDisableForm(!disableForm), NotificationDisplayInterval);
+							return setTimeout(() => {
+								// Disable submission form and as soon as 200 OK or 201 Created response is issued
+								setSubmitting(false);
+								setDisableForm(!disableForm);
+							}, NotificationDisplayInterval);
 						}
 					} else {
+						// [TODO] - Handle error response
 						console.log(payload.error);
+
+						// Disable submission and as soon as 200 OK or 201 Created response is issued
+						setSubmitting(false);
 					}
 				}
 			}}
@@ -267,7 +270,7 @@ const CardInformationForm = () => {
 							{cardCvcError ? <span className="mt-2 block text-xs leading-5 text-red-700">{cardCvcError}</span> : null}
 						</div>
 
-						{state?.responses?.length > 0 ? (
+						{state?.isStripePaymentMethod && state?.responses?.length > 0 ? (
 							<div className="sm:col-span-1">
 								<div className="relative mt-1">
 									{state.responses.map((value, key) => {
@@ -371,7 +374,7 @@ const CardInformationForm = () => {
 										className="relative mt-3 mr-3 inline-flex w-full items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium leading-5 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0"
 										onClick={() => setDisableForm(!disableForm)}
 									>
-										{defaultPaymentMethod?.data?.id ? updateText : addCardText}
+										{defaultPaymentMethodData?.id ? updateText : addCardText}
 									</button>
 								) : (
 									<Skeleton
