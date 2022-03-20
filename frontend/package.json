@@ -88,7 +88,7 @@
 	"devDependencies": {
 		"@next/bundle-analyzer": "^12.1.0",
 		"@next/eslint-plugin-next": "12.1.0",
-		"autoprefixer": "^10.4.2",
+		"autoprefixer": "^10.4.4",
 		"cross-env": "^7.0.3",
 		"eslint": "^8.10.0",
 		"eslint-config-next": "12.1.0",
