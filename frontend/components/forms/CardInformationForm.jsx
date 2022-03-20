@@ -68,10 +68,9 @@ const CardInformationForm = () => {
 		const selectedCurrentPaymentMethod = Array.isArray(paymentMethodsData)
 			? () => {
 					const dataFound =
-						paymentMethodsData?.find((paymentMethod) => paymentMethod.id === defaultPaymentMethodData?.id) ??
-						noCurrentCardRegisteredText;
+						paymentMethodsData?.find((paymentMethod) => paymentMethod.id === defaultPaymentMethodData?.id) ?? null;
 
-					return Object.keys(dataFound)?.length > 0
+					return dataFound && Object.keys(dataFound)?.length > 0
 						? handleConversionStringToUppercase(dataFound?.card?.brand?.charAt(0)) +
 								dataFound?.card?.brand.slice(1) +
 								" - " +
@@ -79,7 +78,7 @@ const CardInformationForm = () => {
 								"****" +
 								" " +
 								dataFound?.card?.last4
-						: dataFound;
+						: noCurrentCardRegisteredText;
 			  }
 			: loadingCardInformationText;
 
