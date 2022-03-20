@@ -1583,68 +1583,68 @@ export const UrlInformationStepNotificationMessage = ({
 		responses: [
 			{
 				status: 200,
-				title: fallback200OkSuccessResponse,
-				message: urlInformationStepPost200OkSuccessResponse,
+				title: fallback.okSuccessResponse,
+				message: locales.urlInformationStepPost200OkSuccessResponse,
 				isSuccess: true
 			},
 			{
 				status: 201,
-				title: fallback201CreatedSuccessResponse,
-				message: urlInformationStepPost201CreatedSuccessResponse,
+				title: fallback.createdSuccessResponse,
+				message: locales.urlInformationStepPost201CreatedSuccessResponse,
 				isSuccess: true
 			},
 			{
 				status: 400,
-				title: fallback400BadRequestErrorResponse,
-				message: urlInformationStepPost400BadRequestErrorResponse,
+				title: fallback.badRequestErrorResponse,
+				message: locales.urlInformationStepPost400BadRequestErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 401,
-				title: fallback401UnauthorizedErrorResponse,
-				message: urlInformationStepPost401UnauthorizedErrorResponse,
+				title: fallback.unauthorizedErrorResponse,
+				message: locales.urlInformationStepPost401UnauthorizedErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 403,
-				title: fallback403ForbiddenErrorResponse,
-				message: urlInformationStepPost403ForbiddenErrorResponse,
+				title: fallback.forbiddenErrorResponse,
+				message: locales.urlInformationStepPost403ForbiddenErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 404,
-				title: fallback404NotFoundErrorResponse,
-				message: urlInformationStepPost404NotFoundErrorResponse,
+				title: fallback.notFoundErrorResponse,
+				message: locales.urlInformationStepPost404NotFoundErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 429,
-				title: fallback429TooManyRequestsErrorResponse,
-				message: urlInformationStepPost429TooManyRequestsErrorResponse,
+				title: fallback.tooManyRequestsErrorResponse,
+				message: locales.urlInformationStepPost429TooManyRequestsErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 500,
-				title: fallback500InternalServerErrorResponse,
-				message: urlInformationStepPost500InternalServerErrorResponse,
+				title: fallback.internalServerErrorResponse,
+				message: locales.urlInformationStepPost500InternalServerErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 502,
-				title: fallback502BadGatewayErrorResponse,
-				message: urlInformationStepPost502BadGatewayErrorResponse,
+				title: fallback.badGatewayErrorResponse,
+				message: locales.urlInformationStepPost502BadGatewayErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 503,
-				title: fallback503ServiceUnavailableErrorResponse,
-				message: urlInformationStepPost503ServiceUnavailableErrorResponse,
+				title: fallback.serviceUnavailableErrorResponse,
+				message: locales.urlInformationStepPost503ServiceUnavailableErrorResponse,
 				isSuccess: false
 			},
 			{
 				status: 504,
-				title: fallback504GatewayTimeoutErrorResponse,
-				message: urlInformationStepPost504GatewayTimeoutErrorResponse,
+				title: fallback.gatewayTimeoutErrorResponse,
+				message: locales.urlInformationStepPost504GatewayTimeoutErrorResponse,
 				isSuccess: false
 			}
 		]
@@ -1790,6 +1790,8 @@ export const VerifyUrlStepNotificationMessage = ({
 		isNotification: isNotification,
 		...dataResponse
 	};
+
+	console.log(dataMethod, dataResponse, config, state);
 
 	return handleNotificationMessages({
 		dispatch,
