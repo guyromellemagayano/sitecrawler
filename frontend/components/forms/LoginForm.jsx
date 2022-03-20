@@ -33,15 +33,6 @@ const LoginForm = () => {
 	const continueWith = t("login:continueWith");
 	const googleSignIn = t("login:googleSignIn");
 
-	// Social media links array
-	const linksArray = [
-		{
-			label: googleSignIn,
-			icon: ["fab", "google"],
-			disabled: false
-		}
-	];
-
 	// Custom hooks
 	const { passwordRef, isPasswordShown, setIsPasswordShown } = useShowPassword(false);
 
