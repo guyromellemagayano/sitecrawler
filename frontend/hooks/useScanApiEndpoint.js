@@ -127,7 +127,5 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 
 	scanApiEndpoint += queryString;
 
-	console.log(scanApiEndpoint);
-
 	return { scanApiEndpoint, queryString, filterQueryString };
 };
