@@ -1,6 +1,5 @@
 import { MemoizedHowToSetupSkeleton } from "@components/skeletons/HowToSetupSkeleton";
 import { HowToSetupData } from "@constants/HowToSetup";
-import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
@@ -24,32 +23,21 @@ const HowToSetup = () => {
 	// Custom context
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
-	// SWR hooks
-	const { user } = useUser();
-
-	return isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+	return isComponentReady ? (
 		<div className="flex-auto">
 			<div className="w-full xl:max-w-screen-sm xl:flex-none xl:flex-grow-0">
 				<div className="relative py-6 px-4 sm:px-6 lg:px-8 lg:py-0">
 					<div className="mx-auto w-full max-w-7xl">
 						<div className="mb-10 text-center">
 							<h3 className="text-2xl font-bold leading-9 tracking-tight text-gray-900 sm:text-3xl sm:leading-10">
-								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-									howToSetupHeadline
-								) : (
-									<Skeleton duration={2} width={120} height={30} />
-								)}
+								{isComponentReady ? howToSetupHeadline : <Skeleton duration={2} width={120} height={30} />}
 							</h3>
 							<p className="mx-auto mt-3 max-w-2xl text-base leading-6 text-gray-500 sm:mt-4">
-								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-									howToSetupSubheadline
-								) : (
-									<Skeleton duration={2} width={200} height={30} />
-								)}
+								{isComponentReady ? howToSetupSubheadline : <Skeleton duration={2} width={200} height={30} />}
 							</p>
 						</div>
 						<div className="relative mx-auto mb-8 w-full rounded-lg lg:max-w-md">
-							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+							{isComponentReady ? (
 								HowToSetupData.map(({ id, video }, key) => {
 									return tabActive === id ? (
 										<ReactPlayer key={key} url={video.src} width={"auto"} height={320} controls={true} />
@@ -89,7 +77,7 @@ const HowToSetup = () => {
 							</div>
 							<div className="hidden sm:block">
 								<nav className="flex justify-center space-x-3">
-									{HowToSetupData.map(({ title, id }, key) =>
+									{HowToSetupData?.map(({ title, id }, key) =>
 										isComponentReady ? (
 											<TabItem
 												key={key}
@@ -101,7 +89,7 @@ const HowToSetup = () => {
 										) : (
 											<Skeleton key={key} duration={2} width={100} height={30} />
 										)
-									)}
+									) ?? null}
 								</nav>
 							</div>
 						</div>

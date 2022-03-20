@@ -1,14 +1,15 @@
 import { MemoizedVerifyUrlStepForm } from "@components/forms/VerifyUrlStepForm";
 import { MemoizedShowHelpModal } from "@components/modals/ShowHelpModal";
+import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import { ResetCopyStateTimeout } from "@constants/GlobalValues";
 import { ClipboardIcon, QuestionMarkCircleIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
-import { useSites } from "@hooks/useSites";
+import { useSiteId } from "@hooks/useSiteId";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
-import { memo, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { memo, useContext, useMemo, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -23,7 +24,7 @@ const VerifyUrlStep = (props) => {
 	const [siteData, setSiteData] = useState(null);
 
 	// Props
-	const { sid = null, step = null, verified = false } = props;
+	const { sid, step, verified } = props;
 
 	// Translation
 	const { t } = useTranslation();
@@ -38,52 +39,39 @@ const VerifyUrlStep = (props) => {
 	const copiedText = t("common:copiedText");
 	const copyText = t("common:copyText");
 
-	// SWR hooks
-	const { sites, sitesResults } = useSites();
-
 	// Custom hooks
 	const {
 		ref: showModalRef,
 		isComponentVisible: showModal,
 		setIsComponentVisible: setShowModal
 	} = useComponentVisible(false);
+
+	// Custom context
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
+	// Custom variables
+	const customSiteIdApiEndpoint = isComponentReady ? SitesApiEndpoint + sid + "/" : null;
+
+	// SWR hooks
+	const { siteId } = useSiteId(customSiteIdApiEndpoint);
+
 	// Handle site data selection based on the given `sid` query value
-	useMemo(async () => {
-		let isMounted = true;
+	useMemo(() => {
+		siteId ? setSiteData(siteId?.data) : setSiteData(null);
 
-		if (isMounted) {
-			setSiteData(sitesResults?.find((site) => site?.id === sid) ?? null);
-		}
-
-		return () => {
-			isMounted = false;
-		};
-	}, [sid, sitesResults]);
+		return { siteData };
+	}, [siteId]);
 
 	// Handle site data
-	const handleSiteData = useCallback(async () => {
-		if (siteData !== null && Object.keys(siteData)?.length > 0) {
-			const siteVerificationId = siteData?.verification_id ?? null;
+	useMemo(() => {
+		const siteVerificationId = siteData?.verification_id ?? null;
 
-			if (typeof copyValue === "string" && copyValue == "") {
-				setCopyValue('<meta name="epic-crawl-id" content="' + siteVerificationId + '" />');
-			}
-		}
-	}, [siteData]);
-
-	useEffect(() => {
-		let isMounted = true;
-
-		if (isMounted) {
-			handleSiteData();
+		if (typeof copyValue === "string" && copyValue == "" && siteVerificationId) {
+			setCopyValue('<meta name="epic-crawl-id" content="' + siteVerificationId + '" />');
 		}
 
-		return () => {
-			isMounted = false;
-		};
-	}, [handleSiteData]);
+		return { copyValue };
+	}, [siteData, copyValue]);
 
 	// Handle input change
 	const handleInputChange = ({ copyValue }) => {
@@ -96,24 +84,31 @@ const VerifyUrlStep = (props) => {
 	};
 
 	// Reset copied state after a timeout
-	useEffect(() => {
-		if (copied) {
-			setTimeout(() => {
-				setCopied(false);
-			}, ResetCopyStateTimeout);
-		}
+	useMemo(() => {
+		copied
+			? setTimeout(() => {
+					setCopied(false);
+			  }, ResetCopyStateTimeout)
+			: null;
+
+		return { copied };
 	}, [copied]);
 
-	return step === 2 || step === 3 ? (
+	return (
 		<>
-			<MemoizedShowHelpModal ref={showModalRef} showModal={showModal} setShowModal={setShowModal} siteData={siteData} />
+			<MemoizedShowHelpModal
+				ref={showModalRef}
+				showModal={showModal}
+				setShowModal={setShowModal}
+				verificationTag={copyValue}
+			/>
 
 			<div className="block pt-8 pb-12">
 				<div className="m-auto py-4">
-					<div className="mb-12 block">
+					<div className="mb-7 block">
 						<h3 className="flex-1 text-xl font-medium leading-7 text-gray-900">
 							<span className="flex-1">
-								{isComponentReady && siteData !== null && Object.keys(siteData)?.length > 0 ? (
+								{isComponentReady && siteData ? (
 									step === 2 && !verified ? (
 										verifySiteTitle + ": "
 									) : (
@@ -125,7 +120,7 @@ const VerifyUrlStep = (props) => {
 							</span>
 						</h3>
 						<h4 className="mb-5 flex-1 text-lg font-normal leading-7 text-gray-600">
-							{isComponentReady && siteData !== null && Object.keys(siteData)?.length > 0 ? (
+							{isComponentReady && siteData ? (
 								<>
 									<span className="flex-1">{siteData?.name}</span>
 									<span className="flex-1">
@@ -148,13 +143,13 @@ const VerifyUrlStep = (props) => {
 						</h4>
 
 						{step === 2 && !verified ? (
-							isComponentReady && siteData !== null && Object.keys(siteData)?.length > 0 ? (
+							isComponentReady && siteData ? (
 								<>
 									<p className="mb-3 text-base leading-6 text-gray-700">
 										<strong>{instructions}:</strong>
 									</p>
 
-									<ol className="mb-5 list-decimal space-y-2">
+									<ol className="mb-1 list-decimal space-y-2">
 										<li className="ml-4 text-sm leading-6 text-gray-600">{instruction1}</li>
 										<li className="ml-4 text-sm leading-6 text-gray-600">
 											{instruction2}
@@ -239,12 +234,13 @@ const VerifyUrlStep = (props) => {
 					<MemoizedVerifyUrlStepForm
 						disableSiteVerify={disableSiteVerify}
 						setDisableSiteVerify={setDisableSiteVerify}
+						siteData={siteData}
 						{...props}
 					/>
 				</div>
 			</div>
 		</>
-	) : null;
+	);
 };
 
 VerifyUrlStep.propTypes = {

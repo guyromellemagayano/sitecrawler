@@ -10,11 +10,11 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 /**
  * Custom function to render the `ShowHelpModal` component
  *
- * @param {object} siteData
+ * @param {string} verificationTag
  * @param {boolean} showModal
  * @param {function} setShowModal
  */
-const ShowHelpModal = ({ siteData = null, showModal = false, setShowModal }, ref) => {
+const ShowHelpModal = ({ verificationTag = null, showModal = false, setShowModal }, ref) => {
 	const [siteVerificationId, setSiteVerificationId] = useState(null);
 	const [siteUrl, setSiteUrl] = useState(null);
 	const [copyValue, setCopyValue] = useState(null);
@@ -22,18 +22,6 @@ const ShowHelpModal = ({ siteData = null, showModal = false, setShowModal }, ref
 
 	// Custom hooks
 	const showHelpRef = useRef(null);
-
-	// Handle the copy to clipboard functionality
-	useEffect(() => {
-		if (siteData !== null) {
-			setSiteVerificationId(siteData.verification_id ?? null);
-			setSiteUrl(siteData.url ?? null);
-
-			if (siteVerificationId !== null) {
-				setCopyValue(`<meta name="epic-crawl-id" content="${siteVerificationId}" />`);
-			}
-		}
-	}, [siteData]);
 
 	// Handle textarea change
 	const handleTextareaChange = ({ copyValue }) => {
@@ -54,6 +42,8 @@ const ShowHelpModal = ({ siteData = null, showModal = false, setShowModal }, ref
 
 			return () => clearTimeout(timeout);
 		}
+
+		return { copied };
 	}, [copied]);
 
 	// Handle close modal
@@ -77,7 +67,7 @@ const ShowHelpModal = ({ siteData = null, showModal = false, setShowModal }, ref
 
 	// Custom variables
 	let instructionHtmlText = `1. ${instruction1}: ` + siteUrl + "\n\n";
-	instructionHtmlText += `2. ${instruction2}: ` + "\n" + copyValue + "\n\n";
+	instructionHtmlText += `2. ${instruction2}: ` + "\n" + verificationTag + "\n\n";
 	instructionHtmlText += `3. ${instruction3}.` + "\n\n";
 	instructionHtmlText += `4. ${instruction4}` + "\n\n";
 
