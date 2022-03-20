@@ -480,8 +480,6 @@ const Filter = ({
 					(() => {
 						const sanitizedFilterQueryString = filterQueryString.get("verified");
 
-						console.log(sanitizedFilterQueryString);
-
 						if (sanitizedFilterQueryString === "true") {
 							setVerifiedFilter(true);
 							setUnverifiedFilter(false);
