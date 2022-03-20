@@ -1,6 +1,12 @@
 /* eslint-disable-line no-useless-escape */
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
-import { FormSubmissionInterval, NotificationDisplayInterval } from "@constants/GlobalValues";
+import {
+	FormStringMinChars,
+	FormSubmissionInterval,
+	FormUrlMaxChars,
+	FormUrlNameMaxChars,
+	NotificationDisplayInterval
+} from "@constants/GlobalValues";
 import { AddNewSiteLink, DashboardSitesLink } from "@constants/PageLinks";
 import { handleGetMethod, handlePostMethod, handlePutMethod } from "@helpers/handleHttpMethods";
 import { useSiteId } from "@hooks/useSiteId";
@@ -118,8 +124,14 @@ const UrlInformationStepForm = (props) => {
 				sitename: edit && step === 1 && sid && !verified ? siteName : ""
 			}}
 			validationSchema={Yup.object().shape({
-				siteurl: Yup.string().matches(urlRegex, enterValidSiteUrl).max(2048, tooLong).required(requiredField),
-				sitename: Yup.string().min(1, tooShort).max(255, tooLong).required(requiredField)
+				siteurl: Yup.string()
+					.matches(urlRegex, enterValidSiteUrl)
+					.max(FormUrlMaxChars, tooLong)
+					.required(requiredField),
+				sitename: Yup.string()
+					.min(FormStringMinChars, tooShort)
+					.max(FormUrlNameMaxChars, tooLong)
+					.required(requiredField)
 			})}
 			onSubmit={async (values, { setSubmitting, setErrors }) => {
 				if (!editMode) {
@@ -333,7 +345,7 @@ const UrlInformationStepForm = (props) => {
 				}
 			}}
 		>
-			{({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
+			{({ values, errors, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
 				<form className="space-y-8" onSubmit={handleSubmit}>
 					<div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
 						<div className="sm:col-span-3">
@@ -346,12 +358,14 @@ const UrlInformationStepForm = (props) => {
 										id="sitename"
 										type="text"
 										name="sitename"
-										disabled={isSubmitting}
+										disabled={isSubmitting || disableForm || Object.keys(errors).length > 0}
 										placeholder={formSiteNamePlaceholder}
 										className={classnames(
 											"block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
-											isSubmitting || disableForm ? "cursor-not-allowed bg-gray-300 opacity-50" : null,
-											errors.sitename && touched.sitename ? "border-red-300" : "border-gray-300"
+											isSubmitting || disableForm || Object.keys(errors).length > 0
+												? "cursor-not-allowed bg-gray-300 opacity-50"
+												: null,
+											errors.sitename ? "border-red-300" : "border-gray-300"
 										)}
 										aria-describedby="sitename"
 										onChange={handleChange}
@@ -362,10 +376,8 @@ const UrlInformationStepForm = (props) => {
 									<Skeleton duration={2} width={375.5} height={38} />
 								)}
 
-								{errors.sitename || touched.sitename ? (
-									<span className="mt-2 block text-xs leading-5 text-red-700">
-										{errors.sitename && touched.sitename}
-									</span>
+								{errors.sitename ? (
+									<span className="mt-2 block text-xs leading-5 text-red-700">{errors.sitename}</span>
 								) : null}
 							</div>
 						</div>
@@ -387,7 +399,12 @@ const UrlInformationStepForm = (props) => {
 													"h-full rounded-md border-transparent bg-transparent py-0 pl-3 pr-7 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
 													edit && step === 1 && sid && !verified ? "cursor-not-allowed bg-gray-300 opacity-50" : null
 												)}
-												disabled={isSubmitting || (edit && step === 1 && sid && !verified)}
+												disabled={
+													isSubmitting ||
+													disableForm ||
+													Object.keys(errors).length > 0 ||
+													(edit && step === 1 && sid && !verified)
+												}
 												onChange={handleChange}
 												onBlur={handleBlur}
 												value={edit && step === 1 && sid && !verified ? siteUrlProtocol : values.siteurlprotocol}
@@ -401,13 +418,21 @@ const UrlInformationStepForm = (props) => {
 											id="siteurl"
 											type="text"
 											name="siteurl"
-											disabled={isSubmitting || (edit && step === 1 && sid && !verified)}
+											disabled={
+												isSubmitting ||
+												disableForm ||
+												Object.keys(errors).length > 0 ||
+												(edit && step === 1 && sid && !verified)
+											}
 											className={classnames(
 												"block w-full rounded-md border-gray-300 pl-24 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
-												(edit && step === 1 && sid && !verified) || disableForm || isSubmitting
+												(edit && step === 1 && sid && !verified) ||
+													isSubmitting ||
+													disableForm ||
+													Object.keys(errors).length > 0
 													? "cursor-not-allowed bg-gray-300 text-gray-500 opacity-50"
 													: null,
-												!disableForm && (errors.siteurl || touched.siteurl) ? "border-red-300" : "border-gray-300"
+												errors.siteurl ? "border-red-300" : "border-gray-300"
 											)}
 											placeholder={formSiteUrlPlaceholder}
 											aria-describedby="siteurl"
@@ -421,8 +446,8 @@ const UrlInformationStepForm = (props) => {
 								)}
 							</div>
 
-							{errors.siteurl || touched.siteurl ? (
-								<span className="mt-2 block text-xs leading-5 text-red-700">{errors.siteurl || touched.siteurl}</span>
+							{errors.siteurl ? (
+								<span className="mt-2 block text-xs leading-5 text-red-700">{errors.siteurl}</span>
 							) : null}
 						</div>
 

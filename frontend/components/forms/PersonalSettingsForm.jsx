@@ -1,11 +1,11 @@
 import { UserApiEndpoint } from "@constants/ApiEndpoints";
+import { FormStringMaxChars, FormStringMinChars, NotificationDisplayInterval } from "@constants/GlobalValues";
 import { handlePatchMethod } from "@helpers/handleHttpMethods";
-import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
-import { memo, useContext, useState } from "react";
+import { memo, useContext, useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useSWRConfig } from "swr";
@@ -16,40 +16,54 @@ import * as Yup from "yup";
  */
 const PersonalSettingsForm = () => {
 	const [disableForm, setDisableForm] = useState(true);
+	const [username, setUsername] = useState("");
+	const [firstname, setFirstname] = useState("");
+	const [lastname, setLastname] = useState("");
+	const [email, setEmail] = useState("");
+	const [settings, setSettings] = useState({});
+	const [largePageSizeThreshold, setLargePageSizeThreshold] = useState(0);
+	const [isLoading, setIsLoading] = useState(false);
 
 	// Translations
 	const { t } = useTranslation();
 	const saving = t("common:saving");
 	const saveChanges = t("common:save");
-	const firstName = t("common:firstName");
-	const lastName = t("common:lastName");
-	const userName = t("common:userName");
-	const emailAddress = t("common:emailAddress");
+	const firstNameText = t("common:firstName");
+	const lastNameText = t("common:lastName");
+	const userNameText = t("common:userName");
+	const emailText = t("common:emailAddress");
 	const updateText = t("common:update");
 	const requiredField = t("common:requiredField");
 	const tooShort = t("common:tooShort");
 	const tooLong = t("common:tooLong");
+	const cancelText = t("common:cancel");
 
 	// Custom context
-	const { isComponentReady, setConfig } = useContext(SiteCrawlerAppContext);
-
-	// SWR hooks
-	const {
-		user,
-		username,
-		setUsername,
-		firstname,
-		setFirstname,
-		lastname,
-		setLastname,
-		email,
-		setEmail,
-		settings,
-		largePageSizeThreshold
-	} = useUser();
+	const { isComponentReady, setConfig, user, state } = useContext(SiteCrawlerAppContext);
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
+
+	// Load `user` data from the API
+	useEffect(() => {
+		let initialFirstName = user?.data?.first_name ?? "";
+		let initialLastName = user?.data?.last_name ?? "";
+		let initialUsername = user?.data?.username ?? "";
+		let initialEmail = user?.data?.email ?? "";
+		let initialSettings = user?.data?.settings ?? {};
+		let initialLargePageSizeThreshold = user?.data?.large_page_size_threshold ?? null;
+
+		if (initialFirstName !== "" && initialLastName !== "" && initialUsername !== "" && initialEmail !== "") {
+			setFirstname(initialFirstName);
+			setLastname(initialLastName);
+			setUsername(initialUsername);
+			setEmail(initialEmail);
+			setSettings(initialSettings);
+			setLargePageSizeThreshold(initialLargePageSizeThreshold);
+		}
+
+		return { firstname, lastname, username, email, settings, largePageSizeThreshold };
+	}, [user]);
 
 	const handleUserNameInputChange = (e) => {
 		setUsername(e.target.value);
@@ -74,14 +88,27 @@ const PersonalSettingsForm = () => {
 				username: username,
 				firstname: firstname,
 				lastname: lastname,
-				email: email
+				email: email,
+				settings: settings,
+				largePageSizeThreshold: largePageSizeThreshold
 			}}
 			validationSchema={Yup.object().shape({
-				username: Yup.string().min(3, tooShort).max(30, tooLong).required(requiredField),
-				firstname: Yup.string().min(2, tooShort).max(78, tooLong).required(requiredField),
-				lastname: Yup.string().min(2, tooShort).max(78, tooLong).required(requiredField)
+				username: Yup.string()
+					.min(FormStringMinChars, tooShort)
+					.max(FormStringMaxChars, tooLong)
+					.required(requiredField),
+				firstname: Yup.string()
+					.min(FormStringMinChars, tooShort)
+					.max(FormStringMaxChars, tooLong)
+					.required(requiredField),
+				lastname: Yup.string()
+					.min(FormStringMinChars, tooShort)
+					.max(FormStringMaxChars, tooLong)
+					.required(requiredField)
 			})}
-			onSubmit={async (values, { setSubmitting }) => {
+			onSubmit={async (values, { resetForm }) => {
+				setIsLoading(true);
+
 				const body = {
 					username: values.username,
 					first_name: values.firstname,
@@ -96,55 +123,53 @@ const PersonalSettingsForm = () => {
 				const personalSettingsResponseStatus = personalSettingsResponse?.status ?? null;
 				const personalSettingsResponseMethod = personalSettingsResponse?.config?.method ?? null;
 
-				if (personalSettingsResponseData && Math.round(personalSettingsResponseStatus / 200) === 1) {
-					// Disable submission and disable form as soon as 200 OK or 201 Created response was issued
-					setSubmitting(false);
-					setDisableForm(!disableForm);
+				// Show alert message after successful 200 OK or 201 Created response is issued
+				setConfig({
+					isUser: true,
+					method: personalSettingsResponseMethod,
+					status: personalSettingsResponseStatus,
+					isAlert: false,
+					isNotification: false
+				});
 
-					// Show alert message after successful 200 OK or 201 Created response is issued
-					setConfig({
-						isUser: true,
-						method: personalSettingsResponseMethod,
-						status: personalSettingsResponseStatus
-					});
+				const personalSettingsResponseTimeout = setTimeout(() => {
+					if (personalSettingsResponseData && Math.round(personalSettingsResponseStatus / 200) === 1) {
+						// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
+						mutate(UserApiEndpoint, { ...user, data: personalSettingsResponseData }, false);
 
-					// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-					mutate(UserApiEndpoint);
-				} else {
-					// Disable submission as soon as 200 OK or 201 Created response was not issued
-					setSubmitting(false);
+						// Disable submission and disable form as soon as 200 OK or 201 Created response was issued
+						setIsLoading(false);
+						resetForm({ values: "" });
+						setDisableForm(!disableForm);
+					} else {
+						// Disable submission as soon as 200 OK or 201 Created response was not issued
+						setIsLoading(false);
+					}
+				}, NotificationDisplayInterval);
 
-					// Show alert message after unsuccessful 200 OK or 201 Created response is issued
-					setConfig({
-						isUser: true,
-						method: personalSettingsResponseMethod,
-						status: personalSettingsResponseStatus
-					});
-				}
+				return () => {
+					clearTimeout(personalSettingsResponseTimeout);
+				};
 			}}
 		>
-			{({ errors, handleBlur, handleSubmit, isSubmitting, touched, values }) => (
-				<form className="space-y-8 divide-y divide-gray-200" onSubmit={handleSubmit}>
+			{({ errors, handleBlur, handleSubmit, isSubmitting, values }) => (
+				<form className="space-y-8" onSubmit={handleSubmit}>
 					<div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4">
 						<div className="sm:col-span-1">
 							<label htmlFor="firstname" className="block text-sm font-medium leading-5 text-gray-700">
-								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-									firstName
-								) : (
-									<Skeleton duration={2} width={150} height={20} />
-								)}
+								{isComponentReady ? firstNameText : <Skeleton duration={2} width={150} height={20} />}
 							</label>
-							<div className="relative mt-1 rounded-md shadow-sm">
-								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+							<div className="my-1">
+								{isComponentReady ? (
 									<input
 										type="text"
 										id="firstname"
 										value={values.firstname}
 										name="firstname"
-										disabled={isSubmitting || disableForm}
+										disabled={isSubmitting || isLoading || disableForm}
 										className={classnames(
 											"block w-full rounded-md focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
-											(isSubmitting || disableForm) && "cursor-not-allowed bg-gray-300 opacity-50",
+											(isSubmitting || isLoading || disableForm) && "cursor-not-allowed bg-gray-300 opacity-50",
 											errors.firstname ? "border-red-300" : "border-gray-300"
 										)}
 										aria-describedby="firstname"
@@ -152,36 +177,30 @@ const PersonalSettingsForm = () => {
 										onBlur={handleBlur}
 									/>
 								) : (
-									<Skeleton duration={2} width={360} height={38} />
+									<Skeleton duration={2} height={38} />
 								)}
-							</div>
 
-							{errors.firstname || touched.firstname ? (
-								<span className="mt-2 block text-xs leading-5 text-red-700">
-									{errors.firstname || touched.firstname}
-								</span>
-							) : null}
+								{errors.firstname ? (
+									<span className="mt-2 block text-xs leading-5 text-red-700">{errors.firstname}</span>
+								) : null}
+							</div>
 						</div>
 
 						<div className="sm:col-span-1">
 							<label htmlFor="lastname" className="block text-sm font-medium leading-5 text-gray-700">
-								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-									lastName
-								) : (
-									<Skeleton duration={2} width={150} height={20} />
-								)}
+								{isComponentReady ? lastNameText : <Skeleton duration={2} width={150} height={20} />}
 							</label>
-							<div className="relative mt-1 rounded-md shadow-sm">
-								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+							<div className="my-1">
+								{isComponentReady ? (
 									<input
 										type="text"
 										id="lastname"
 										value={values.lastname}
 										name="lastname"
-										disabled={isSubmitting || disableForm}
+										disabled={isSubmitting || isLoading || disableForm}
 										className={classnames(
 											"block w-full rounded-md focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
-											(isSubmitting || disableForm) && "cursor-not-allowed bg-gray-300 opacity-50",
+											(isSubmitting || isLoading || disableForm) && "cursor-not-allowed bg-gray-300 opacity-50",
 											errors.lastname ? "border-red-300" : "border-gray-300"
 										)}
 										aria-describedby="lastname"
@@ -189,34 +208,30 @@ const PersonalSettingsForm = () => {
 										onBlur={handleBlur}
 									/>
 								) : (
-									<Skeleton duration={2} width={360} height={38} />
+									<Skeleton duration={2} height={38} />
 								)}
-							</div>
 
-							{errors.lastname || touched.lastname ? (
-								<span className="mt-2 block text-xs leading-5 text-red-700">{errors.lastname || touched.lastname}</span>
-							) : null}
+								{errors.lastname ? (
+									<span className="mt-2 block text-xs leading-5 text-red-700">{errors.lastname}</span>
+								) : null}
+							</div>
 						</div>
 
 						<div className="sm:col-span-1">
 							<label htmlFor="username" className="block text-sm font-medium leading-5 text-gray-700">
-								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-									userName
-								) : (
-									<Skeleton duration={2} width={150} height={20} />
-								)}
+								{isComponentReady ? userNameText : <Skeleton duration={2} width={150} height={20} />}
 							</label>
-							<div className="relative mt-1 flex rounded-md shadow-sm">
-								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+							<div className="my-1">
+								{isComponentReady ? (
 									<input
 										type="text"
 										id="username"
 										value={values.username}
 										name="username"
-										disabled={isSubmitting || disableForm}
+										disabled={isSubmitting || isLoading || disableForm}
 										className={classnames(
 											"block w-full rounded-md focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
-											(isSubmitting || disableForm) && "cursor-not-allowed bg-gray-300 opacity-50",
+											(isSubmitting || isLoading || disableForm) && "cursor-not-allowed bg-gray-300 opacity-50",
 											errors.username ? "border-red-300" : "border-gray-300"
 										)}
 										aria-describedby="username"
@@ -224,25 +239,21 @@ const PersonalSettingsForm = () => {
 										onBlur={handleBlur}
 									/>
 								) : (
-									<Skeleton duration={2} width={360} height={38} />
+									<Skeleton duration={2} height={38} />
 								)}
 							</div>
 
-							{errors.username || touched.username ? (
-								<span className="mt-2 block text-xs leading-5 text-red-700">{errors.username || touched.username}</span>
+							{errors.username ? (
+								<span className="mt-2 block text-xs leading-5 text-red-700">{errors.username}</span>
 							) : null}
 						</div>
 
 						<div className="sm:col-span-1">
 							<label htmlFor="email" className="block text-sm font-medium leading-5 text-gray-700">
-								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-									emailAddress
-								) : (
-									<Skeleton duration={2} width={150} height={20} />
-								)}
+								{isComponentReady ? emailText : <Skeleton duration={2} width={150} height={20} />}
 							</label>
 							<div className="mt-1 rounded-md shadow-sm">
-								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+								{isComponentReady ? (
 									<input
 										id="email"
 										type="email"
@@ -253,42 +264,89 @@ const PersonalSettingsForm = () => {
 										onChange={handleEmailInputChange}
 									/>
 								) : (
-									<Skeleton duration={2} width={360} height={38} />
+									<Skeleton duration={2} height={38} />
 								)}
 							</div>
 						</div>
+
+						{state?.isUser && state?.responses?.length > 0 ? (
+							<div className="sm:col-span-1">
+								<div className="relative mt-1">
+									{state.responses.map((value, key) => {
+										// Alert Messsages
+										const responseText = value.responseText;
+										const isSuccess = value.isSuccess;
+
+										return (
+											<span
+												key={key}
+												className={classnames(
+													"block break-words text-sm font-medium leading-5",
+													isSuccess ? "text-green-800" : "text-red-800"
+												)}
+											>
+												{responseText}
+											</span>
+										);
+									})}
+								</div>
+							</div>
+						) : null}
 
 						<div className="sm:col-span-1">
 							<div className="flex flex-col justify-between sm:flex-row md:flex-col lg:flex-row">
 								<div className="order-1 flex justify-start sm:mr-1 sm:w-auto sm:flex-initial sm:flex-row lg:order-1 lg:w-full">
 									<span className="inline-flex">
-										{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+										{isComponentReady ? (
 											!disableForm ? (
-												<button
-													type="submit"
-													disabled={isSubmitting || Object.keys(errors).length > 0}
-													className={classnames(
-														"relative mt-3 mr-3 inline-flex w-full items-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-sm font-medium leading-5 text-white sm:mt-0",
-														isSubmitting || Object.keys(errors).length > 0
-															? "cursor-not-allowed opacity-50"
-															: "hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-													)}
-												>
-													{isSubmitting ? saving : !disableForm ? saveChanges : updateText}
-												</button>
+												<>
+													<button
+														type="button"
+														disabled={isSubmitting || isLoading || disableForm}
+														className={classnames(
+															"rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm",
+															isSubmitting || isLoading || disableForm
+																? "cursor-not-allowed opacity-50"
+																: "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+														)}
+														onClick={() => setDisableForm(!disableForm)}
+													>
+														{cancelText}
+													</button>
+
+													<button
+														type="submit"
+														disabled={isSubmitting || isLoading || disableForm}
+														aria-disabled={isSubmitting || isLoading || disableForm}
+														aria-hidden={isSubmitting || isLoading || disableForm}
+														className={classnames(
+															"ml-3 inline-flex justify-center rounded-md border border-transparent bg-green-600 py-2 px-4 text-sm font-medium text-white shadow-sm",
+															isSubmitting ||
+																isLoading ||
+																Object.keys(errors).length > 0 ||
+																values.firstname !== firstname ||
+																values.lastname !== lastname ||
+																values.username !== username
+																? "cursor-not-allowed opacity-50"
+																: "hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+														)}
+													>
+														{isSubmitting ? saving : saveChanges}
+													</button>
+												</>
 											) : (
 												<button
 													type="button"
-													disabled={isSubmitting || Object.keys(errors).length > 0}
+													disabled={!disableForm}
 													className={classnames(
 														"relative mt-3 mr-3 inline-flex w-full items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium leading-5 text-white sm:mt-0",
-														isSubmitting || Object.keys(errors).length > 0
+														!disableForm
 															? "cursor-not-allowed opacity-50"
 															: "hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 													)}
 													onClick={() => setDisableForm(!disableForm)}
 												>
-													{isSubmitting ? saving : !disableForm ? saveChanges : updateText}
+													{updateText}
 												</button>
 											)
 										) : (

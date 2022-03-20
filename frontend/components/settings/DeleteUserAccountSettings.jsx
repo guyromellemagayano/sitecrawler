@@ -1,6 +1,5 @@
 import { MemoizedDeleteUserAccountModal } from "@components/modals/DeleteUserAccountModal";
 import { useComponentVisible } from "@hooks/useComponentVisible";
-import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
@@ -20,9 +19,6 @@ const DeleteUserAccountSettings = () => {
 	// Custom context
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
-	// SWR hooks
-	const { user } = useUser();
-
 	// Custom hooks
 	const {
 		ref: showModalRef,
@@ -40,17 +36,13 @@ const DeleteUserAccountSettings = () => {
 			<MemoizedDeleteUserAccountModal ref={showModalRef} showModal={showModal} setShowModal={setShowModal} />
 
 			<h5 className="text-xl font-bold leading-6 text-gray-900">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-					deleteUserAccountModalRequestTitle
-				) : (
-					<Skeleton duration={2} width={175} height={24} />
-				)}
+				{isComponentReady ? deleteUserAccountModalRequestTitle : <Skeleton duration={2} width={175} height={24} />}
 			</h5>
 
 			<div className="mt-6 max-w-full pt-0 pb-2 lg:max-w-3xl">
 				<div className="flex justify-start">
 					<span className="inline-flex rounded-md shadow-sm">
-						{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+						{isComponentReady ? (
 							<button
 								type="button"
 								disabled={showModal}

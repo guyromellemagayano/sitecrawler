@@ -1,11 +1,8 @@
 import { MemoizedLayout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
 import { MemoizedBillingSettingsPageLayout } from "@components/layouts/pages/BillingSettings";
-import { MemoizedLoader } from "@components/loaders";
-import { SiteCrawlerAppContext } from "@pages/_app";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
-import { useContext } from "react";
 import { SWRConfig } from "swr";
 
 const BillingSettingsAuth = () => {
@@ -13,18 +10,13 @@ const BillingSettingsAuth = () => {
 	const { t } = useTranslation("common");
 	const billingSettings = t("billingSettings");
 
-	// Custom context
-	const { isComponentReady } = useContext(SiteCrawlerAppContext);
-
-	return isComponentReady ? (
+	return (
 		<MemoizedLayout>
 			<NextSeo title={billingSettings} />
 			<MemoizedPageLayout pageTitle={billingSettings}>
 				<MemoizedBillingSettingsPageLayout />
 			</MemoizedPageLayout>
 		</MemoizedLayout>
-	) : (
-		<MemoizedLoader />
 	);
 };
 

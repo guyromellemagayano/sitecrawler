@@ -1,5 +1,4 @@
 import { MemoizedPasswordSettingsForm } from "@components/forms/PasswordSettingsForm";
-import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import { memo, useContext } from "react";
@@ -17,17 +16,10 @@ const PasswordSettings = () => {
 	// Custom context
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
-	// SWR hooks
-	const { user } = useUser();
-
 	return (
 		<div className="pb-12">
 			<h5 className="text-xl font-bold leading-6 text-gray-900">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-					passwordChangeUpdateTitle
-				) : (
-					<Skeleton duration={2} width={175} height={24} />
-				)}
+				{isComponentReady ? passwordChangeUpdateTitle : <Skeleton duration={2} width={175} height={24} />}
 			</h5>
 
 			<MemoizedPasswordSettingsForm />

@@ -1,6 +1,6 @@
-import { PasswordChangeApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
+import { PasswordChangeApiEndpoint } from "@constants/ApiEndpoints";
+import { NotificationDisplayInterval } from "@constants/GlobalValues";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
-import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import { Formik } from "formik";
@@ -17,6 +17,7 @@ import * as Yup from "yup";
  */
 const PasswordSettingsForm = () => {
 	const [disableForm, setDisableForm] = useState(true);
+	const [isLoading, setIsLoading] = useState(false);
 
 	// Translations
 	const { t } = useTranslation();
@@ -29,15 +30,13 @@ const PasswordSettingsForm = () => {
 	const tooShort = t("common:tooShort");
 	const tooLong = t("common:tooLong");
 	const bothPasswordsNeedSame = t("common:bothPasswordsNeedSame");
+	const cancelText = t("common:cancel");
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
 
 	// Custom context
-	const { isComponentReady, setConfig } = useContext(SiteCrawlerAppContext);
-
-	// SWR hooks
-	const { user } = useUser();
+	const { isComponentReady, setConfig, user, state } = useContext(SiteCrawlerAppContext);
 
 	return (
 		<Formik
@@ -54,7 +53,9 @@ const PasswordSettingsForm = () => {
 					})
 					.required(requiredField)
 			})}
-			onSubmit={async (values, { setSubmitting, resetForm }) => {
+			onSubmit={async (values, { resetForm }) => {
+				setIsLoading(true);
+
 				const body = {
 					new_password1: values.password1,
 					new_password2: values.password2
@@ -65,59 +66,54 @@ const PasswordSettingsForm = () => {
 				const passwordSettingsResponseStatus = passwordSettingsResponse?.status ?? null;
 				const passwordSettingsResponseMethod = passwordSettingsResponse?.config?.method ?? null;
 
-				if (passwordSettingsResponseData && Math.round(passwordSettingsResponseStatus / 200) === 1) {
-					// Disable submission, reset, and disable form as soon as 200 OK or 201 Created response was issued
-					setSubmitting(false);
-					resetForm({ values: "" });
-					setDisableForm(!disableForm);
+				// Show alert message after successful 200 OK or 201 Created response is issued
+				setConfig({
+					isPasswordChange: true,
+					method: passwordSettingsResponseMethod,
+					status: passwordSettingsResponseStatus,
+					isAlert: false,
+					isNotification: false
+				});
 
-					// Show alert message after successful 200 OK or 201 Created response is issued
-					setConfig({
-						isPasswordChange: true,
-						method: passwordSettingsResponseMethod,
-						status: passwordSettingsResponseStatus
-					});
+				const passwordSettingsResponseTimeout = setTimeout(() => {
+					if (passwordSettingsResponseData && Math.round(passwordSettingsResponseStatus / 200) === 1) {
+						// Mutate `password` endpoint after successful 200 OK or 201 Created response is issued
+						mutate(PasswordChangeApiEndpoint);
 
-					// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-					mutate(UserApiEndpoint);
-				} else {
-					// Disable submission, reset, and disable form as soon as 200 OK or 201 Created response was not issued
-					setSubmitting(false);
-					resetForm({ values: "" });
-					setDisableForm(!disableForm);
+						// Disable submission, reset, and disable form as soon as 200 OK or 201 Created response was issued
+						setIsLoading(false);
+						resetForm({ values: "" });
+						setDisableForm(!disableForm);
+					} else {
+						// Disable submission, reset, and disable form as soon as 200 OK or 201 Created response was not issued
+						setIsLoading(false);
+					}
+				}, NotificationDisplayInterval);
 
-					// Show alert message after successful 200 OK or 201 Created response is issued
-					setConfig({
-						isPasswordChange: true,
-						method: passwordSettingsResponseMethod,
-						status: passwordSettingsResponseStatus
-					});
-				}
+				return () => {
+					clearTimeout(passwordSettingsResponseTimeout);
+				};
 			}}
 		>
 			{({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
-				<form className="space-y-8 divide-y divide-gray-200" onSubmit={handleSubmit}>
+				<form className="space-y-8" onSubmit={handleSubmit}>
 					<div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4">
 						<div className="sm:col-span-1">
 							<label htmlFor="password1" className="block text-sm font-medium leading-5 text-gray-700">
-								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-									newPassword
-								) : (
-									<Skeleton duration={2} width={150} height={20} />
-								)}
+								{isComponentReady ? newPassword : <Skeleton duration={2} width={150} height={20} />}
 							</label>
 							<div className="relative mt-1 flex rounded-md shadow-sm">
-								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+								{isComponentReady ? (
 									<input
 										type="password"
 										id="password1"
 										value={values.password1}
 										autoComplete="current-password"
 										name="password1"
-										disabled={isSubmitting || disableForm}
+										disabled={isSubmitting || isLoading || disableForm}
 										className={classnames(
 											"block w-full rounded-md focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
-											isSubmitting || disableForm ? "cursor-not-allowed bg-gray-300 opacity-50" : null,
+											isSubmitting || isLoading || disableForm ? "cursor-not-allowed bg-gray-300 opacity-50" : null,
 											errors.password1 ? "border-red-300" : "border-gray-300"
 										)}
 										aria-describedby="password1"
@@ -132,32 +128,26 @@ const PasswordSettingsForm = () => {
 								<PasswordStrengthBar className="w-full" password={values.password1} />
 							</div>
 
-							{errors.password1 || touched.password1 ? (
-								<span className="mt-2 block text-xs leading-5 text-red-700">
-									{errors.password1 || touched.password1}
-								</span>
+							{errors.password1 ? (
+								<span className="mt-2 block text-xs leading-5 text-red-700">{errors.password1}</span>
 							) : null}
 						</div>
 
 						<div className="sm:col-span-1">
 							<label htmlFor="password2" className="block text-sm font-medium leading-5 text-gray-700">
-								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-									confirmPassword
-								) : (
-									<Skeleton duration={2} width={150} height={20} />
-								)}
+								{isComponentReady ? confirmPassword : <Skeleton duration={2} width={150} height={20} />}
 							</label>
 							<div className="relative mt-1 flex rounded-md shadow-sm">
-								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+								{isComponentReady ? (
 									<input
 										type="password"
 										id="password2"
 										value={values.password2}
 										name="password2"
-										disabled={isSubmitting || disableForm}
+										disabled={isSubmitting || isLoading || disableForm}
 										className={classnames(
 											"block w-full rounded-md focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
-											(isSubmitting || disableForm) && "cursor-not-allowed bg-gray-300 opacity-50",
+											(isSubmitting || isLoading || disableForm) && "cursor-not-allowed bg-gray-300 opacity-50",
 											errors.password2 ? "border-red-300" : "border-gray-300"
 										)}
 										aria-describedby="password2"
@@ -169,37 +159,75 @@ const PasswordSettingsForm = () => {
 								)}
 							</div>
 
-							{errors.password2 || touched.password2 ? (
-								<span className="mt-2 block text-xs leading-5 text-red-700">
-									{errors.password2 || touched.password2}
-								</span>
+							{errors.password2 ? (
+								<span className="mt-2 block text-xs leading-5 text-red-700">{errors.password2}</span>
 							) : null}
 						</div>
+
+						{state?.isPasswordChange && state?.responses?.length > 0 ? (
+							<div className="sm:col-span-1">
+								<div className="relative mt-1">
+									{state.responses.map((value, key) => {
+										// Alert Messsages
+										const responseText = value.responseText;
+										const isSuccess = value.isSuccess;
+
+										return (
+											<span
+												key={key}
+												className={classnames(
+													"block break-words text-sm font-medium leading-5",
+													isSuccess ? "text-green-800" : "text-red-800"
+												)}
+											>
+												{responseText}
+											</span>
+										);
+									})}
+								</div>
+							</div>
+						) : null}
 
 						<div className="sm:col-span-1">
 							<div className="flex flex-col justify-between sm:flex-row md:flex-col lg:flex-row">
 								<div className="order-1 flex justify-start sm:mr-1 sm:w-auto sm:flex-initial sm:flex-row lg:order-1 lg:w-full">
 									<span className="inline-flex">
-										{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+										{isComponentReady ? (
 											!disableForm ? (
-												<button
-													type="submit"
-													disabled={
-														isSubmitting ||
-														Object.keys(errors).length > 0 ||
-														(values.password1 === "" && values.password2 === "")
-													}
-													className={classnames(
-														"relative mt-3 mr-3 inline-flex w-full items-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-sm font-medium leading-5 text-white sm:mt-0",
-														isSubmitting ||
-															Object.keys(errors).length > 0 ||
-															(values.password1 === "" && values.password2 === "")
-															? "cursor-not-allowed opacity-50"
-															: "hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-													)}
-												>
-													{isSubmitting ? saving : !disableForm ? saveChanges : update}
-												</button>
+												<>
+													<button
+														type="button"
+														disabled={isSubmitting || isLoading || Object.keys(errors).length > 0}
+														className={classnames(
+															"rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm",
+															isSubmitting || isLoading || Object.keys(errors).length > 0
+																? "cursor-not-allowed opacity-50"
+																: "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+														)}
+														onClick={() => setDisableForm(!disableForm)}
+													>
+														{cancelText}
+													</button>
+
+													<button
+														type="submit"
+														disabled={isSubmitting || isLoading || (values.password1 === "" && values.password2 === "")}
+														aria-disabled={
+															isSubmitting || isLoading || (values.password1 === "" && values.password2 === "")
+														}
+														aria-hidden={
+															isSubmitting || isLoading || (values.password1 === "" && values.password2 === "")
+														}
+														className={classnames(
+															"ml-3 inline-flex justify-center rounded-md border border-transparent bg-green-600 py-2 px-4 text-sm font-medium text-white shadow-sm",
+															isSubmitting || isLoading || (values.password1 === "" && values.password2 === "")
+																? "cursor-not-allowed opacity-50"
+																: "hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+														)}
+													>
+														{isSubmitting ? saving : saveChanges}
+													</button>
+												</>
 											) : (
 												<button
 													type="button"
