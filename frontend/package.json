@@ -60,7 +60,7 @@
 		"dayjs": "^1.10.8",
 		"formik": "^2.2.9",
 		"js-cookie": "^3.0.1",
-		"logrocket": "^2.2.0",
+		"logrocket": "^2.2.1",
 		"logrocket-react": "^5.0.1",
 		"next": "^12.1.0",
 		"next-compose-plugins": "^2.2.1",
