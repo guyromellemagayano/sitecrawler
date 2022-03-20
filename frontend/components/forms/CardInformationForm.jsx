@@ -184,7 +184,7 @@ const CardInformationForm = () => {
 			}}
 		>
 			{({ handleSubmit }) => (
-				<form className="space-y-8 divide-y divide-gray-200" onSubmit={handleSubmit}>
+				<form className="space-y-8" onSubmit={handleSubmit}>
 					<div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4">
 						<div className="sm:col-span-1">
 							<label htmlFor="cardNumber" className="block text-sm font-medium leading-5 text-gray-700">
@@ -271,7 +271,7 @@ const CardInformationForm = () => {
 							{cardCvcError ? <span className="mt-2 block text-xs leading-5 text-red-700">{cardCvcError}</span> : null}
 						</div>
 
-						{state?.responses?.length > 0 ? (
+						{state?.isStripePaymentMethod && state?.responses?.length > 0 ? (
 							<div className="sm:col-span-1">
 								<div className="relative mt-1">
 									{state.responses.map((value, key) => {
@@ -304,6 +304,8 @@ const CardInformationForm = () => {
 												<button
 													type="button"
 													disabled={isSubmitting}
+													aria-disabled={isSubmitting}
+													aria-hidden={isSubmitting}
 													className={classnames(
 														"rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm",
 														isSubmitting
@@ -323,6 +325,8 @@ const CardInformationForm = () => {
 												<button
 													type="submit"
 													disabled={isSubmitting}
+													aria-disabled={isSubmitting}
+													aria-hidden={isSubmitting}
 													className={classnames(
 														"ml-3 inline-flex justify-center rounded-md border border-transparent bg-green-600 py-2 px-4 text-sm font-medium text-white shadow-sm",
 														isSubmitting
