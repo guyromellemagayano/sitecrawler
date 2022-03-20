@@ -45,6 +45,7 @@ const PaymentMethodModal = (
 	const [cardNumberError, setCardNumberError] = useState(null);
 	const [cardExpiryError, setCardExpiryError] = useState(null);
 	const [cardCvcError, setCardCvcError] = useState(null);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	// Router
 	const { asPath } = useRouter();
@@ -69,6 +70,7 @@ const PaymentMethodModal = (
 	const saveText = t("common:save");
 	const savingText = t("common:saving");
 	const processingPaymentText = t("settings:subscriptionPlans.processingPayment");
+	const loadingCardInformationText = t("settings:cardInformationSettings.loadingCardInformation");
 	const upgradePlanText = t("common:upgradePlan");
 	const userName = t("common:userName");
 
@@ -83,35 +85,33 @@ const PaymentMethodModal = (
 	const stripe = useStripe();
 	const elements = useElements();
 
-	// Handle `disableForm` and `currentPaymentMethod` states
+	// Custom variables
+	const paymentMethodsData = paymentMethods?.data ?? null;
+	const defaultPaymentMethodData = defaultPaymentMethod?.data ?? null;
+
+	// Handle `disableForm` and `currentPaymentMethod` state
 	useEffect(() => {
-		disableForm
-			? Array.isArray(paymentMethods?.data)
-				? setCurrentPaymentMethod(
-						paymentMethods?.data
-							.filter((paymentMethod) => paymentMethod.id === defaultPaymentMethod?.data?.id)
-							.map(
-								(paymentMethod) =>
-									handleConversionStringToUppercase(paymentMethod.card.brand.charAt(0)) +
-									paymentMethod.card.brand.slice(1) +
-									" - " +
-									" " +
-									"****" +
-									" " +
-									paymentMethod.card.last4
-							)
-				  )
-				: setCurrentPaymentMethod(
-						handleConversionStringToUppercase(paymentMethods?.data?.card?.brand?.charAt(0)) +
-							paymentMethods?.data?.card?.brand?.slice(1) +
-							" - " +
-							" " +
-							"****" +
-							" " +
-							paymentMethods?.data?.card?.last4
-				  )
-			: setCurrentPaymentMethod(noCurrentCardRegisteredText);
-	}, [disableForm, defaultPaymentMethod, paymentMethods]);
+		const selectedCurrentPaymentMethod = Array.isArray(paymentMethodsData)
+			? () => {
+					const dataFound =
+						paymentMethodsData?.find((paymentMethod) => paymentMethod.id === defaultPaymentMethodData?.id) ?? null;
+
+					return dataFound && Object.keys(dataFound)?.length > 0
+						? handleConversionStringToUppercase(dataFound?.card?.brand?.charAt(0)) +
+								dataFound?.card?.brand.slice(1) +
+								" - " +
+								" " +
+								"****" +
+								" " +
+								dataFound?.card?.last4
+						: noCurrentCardRegisteredText;
+			  }
+			: loadingCardInformationText;
+
+		disableForm ? setCurrentPaymentMethod(selectedCurrentPaymentMethod) : null;
+
+		return { currentPaymentMethod };
+	}, [disableForm, defaultPaymentMethodData, paymentMethods]);
 
 	// Handle form events
 	const handleFormEvents = (e) => {
@@ -218,7 +218,9 @@ const PaymentMethodModal = (
 												cardExpiry: "",
 												cardCvc: ""
 											}}
-											onSubmit={async (values, { setSubmitting, resetForm }) => {
+											onSubmit={async (values) => {
+												setIsSubmitting(true);
+
 												if (stripe && elements) {
 													const payload = await stripe.createPaymentMethod({
 														type: "card",
@@ -244,28 +246,33 @@ const PaymentMethodModal = (
 															isNotification: false
 														});
 
-														// Disable submission and reset form as soon as 200 OK or 201 Created response is issued
-														setSubmitting(false);
-														resetForm({ values: "" });
+														const paymentMethodResponseTimeout = setTimeout(() => {
+															if (paymentMethodResponseData && Math.round(paymentMethodResponseStatus / 200) === 1) {
+																// Mutate `defaultPaymentMethod` endpoint after successful 200 OK or 201 Created response is issued
+																mutate(
+																	PaymentMethodApiEndpoint,
+																	{ ...paymentMethods, data: paymentMethodResponseData },
+																	false
+																);
+																mutate(DefaultPaymentMethodApiEndpoint);
 
-														if (paymentMethodResponseData && Math.round(paymentMethodResponseStatus / 200) === 1) {
-															// Mutate `defaultPaymentMethod` endpoint after successful 200 OK or 201 Created response is issued
-															mutate(
-																PaymentMethodApiEndpoint,
-																{ ...paymentMethods, data: paymentMethodResponseData },
-																false
-															);
-															mutate(DefaultPaymentMethodApiEndpoint);
+																// Disable submission form and as soon as 200 OK or 201 Created response is issued
+																setIsSubmitting(false);
+																setDisableForm(!disableForm);
+															} else {
+																// Disable submission, reset, and disable form as soon as 200 OK or 201 Created response was not issued
+																setIsSubmitting(false);
+															}
+														}, NotificationDisplayInterval);
 
-															return setTimeout(setDisableForm(!disableForm), NotificationDisplayInterval);
-														}
-													} else {
-														console.log(payload.error);
+														return () => {
+															clearTimeout(paymentMethodResponseTimeout);
+														};
 													}
 												}
 											}}
 										>
-											{({ handleSubmit, isSubmitting }) => (
+											{({ handleSubmit }) => (
 												<form onSubmit={handleSubmit}>
 													<div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4">
 														<div className="sm:col-span-1">
@@ -361,7 +368,7 @@ const PaymentMethodModal = (
 															) : null}
 														</div>
 
-														{state?.responses?.length > 0 ? (
+														{state?.isStripePaymentMethod && state?.responses?.length > 0 ? (
 															<div className="sm:col-span-1">
 																<div className="relative mt-1">
 																	{state.responses.map((value, key) => {
@@ -400,7 +407,16 @@ const PaymentMethodModal = (
 																					? "cursor-not-allowed opacity-50"
 																					: "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 																			)}
-																			onClick={isSubmitting ? () => {} : () => setDisableForm(!disableForm)}
+																			onClick={
+																				isSubmitting
+																					? () => {}
+																					: () => {
+																							setCardNumberError(null);
+																							setCardExpiryError(null);
+																							setCardCvcError(null);
+																							setDisableForm(!disableForm);
+																					  }
+																			}
 																		>
 																			{cancelText}
 																		</button>
@@ -408,6 +424,8 @@ const PaymentMethodModal = (
 																		<button
 																			type="submit"
 																			disabled={isSubmitting}
+																			aria-disabled={isSubmitting}
+																			aria-hidden={isSubmitting}
 																			className={classnames(
 																				"ml-3 inline-flex justify-center rounded-md border border-transparent bg-green-600 py-2 px-4 text-sm font-medium text-white shadow-sm",
 																				isSubmitting

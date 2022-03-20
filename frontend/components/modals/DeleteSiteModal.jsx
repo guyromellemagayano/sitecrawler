@@ -1,10 +1,9 @@
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
-import { ModalDisplayInterval } from "@constants/GlobalValues";
+import { ModalDisplayInterval, NotificationDisplayInterval } from "@constants/GlobalValues";
 import { DashboardSitesLink } from "@constants/PageLinks";
 import { Dialog, Transition } from "@headlessui/react";
 import { handleDeleteMethod } from "@helpers/handleHttpMethods";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/outline";
-import { TrashIcon } from "@heroicons/react/solid";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
@@ -47,13 +46,9 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 
 	// Handle site deletion
 	const handleSiteDeletion = () => {
-		let isMounted = true;
-
 		setIsLoading(true);
 
 		(async () => {
-			if (!isMounted) return;
-
 			const siteDeleteResponse = await handleDeleteMethod(SiteIdApiEndpoint);
 			const siteDeleteResponseData = siteDeleteResponse?.data ?? null;
 			const siteDeleteResponseStatus = siteDeleteResponse?.status ?? null;
@@ -63,31 +58,31 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 			setConfig({
 				isSites: true,
 				method: siteDeleteResponseMethod,
-				status: siteDeleteResponseStatus
+				status: siteDeleteResponseStatus,
+				isAlert: false,
+				isNotification: false
 			});
 
-			if (siteDeleteResponseData !== null && Math.round(siteDeleteResponseStatus / 200) === 1) {
-				setIsHidden(true);
+			const siteDeleteResponseTimeout = setTimeout(() => {
+				if (siteDeleteResponseData !== null && Math.round(siteDeleteResponseStatus / 200) === 1) {
+					setIsHidden(true);
 
-				const timeout = setTimeout(() => {
-					// Mutate "user" endpoint after successful 200 OK or 201 Created response is issued
-					mutate(SitesApiEndpoint);
+					const timeout = setTimeout(() => {
+						// Mutate "user" endpoint after successful 200 OK or 201 Created response is issued
+						mutate(SitesApiEndpoint);
 
-					// Redirect to the sites dashboard page after successful 200 OK or 201 Created response is issued
-					push(DashboardSitesLink);
-				}, ModalDisplayInterval);
+						// Redirect to the sites dashboard page after successful 200 OK or 201 Created response is issued
+						push(DashboardSitesLink);
+					}, ModalDisplayInterval);
 
-				return () => {
-					clearTimeout(timeout);
-				};
-			} else {
-				setIsLoading(false);
-			}
+					return () => {
+						clearTimeout(timeout);
+					};
+				} else {
+					setIsLoading(false);
+				}
+			}, NotificationDisplayInterval);
 		})();
-
-		return () => {
-			isMounted = false;
-		};
 	};
 
 	// Handle close modal
@@ -202,16 +197,7 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 											: "hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
 									)}
 								>
-									<span className="flex items-center space-x-2">
-										{isLoading ? (
-											processingText
-										) : (
-											<>
-												<TrashIcon className="mr-2 h-4 w-4" aria-hidden="true" />
-												{proceedText}
-											</>
-										)}
-									</span>
+									<span className="flex items-center space-x-2">{isLoading ? processingText : proceedText}</span>
 								</button>
 
 								<button
