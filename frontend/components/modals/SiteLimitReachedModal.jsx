@@ -33,20 +33,7 @@ const SiteLimitReachedModal = ({ showModal = false, setShowModal }, ref) => {
 	// Handle `onClick` event on <Link> element
 	const handleRouterOnClick = () => {
 		setIsLoading(true);
-
-		let isMounted = true;
-
-		(async () => {
-			if (!isMounted) return;
-
-			// Redirect to the subscription plans page after successful 200 OK or 201 Created response is issued
-			setIsLoading(false);
-			push(SubscriptionPlansSettingsLink);
-		})();
-
-		return () => {
-			isMounted = false;
-		};
+		push(SubscriptionPlansSettingsLink);
 	};
 
 	// Handle close modal
@@ -144,7 +131,6 @@ const SiteLimitReachedModal = ({ showModal = false, setShowModal }, ref) => {
 										isLoading ? "cursor-not-allowed opacity-50" : "hover:bg-gray-50"
 									)}
 									onClick={isLoading ? () => {} : handleCloseModal}
-									ref={ref}
 								>
 									{closeText}
 								</button>

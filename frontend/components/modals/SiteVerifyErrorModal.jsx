@@ -1,6 +1,6 @@
 import { SubscriptionPlansSettingsLink } from "@constants/PageLinks";
 import { Dialog, Transition } from "@headlessui/react";
-import { ExclamationIcon, ExternalLinkIcon } from "@heroicons/react/outline";
+import { ExclamationIcon } from "@heroicons/react/outline";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
@@ -121,16 +121,7 @@ const SiteVerifyErrorModal = ({ showModal = false, setShowModal }, ref) => {
 											: "hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
 									)}
 								>
-									<span className="flex items-center space-x-2">
-										{isLoading ? (
-											loaderMessage
-										) : (
-											<>
-												<ExternalLinkIcon className="mr-2 h-4 w-4" aria-hidden="true" />
-												{goBackText}
-											</>
-										)}
-									</span>
+									<span className="flex items-center space-x-2">{isLoading ? loaderMessage : goBackText}</span>
 								</button>
 
 								<button

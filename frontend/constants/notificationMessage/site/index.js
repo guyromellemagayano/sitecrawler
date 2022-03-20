@@ -1791,8 +1791,6 @@ export const VerifyUrlStepNotificationMessage = ({
 		...dataResponse
 	};
 
-	console.log(dataMethod, dataResponse, config, state);
-
 	return handleNotificationMessages({
 		dispatch,
 		config,
