@@ -1,6 +1,7 @@
 import { MemoizedMobileSidebarButton } from "@components/buttons/MobileSidebarButton";
 import { MemoizedNotAllowedFeatureModal } from "@components/modals/NotAllowedFeatureModal";
 import { MemoizedSiteLimitReachedModal } from "@components/modals/SiteLimitReachedModal";
+import { ResetLoadingStateTimeout } from "@constants/GlobalValues";
 import { AddNewSiteLink } from "@constants/PageLinks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
@@ -90,13 +91,21 @@ const AddSite = ({ handleOpenSidebar }) => {
 
 	// Handle `onClick` event on <Link> element
 	const handleRouterOnClick = () => {
-		const addNewSitePage = AddNewSiteLink + "?step=1&edit=false&verified=false";
+		let addNewSitePage = AddNewSiteLink + "?step=1&edit=false&verified=false";
 
-		if (asPath.includes(addNewSitePage)) {
+		if (asPath.includes(AddNewSiteLink)) {
 			setIsNotAllowedFeatureModalVisible(!isNotAllowedFeatureModalVisible);
 		} else {
-			setIsLoading(!isLoading);
+			setIsLoading(true);
 			push(addNewSitePage);
+
+			const timeout = setTimeout(() => {
+				setIsLoading(false);
+			}, ResetLoadingStateTimeout);
+
+			return () => {
+				clearTimeout(timeout);
+			};
 		}
 	};
 
@@ -175,14 +184,14 @@ const AddSite = ({ handleOpenSidebar }) => {
 								type="button"
 								disabled={isLoading}
 								aria-disabled={isLoading}
-								onClick={!isLoading ? handleRouterOnClick : () => {}}
+								onClick={isLoading ? () => {} : handleRouterOnClick}
 								aria-hidden={isLoading}
 								className={classnames(
 									"inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm",
 									asPath.includes(AddNewSiteLink)
 										? "cursor-pointer bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
 										: isLoading
-										? "cursor-not-allowed opacity-50"
+										? "cursor-not-allowed bg-green-500 opacity-50"
 										: "cursor-pointer bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
 								)}
 							>
