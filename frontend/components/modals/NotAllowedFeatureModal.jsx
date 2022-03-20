@@ -1,7 +1,7 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationIcon } from "@heroicons/react/outline";
 import useTranslation from "next-translate/useTranslation";
-import { forwardRef, Fragment, memo } from "react";
+import { forwardRef, Fragment, memo, useRef } from "react";
 
 /**
  * Custom function to render the `NotAllowedFeatureModal` component
@@ -16,6 +16,9 @@ const NotAllowedFeatureModal = ({ showModal = false, setShowModal }, ref) => {
 	const notAllowedFeatureMessage = t("notAllowedFeatureMessage");
 	const closeText = t("close");
 
+	// Custom hooks
+	const NotAllowedFeatureModalRef = useRef(null);
+
 	// Handle close modal
 	const handleCloseModal = () => {
 		setShowModal(false);
@@ -23,7 +26,12 @@ const NotAllowedFeatureModal = ({ showModal = false, setShowModal }, ref) => {
 
 	return (
 		<Transition.Root show={showModal} as={Fragment}>
-			<Dialog as="div" className="fixed inset-0 z-50 overflow-y-auto" initialFocus={ref} onClose={handleCloseModal}>
+			<Dialog
+				as="div"
+				className="fixed inset-0 z-50 overflow-y-auto"
+				initialFocus={NotAllowedFeatureModalRef}
+				onClose={handleCloseModal}
+			>
 				<div className="flex min-h-screen items-end justify-center p-4 text-center sm:block sm:p-0">
 					<Transition.Child
 						as={Fragment}
@@ -72,8 +80,9 @@ const NotAllowedFeatureModal = ({ showModal = false, setShowModal }, ref) => {
 							<div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
 								<button
 									type="button"
-									className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
+									className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300  bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50   focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
 									onClick={handleCloseModal}
+									ref={ref}
 								>
 									{closeText}
 								</button>
