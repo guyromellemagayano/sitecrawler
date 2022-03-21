@@ -1,21 +1,12 @@
 import { MemoizedSiteSelect } from "@components/select/SiteSelect";
 import { SiteLogoWhite } from "@components/svgs/SiteLogo";
-import { SitesApiEndpoint } from "@constants/ApiEndpoints";
-import {
-	AuthAppLogo,
-	orderingByNameQuery,
-	RevalidationInterval,
-	sortByFinishedAtDescending
-} from "@constants/GlobalValues";
-import { DashboardSitesLink, ScanSlug, SettingsSlug } from "@constants/PageLinks";
+import { AuthAppLogo } from "@constants/GlobalValues";
+import { DashboardSitesLink, SettingsSlug } from "@constants/PageLinks";
 import { SidebarMenus } from "@constants/SidebarMenus";
 import { CogIcon, DocumentTextIcon, PhotographIcon } from "@heroicons/react/outline";
 import { ArrowLeftIcon, LinkIcon, SearchIcon, ViewGridIcon } from "@heroicons/react/solid";
-import { useScan } from "@hooks/useScan";
-import { useStats } from "@hooks/useStats";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
-import { handleConversionStringToNumber } from "@utils/convertCase";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -34,29 +25,9 @@ const SiteMenu = () => {
 
 	// Router
 	const { asPath, pathname, query, prefetch } = useRouter();
-	const { siteId } = query;
-
-	// Custom variables
-	const sanitizedSiteId = handleConversionStringToNumber(siteId);
 
 	// Custom context
-	const { isComponentReady, isUserReady } = useContext(SiteCrawlerAppContext);
-
-	// Custom `scan` API endpoint
-	let customScanApiEndpointQuery = "?" + orderingByNameQuery + sortByFinishedAtDescending;
-	const customScanApiEndpoint = SitesApiEndpoint + sanitizedSiteId + ScanSlug;
-	const fullCustomScanApiEndpoint = customScanApiEndpoint + customScanApiEndpointQuery;
-
-	// SWR hooks
-	const { scan, scanObjId } = useScan(fullCustomScanApiEndpoint, {
-		refreshInterval: RevalidationInterval
-	});
-
-	// Custom `stats` API endpoint
-	const customStatsApiEndpoint = scanObjId ? customScanApiEndpoint + scanObjId + "/" : null;
-
-	// `stats` SWR hooks
-	const { stats } = useStats(customStatsApiEndpoint);
+	const { isComponentReady, isUserReady, stats, scan, siteId, querySiteId } = useContext(SiteCrawlerAppContext);
 
 	// Custom variables
 	const scanCount = scan?.data?.count ?? 0;
@@ -69,7 +40,7 @@ const SiteMenu = () => {
 
 	// Prefetch page
 	useEffect(() => {
-		prefetch(`/dashboard/sites/${sanitizedSiteId}/overview`);
+		prefetch(`/dashboard/sites/${querySiteId}/overview`);
 	}, []);
 
 	return (
@@ -86,7 +57,7 @@ const SiteMenu = () => {
 				<div className="flex flex-1 flex-col overflow-y-auto">
 					<nav className="flex-1 px-4">
 						{SiteSidebarMenus.filter((e) => {
-							return !asPath?.includes(DashboardSitesLink + sanitizedSiteId) ? e.slug !== "navigation" : true;
+							return !asPath?.includes(DashboardSitesLink + querySiteId) ? e.slug !== "navigation" : true;
 						}).map((value, index) => {
 							return (
 								<div key={index} className="mb-4">
@@ -101,7 +72,7 @@ const SiteMenu = () => {
 													<Link
 														key={index2}
 														href={DashboardSitesLink + "[siteId]" + value2.url}
-														as={DashboardSitesLink + sanitizedSiteId + value2.url}
+														as={DashboardSitesLink + querySiteId + value2.url}
 														passHref
 													>
 														<a
