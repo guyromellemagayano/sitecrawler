@@ -1,4 +1,4 @@
-import { SubscriptionPlansSettingsLink } from "@constants/PageLinks";
+import { DashboardSitesLink } from "@constants/PageLinks";
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationIcon } from "@heroicons/react/outline";
 import { classnames } from "@utils/classnames";
@@ -32,20 +32,7 @@ const SiteVerifyErrorModal = ({ showModal = false, setShowModal }, ref) => {
 	// Handle `onClick` event on <Link> element
 	const handleRouterOnClick = () => {
 		setIsLoading(true);
-
-		let isMounted = true;
-
-		(async () => {
-			if (!isMounted) return;
-
-			// Redirect to the subscription plans page after successful 200 OK or 201 Created response is issued
-			setIsLoading(false);
-			push(SubscriptionPlansSettingsLink);
-		})();
-
-		return () => {
-			isMounted = false;
-		};
+		push(DashboardSitesLink);
 	};
 
 	// Handle close modal

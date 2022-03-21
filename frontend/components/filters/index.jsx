@@ -120,8 +120,6 @@ const Filter = ({
 
 	// Handle filter URLs
 	const handleFilterUrl = (e) => {
-		e.preventDefault();
-
 		const filterValue = e.target.value;
 		const filterChecked = e.target.checked;
 
@@ -129,73 +127,104 @@ const Filter = ({
 		newPath = handleRemoveUrlParameter(newPath, "page");
 
 		if (filterType === "links") {
-			if (filterValue === "linksWithIssues") {
+			if (filterValue === "linksWithIssues" && filterChecked) {
 				setLinksWithIssuesFilter(true);
+				setInternalLinksFilter(false);
+				setExternalLinksFilter(false);
+				setNonWebLinksFilter(false);
 				setNoLinkIssuesFilter(false);
 				setAllLinksFilter(false);
 
-				filterQueryString?.delete("status") ?? null;
-				filterQueryString?.delete("status__neq") ?? null;
-
-				if (newPath.includes("status")) newPath = handleRemoveUrlParameter(newPath, "status");
-				if (newPath.includes("status__neq")) newPath = handleRemoveUrlParameter(newPath, "status__neq");
+				newPath = handleRemoveUrlParameter(newPath, "status");
 
 				if (newPath.includes("?")) newPath += `&status__neq=OK`;
 				else newPath += `?status__neq=OK`;
-			} else if (filterValue === "noLinkIssues") {
+			} else if (filterValue === "linksWithIssues" && !filterChecked) {
+				filterQueryString?.delete("status__neq") ?? null;
+
+				if (newPath.includes("status__neq")) newPath = handleRemoveUrlParameter(newPath, "status__neq");
+
 				setLinksWithIssuesFilter(false);
+			}
+
+			if (filterValue === "noLinkIssues" && filterChecked) {
+				setLinksWithIssuesFilter(false);
+				setInternalLinksFilter(false);
+				setExternalLinksFilter(false);
+				setNonWebLinksFilter(false);
 				setNoLinkIssuesFilter(true);
 				setAllLinksFilter(false);
 
-				filterQueryString?.delete("status__neq") ?? null;
-				filterQueryString?.delete("status") ?? null;
-
-				if (newPath.includes("status__neq")) newPath = handleRemoveUrlParameter(newPath, "status__neq");
-				if (newPath.includes("status")) newPath = handleRemoveUrlParameter(newPath, "status");
+				newPath = handleRemoveUrlParameter(newPath, "status__neq");
 
 				if (newPath.includes("?")) newPath += `&status=OK`;
 				else newPath += `?status=OK`;
-			} else if (filterValue === "internalLinks") {
+			} else if (filterValue === "noLinkIssues" && !filterChecked) {
+				filterQueryString?.delete("status") ?? null;
+
+				if (newPath.includes("status")) newPath = handleRemoveUrlParameter(newPath, "status");
+
+				setNoLinkIssuesFilter(false);
+			}
+
+			if (filterValue === "internalLinks" && filterChecked) {
 				setInternalLinksFilter(true);
 				setExternalLinksFilter(false);
 				setNonWebLinksFilter(false);
 				setAllLinksFilter(false);
 
+				newPath = handleRemoveUrlParameter(newPath, "type");
+
+				if (newPath.includes("?")) newPath += `&type=PAGE`;
+				else newPath += `?type=PAGE`;
+			} else if (filterValue === "internalLinks" && !filterChecked) {
 				filterQueryString?.delete("type") ?? null;
 
 				if (newPath.includes("type")) newPath = handleRemoveUrlParameter(newPath, "type");
 
-				if (newPath.includes("?")) newPath += `&type=PAGE`;
-				else newPath += `?type=PAGE`;
-			} else if (filterValue === "externalLinks") {
+				setInternalLinksFilter(false);
+			}
+
+			if (filterValue === "externalLinks" && filterChecked) {
 				setInternalLinksFilter(false);
 				setExternalLinksFilter(true);
 				setNonWebLinksFilter(false);
 				setAllLinksFilter(false);
 
-				filterQueryString?.delete("type") ?? null;
-
-				if (newPath.includes("type")) newPath = handleRemoveUrlParameter(newPath, "type");
+				newPath = handleRemoveUrlParameter(newPath, "type");
 
 				if (newPath.includes("?")) newPath += `&type=EXTERNAL`;
 				else newPath += `?type=EXTERNAL`;
-			} else if (filterValue === "nonWebLinks") {
-				setInternalLinksFilter(false);
-				setExternalLinksFilter(false);
-				setNonWebLinksFilter(true);
-				setAllLinksFilter(false);
-
+			} else if (filterValue === "externalLinks" && !filterChecked) {
 				filterQueryString?.delete("type") ?? null;
 
 				if (newPath.includes("type")) newPath = handleRemoveUrlParameter(newPath, "type");
 
+				setExternalLinksFilter(false);
+			}
+
+			if (filterValue === "nonWebLinks" && filterChecked) {
+				setNonWebLinksFilter(true);
+				setInternalLinksFilter(false);
+				setExternalLinksFilter(false);
+				setAllLinksFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "type");
+
 				if (newPath.includes("?")) newPath += `&type=NON_WEB`;
 				else newPath += `?type=NON_WEB`;
-			} else {
+			} else if (filterValue === "nonWebLinks" && !filterChecked) {
+				filterQueryString?.delete("type") ?? null;
+
+				if (newPath.includes("type")) newPath = handleRemoveUrlParameter(newPath, "type");
+
+				setNonWebLinksFilter(false);
+			}
+
+			if (filterValue === "allLinks" && filterChecked) {
 				setAllLinksFilter(true);
 				setLinksWithIssuesFilter(false);
 				setNoLinkIssuesFilter(false);
-				setNonWebLinksFilter(false);
 				setExternalLinksFilter(false);
 				setInternalLinksFilter(false);
 
@@ -302,29 +331,44 @@ const Filter = ({
 			}
 		} else {
 			// Sites filter
-			if (filterValue === "verified") {
+			if (filterValue === "verified" && filterChecked) {
 				setVerifiedFilter(true);
 				setUnverifiedFilter(false);
 				setAllSitesFilter(false);
 
+				newPath = handleRemoveUrlParameter(newPath, "verified");
+
+				if (newPath.includes("?")) newPath += `&verified=true`;
+				else newPath += `?verified=true`;
+			} else if (filterValue === "verified" && !filterChecked) {
 				filterQueryString?.delete("verified") ?? null;
 
 				if (newPath.includes("verified")) newPath = handleRemoveUrlParameter(newPath, "verified");
 
-				if (newPath.includes("?")) newPath += `&verified=true`;
-				else newPath += `?verified=true`;
-			} else if (filterValue === "unverified") {
+				setVerifiedFilter(false);
+			}
+
+			if (filterValue === "unverified" && filterChecked) {
 				setVerifiedFilter(false);
 				setUnverifiedFilter(true);
 				setAllSitesFilter(false);
 
+				newPath = handleRemoveUrlParameter(newPath, "verified");
+
+				if (newPath.includes("?")) newPath += `&verified=false`;
+				else newPath += `?verified=false`;
+			} else if (filterValue === "unverified" && !filterChecked) {
 				filterQueryString?.delete("verified") ?? null;
 
 				if (newPath.includes("verified")) newPath = handleRemoveUrlParameter(newPath, "verified");
 
-				if (newPath.includes("?")) newPath += `&verified=false`;
-				else newPath += `?verified=false`;
-			} else {
+				setUnverifiedFilter(false);
+			}
+
+			if (
+				(filterValue === "allSites" && filterChecked) ||
+				(filterValue !== "unverified" && filterValue !== "verified")
+			) {
 				setVerifiedFilter(false);
 				setUnverifiedFilter(false);
 				setAllSitesFilter(true);
@@ -346,163 +390,133 @@ const Filter = ({
 	// Handle filters on load
 	useEffect(() => {
 		if (filterQueryString) {
-			switch (filterType) {
-				case "links":
-					(() => {
-						const sanitizedStatusOkFilterQueryString = filterQueryString.has("status");
-						const sanitizedStatusNotEqualOkFilterQueryString = filterQueryString.has("status__neq");
-						const sanitizedTypeFilterQueryString = filterQueryString.get("type");
+			if (filterType === "links") {
+				if (filterQueryString.get("status__neq") === "OK") {
+					setLinksWithIssuesFilter(true);
+				} else {
+					setLinksWithIssuesFilter(false);
+				}
 
-						if (sanitizedStatusOkFilterQueryString) {
-							setAllLinksFilter(false);
-							setNoLinkIssuesFilter(true);
-							setLinksWithIssuesFilter(false);
+				if (filterQueryString.get("status") === "OK") {
+					setNoLinkIssuesFilter(true);
+				} else {
+					setNoLinkIssuesFilter(false);
+				}
 
-							if (sanitizedTypeFilterQueryString === "PAGE") {
-								setInternalLinksFilter(true);
-								setExternalLinksFilter(false);
-								setNonWebLinksFilter(false);
-							} else if (
-								sanitizedTypeFilterQueryString === "EXTERNAL" ||
-								sanitizedTypeFilterQueryString === "EXTERNALOTHER"
-							) {
-								setInternalLinksFilter(false);
-								setExternalLinksFilter(true);
-								setNonWebLinksFilter(false);
-							} else if (sanitizedTypeFilterQueryString === "NON_WEB") {
-								setInternalLinksFilter(false);
-								setExternalLinksFilter(false);
-								setNonWebLinksFilter(true);
-							} else {
-								setInternalLinksFilter(false);
-								setExternalLinksFilter(false);
-								setNonWebLinksFilter(false);
-							}
-						} else if (sanitizedStatusNotEqualOkFilterQueryString) {
-							setAllLinksFilter(false);
-							setNoLinkIssuesFilter(false);
-							setLinksWithIssuesFilter(true);
+				if (filterQueryString.get("type") === "PAGE") {
+					setInternalLinksFilter(true);
+				} else {
+					setInternalLinksFilter(false);
+				}
 
-							if (sanitizedTypeFilterQueryString === "PAGE") {
-								setInternalLinksFilter(true);
-								setExternalLinksFilter(false);
-								setNonWebLinksFilter(false);
-							} else if (
-								sanitizedTypeFilterQueryString === "EXTERNAL" ||
-								sanitizedTypeFilterQueryString === "EXTERNALOTHER"
-							) {
-								setInternalLinksFilter(false);
-								setExternalLinksFilter(true);
-								setNonWebLinksFilter(false);
-							} else if (sanitizedTypeFilterQueryString === "NON_WEB") {
-								setInternalLinksFilter(false);
-								setExternalLinksFilter(false);
-								setNonWebLinksFilter(true);
-							} else {
-								setInternalLinksFilter(false);
-								setExternalLinksFilter(false);
-								setNonWebLinksFilter(false);
-							}
-						} else {
-							setAllLinksFilter(true);
-							setNoLinkIssuesFilter(false);
-							setLinksWithIssuesFilter(false);
-							setInternalLinksFilter(false);
-							setExternalLinksFilter(false);
-							setNonWebLinksFilter(false);
-						}
+				if (filterQueryString.get("type") === "EXTERNAL" || filterQueryString.get("type") === "EXTERNALOTHER") {
+					setExternalLinksFilter(true);
+				} else {
+					setExternalLinksFilter(false);
+				}
 
-						return {
-							noLinkIssuesFilter,
-							linksWithIssuesFilter,
-							internalLinksFilter,
-							externalLinksFilter,
-							nonWebLinksFilter,
-							allLinksFilter
-						};
-					})();
+				if (filterQueryString.get("type") === "NON_WEB") {
+					setNonWebLinksFilter(true);
+				} else {
+					setNonWebLinksFilter(false);
+				}
 
-					break;
-				case "pages":
-					if (filterQueryString.has("tls_status")) {
-						setTlsStatusFilter(true);
-					} else {
-						setTlsStatusFilter(false);
-					}
+				if (
+					!filterQueryString.has("type") &&
+					!filterQueryString.has("status") &&
+					!filterQueryString.has("status__neq")
+				) {
+					setAllLinksFilter(true);
+				} else {
+					setAllLinksFilter(false);
+				}
 
-					if (filterQueryString.has("tls_images")) {
-						setImagesTlsStatusFilter(true);
-					} else {
-						setImagesTlsStatusFilter(false);
-					}
+				return {
+					noLinkIssuesFilter,
+					linksWithIssuesFilter,
+					internalLinksFilter,
+					externalLinksFilter,
+					nonWebLinksFilter,
+					allLinksFilter
+				};
+			} else if (filterType === "pages") {
+				if (filterQueryString.has("tls_status")) {
+					setTlsStatusFilter(true);
+				} else {
+					setTlsStatusFilter(false);
+				}
 
-					if (filterQueryString.has("tls_scripts")) {
-						setScriptsTlsStatusFilter(true);
-					} else {
-						setScriptsTlsStatusFilter(false);
-					}
+				if (filterQueryString.has("tls_images")) {
+					setImagesTlsStatusFilter(true);
+				} else {
+					setImagesTlsStatusFilter(false);
+				}
 
-					if (filterQueryString.has("tls_stylesheets")) {
-						setStylesheetsTlsStatusFilter(true);
-					} else {
-						setStylesheetsTlsStatusFilter(false);
-					}
+				if (filterQueryString.has("tls_scripts")) {
+					setScriptsTlsStatusFilter(true);
+				} else {
+					setScriptsTlsStatusFilter(false);
+				}
 
-					if (
-						!filterQueryString.has("tls_status") &&
-						!filterQueryString.has("tls_images") &&
-						!filterQueryString.has("tls_scripts") &&
-						!filterQueryString.has("tls_stylesheets")
-					) {
-						setAllPagesFilter(true);
-					} else {
-						setAllPagesFilter(false);
-					}
+				if (filterQueryString.has("tls_stylesheets")) {
+					setStylesheetsTlsStatusFilter(true);
+				} else {
+					setStylesheetsTlsStatusFilter(false);
+				}
 
-					return {
-						tlsStatusFilter,
-						imagesTlsStatusFilter,
-						scriptsTlsStatusFilter,
-						stylesheetsTlsStatusFilter,
-						allPagesFilter
-					};
-				default:
-					(() => {
-						const sanitizedVerifiedFilterQueryString = filterQueryString.get("verified");
+				if (
+					!filterQueryString.has("tls_status") &&
+					!filterQueryString.has("tls_images") &&
+					!filterQueryString.has("tls_scripts") &&
+					!filterQueryString.has("tls_stylesheets")
+				) {
+					setAllPagesFilter(true);
+				} else {
+					setAllPagesFilter(false);
+				}
 
-						if (sanitizedVerifiedFilterQueryString === "true") {
-							setVerifiedFilter(true);
-							setUnverifiedFilter(false);
-							setAllSitesFilter(false);
-						} else if (sanitizedVerifiedFilterQueryString === "false") {
-							setVerifiedFilter(false);
-							setUnverifiedFilter(true);
-							setAllSitesFilter(false);
-						} else {
-							setVerifiedFilter(false);
-							setUnverifiedFilter(false);
-							setAllSitesFilter(true);
-						}
+				return {
+					tlsStatusFilter,
+					imagesTlsStatusFilter,
+					scriptsTlsStatusFilter,
+					stylesheetsTlsStatusFilter,
+					allPagesFilter
+				};
+			} else {
+				if (filterQueryString.get("verified") === "true") {
+					setVerifiedFilter(true);
+				} else {
+					setVerifiedFilter(false);
+				}
 
-						return {
-							verifiedFilter,
-							unverifiedFilter,
-							allSitesFilter
-						};
-					})();
+				if (filterQueryString.get("verified") === "false") {
+					setUnverifiedFilter(true);
+				} else {
+					setUnverifiedFilter(false);
+				}
 
-					break;
+				if (!filterQueryString.has("verified")) {
+					setAllSitesFilter(true);
+				} else {
+					setAllSitesFilter(false);
+				}
+
+				return {
+					verifiedFilter,
+					unverifiedFilter,
+					allSitesFilter
+				};
 			}
 		}
-	}, []);
+	}, [filterQueryString]);
 
 	return isComponentReady ? (
-		<form className="rounded-lg border border-gray-300 px-4 py-5 sm:px-6 lg:flex lg:justify-between">
+		<form className="rounded-lg border border-gray-300 bg-white px-4 py-5 sm:px-6 lg:flex lg:justify-between">
 			<div className="-ml-4 flex-wrap items-center sm:flex-nowrap lg:-mt-2 lg:flex">
 				<h4 className="ml-4 mb-4 mt-2 mr-1 font-semibold leading-4 text-gray-600 lg:mb-0">{filterText}</h4>
 
 				{filtersArray
-					?.filter(
+					.filter(
 						(e) =>
 							e.type === filterType &&
 							e.value !== "allSites" &&
@@ -511,7 +525,7 @@ const Filter = ({
 							e.value !== "allImages" &&
 							e.value !== "allSeo"
 					)
-					?.map((value, key) => (
+					.map((value, key) => (
 						<div key={key} className="ml-4 mt-2">
 							<label className="flex items-center space-x-2">
 								<input
@@ -524,12 +538,12 @@ const Filter = ({
 								<span className="ml-2 text-left text-xs font-normal leading-4 text-gray-500">{value.label}</span>
 							</label>
 						</div>
-					)) ?? null}
+					))}
 			</div>
 
 			<div className="flex-wrap items-center justify-end space-x-4 sm:flex-nowrap lg:-mt-2 lg:flex">
 				{filtersArray
-					?.filter(
+					.filter(
 						(e) =>
 							e.type === filterType &&
 							(e.value === "allSites" ||
@@ -538,7 +552,7 @@ const Filter = ({
 								e.value === "allImages" ||
 								e.value === "allSeo")
 					)
-					?.map((value, key) => (
+					.map((value, key) => (
 						<div key={key} className="ml-4 mt-2">
 							<label className="flex items-center space-x-2">
 								<input
@@ -551,16 +565,16 @@ const Filter = ({
 								<span className="text-left text-xs font-normal leading-4 text-gray-500">{value.label}</span>
 							</label>
 						</div>
-					)) ?? null}
+					))}
 			</div>
 		</form>
 	) : (
-		<div className="rounded-lg border border-gray-300 px-4 py-5 sm:px-6 lg:flex lg:justify-between">
+		<div className="rounded-lg border border-gray-300 bg-white px-4 py-5 sm:px-6 lg:flex lg:justify-between">
 			<div className="-ml-4 flex-wrap items-center sm:flex-nowrap lg:-mt-2 lg:flex">
 				<Skeleton duration={2} width={50} height={16} className="my-4 ml-4 mr-1 lg:mb-0" />
 
 				{filtersArray
-					?.filter(
+					.filter(
 						(e) =>
 							e.type === filterType &&
 							e.value !== "allSites" &&
@@ -569,7 +583,7 @@ const Filter = ({
 							e.value !== "allImages" &&
 							e.value !== "allSeo"
 					)
-					?.map((value, key) => (
+					.map((value, key) => (
 						<div key={key} className="ml-4 mt-2">
 							<div className="flex items-center space-x-2">
 								<Skeleton duration={2} width={16} height={16} className="h-4 w-4 rounded" />
@@ -581,7 +595,7 @@ const Filter = ({
 
 			<div className="flex-wrap items-center justify-end space-x-4 sm:flex-nowrap lg:-mt-2 lg:flex">
 				{filtersArray
-					?.filter(
+					.filter(
 						(e) =>
 							e.type === filterType &&
 							(e.value === "allSites" ||
@@ -590,7 +604,7 @@ const Filter = ({
 								e.value === "allImages" ||
 								e.value === "allSeo")
 					)
-					?.map((value, key) => (
+					.map((value, key) => (
 						<div key={key} className="ml-4 mt-2">
 							<div className="flex items-center space-x-2">
 								<Skeleton duration={2} width={16} height={16} className="h-4 w-4 rounded" />
