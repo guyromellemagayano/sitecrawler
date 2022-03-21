@@ -49,7 +49,7 @@ const SiteList = ({ data = null, handleSiteSelectOnClick }) => {
 	};
 
 	// Custom context
-	const { isComponentReady, isUserReady } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
 	// Custom `scan` API endpoint
 	let customScanApiEndpointQuery = "?" + orderingByNameQuery + sortByFinishedAtDescending;
@@ -65,7 +65,9 @@ const SiteList = ({ data = null, handleSiteSelectOnClick }) => {
 	const customStatsApiEndpoint = scanObjId ? customScanApiEndpoint + scanObjId + "/" : null;
 
 	// `stats` SWR hooks
-	const { stats } = useStats(customStatsApiEndpoint);
+	const { stats } = useStats(customStatsApiEndpoint, {
+		refreshInterval: RevalidationInterval
+	});
 
 	// Custom variables
 	const scanCount = scan?.data?.count ?? 0;
