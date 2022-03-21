@@ -1,7 +1,6 @@
 import { SubscriptionPlansSettingsLink } from "@constants/PageLinks";
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationIcon } from "@heroicons/react/outline";
-import { ViewBoardsIcon } from "@heroicons/react/solid";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
@@ -109,16 +108,7 @@ const SiteLimitReachedModal = ({ showModal = false, setShowModal }, ref) => {
 											: "hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
 									)}
 								>
-									<span className="flex items-center space-x-2">
-										{isLoading ? (
-											loaderMessage
-										) : (
-											<>
-												<ViewBoardsIcon className="mr-2 h-4 w-4" aria-hidden="true" />
-												{upgradePlanText}
-											</>
-										)}
-									</span>
+									<span className="flex items-center space-x-2">{isLoading ? loaderMessage : upgradePlanText}</span>
 								</button>
 
 								<button
