@@ -8,7 +8,6 @@ import {
 import { usePage } from "@hooks/usePage";
 import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
 import { useSiteQueries } from "@hooks/useSiteQueries";
-import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
@@ -45,7 +44,6 @@ const DataPagination = () => {
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
 	// SWR hooks
-	const { user } = useUser();
 	const { pageCount, pageResults } = usePage(scanApiEndpoint);
 
 	// Custom variables
@@ -188,7 +186,7 @@ const DataPagination = () => {
 				current={currentPage}
 				defaultCurrent={currentPage}
 				defaultPageSize={pageNumbers[0]}
-				disabled={!isComponentReady && user && Math.round(user?.status / 100) === 4 && user?.data?.detail}
+				disabled={!isComponentReady}
 				onChange={handlePageChange}
 				pageSize={linksPerPage}
 				locale={PaginationLocale}
