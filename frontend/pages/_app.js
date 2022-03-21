@@ -8,7 +8,7 @@ import {
 	UserApiEndpoint
 } from "@constants/ApiEndpoints";
 import AppSeo from "@constants/AppSeo";
-import { ComponentReadyInterval, orderingByNameQuery, sortByFinishedAtDescending } from "@constants/GlobalValues";
+import { ComponentReadyInterval, NoInterval, RevalidationInterval } from "@constants/GlobalValues";
 import { DashboardSlug, ScanSlug, SiteImageSlug, SiteLinkSlug, SitePageSlug } from "@constants/PageLinks";
 import { isProd } from "@constants/ServerEnv";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -33,6 +33,7 @@ import { useStripePromise } from "@hooks/useStripePromise";
 import { useSubscriptions } from "@hooks/useSubscriptions";
 import { useUser } from "@hooks/useUser";
 import "@styles/tailwind.css";
+import { handleConversionStringToNumber } from "@utils/convertCase";
 import LogRocket from "logrocket";
 import setupLogRocketReact from "logrocket-react";
 import { DefaultSeo } from "next-seo";
@@ -111,7 +112,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [isReady, user, asPath]);
 
 	// Custom API endpoint states that rely on `user` value
-	useMemo(() => {
+	useEffect(() => {
 		if (isUserReady) {
 			setCustomSitesApiEndpoint(SitesApiEndpoint);
 			setCustomStripePromiseApiEndpoint(StripePromiseApiEndpoint);
@@ -162,27 +163,37 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	);
 
 	// `sites` SWR hook
-	const { sites, errorSites, validatingSites } = useSites(customSitesApiEndpoint);
+	const { sites, errorSites, validatingSites } = useSites(customSitesApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
+	});
+
+	// console.log("sites", sites);
 
 	// Custom variables
-	const querySiteId = query?.siteId ?? null;
-	const queryLinkId = query?.linkId ?? null;
-	const queryPageId = query?.pageId ?? null;
-	const queryImageId = query?.imageId ?? null;
+	const querySiteId = query?.siteId ? handleConversionStringToNumber(query.siteId) : null;
+	const queryLinkId = query?.linkId ? handleConversionStringToNumber(query.linkId) : null;
+	const queryPageId = query?.pageId ? handleConversionStringToNumber(query.pageId) : null;
+	const queryImageId = query?.imageId ? handleConversionStringToNumber(query.imageId) : null;
 
 	// Custom `siteId` SWR hook
-	useMemo(() => {
+	useEffect(() => {
 		const verifiedSiteId = sites?.data?.results?.find((site) => site.id === querySiteId) ? querySiteId : null;
 
-		customSitesApiEndpoint && isUserReady && verifiedSiteId
+		sites && isUserReady && verifiedSiteId
 			? setCustomSitesIdApiEndpoint(customSitesApiEndpoint + verifiedSiteId)
 			: setCustomSitesIdApiEndpoint(null);
 
 		return { customSitesIdApiEndpoint };
-	}, [isUserReady, sites, customSitesApiEndpoint, querySiteId]);
+	}, [isUserReady, sites, querySiteId]);
 
 	// `siteId` SWR hook
-	const { siteId, errorSiteId, validatingSiteId } = useSiteId(customSitesIdApiEndpoint);
+	const { siteId, errorSiteId, validatingSiteId } = useSiteId(customSitesIdApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
+	});
+
+	// console.log("siteId", siteId);
 
 	// Update `hasSiteLimitReached` state value
 	useMemo(() => {
@@ -198,15 +209,11 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [sites, user]);
 
 	// Custom `scan` SWR hook
-	useMemo(() => {
-		customSitesIdApiEndpoint
-			? setCustomScanApiEndpoint(
-					customSitesIdApiEndpoint + ScanSlug + "?" + orderingByNameQuery + sortByFinishedAtDescending
-			  )
-			: setCustomScanApiEndpoint(null);
+	useEffect(() => {
+		siteId ? setCustomScanApiEndpoint(customSitesIdApiEndpoint + ScanSlug) : setCustomScanApiEndpoint(null);
 
 		return { customScanApiEndpoint };
-	}, [customSitesIdApiEndpoint]);
+	}, [siteId]);
 
 	// `scan` SWR hook
 	const {
@@ -221,30 +228,54 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 		scanObjId,
 		selectedSiteRef,
 		validatingScan
-	} = useScan(customScanApiEndpoint);
+	} = useScan(customScanApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
+	});
+
+	// console.log("scan", scan);
 
 	// Custom `stats` API endpoint state
-	useMemo(() => {
-		customSitesIdApiEndpoint && scanObjId
-			? setCustomStatsApiEndpoint(customSitesIdApiEndpoint + ScanSlug + scanObjId)
-			: setCustomStatsApiEndpoint(null);
+	useEffect(() => {
+		scan && scanObjId ? setCustomStatsApiEndpoint(customScanApiEndpoint + scanObjId) : setCustomStatsApiEndpoint(null);
 
 		return { customStatsApiEndpoint };
-	}, [customSitesIdApiEndpoint, scanObjId]);
+	}, [scan, scanObjId]);
 
 	// `stats` SWR hook
-	const { stats, errorStats, validatingStats } = useStats(customStatsApiEndpoint);
+	const { stats, errorStats, validatingStats } = useStats(customStatsApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
+	});
+
+	// console.log("stats", stats);
 
 	// Custom API endpoint states that rely on `siteId` and `scanObjId` values
-	useMemo(() => {
-		if (customStatsApiEndpoint) {
-			setCustomLinksApiEndpoint(customStatsApiEndpoint + SiteLinkSlug);
-			setCustomPagesApiEndpoint(customStatsApiEndpoint + SitePageSlug);
-			setCustomImagesApiEndpoint(customStatsApiEndpoint + SiteImageSlug);
-		} else {
-			setCustomLinksIdApiEndpoint(null);
-			setCustomPagesIdApiEndpoint(null);
-			setCustomImagesIdApiEndpoint(null);
+	useEffect(() => {
+		if (user) {
+			const permissions = user?.data?.permissions ?? null;
+
+			if (stats) {
+				setCustomLinksApiEndpoint(customStatsApiEndpoint + SiteLinkSlug);
+
+				if (
+					permissions &&
+					permissions?.includes("can_see_pages") &&
+					permissions?.includes("can_see_scripts") &&
+					permissions?.includes("can_see_stylesheets") &&
+					permissions?.includes("can_see_images")
+				) {
+					if (customStatsApiEndpoint) {
+						setCustomPagesApiEndpoint(customStatsApiEndpoint + SitePageSlug);
+						setCustomImagesApiEndpoint(customStatsApiEndpoint + SiteImageSlug);
+					} else {
+						setCustomPagesIdApiEndpoint(null);
+						setCustomImagesIdApiEndpoint(null);
+					}
+				}
+			} else {
+				setCustomLinksIdApiEndpoint(null);
+			}
 		}
 
 		return {
@@ -252,58 +283,72 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			customPagesApiEndpoint,
 			customImagesApiEndpoint
 		};
-	}, [customStatsApiEndpoint]);
+	}, [stats, user]);
 
 	// `links` SWR hook
 	const { links, errorLinks, validatingLinks } = useLinks(customLinksApiEndpoint);
 
+	// console.log("links", links);
+
 	// `pages` SWR hook
 	const { pages, errorPages, validatingPages } = usePages(customPagesApiEndpoint);
+
+	// console.log("pages", pages);
 
 	// `images` SWR hook
 	const { images, errorImages, validatingImages } = useImages(customImagesApiEndpoint);
 
-	// Custom `linkId` SWR hook
-	useMemo(() => {
-		const verifiedLinkId = links?.data?.results?.find((link) => link.id === queryLinkId) ? queryLinkId : null;
+	// console.log("images", images);
 
-		customLinksApiEndpoint && isUserReady && verifiedLinkId
+	// Custom `linkId` SWR hook
+	useEffect(() => {
+		const verifiedLinkId = queryLinkId ? links?.data?.results?.find((link) => link.id === queryLinkId) ?? null : null;
+
+		links && isUserReady && verifiedLinkId
 			? setCustomLinksIdApiEndpoint(customSitesApiEndpoint + verifiedLinkId)
 			: setCustomLinksIdApiEndpoint(null);
 
 		return { customLinksIdApiEndpoint };
-	}, [isUserReady, links, customLinksApiEndpoint, queryLinkId]);
+	}, [isUserReady, links, queryLinkId]);
 
 	// `linkId` SWR hook
 	const { linkId, errorLinkId, validatingLinkId } = useLinkId(customLinksIdApiEndpoint);
 
-	// Custom `pageId` SWR hook
-	useMemo(() => {
-		const verifiedPageId = pages?.data?.results?.find((page) => page.id === queryPageId) ? queryPageId : null;
+	// console.log("linkId", linkId);
 
-		customPagesApiEndpoint && isUserReady && verifiedPageId
+	// Custom `pageId` SWR hook
+	useEffect(() => {
+		const verifiedPageId = queryPageId ? pages?.data?.results?.find((page) => page.id === queryPageId) ?? null : null;
+
+		pages && isUserReady && verifiedPageId
 			? setCustomPagesIdApiEndpoint(customSitesApiEndpoint + verifiedPageId)
 			: setCustomPagesIdApiEndpoint(null);
 
 		return { customPagesIdApiEndpoint };
-	}, [isUserReady, pages, customPagesApiEndpoint, queryPageId]);
+	}, [isUserReady, pages, queryPageId]);
 
 	// `pageId` SWR hook
 	const { pageId, errorPageId, validatingPageId } = usePageId(customPagesIdApiEndpoint);
 
-	// Custom `imageId` API endpoint
-	useMemo(() => {
-		const verifiedImageId = images?.data?.results?.find((image) => image.id === queryImageId) ? queryImageId : null;
+	// console.log("pageId", pageId);
 
-		customImagesApiEndpoint && isUserReady && verifiedImageId
+	// Custom `imageId` API endpoint
+	useEffect(() => {
+		const verifiedImageId = queryImageId
+			? images?.data?.results?.find((image) => image.id === queryImageId) ?? null
+			: null;
+
+		images && isUserReady && verifiedImageId
 			? setCustomImagesIdApiEndpoint(customSitesApiEndpoint + verifiedImageId)
 			: setCustomImagesIdApiEndpoint(null);
 
 		return { customImagesApiEndpoint };
-	}, [isUserReady, images, customImagesApiEndpoint, queryImageId]);
+	}, [isUserReady, images, queryImageId]);
 
 	// `imageId` SWR hook
 	const { imageId, errorImageId, validatingImageId } = useImageId(customImagesIdApiEndpoint);
+
+	// console.log("imageId", imageId);
 
 	// Use the layout defined at the page level, if available
 	const getLayout = Component.getLayout || ((page) => page);
@@ -316,6 +361,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 				defaultPaymentMethod,
 				errorCurrentSubscription,
 				errorDefaultPaymentMethod,
+				customScanApiEndpoint,
 				errorImageId,
 				errorImages,
 				errorLinkId,
