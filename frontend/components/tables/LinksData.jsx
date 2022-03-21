@@ -1,14 +1,9 @@
 import { MemoizedBadge } from "@components/badges";
 import { useComponentVisible } from "@hooks/useComponentVisible";
-import { useLinkId } from "@hooks/useLinkId";
-import { useScan } from "@hooks/useScan";
-import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
-import { handleConversionStringToLowercase, handleConversionStringToNumber } from "@utils/convertCase";
 import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
@@ -31,13 +26,6 @@ const LinksData = ({ link = null }) => {
 	const linkResolvedStatus = link?.resolved_status ?? "";
 	const linkResolvedTls = link?.resolved_tls ?? "";
 
-	// Router
-	const { query } = useRouter();
-	const { siteId } = query;
-
-	// Custom variables
-	const sanitizedSiteId = handleConversionStringToNumber(siteId);
-
 	// Translations
 	const { t } = useTranslation();
 	const markAsResolvedText = t("sites:markAsResolved");
@@ -50,12 +38,11 @@ const LinksData = ({ link = null }) => {
 	const nonWebText = t("sites:nonWeb");
 
 	// Custom context
-	const { isComponentReady } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady, querySiteId, user, pages } = useContext(SiteCrawlerAppContext);
 
-	// SWR hooks
-	const { user, disableLocalTime, permissions } = useUser();
-	const { scanObjId } = useScan(sanitizedSiteId);
-	const { pages } = useLinkId(sanitizedSiteId, linkId, scanObjId);
+	// Custom variables
+	const disableLocalTime = user?.data?.settings?.disableLocalTime ?? false;
+	const permissions = user?.data?.permissions ?? null;
 
 	// Custom hooks
 	const {
@@ -87,75 +74,48 @@ const LinksData = ({ link = null }) => {
 
 	return (
 		<tr>
-			<td className="flex-none whitespace-nowrap p-4">
+			<td className="truncate-link flex-none whitespace-nowrap p-4">
 				<div className="flex flex-col items-start">
 					<div>
-						{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-							<>
-								{linkStatus === "OK" && linkTlsStatus === "OK" ? (
-									<span
-										aria-label="Ok"
-										className="relative -left-3 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-green-400 leading-5"
-									></span>
-								) : linkStatus === "TIMEOUT" ? (
-									<span
-										aria-label="Timeout"
-										className="relative -left-3 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-yellow-400 leading-5"
-									></span>
-								) : (
-									<span
-										aria-label={
-											linkStatus === "HTTP_ERROR" && linkTlsStatus === "ERROR"
-												? "HTTP Error"
-												: linkStatus === "TOO MANY REDIRECTS"
-												? "Too Many Redirects"
-												: "Other Error"
-										}
-										className="relative -left-3 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-red-400 leading-5"
-									></span>
-								)}
-
-								<div className="inline-flex flex-col items-start justify-start">
-									<span className="flex items-center justify-start text-sm font-semibold leading-6 text-gray-500">
-										<p className="truncate-link">{linkUrl}</p>
-									</span>
-									<span className="flex justify-start space-x-2 text-sm leading-5 text-gray-500">
-										<Link
-											href="/dashboard/sites/[siteId]/links/[linkId]/"
-											as={`/dashboard/sites/${sanitizedSiteId}/links/${linkId}/`}
-											title={linkUrl}
-											passHref
-										>
-											<a
-												type="button"
-												className="flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-indigo-600 transition duration-150 ease-in-out hover:text-indigo-500 focus:outline-none"
-											>
-												{goToSiteOverviewText}
-											</a>
-										</Link>
-
+						{isComponentReady ? (
+							<div>
+								<p className="block truncate text-sm font-semibold leading-6 text-gray-500">{linkUrl}</p>
+								<span className="flex justify-start space-x-2 text-sm leading-5 text-gray-500">
+									<Link
+										href="/dashboard/sites/[siteId]/links/[linkId]/"
+										as={`/dashboard/sites/${querySiteId}/links/${linkId}/`}
+										title={linkUrl}
+										passHref
+									>
 										<a
-											href={linkUrl}
-											className="flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-gray-600 transition duration-150 ease-in-out hover:text-gray-500 focus:outline-none"
-											title={visitExternalSiteText}
-											target="_blank"
-											rel="noreferrer"
+											type="button"
+											className="flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-indigo-600 transition duration-150 ease-in-out hover:text-indigo-500 focus:outline-none"
 										>
-											{visitExternalSiteText}
+											{goToSiteOverviewText}
 										</a>
+									</Link>
 
-										{linkStatus !== "OK" ? (
-											<button
-												type="button"
-												className="ml-3 flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-green-600 transition duration-150 ease-in-out hover:text-green-500 focus:outline-none"
-												onClick={() => {}}
-											>
-												{markAsResolvedText}
-											</button>
-										) : null}
-									</span>
-								</div>
-							</>
+									<a
+										href={linkUrl}
+										className="flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-gray-600 transition duration-150 ease-in-out hover:text-gray-500 focus:outline-none"
+										title={visitExternalSiteText}
+										target="_blank"
+										rel="noreferrer"
+									>
+										{visitExternalSiteText}
+									</a>
+
+									{linkStatus !== "OK" ? (
+										<button
+											type="button"
+											className="ml-3 flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-green-600 transition duration-150 ease-in-out hover:text-green-500 focus:outline-none"
+											onClick={() => {}}
+										>
+											{markAsResolvedText}
+										</button>
+									) : null}
+								</span>
+							</div>
 						) : (
 							<span className="flex items-start space-x-3 py-2">
 								<Skeleton
@@ -184,8 +144,8 @@ const LinksData = ({ link = null }) => {
 					</div>
 				</div>
 			</td>
-			<td className="whitespace-nowrap px-6 py-4 text-sm leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+			<td className="truncate-link whitespace-nowrap px-6 py-4 text-sm leading-5 text-gray-500">
+				{isComponentReady ? (
 					linkType === "PAGE" ? (
 						internalText
 					) : linkType === "EXTERNAL" ? (
@@ -199,8 +159,8 @@ const LinksData = ({ link = null }) => {
 					<Skeleton duration={2} width={100} />
 				)}
 			</td>
-			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+			<td className="truncate-link whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
+				{isComponentReady ? (
 					linkStatus === "OK" ? (
 						<MemoizedBadge text="OK" isSuccess />
 					) : linkStatus === "TIMEOUT" ? (
@@ -214,8 +174,8 @@ const LinksData = ({ link = null }) => {
 					<Skeleton duration={2} width={150} />
 				)}
 			</td>
-			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+			<td className="truncate-link whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
+				{isComponentReady ? (
 					Math.round(linkHttpStatus / 100) === 2 ? (
 						<span className="text-green-500">{linkHttpStatus}</span>
 					) : Math.round(linkHttpStatus / 100) === 4 || Math.round(linkHttpStatus / 100) === 5 ? (
@@ -229,12 +189,12 @@ const LinksData = ({ link = null }) => {
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+			{/* <td className="truncate-link whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
+				{isComponentReady ? (
 					pages?.length > 0 ? (
 						<Link
 							href="/dashboard/sites/[siteId]/links/[linkId]/"
-							as={`/dashboard/sites/${sanitizedSiteId}/links/${linkId}/`}
+							as={`/dashboard/sites/${querySiteId}/links/${linkId}/`}
 							passHref
 						>
 							<a className="mr-3 flex items-center text-sm font-semibold leading-6 text-indigo-600 outline-none transition duration-150 ease-in-out hover:text-indigo-500 focus:outline-none">
@@ -252,9 +212,9 @@ const LinksData = ({ link = null }) => {
 				) : (
 					<Skeleton duration={2} width={120} />
 				)}
-			</td>
-			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+			</td> */}
+			<td className="truncate-link whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
+				{isComponentReady ? (
 					linkOccurrences ? (
 						<span className="text-gray-500">{linkOccurrences}</span>
 					) : null
@@ -262,8 +222,8 @@ const LinksData = ({ link = null }) => {
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+			<td className="truncate-link whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
+				{isComponentReady ? (
 					linkResolvedStatus ? (
 						<span className="text-gray-500">{linkResolvedStatus}</span>
 					) : null
@@ -271,8 +231,8 @@ const LinksData = ({ link = null }) => {
 					<Skeleton duration={2} width={75} />
 				)}
 			</td>
-			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+			<td className="truncate-link whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
+				{isComponentReady ? (
 					linkResolvedTls ? (
 						<span className="text-gray-500">{linkResolvedTls}</span>
 					) : null

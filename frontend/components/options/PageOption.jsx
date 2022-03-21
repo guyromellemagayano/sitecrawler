@@ -1,7 +1,7 @@
 import { MemoizedFilter } from "@components/filters";
 import { MemoizedSiteVerifyErrorModal } from "@components/modals/SiteVerifyErrorModal";
 import { MemoizedUpgradeErrorModal } from "@components/modals/UpgradeErrorModal";
-import { RedirectInterval, RevalidationInterval } from "@constants/GlobalValues";
+import { RedirectInterval } from "@constants/GlobalValues";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DocumentTextIcon, ExternalLinkIcon, LinkIcon } from "@heroicons/react/outline";
 import { DownloadIcon, GlobeIcon } from "@heroicons/react/solid";
@@ -9,9 +9,7 @@ import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useImages } from "@hooks/useImages";
 import { useLinks } from "@hooks/useLinks";
 import { usePages } from "@hooks/usePages";
-import { useScan } from "@hooks/useScan";
 import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
-import { useSiteId } from "@hooks/useSiteId";
 import { useSiteQueries } from "@hooks/useSiteQueries";
 import { useSites } from "@hooks/useSites";
 import { SiteCrawlerAppContext } from "@pages/_app";
@@ -69,15 +67,12 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 	} = useComponentVisible(false);
 
 	// Custom context
-	const { isComponentReady, isUserReady, querySiteId, user, customSitesIdApiEndpoint, customScanApiEndpoint } =
-		useContext(SiteCrawlerAppContext);
-
-	// Helper functions
-	const { linksPerPage } = useSiteQueries();
-	const { scanApiEndpoint, queryString } = useScanApiEndpoint(linksPerPage);
-
-	// `scan` SWR hooks
 	const {
+		isComponentReady,
+		isUserReady,
+		querySiteId,
+		user,
+		siteId,
 		scan,
 		currentScan,
 		previousScan,
@@ -87,11 +82,12 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 		isCrawlFinished,
 		handleCrawl,
 		isProcessing
-	} = useScan(customScanApiEndpoint, {
-		refreshInterval: RevalidationInterval
-	});
+	} = useContext(SiteCrawlerAppContext);
 
-	const { siteId } = useSiteId(customSitesIdApiEndpoint);
+	// Helper functions
+	const { linksPerPage } = useSiteQueries();
+	const { scanApiEndpoint, queryString } = useScanApiEndpoint(linksPerPage);
+
 	const { sites } = useSites(scanApiEndpoint);
 	const { links } = useLinks(scanApiEndpoint);
 	const { pages } = usePages(scanApiEndpoint);
@@ -141,7 +137,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 		setIsDownloading(!isDownloading);
 
 		if (!isDownloading) {
-			const downloadLink = `/api/site/${siteId}/scan/${scanObjId}/${
+			const downloadLink = `/api/site/${querySiteId}/scan/${scanObjId}/${
 				isLinks ? "link" : isPages ? "page" : isImages ? "image" : null
 			}/?format=csv${queryString}`;
 
@@ -175,7 +171,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 						{!isSites ? (
 							<>
 								<div className="flex items-center space-x-2 text-sm text-gray-500">
-									{isComponentReady ? (
+									{isComponentReady && siteId ? (
 										<>
 											<GlobeIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
 											<span className="text-sm font-semibold leading-6 text-gray-500">
@@ -199,7 +195,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 								</div>
 
 								<div className="flex items-center space-x-2 text-sm text-gray-500">
-									{isComponentReady ? (
+									{isComponentReady && scanCount ? (
 										<>
 											<FontAwesomeIcon
 												icon={["fas", "spider"]}
@@ -233,7 +229,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 						) : null}
 
 						<div className="flex items-center space-x-2 text-sm text-gray-500">
-							{isComponentReady && isLinks ? (
+							{isComponentReady && isLinks && linksCount ? (
 								<>
 									<LinkIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
 									<span className="text-sm leading-6 text-gray-500">
@@ -244,7 +240,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 											: noAvailableLinksText}
 									</span>
 								</>
-							) : isComponentReady && isSites ? (
+							) : isComponentReady && isSites && sitesCount ? (
 								<>
 									<ExternalLinkIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
 									<span className="text-sm leading-6 text-gray-500">
@@ -255,7 +251,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 											: noAvailableSitesText}
 									</span>
 								</>
-							) : isComponentReady && isPages ? (
+							) : isComponentReady && isPages && pagesCount ? (
 								<>
 									<DocumentTextIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
 									<span className="text-sm leading-6 text-gray-500">
@@ -280,11 +276,11 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 							{isComponentReady &&
 							(linksCount || sitesCount || pagesCount) &&
 							(isCrawlStarted || !isCrawlStarted || isCrawlFinished || !isCrawlFinished) ? (
-								permissions.includes("can_start_scan") &&
-								permissions.includes("can_see_pages") &&
-								permissions.includes("can_see_scripts") &&
-								permissions.includes("can_see_stylesheets") &&
-								permissions.includes("can_see_images") ? (
+								permissions?.includes("can_start_scan") &&
+								permissions?.includes("can_see_pages") &&
+								permissions?.includes("can_see_scripts") &&
+								permissions?.includes("can_see_stylesheets") &&
+								permissions?.includes("can_see_images") ? (
 									siteIdVerified ? (
 										<button
 											type="button"
@@ -369,9 +365,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 					) : null}
 				</div>
 
-				{isSites ? <MemoizedFilter isSitesFilter /> : null}
-
-				{/* {isLinks ? (
+				{isLinks ? (
 					<MemoizedFilter isSitesLinksFilter />
 				) : isPages ? (
 					<MemoizedFilter isSitesPagesFilter />
@@ -379,7 +373,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 					<MemoizedFilter isSitesImagesFilter />
 				) : (
 					<MemoizedFilter isSitesFilter />
-				)} */}
+				)}
 			</div>
 		</div>
 	);

@@ -1,6 +1,6 @@
 import { SubscriptionPlansSettingsLink } from "@constants/PageLinks";
 import { Dialog, Transition } from "@headlessui/react";
-import { ExclamationIcon } from "@heroicons/react/solid";
+import { ExclamationIcon } from "@heroicons/react/outline";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";

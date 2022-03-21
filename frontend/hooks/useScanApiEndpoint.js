@@ -1,5 +1,5 @@
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
-import { orderingByNameQuery } from "@constants/GlobalValues";
+import { perPageQuery, sortByNameAscending } from "@constants/GlobalValues";
 import {
 	SiteImageSlug,
 	SiteImagesSlug,
@@ -35,13 +35,28 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 	const { scanObjId } = useScan(customScanApiEndpoint);
 
 	scanObjId && asPath.includes(SiteLinksSlug)
-		? (scanApiEndpoint += customScanApiEndpoint + scanObjId + SiteLinkSlug)
+		? (scanApiEndpoint +=
+				customScanApiEndpoint +
+				scanObjId +
+				SiteLinkSlug +
+				(scanApiEndpoint.includes("?") ? "&" : "?") +
+				`${perPageQuery + linksPerPage}`)
 		: scanObjId && asPath.includes(SitePagesSlug)
-		? (scanApiEndpoint += customScanApiEndpoint + scanObjId + SitePageSlug)
+		? (scanApiEndpoint +=
+				customScanApiEndpoint +
+				scanObjId +
+				SitePageSlug +
+				(scanApiEndpoint.includes("?") ? "&" : "?") +
+				`${perPageQuery + linksPerPage}`)
 		: scanObjId && asPath.includes(SiteImagesSlug)
-		? (scanApiEndpoint += customScanApiEndpoint + scanObjId + SiteImageSlug)
+		? (scanApiEndpoint +=
+				customScanApiEndpoint +
+				scanObjId +
+				SiteImageSlug +
+				(scanApiEndpoint.includes("?") ? "&" : "?") +
+				`${perPageQuery + linksPerPage}`)
 		: (scanApiEndpoint +=
-				SitesApiEndpoint + (scanApiEndpoint.includes("?") ? "&" : "?") + `${orderingByNameQuery + "name"}`);
+				SitesApiEndpoint + (scanApiEndpoint.includes("?") ? "&" : "?") + `${perPageQuery + linksPerPage}`);
 
 	const typeString = query?.type ? (Array.isArray(query?.type) ? query.type.join("&type=") : query.type) : "";
 
@@ -111,7 +126,9 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 		? scanApiEndpoint.includes("?")
 			? `&ordering=${query.ordering}`
 			: `?ordering=${query.ordering}`
-		: "";
+		: scanApiEndpoint.includes("?")
+		? `&ordering=${sortByNameAscending}`
+		: `?ordering=${sortByNameAscending}`;
 
 	queryString += verifiedQuery;
 	queryString += statusNeqQuery;
@@ -126,6 +143,8 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 	queryString += orderingQuery;
 
 	scanApiEndpoint += queryString;
+
+	// console.log(scanApiEndpoint);
 
 	return { scanApiEndpoint, queryString, filterQueryString };
 };

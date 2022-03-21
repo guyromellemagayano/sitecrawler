@@ -5,12 +5,8 @@ import { DashboardSitesLink, SettingsSlug } from "@constants/PageLinks";
 import { SidebarMenus } from "@constants/SidebarMenus";
 import { CogIcon, DocumentTextIcon, PhotographIcon } from "@heroicons/react/outline";
 import { ArrowLeftIcon, LinkIcon, SearchIcon, ViewGridIcon } from "@heroicons/react/solid";
-import { useScan } from "@hooks/useScan";
-import { useStats } from "@hooks/useStats";
-import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
-import { handleConversionStringToNumber } from "@utils/convertCase";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -29,25 +25,22 @@ const SiteMenu = () => {
 
 	// Router
 	const { asPath, pathname, query, prefetch } = useRouter();
-	const { siteId } = query;
-
-	// Custom variables
-	const sanitizedSiteId = handleConversionStringToNumber(siteId);
 
 	// Custom context
-	const { isComponentReady } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady, isUserReady, stats, scan, siteId, querySiteId } = useContext(SiteCrawlerAppContext);
 
-	// SWR hooks
-	const { user } = useUser();
-	const { scan, scanObjId } = useScan(sanitizedSiteId);
-	const { stats, totalImages, totalLinks, totalPages } = useStats(sanitizedSiteId, scanObjId);
+	// Custom variables
+	const scanCount = scan?.data?.count ?? 0;
+	const totalImages = stats?.data?.num_images ?? 0;
+	const totalLinks = stats?.data?.num_links ?? 0;
+	const totalPages = stats?.data?.num_pages ?? 0;
 
 	// Sidebar menus
 	const { SiteSidebarMenus } = SidebarMenus();
 
 	// Prefetch page
 	useEffect(() => {
-		prefetch(`/dashboard/sites/${siteId}/overview`);
+		prefetch(`/dashboard/sites/${querySiteId}/overview`);
 	}, []);
 
 	return (
@@ -55,14 +48,7 @@ const SiteMenu = () => {
 			<div className="flex h-full flex-col py-4 lg:py-8">
 				<div className="mb-0 flex flex-shrink-0 flex-row items-center px-3">
 					<Link href={DashboardSitesLink} passHref>
-						<a
-							className={classnames(
-								"block w-full p-1",
-								isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail
-									? "cursor-pointer"
-									: null
-							)}
-						>
+						<a className={classnames("block w-full p-1", isComponentReady ? "cursor-pointer" : null)}>
 							<SiteLogoWhite className="flex" width={AuthAppLogo.width} height={AuthAppLogo.height} />
 						</a>
 					</Link>
@@ -71,16 +57,12 @@ const SiteMenu = () => {
 				<div className="flex flex-1 flex-col overflow-y-auto">
 					<nav className="flex-1 px-4">
 						{SiteSidebarMenus.filter((e) => {
-							return !asPath?.includes(DashboardSitesLink + siteId) ? e.slug !== "navigation" : true;
+							return !asPath?.includes(DashboardSitesLink + querySiteId) ? e.slug !== "navigation" : true;
 						}).map((value, index) => {
 							return (
 								<div key={index} className="mb-4">
 									<h3 className="mt-8 inline-block text-xs font-semibold uppercase leading-4 tracking-wider text-gray-200">
-										{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-											value.category
-										) : (
-											<Skeleton duration={2} width={128} height={16} />
-										)}
+										{isComponentReady ? value.category : <Skeleton duration={2} width={128} height={16} />}
 									</h3>
 
 									<div className="my-3" role="group">
@@ -90,79 +72,55 @@ const SiteMenu = () => {
 													<Link
 														key={index2}
 														href={DashboardSitesLink + "[siteId]" + value2.url}
-														as={DashboardSitesLink + siteId + value2.url}
+														as={DashboardSitesLink + querySiteId + value2.url}
 														passHref
 													>
 														<a
 															className={classnames(
 																"group mt-1 flex items-center justify-between rounded-md px-3 py-2 text-sm font-medium leading-5",
-																asPath.includes(value2.url) &&
-																	isComponentReady &&
-																	user &&
-																	Math.round(user?.status / 100) === 2 &&
-																	!user?.data?.detail
-																	? "!cursor-default bg-gray-1100"
-																	: null,
+																asPath.includes(value2.url) && isComponentReady ? "!cursor-default bg-gray-1100" : null,
 																asPath.includes(value2.url) ||
 																	(asPath.includes(SettingsSlug) && SettingsSlug.includes(value2.url))
 																	? "text-gray-100"
 																	: "text-gray-400",
-																isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail
+																isComponentReady
 																	? "cursor-pointer transition duration-150 ease-in-out hover:bg-gray-1100 hover:text-gray-100 focus:bg-gray-1100 focus:outline-none"
 																	: "cursor-default"
 															)}
 														>
 															<span className="flex items-center justify-start">
 																{value2.slug === "overview" ? (
-																	isComponentReady &&
-																	user &&
-																	Math.round(user?.status / 100) === 2 &&
-																	!user?.data?.detail ? (
+																	isComponentReady ? (
 																		<ViewGridIcon className="mr-3 h-6 w-5" />
 																	) : (
 																		<Skeleton duration={2} width={20} height={20} circle={true} className="mr-3" />
 																	)
 																) : value2.slug === "links" ? (
-																	isComponentReady &&
-																	user &&
-																	Math.round(user?.status / 100) === 2 &&
-																	!user?.data?.detail ? (
+																	isComponentReady ? (
 																		<LinkIcon className="mr-3 h-6 w-5" />
 																	) : (
 																		<Skeleton duration={2} width={20} height={20} circle={true} className="mr-3" />
 																	)
 																) : value2.slug === "pages" ? (
-																	isComponentReady &&
-																	user &&
-																	Math.round(user?.status / 100) === 2 &&
-																	!user?.data?.detail ? (
+																	isComponentReady ? (
 																		<DocumentTextIcon className="mr-3 h-6 w-5" />
 																	) : (
 																		<Skeleton duration={2} width={20} height={20} circle={true} className="mr-3" />
 																	)
 																) : value2.slug === "images" ? (
-																	isComponentReady &&
-																	user &&
-																	Math.round(user?.status / 100) === 2 &&
-																	!user?.data?.detail ? (
+																	isComponentReady ? (
 																		<PhotographIcon className="mr-3 h-6 w-5" />
 																	) : (
 																		<Skeleton duration={2} width={20} height={20} circle={true} className="mr-3" />
 																	)
 																) : value2.slug === "seo" ? (
-																	isComponentReady &&
-																	user &&
-																	Math.round(user?.status / 100) === 2 &&
-																	!user?.data?.detail ? (
+																	isComponentReady ? (
 																		<SearchIcon className="mr-3 h-6 w-5" />
 																	) : (
 																		<Skeleton duration={2} width={20} height={20} circle={true} className="mr-3" />
 																	)
 																) : value2.slug === "site-settings" ? (
-																	isComponentReady &&
-																	user &&
-																	Math.round(user?.status / 100) === 2 &&
-																	!user?.data?.detail ? (
+																	isComponentReady ? (
 																		<CogIcon className="mr-3 h-6 w-5" />
 																	) : (
 																		<Skeleton duration={2} width={20} height={20} circle={true} className="mr-3" />
@@ -170,10 +128,7 @@ const SiteMenu = () => {
 																) : null}
 
 																{value2.title ? (
-																	isComponentReady &&
-																	user &&
-																	Math.round(user?.status / 100) === 2 &&
-																	!user?.data?.detail ? (
+																	isComponentReady ? (
 																		value2.title
 																	) : (
 																		<Skeleton duration={2} width={128} height={20} />
@@ -182,10 +137,7 @@ const SiteMenu = () => {
 															</span>
 
 															{value2.slug === "links" ? (
-																isComponentReady &&
-																user &&
-																Math.round(user?.status / 100) === 2 &&
-																!user?.data?.detail ? (
+																isComponentReady ? (
 																	totalLinks > 0 ? (
 																		<span className="ml-auto inline-block rounded-full bg-white py-1 px-3 text-xs leading-4 text-black">
 																			{totalLinks}
@@ -199,10 +151,7 @@ const SiteMenu = () => {
 															) : null}
 
 															{value2.slug === "pages" ? (
-																isComponentReady &&
-																user &&
-																Math.round(user?.status / 100) === 2 &&
-																!user?.data?.detail ? (
+																isComponentReady ? (
 																	totalPages > 0 ? (
 																		<span className="ml-auto inline-block rounded-full bg-white py-1 px-3 text-xs leading-4 text-black">
 																			{totalPages}
@@ -216,10 +165,7 @@ const SiteMenu = () => {
 															) : null}
 
 															{value2.slug === "images" ? (
-																isComponentReady &&
-																user &&
-																Math.round(user?.status / 100) === 2 &&
-																!user?.data?.detail ? (
+																isComponentReady ? (
 																	totalImages > 0 ? (
 																		<span className="ml-auto inline-block rounded-full bg-white py-1 px-3 text-xs leading-4 text-black">
 																			{totalImages}
@@ -238,15 +184,10 @@ const SiteMenu = () => {
 														<a
 															className={classnames(
 																"group mt-1 flex items-center rounded-md py-2 text-sm font-medium leading-5 text-gray-400 hover:text-gray-100 focus:text-white focus:outline-none",
-																isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail
-																	? "cursor-pointer"
-																	: null
+																isComponentReady ? "cursor-pointer" : null
 															)}
 														>
-															{isComponentReady &&
-															user &&
-															Math.round(user?.status / 100) === 2 &&
-															!user?.data?.detail ? (
+															{isComponentReady ? (
 																<ArrowLeftIcon className="mr-3 h-6 w-5" />
 															) : (
 																<Skeleton duration={2} width={20} height={20} circle={true} className="mr-3" />
@@ -254,14 +195,7 @@ const SiteMenu = () => {
 
 															{value2.title ? (
 																<span>
-																	{isComponentReady &&
-																	user &&
-																	Math.round(user?.status / 100) === 2 &&
-																	!user?.data?.detail ? (
-																		value2.title
-																	) : (
-																		<Skeleton duration={2} width={128} height={20} />
-																	)}
+																	{isComponentReady ? value2.title : <Skeleton duration={2} width={128} height={20} />}
 																</span>
 															) : null}
 														</a>

@@ -49,7 +49,7 @@ const SiteList = ({ data = null, handleSiteSelectOnClick }) => {
 	};
 
 	// Custom context
-	const { isComponentReady, isUserReady } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
 	// Custom `scan` API endpoint
 	let customScanApiEndpointQuery = "?" + orderingByNameQuery + sortByFinishedAtDescending;
@@ -62,13 +62,18 @@ const SiteList = ({ data = null, handleSiteSelectOnClick }) => {
 	});
 
 	// Custom `stats` API endpoint
-	const customStatsApiEndpoint = scanObjId ? customScanApiEndpoint + scanObjId : null;
+	const customStatsApiEndpoint = scanObjId ? customScanApiEndpoint + scanObjId + "/" : null;
 
 	// `stats` SWR hooks
-	const { totalImages, totalLinks, totalPages } = useStats(customStatsApiEndpoint);
+	const { stats } = useStats(customStatsApiEndpoint, {
+		refreshInterval: RevalidationInterval
+	});
 
 	// Custom variables
-	const scanCount = scan?.data?.count ?? null;
+	const scanCount = scan?.data?.count ?? 0;
+	const totalImages = stats?.data?.num_images ?? 0;
+	const totalLinks = stats?.data?.num_links ?? 0;
+	const totalPages = stats?.data?.num_pages ?? 0;
 
 	return isComponentReady ? (
 		<li id={`listbox-item-${siteId}`}>

@@ -6,7 +6,7 @@ export const LinksTableLabels = () => {
 	const urlType = t("type");
 	const status = t("status");
 	const httpStatus = t("httpStatus");
-	const linkLocation = t("location");
+	// const linkLocation = t("location");
 	const occurrences = t("occurrences");
 	const errorMessage = t("errorMessage");
 	const statusResolved = t("statusResolved");
@@ -18,7 +18,7 @@ export const LinksTableLabels = () => {
 	const urlTypeTableLabel = { label: urlType, slug: "url-type", key: "type" };
 	const statusTableLabel = { label: status, slug: "status", key: "status" };
 	const httpStatusTableLabel = { label: httpStatus, slug: "http-status", key: "http_status" };
-	const linkLocationTableLabel = { label: linkLocation };
+	// const linkLocationTableLabel = { label: linkLocation };
 	const occurrencesTableLabel = { label: occurrences, slug: "occurrences", key: "occurences" };
 	const statusResolvedTableLabel = { label: statusResolved };
 	const tlsResolvedTableLabel = { label: tlsResolved };
@@ -27,7 +27,7 @@ export const LinksTableLabels = () => {
 	labelsArray.push(urlTypeTableLabel);
 	labelsArray.push(statusTableLabel);
 	labelsArray.push(httpStatusTableLabel);
-	labelsArray.push(linkLocationTableLabel);
+	// labelsArray.push(linkLocationTableLabel);
 	labelsArray.push(occurrencesTableLabel);
 	labelsArray.push(statusResolvedTableLabel);
 	labelsArray.push(tlsResolvedTableLabel);
