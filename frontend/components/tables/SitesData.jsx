@@ -78,7 +78,9 @@ const SitesData = ({ site = null }) => {
 	}, [customScanApiEndpoint, siteLastFinishedScanId]);
 
 	// `stats` SWR hook
-	const { stats } = useStats(customStatsApiEndpoint);
+	const { stats } = useStats(customStatsApiEndpoint, {
+		refreshInterval: RevalidationInterval
+	});
 
 	// Custom hooks
 	const {
