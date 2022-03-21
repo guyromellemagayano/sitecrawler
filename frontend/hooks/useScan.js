@@ -1,6 +1,6 @@
 import { handlePostMethod } from "@helpers/handleHttpMethods";
 import dayjs from "dayjs";
-import { useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSWRConfig } from "swr";
 import { useMainSWRConfig } from "./useMainSWRConfig";
 import { useNotificationMessage } from "./useNotificationMessage";
@@ -86,38 +86,48 @@ export const useScan = (endpoint = null, options = null) => {
 			setConfig({
 				isScan: true,
 				method: currentScanResponseData?.config?.method ?? null,
-				status: currentScanResponseData?.status ?? null
+				status: currentScanResponseData?.status ?? null,
+				isAlert: false,
+				isNotification: true
 			});
 		}
 
 		return { isCrawlStarted, isCrawlFinished, isProcessing };
 	};
 
-	useMemo(() => {
-		const previousScanResult = scan?.data?.results?.find((result) => result.finished_at && result.force_https) ?? null;
-		const currentScanResult =
-			scan?.data?.results?.find((result) => result.finished_at == null && result.force_https == null) ?? null;
+	// Handle scan process
+	const handleScan = useCallback(() => {
+		if (scan) {
+			const previousScanResult =
+				scan?.data?.results?.find((result) => result.finished_at && result.force_https) ?? null;
+			const currentScanResult =
+				scan?.data?.results?.find((result) => result.finished_at == null && result.force_https == null) ?? null;
 
-		setCurrentScan(currentScanResult);
-		setPreviousScan(previousScanResult);
+			setCurrentScan(currentScanResult);
+			setPreviousScan(previousScanResult);
 
-		currentScan
-			? () => {
-					setIsCrawlStarted(true);
-					setIsCrawlFinished(false);
-			  }
-			: () => {
-					setIsCrawlStarted(false);
-					setIsCrawlFinished(true);
-			  };
+			currentScan
+				? () => {
+						setIsCrawlStarted(true);
+						setIsCrawlFinished(false);
+				  }
+				: () => {
+						setIsCrawlStarted(false);
+						setIsCrawlFinished(true);
+				  };
 
-		// Set `scanObjId` state
-		(currentScan && previousScan) || (!currentScan && previousScan)
-			? setScanObjId(previousScan?.id)
-			: setScanObjId(currentScan?.id);
+			// Set `scanObjId` state
+			(currentScan && previousScan) || (!currentScan && previousScan)
+				? setScanObjId(previousScan?.id)
+				: setScanObjId(currentScan?.id);
 
-		return { currentScan, previousScan, scanObjId, isCrawlStarted, isCrawlFinished };
-	}, [scan]);
+			return { currentScan, previousScan, scanObjId, isCrawlStarted, isCrawlFinished };
+		}
+	});
+
+	useEffect(() => {
+		handleScan();
+	}, [handleScan]);
 
 	return {
 		currentScan,

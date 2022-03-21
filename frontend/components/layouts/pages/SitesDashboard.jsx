@@ -1,7 +1,6 @@
 import { MemoizedPageOption } from "@components/options/PageOption";
 import { MemoizedDataPagination } from "@components/pagination";
 import { MemoizedSitesTable } from "@components/tables/SitesTable";
-import { RevalidationInterval } from "@constants/GlobalValues";
 import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
 import { useSiteQueries } from "@hooks/useSiteQueries";
 import { useSites } from "@hooks/useSites";
@@ -21,9 +20,7 @@ const SitesDashboardPageLayout = () => {
 	const { scanApiEndpoint } = useScanApiEndpoint(linksPerPage);
 
 	// SWR hooks
-	const { sites } = useSites(scanApiEndpoint, {
-		refreshInterval: RevalidationInterval
-	});
+	const { sites } = useSites(scanApiEndpoint);
 
 	// Custom variables
 	const sitesCount = sites?.data?.count ?? null;
