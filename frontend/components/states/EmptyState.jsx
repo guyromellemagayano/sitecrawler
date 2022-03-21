@@ -4,7 +4,6 @@ import { ExclamationIcon, FolderAddIcon } from "@heroicons/react/outline";
 import { PlusIcon, ViewBoardsIcon } from "@heroicons/react/solid";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { memo, useState } from "react";
 
@@ -58,40 +57,38 @@ const EmptyState = ({ isSites = false }) => {
 				{asPath !== DashboardSitesLink && !isSites ? siteFeatureNotAvailableMessageText : addNewSiteMessageText}
 			</p>
 			<div className="mt-6">
-				<Link href="/" passHref>
-					<a
-						role="button"
-						aria-disabled={isLoading}
-						onClick={handleRouterOnClick}
-						aria-hidden="true"
-						className={classnames(
-							"inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm ",
-							asPath !== DashboardSitesLink && !isSites
-								? isLoading
-									? "cursor-not-allowed bg-yellow-500 opacity-50"
-									: "cursor-pointer bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
-								: isLoading
-								? "cursor-not-allowed bg-green-500 opacity-50"
-								: "cursor-pointer bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-						)}
-					>
-						{!isLoading ? (
-							asPath !== DashboardSitesLink && !isSites ? (
-								<>
-									<ViewBoardsIcon className="-ml-1 mr-2 h-4 w-4" aria-hidden="true" />
-									{upgradePlanText}
-								</>
-							) : (
-								<>
-									<PlusIcon className="-ml-1 mr-2 h-4 w-4" aria-hidden="true" />
-									{addNewSiteText}
-								</>
-							)
+				<button
+					disabled={isLoading}
+					aria-disabled={isLoading}
+					aria-hidden={isLoading}
+					onClick={handleRouterOnClick}
+					className={classnames(
+						"inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm ",
+						asPath !== DashboardSitesLink && !isSites
+							? isLoading
+								? "cursor-not-allowed bg-yellow-500 opacity-50"
+								: "cursor-pointer bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+							: isLoading
+							? "cursor-not-allowed bg-green-500 opacity-50"
+							: "cursor-pointer bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+					)}
+				>
+					{!isLoading ? (
+						asPath !== DashboardSitesLink && !isSites ? (
+							<>
+								<ViewBoardsIcon className="-ml-1 mr-2 h-4 w-4" aria-hidden="true" />
+								{upgradePlanText}
+							</>
 						) : (
-							loaderMessage
-						)}
-					</a>
-				</Link>
+							<>
+								<PlusIcon className="-ml-1 mr-2 h-4 w-4" aria-hidden="true" />
+								{addNewSiteText}
+							</>
+						)
+					) : (
+						loaderMessage
+					)}
+				</button>
 			</div>
 		</div>
 	);
