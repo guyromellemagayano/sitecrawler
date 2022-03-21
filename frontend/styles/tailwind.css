@@ -41,8 +41,8 @@ tr div {
 
 .truncate-link,
 .truncate-breadcrumbs {
-	min-width: 15rem;
-	max-width: 30rem;
+	min-width: 24rem;
+	max-width: 32rem;
 }
 
 .scroll-dark-bg {
