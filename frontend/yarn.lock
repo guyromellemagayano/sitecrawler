@@ -96,7 +96,7 @@
     core-js-pure "^3.20.2"
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.10.1", "@babel/runtime@^7.10.2", "@babel/runtime@^7.15.4", "@babel/runtime@^7.16.3", "@babel/runtime@^7.17.2":
+"@babel/runtime@^7.10.1", "@babel/runtime@^7.10.2", "@babel/runtime@^7.15.4", "@babel/runtime@^7.16.3", "@babel/runtime@^7.17.7":
   version "7.17.8"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.17.8.tgz#3e56e4aff81befa55ac3ac6a0967349fd1c5bca2"
   integrity sha512-dQpEpK0O9o6lj6oPu0gRDbbnk+4LeHlNcBpspf6Olzt3GIX4P1lWF1gS+pHLDFlaJvbR6q7jCfQ08zA4QJBnmA==
@@ -519,12 +519,12 @@
     lodash.isplainobject "^4.0.6"
     lodash.merge "^4.6.2"
 
-"@tanem/react-nprogress@^4.0.10":
-  version "4.0.10"
-  resolved "https://registry.yarnpkg.com/@tanem/react-nprogress/-/react-nprogress-4.0.10.tgz#e0a002324ea79ea9b261c02425d73c8ce80090b4"
-  integrity sha512-LGEMgPdXgLZ9e4XsCzFll3AJE5B6CqHMBaBPqYKmKuRVH+blp8ke2psiiOTqEGOlxuI0F0K/2u3N1qg9wI+p5Q==
+"@tanem/react-nprogress@^4.0.11":
+  version "4.0.11"
+  resolved "https://registry.yarnpkg.com/@tanem/react-nprogress/-/react-nprogress-4.0.11.tgz#3e398e65d1b450ef144e4b41b13c084d79e485d6"
+  integrity sha512-TDKcZ+W18/FFXcQrfe2VmOTdk5y3Ocv16xhTpm1NzhKiBHcXSAzzN04sJ1eJ/RPrDjh38Y5myx1YZjOgNte5ow==
   dependencies:
-    "@babel/runtime" "^7.17.2"
+    "@babel/runtime" "^7.17.7"
     hoist-non-react-statics "^3.3.2"
     prop-types "^15.8.1"
 
