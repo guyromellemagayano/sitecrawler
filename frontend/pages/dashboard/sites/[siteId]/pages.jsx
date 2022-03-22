@@ -1,16 +1,12 @@
 import { MemoizedLayout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
 import { MemoizedSitePagesPageLayout } from "@components/layouts/pages/SitePages";
-import { MemoizedLoader } from "@components/loaders";
 import { SitesApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { DashboardSitesLink, LoginLink } from "@constants/PageLinks";
 import { SSR_SITE_URL } from "@constants/ServerEnv";
-import { useUser } from "@hooks/useUser";
-import { SiteCrawlerAppContext } from "@pages/_app";
 import AppAxiosInstance from "@utils/axios";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
-import { useContext } from "react";
 import { SWRConfig } from "swr";
 
 // Pre-render `user` data with NextJS SSR. Redirect to a login page if current user is not allowed to access that page (403 Forbidden) or redirect to the sites dashboard page if the user is still currently logged in (200 OK).
@@ -47,10 +43,7 @@ export async function getServerSideProps({ req, query }) {
 		) {
 			return {
 				props: {
-					siteName: sitesData.name,
-					fallback: {
-						"/api/auth/user/": userData
-					}
+					siteName: sitesData.name
 				}
 			};
 		} else {
@@ -76,30 +69,22 @@ const SitePagesAuth = ({ siteName }) => {
 	const { t } = useTranslation("sites");
 	const sitesPagesText = t("sitesPages");
 
-	// Custom context
-	const { isComponentReady } = useContext(SiteCrawlerAppContext);
-
-	// SWR hooks
-	const { user } = useUser("/api/auth/user/");
-
 	// Custom variables
 	const sitesPagesPageTitle = sitesPagesText + " - " + siteName;
 
-	return isComponentReady && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+	return (
 		<MemoizedLayout>
 			<NextSeo title={sitesPagesPageTitle} />
 			<MemoizedPageLayout pageTitle={sitesPagesText}>
 				<MemoizedSitePagesPageLayout />
 			</MemoizedPageLayout>
 		</MemoizedLayout>
-	) : (
-		<MemoizedLoader />
 	);
 };
 
-export default function SitePages({ siteName, fallback }) {
+export default function SitePages({ siteName }) {
 	return (
-		<SWRConfig value={{ fallback }}>
+		<SWRConfig>
 			<SitePagesAuth siteName={siteName} />
 		</SWRConfig>
 	);

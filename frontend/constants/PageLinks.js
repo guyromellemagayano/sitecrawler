@@ -4,7 +4,6 @@ export const SiteImagesSlug = "/images/";
 export const SiteImageSlug = "/image/";
 export const SiteLinkSlug = "/link/";
 export const SiteLinksSlug = "/links/";
-export const SiteOverviewSlug = "/overview/";
 export const SitePageSlug = "/page/";
 export const SitePagesSlug = "/pages/";
 export const UptimeSlug = "/uptime/";

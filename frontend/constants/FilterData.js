@@ -12,59 +12,57 @@ export const FilterData = () => {
 	const [linksWithIssuesFilter, setLinksWithIssuesFilter] = useState(false);
 	const [noLinkIssuesFilter, setNoLinkIssuesFilter] = useState(false);
 	const [allPagesFilter, setAllPagesFilter] = useState(false);
-	const [tlsStatusFilter, setTlsStatusFilter] = useState(false);
-	const [imagesTlsStatusFilter, setImagesTlsStatusFilter] = useState(false);
-	const [scriptsTlsStatusFilter, setScriptsTlsStatusFilter] = useState(false);
-	const [stylesheetsTlsStatusFilter, setStylesheetsTlsStatusFilter] = useState(false);
-	const [okLinksFilter, setOkLinksFilter] = useState(false);
-	const [nonOkLinksFilter, setNonOkLinksFilter] = useState(false);
-	const [okImagesFilter, setOkImagesFilter] = useState(false);
-	const [nonOkImagesFilter, setNonOkImagesFilter] = useState(false);
-	const [okScriptsFilter, setOkScriptsFilter] = useState(false);
-	const [nonOkScriptsFilter, setNonOkScriptsFilter] = useState(false);
-	const [okStylesheetsFilter, setOkStylesheetsFilter] = useState(false);
-	const [nonOkStylesheetsFilter, setNonOkStylesheetsFilter] = useState(false);
-	const [securedImagesFilter, setSecuredImagesFilter] = useState(false);
-	const [unsecuredImagesFilter, setUnsecuredImagesFilter] = useState(false);
-	const [securedScriptsFilter, setSecuredScriptsFilter] = useState(false);
-	const [unsecuredScriptsFilter, setUnsecuredScriptsFilter] = useState(false);
-	const [securedStylesheetsFilter, setSecuredStylesheetsFilter] = useState(false);
-	const [unsecuredStylesheetsFilter, setUnsecuredStylesheetsFilter] = useState(false);
-	const [allImagesFilter, setAllImagesFilter] = useState(false);
-	const [urlTypeFilter, setUrlTypeFilter] = useState(false);
-	const [httpStatusFilter, setHttpStatusFilter] = useState(false);
+	const [hasTitleFilter, setHasTitleFilter] = useState(false);
+	const [hasDescriptionFilter, setHasDescriptionFilter] = useState(false);
+	const [hasH1FirstFilter, setHasH1FirstFilter] = useState(false);
+	const [hasH1SecondFilter, setHasH1SecondFilter] = useState(false);
+	const [hasH2FirstFilter, setHasH2FirstFilter] = useState(false);
+	const [hasH2SecondFilter, setHasH2SecondFilter] = useState(false);
+	const [hasNoH1FirstFilter, setHasNoH1FirstFilter] = useState(false);
+	const [hasNoH1SecondFilter, setHasNoH1SecondFilter] = useState(false);
+	const [hasNoH2FirstFilter, setHasNoH2FirstFilter] = useState(false);
+	const [hasNoH2SecondFilter, setHasNoH2SecondFilter] = useState(false);
+	const [hasDuplicatedTitleFilter, setHasDuplicatedTitleFilter] = useState(false);
+	const [hasDuplicatedDescriptionFilter, setHasDuplicatedDescriptionFilter] = useState(false);
+	const [tlsImagesFilter, setTlsImagesFilter] = useState(false);
+	const [tlsScriptsFilter, setTlsScriptsFilter] = useState(false);
+	const [tlsStylesheetsFilter, setTlsStylesheetsFilter] = useState(false);
+	const [tlsTotalFilter, setTlsTotalFilter] = useState(false);
 
 	// Translations
 	const { t } = useTranslation("filters");
+
+	// Sites
 	const allSitesText = t("allSites");
 	const unverifiedText = t("unverified");
 	const verifiedText = t("verified");
+
+	// Links
 	const allLinksText = t("allLinks");
 	const linksWithIssuesText = t("linksWithIssues");
 	const internalLinksText = t("internalLinks");
 	const externalLinksText = t("externalLinks");
 	const nonWebLinksText = t("nonWebLinks");
 	const noLinkIssuesText = t("noLinkIssues");
+
+	// Pages
 	const allPagesText = t("allPages");
-	const tlsStatusText = t("tlsStatus");
-	const imagesTlsStatusText = t("imagesTlsStatus");
-	const scriptsTlsStatusText = t("scriptsTlsStatus");
-	const stylesheetsTlsStatusText = t("stylesheetsTlsStatus");
-	const okLinksText = t("okLinks");
-	const nonOkLinksText = t("nonOkLinks");
-	const okImagesText = t("okImages");
-	const nonOkImagesText = t("nonOkImages");
-	const okScriptsText = t("okScripts");
-	const nonOkScriptsText = t("nonOkScripts");
-	const okStylesheetsText = t("okStylesheets");
-	const nonOkStylesheetsText = t("nonOkStylesheets");
-	const securedImagesText = t("securedImages");
-	const unsecuredImagesText = t("unsecuredImages");
-	const securedScriptsText = t("securedScripts");
-	const unsecuredScriptsText = t("unsecuredScripts");
-	const securedStylesheetsText = t("securedStylesheets");
-	const unsecuredStylesheetsText = t("unsecuredStylesheets");
-	const urlTypeText = t("urlType");
+	const hasTitleText = t("hasTitle");
+	const hasDescriptionText = t("hasDescription");
+	const hasH1FirstText = t("hasH1First");
+	const hasH1SecondText = t("hasH1Second");
+	const hasH2FirstText = t("hasH2First");
+	const hasH2SecondText = t("hasH2Second");
+	const hasNoH1FirstText = t("hasNoH1First");
+	const hasNoH1SecondText = t("hasNoH1Second");
+	const hasNoH2FirstText = t("hasNoH2First");
+	const hasNoH2SecondText = t("hasNoH2Second");
+	const hasDuplicatedTitleText = t("hasDuplicatedTitle");
+	const hasDuplicatedDescriptionText = t("hasDuplicatedDescription");
+	const tlsImagesText = t("tlsImages");
+	const tlsScriptsText = t("tlsScripts");
+	const tlsStylesheetsText = t("tlsStylesheets");
+	const tlsTotalText = t("tlsTotal");
 
 	const filtersArray = [];
 
@@ -133,143 +131,131 @@ export const FilterData = () => {
 		value: "allPages",
 		type: "pages"
 	};
-	const tlsStatusData = {
-		label: tlsStatusText,
-		checked: tlsStatusFilter,
-		value: "tlsStatus",
+	const hasTitleData = {
+		label: hasTitleText,
+		checked: hasTitleFilter,
+		value: "hasTitle",
 		type: "pages"
 	};
-	const imagesTlsStatusData = {
-		label: imagesTlsStatusText,
-		checked: imagesTlsStatusFilter,
-		value: "imagesTlsStatus",
+	const hasDescriptionData = {
+		label: hasDescriptionText,
+		checked: hasDescriptionFilter,
+		value: "hasDescription",
 		type: "pages"
 	};
-	const scriptsTlsStatusData = {
-		label: scriptsTlsStatusText,
-		checked: scriptsTlsStatusFilter,
-		value: "scriptsTlsStatus",
+	const hasH1FirstData = {
+		label: hasH1FirstText,
+		checked: hasH1FirstFilter,
+		value: "hasH1First",
 		type: "pages"
 	};
-	const stylesheetsTlsStatusData = {
-		label: stylesheetsTlsStatusText,
-		checked: stylesheetsTlsStatusFilter,
-		value: "stylesheetsTlsStatus",
+	const hasH1SecondData = {
+		label: hasH1SecondText,
+		checked: hasH1SecondFilter,
+		value: "hasH1Second",
 		type: "pages"
 	};
-	const totalOkLinksData = {
-		label: okLinksText,
-		checked: okLinksFilter,
-		value: "okLinks",
+	const hasH2FirstData = {
+		label: hasH2FirstText,
+		checked: hasH2FirstFilter,
+		value: "hasH2First",
 		type: "pages"
 	};
-	const totalNonOkLinksData = {
-		label: nonOkLinksText,
-		checked: nonOkLinksFilter,
-		value: "nonOkLinks",
+	const hasH2SecondData = {
+		label: hasH2SecondText,
+		checked: hasH2SecondFilter,
+		value: "hasH2Second",
 		type: "pages"
 	};
-	const totalOkImagesData = {
-		label: okImagesText,
-		checked: okImagesFilter,
-		value: "okImages",
+
+	const hasNoH1FirstData = {
+		label: hasNoH1FirstText,
+		checked: hasNoH1FirstFilter,
+		value: "hasNoH1First",
 		type: "pages"
 	};
-	const totalNonOkImagesData = {
-		label: nonOkImagesText,
-		checked: nonOkImagesFilter,
-		value: "nonOkImages",
+	const hasNoH1SecondData = {
+		label: hasNoH1SecondText,
+		checked: hasNoH1SecondFilter,
+		value: "hasNoH1Second",
 		type: "pages"
 	};
-	const totalOkScriptsData = {
-		label: okScriptsText,
-		checked: okScriptsFilter,
-		value: "okScripts",
+	const hasNoH2FirstData = {
+		label: hasNoH2FirstText,
+		checked: hasNoH2FirstFilter,
+		value: "hasNoH2First",
 		type: "pages"
 	};
-	const totalNonOkScriptsData = {
-		label: nonOkScriptsText,
-		checked: nonOkScriptsFilter,
-		value: "nonOkScripts",
+	const hasNoH2SecondData = {
+		label: hasNoH2SecondText,
+		checked: hasNoH2SecondFilter,
+		value: "hasNoH2Second",
 		type: "pages"
 	};
-	const totalOkStylesheetsData = {
-		label: okStylesheetsText,
-		checked: okStylesheetsFilter,
-		value: "okStylesheets",
+
+	const hasDuplicatedTitleData = {
+		label: hasDuplicatedTitleText,
+		checked: hasDuplicatedTitleFilter,
+		value: "hasDuplicatedTitle",
 		type: "pages"
 	};
-	const totalNonOkStylesheetsData = {
-		label: nonOkStylesheetsText,
-		checked: nonOkStylesheetsFilter,
-		value: "nonOkStylesheets",
+	const hasDuplicatedDescriptionData = {
+		label: hasDuplicatedDescriptionText,
+		checked: hasDuplicatedDescriptionFilter,
+		value: "hasDuplicatedDescription",
 		type: "pages"
 	};
-	const securedImagesData = {
-		label: securedImagesText,
-		checked: securedImagesFilter,
-		value: "securedImages",
+	const tlsImagesData = {
+		label: tlsImagesText,
+		checked: tlsImagesFilter,
+		value: "tlsImages",
 		type: "pages"
 	};
-	const unsecuredImagesData = {
-		label: unsecuredImagesText,
-		checked: unsecuredImagesFilter,
-		value: "unsecuredImages",
+	const tlsScriptsData = {
+		label: tlsScriptsText,
+		checked: tlsScriptsFilter,
+		value: "tlsScripts",
 		type: "pages"
 	};
-	const securedScriptsData = {
-		label: securedScriptsText,
-		checked: securedScriptsFilter,
-		value: "securedScripts",
+	const tlsStylesheetsData = {
+		label: tlsStylesheetsText,
+		checked: tlsStylesheetsFilter,
+		value: "tlsStylesheets",
 		type: "pages"
 	};
-	const unsecuredScriptsData = {
-		label: unsecuredScriptsText,
-		checked: unsecuredScriptsFilter,
-		value: "unsecuredScripts",
-		type: "pages"
-	};
-	const securedStylesheetsData = {
-		label: securedStylesheetsText,
-		checked: securedStylesheetsFilter,
-		value: "securedStylesheets",
-		type: "pages"
-	};
-	const unsecuredStylesheetsData = {
-		label: unsecuredStylesheetsText,
-		checked: unsecuredStylesheetsFilter,
-		value: "unsecuredStylesheets",
+	const tlsTotalData = {
+		label: tlsTotalText,
+		checked: tlsTotalFilter,
+		value: "tlsTotal",
 		type: "pages"
 	};
 
 	filtersArray.push(allSitesData);
+	filtersArray.push(linksWithIssuesData);
+	filtersArray.push(noLinkIssuesData);
 	filtersArray.push(unverifiedSitesData);
 	filtersArray.push(verifiedSitesData);
 	filtersArray.push(allSiteLinksData);
 	filtersArray.push(internalLinksData);
 	filtersArray.push(externalLinksData);
 	filtersArray.push(nonWebLinksData);
-	filtersArray.push(linksWithIssuesData);
-	filtersArray.push(noLinkIssuesData);
 	filtersArray.push(allSitePagesData);
-	filtersArray.push(tlsStatusData);
-	filtersArray.push(imagesTlsStatusData);
-	filtersArray.push(scriptsTlsStatusData);
-	filtersArray.push(stylesheetsTlsStatusData);
-	filtersArray.push(totalOkLinksData);
-	filtersArray.push(totalNonOkLinksData);
-	filtersArray.push(totalOkImagesData);
-	filtersArray.push(totalNonOkImagesData);
-	filtersArray.push(totalOkScriptsData);
-	filtersArray.push(totalNonOkScriptsData);
-	filtersArray.push(totalOkStylesheetsData);
-	filtersArray.push(totalNonOkStylesheetsData);
-	filtersArray.push(securedImagesData);
-	filtersArray.push(unsecuredImagesData);
-	filtersArray.push(securedScriptsData);
-	filtersArray.push(unsecuredScriptsData);
-	filtersArray.push(securedStylesheetsData);
-	filtersArray.push(unsecuredStylesheetsData);
+	filtersArray.push(hasTitleData);
+	filtersArray.push(hasDescriptionData);
+	filtersArray.push(hasH1FirstData);
+	filtersArray.push(hasNoH1FirstData);
+	filtersArray.push(hasH1SecondData);
+	filtersArray.push(hasNoH1SecondData);
+	filtersArray.push(hasH2FirstData);
+	filtersArray.push(hasNoH2FirstData);
+	filtersArray.push(hasH2SecondData);
+	filtersArray.push(hasNoH2SecondData);
+	filtersArray.push(hasDuplicatedTitleData);
+	filtersArray.push(hasDuplicatedDescriptionData);
+	filtersArray.push(tlsImagesData);
+	filtersArray.push(tlsScriptsData);
+	filtersArray.push(tlsStylesheetsData);
+	filtersArray.push(tlsTotalData);
 
 	return {
 		filtersArray,
@@ -293,41 +279,37 @@ export const FilterData = () => {
 		setNoLinkIssuesFilter,
 		allPagesFilter,
 		setAllPagesFilter,
-		okLinksFilter,
-		setOkLinksFilter,
-		nonOkLinksFilter,
-		setNonOkLinksFilter,
-		okImagesFilter,
-		setOkImagesFilter,
-		nonOkImagesFilter,
-		setNonOkImagesFilter,
-		okScriptsFilter,
-		setOkScriptsFilter,
-		nonOkScriptsFilter,
-		setNonOkScriptsFilter,
-		okStylesheetsFilter,
-		setOkStylesheetsFilter,
-		nonOkStylesheetsFilter,
-		setNonOkStylesheetsFilter,
-		securedImagesFilter,
-		setSecuredImagesFilter,
-		unsecuredImagesFilter,
-		setUnsecuredImagesFilter,
-		securedScriptsFilter,
-		setSecuredScriptsFilter,
-		unsecuredScriptsFilter,
-		setUnsecuredScriptsFilter,
-		securedStylesheetsFilter,
-		setSecuredStylesheetsFilter,
-		unsecuredStylesheetsFilter,
-		setUnsecuredStylesheetsFilter,
-		tlsStatusFilter,
-		setTlsStatusFilter,
-		imagesTlsStatusFilter,
-		setImagesTlsStatusFilter,
-		scriptsTlsStatusFilter,
-		setScriptsTlsStatusFilter,
-		stylesheetsTlsStatusFilter,
-		setStylesheetsTlsStatusFilter
+		hasTitleFilter,
+		setHasTitleFilter,
+		hasDescriptionFilter,
+		setHasDescriptionFilter,
+		hasH1FirstFilter,
+		setHasH1FirstFilter,
+		hasH1SecondFilter,
+		setHasH1SecondFilter,
+		hasH2FirstFilter,
+		setHasH2FirstFilter,
+		hasH2SecondFilter,
+		setHasH2SecondFilter,
+		hasNoH1FirstFilter,
+		setHasNoH1FirstFilter,
+		hasNoH1SecondFilter,
+		setHasNoH1SecondFilter,
+		hasNoH2FirstFilter,
+		setHasNoH2FirstFilter,
+		hasNoH2SecondFilter,
+		setHasNoH2SecondFilter,
+		hasDuplicatedTitleFilter,
+		setHasDuplicatedTitleFilter,
+		hasDuplicatedDescriptionFilter,
+		setHasDuplicatedDescriptionFilter,
+		tlsImagesFilter,
+		setTlsImagesFilter,
+		tlsScriptsFilter,
+		setTlsScriptsFilter,
+		tlsStylesheetsFilter,
+		setTlsStylesheetsFilter,
+		tlsTotalFilter,
+		setTlsTotalFilter
 	};
 };
