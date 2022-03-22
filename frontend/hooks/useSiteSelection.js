@@ -51,20 +51,17 @@ export const useSiteSelection = () => {
 	}, [querySiteId, sitesResults, selectedSiteDetails]);
 
 	// Handle site selection on click
-	const handleSiteSelectOnClick = useCallback(
-		async (id) => {
-			return id
-				? asPath.includes("settings") || asPath.includes("add-new-site") || asPath === DashboardSitesLink
-					? push(DashboardSitesLink + id + "/")
-					: push({
-							query: {
-								siteId: id
-							}
-					  })
-				: null;
-		},
-		[asPath]
-	);
+	const handleSiteSelectOnClick = useCallback(async (id) => {
+		return id
+			? asPath.includes("settings") || asPath.includes("add-new-site") || asPath === DashboardSitesLink
+				? push(DashboardSitesLink + id + "/")
+				: push({
+						query: {
+							siteId: id
+						}
+				  })
+			: null;
+	});
 
 	return {
 		siteSelectRef,
