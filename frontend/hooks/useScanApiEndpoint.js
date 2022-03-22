@@ -1,6 +1,7 @@
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import { perPageQuery, sortByNameAscending } from "@constants/GlobalValues";
 import {
+	DashboardSitesLink,
 	SiteImageSlug,
 	SiteImagesSlug,
 	SiteLinkSlug,
@@ -55,8 +56,10 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 				SiteImageSlug +
 				(scanApiEndpoint.includes("?") ? "&" : "?") +
 				`${perPageQuery + linksPerPage}`)
-		: (scanApiEndpoint +=
-				SitesApiEndpoint + (scanApiEndpoint.includes("?") ? "&" : "?") + `${perPageQuery + linksPerPage}`);
+		: asPath === DashboardSitesLink
+		? (scanApiEndpoint +=
+				SitesApiEndpoint + (scanApiEndpoint.includes("?") ? "&" : "?") + `${perPageQuery + linksPerPage}`)
+		: null;
 
 	const typeString = query?.type ? (Array.isArray(query?.type) ? query.type.join("&type=") : query.type) : "";
 
