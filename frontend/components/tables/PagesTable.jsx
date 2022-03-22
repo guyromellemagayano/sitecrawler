@@ -51,43 +51,53 @@ const PagesTable = ({ count = 0, results = [] }) => {
 			permissions &&
 			permissions?.includes("can_see_pages") &&
 			permissions?.includes("can_see_scripts") &&
-			permissions?.includes("can_see_stylesheets") ? (
-				count > 0 && results?.length > 0 ? (
-					<table>
-						<thead>
-							<tr>
-								{labelsArray?.map((label) => (
-									<th
-										key={label.label}
-										className="border-b border-gray-200 px-6 py-3 text-left text-xs font-medium uppercase leading-4 tracking-wider text-gray-500"
-									>
-										<span className="flex items-center justify-start">
-											<MemoizedDataSorting slug={label.slug} labels={labelsArray} />
-											<span className="flex items-center">{label.label}</span>
-										</span>
-									</th>
-								)) ?? null}
-							</tr>
-						</thead>
+			permissions?.includes("can_see_stylesheets") &&
+			count > 0 &&
+			results?.length > 0 ? (
+				<table>
+					<thead>
+						<tr>
+							{labelsArray?.map((label) => (
+								<th
+									key={label.label}
+									className="border-b border-gray-200 px-6 py-3 text-left text-xs font-medium uppercase leading-4 tracking-wider text-gray-500"
+								>
+									<span className="flex items-center justify-start">
+										<MemoizedDataSorting slug={label.slug} labels={labelsArray} />
+										<span className="flex items-center">{label.label}</span>
+									</span>
+								</th>
+							)) ?? null}
+						</tr>
+					</thead>
 
-						<tbody className="relative divide-y divide-gray-200">
-							{results?.map((result) => {
-								return <MemoizedPagesData key={result.id} page={result} />;
-							}) ?? null}
-						</tbody>
-					</table>
-				) : count === 0 && results?.length === 0 ? (
-					<div className="flex items-center justify-center px-4 py-5 sm:p-6">
-						<MemoizedLoadingMessage message={noAvailablePages} />
-					</div>
-				) : (
-					<div className="flex items-center justify-center px-4 py-5 sm:p-6">
-						<MemoizedLoadingMessage message={loaderMessage} />
-					</div>
-				)
-			) : (
+					<tbody className="relative divide-y divide-gray-200">
+						{results?.map((result) => {
+							return <MemoizedPagesData key={result.id} page={result} />;
+						}) ?? null}
+					</tbody>
+				</table>
+			) : isComponentReady &&
+			  permissions &&
+			  permissions?.includes("can_see_pages") &&
+			  permissions?.includes("can_see_scripts") &&
+			  permissions?.includes("can_see_stylesheets") &&
+			  count === 0 &&
+			  results?.length === 0 ? (
+				<div className="flex items-center justify-center px-4 py-5 sm:p-6">
+					<MemoizedLoadingMessage message={noAvailablePages} />
+				</div>
+			) : isComponentReady &&
+			  permissions &&
+			  !permissions?.includes("can_see_pages") &&
+			  !permissions?.includes("can_see_scripts") &&
+			  !permissions?.includes("can_see_stylesheets") ? (
 				<div className="flex items-center justify-center px-4 py-5 sm:p-6">
 					<MemoizedEmptyState />
+				</div>
+			) : (
+				<div className="flex items-center justify-center px-4 py-5 sm:p-6">
+					<MemoizedLoadingMessage message={loaderMessage} />
 				</div>
 			)}
 		</section>

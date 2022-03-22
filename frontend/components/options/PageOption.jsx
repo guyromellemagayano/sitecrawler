@@ -41,6 +41,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 	const siteText = t("sites:site");
 	const sitesText = t("sites:sites");
 	const pagesText = t("sites:pages");
+	const imagesText = t("sites:images");
 	const csvDownloadText = t("sites:csvDownload");
 	const crawlingText = t("sites:crawling");
 	const crawlText = t("sites:crawlSite");
@@ -262,6 +263,17 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 											: noAvailablePagesText}
 									</span>
 								</>
+							) : isComponentReady && isImages && imagesCount ? (
+								<>
+									<DocumentTextIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
+									<span className="text-sm leading-6 text-gray-500">
+										{imagesCount > 1
+											? imagesCount + " " + handleConversionStringToLowercase(imagesText)
+											: imagesCount === 1
+											? imagesCount + " " + siteText
+											: noAvailableImagesText}
+									</span>
+								</>
 							) : (
 								<>
 									<Skeleton duration={2} width={20} height={20} className="flex-shrink-0" />
@@ -274,8 +286,9 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 					{!isSites ? (
 						<div className="mt-4 flex md:mt-0 md:ml-4">
 							{isComponentReady &&
-							(linksCount || sitesCount || pagesCount) &&
+							(linksCount || sitesCount || pagesCount || imagesCount) &&
 							(isCrawlStarted || !isCrawlStarted || isCrawlFinished || !isCrawlFinished) ? (
+								permissions &&
 								permissions?.includes("can_start_scan") &&
 								permissions?.includes("can_see_pages") &&
 								permissions?.includes("can_see_scripts") &&
@@ -327,7 +340,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 							)}
 
 							{!isSites ? (
-								isComponentReady && (linksCount || sitesCount || pagesCount) ? (
+								isComponentReady && (linksCount || sitesCount || pagesCount || imagesCount) ? (
 									<button
 										type="button"
 										disabled={isDownloading}
