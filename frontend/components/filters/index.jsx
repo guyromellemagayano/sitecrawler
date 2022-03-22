@@ -54,42 +54,38 @@ const Filter = ({
 		setNoLinkIssuesFilter,
 		allPagesFilter,
 		setAllPagesFilter,
-		okLinksFilter,
-		setOkLinksFilter,
-		nonOkLinksFilter,
-		setNonOkLinksFilter,
-		okImagesFilter,
-		setOkImagesFilter,
-		nonOkImagesFilter,
-		setNonOkImagesFilter,
-		okScriptsFilter,
-		setOkScriptsFilter,
-		nonOkScriptsFilter,
-		setNonOkScriptsFilter,
-		okStylesheetsFilter,
-		setOkStylesheetsFilter,
-		nonOkStylesheetsFilter,
-		setNonOkStylesheetsFilter,
-		securedImagesFilter,
-		setSecuredImagesFilter,
-		unsecuredImagesFilter,
-		setUnsecuredImagesFilter,
-		securedScriptsFilter,
-		setSecuredScriptsFilter,
-		unsecuredScriptsFilter,
-		setUnsecuredScriptsFilter,
-		securedStylesheetsFilter,
-		setSecuredStylesheetsFilter,
-		unsecuredStylesheetsFilter,
-		setUnsecuredStylesheetsFilter,
-		tlsStatusFilter,
-		setTlsStatusFilter,
-		imagesTlsStatusFilter,
-		setImagesTlsStatusFilter,
-		scriptsTlsStatusFilter,
-		setScriptsTlsStatusFilter,
-		stylesheetsTlsStatusFilter,
-		setStylesheetsTlsStatusFilter
+		hasTitleFilter,
+		setHasTitleFilter,
+		hasDescriptionFilter,
+		setHasDescriptionFilter,
+		hasH1FirstFilter,
+		setHasH1FirstFilter,
+		hasH1SecondFilter,
+		setHasH1SecondFilter,
+		hasH2FirstFilter,
+		setHasH2FirstFilter,
+		hasH2SecondFilter,
+		setHasH2SecondFilter,
+		hasNoH1FirstFilter,
+		setHasNoH1FirstFilter,
+		hasNoH1SecondFilter,
+		setHasNoH1SecondFilter,
+		hasNoH2FirstFilter,
+		setHasNoH2FirstFilter,
+		hasNoH2SecondFilter,
+		setHasNoH2SecondFilter,
+		hasDuplicatedTitleFilter,
+		setHasDuplicatedTitleFilter,
+		hasDuplicatedDescriptionFilter,
+		setHasDuplicatedDescriptionFilter,
+		tlsImagesFilter,
+		setTlsImagesFilter,
+		tlsScriptsFilter,
+		setTlsScriptsFilter,
+		tlsStylesheetsFilter,
+		setTlsStylesheetsFilter,
+		tlsTotalFilter,
+		setTlsTotalFilter
 	} = FilterData();
 
 	// Custom context
@@ -136,6 +132,7 @@ const Filter = ({
 				setAllLinksFilter(false);
 
 				newPath = handleRemoveUrlParameter(newPath, "status");
+				newPath = handleRemoveUrlParameter(newPath, "status__neq");
 
 				if (newPath.includes("?")) newPath += `&status__neq=OK`;
 				else newPath += `?status__neq=OK`;
@@ -155,6 +152,7 @@ const Filter = ({
 				setNoLinkIssuesFilter(true);
 				setAllLinksFilter(false);
 
+				newPath = handleRemoveUrlParameter(newPath, "status");
 				newPath = handleRemoveUrlParameter(newPath, "status__neq");
 
 				if (newPath.includes("?")) newPath += `&status=OK`;
@@ -221,7 +219,14 @@ const Filter = ({
 				setNonWebLinksFilter(false);
 			}
 
-			if (filterValue === "allLinks" && filterChecked) {
+			if (
+				(filterValue === "allSites" && filterChecked) ||
+				(filterValue !== "linksWithIssues" &&
+					filterValue !== "noLinkIssues" &&
+					filterValue !== "internalLinks" &&
+					filterValue !== "externalLinks" &&
+					filterValue !== "nonWebLinks")
+			) {
 				setAllLinksFilter(true);
 				setLinksWithIssuesFilter(false);
 				setNoLinkIssuesFilter(false);
@@ -233,101 +238,707 @@ const Filter = ({
 				newPath = handleRemoveUrlParameter(newPath, "type");
 			}
 		} else if (filterType === "pages") {
-			if (filterValue === "tlsStatus" && filterChecked) {
+			if (filterValue === "hasTitle" && filterChecked) {
 				setAllPagesFilter(false);
-				setTlsStatusFilter(true);
-				setImagesTlsStatusFilter(false);
-				setScriptsTlsStatusFilter(false);
-				setStylesheetsTlsStatusFilter(false);
+				setHasTitleFilter(true);
+				setHasDescriptionFilter(false);
+				setHasH1FirstFilter(false);
+				setHasH1SecondFilter(false);
+				setHasH2FirstFilter(false);
+				setHasH2SecondFilter(false);
+				setHasNoH1FirstFilter(false);
+				setHasNoH1SecondFilter(false);
+				setHasNoH2FirstFilter(false);
+				setHasNoH2SecondFilter(false);
+				setHasDuplicatedTitleFilter(false);
+				setHasDuplicatedDescriptionFilter(false);
+				setTlsImagesFilter(false);
+				setTlsScriptsFilter(false);
+				setTlsStylesheetsFilter(false);
+				setTlsTotalFilter(false);
 
+				newPath = handleRemoveUrlParameter(newPath, "has_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_description");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
 				newPath = handleRemoveUrlParameter(newPath, "tls_images");
 				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
 				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
+				newPath = handleRemoveUrlParameter(newPath, "tls_total");
 
-				if (newPath.includes("?")) newPath += `&tls_status=true`;
-				else newPath += `?tls_status=true`;
-			} else if (filterValue === "tlsStatus" && !filterChecked) {
-				filterQueryString?.delete("tls_status") ?? null;
+				if (newPath.includes("?")) newPath += `&has_title=true`;
+				else newPath += `?has_title=true`;
+			} else if (filterValue === "hasTitle" && !filterChecked) {
+				filterQueryString?.delete("has_title") ?? null;
 
-				if (newPath.includes("tls_status")) newPath = handleRemoveUrlParameter(newPath, "tls_status");
+				if (newPath.includes("has_title")) newPath = handleRemoveUrlParameter(newPath, "has_title");
 
-				setTlsStatusFilter(false);
+				setHasTitleFilter(false);
 			}
 
-			if (filterValue === "imagesTlsStatus" && filterChecked) {
+			if (filterValue === "hasDescription" && filterChecked) {
 				setAllPagesFilter(false);
-				setTlsStatusFilter(false);
-				setImagesTlsStatusFilter(true);
-				setScriptsTlsStatusFilter(false);
-				setStylesheetsTlsStatusFilter(false);
+				setHasTitleFilter(false);
+				setHasDescriptionFilter(true);
+				setHasH1FirstFilter(false);
+				setHasH1SecondFilter(false);
+				setHasH2FirstFilter(false);
+				setHasH2SecondFilter(false);
+				setHasNoH1FirstFilter(false);
+				setHasNoH1SecondFilter(false);
+				setHasNoH2FirstFilter(false);
+				setHasNoH2SecondFilter(false);
+				setHasDuplicatedTitleFilter(false);
+				setHasDuplicatedDescriptionFilter(false);
+				setTlsImagesFilter(false);
+				setTlsScriptsFilter(false);
+				setTlsStylesheetsFilter(false);
+				setTlsTotalFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "tls_status");
+				newPath = handleRemoveUrlParameter(newPath, "has_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_description");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
+				newPath = handleRemoveUrlParameter(newPath, "tls_images");
 				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
 				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
+				newPath = handleRemoveUrlParameter(newPath, "tls_total");
+
+				if (newPath.includes("?")) newPath += `&has_description=true`;
+				else newPath += `?has_description=true`;
+			} else if (filterValue === "hasDescription" && !filterChecked) {
+				filterQueryString?.delete("has_description") ?? null;
+
+				if (newPath.includes("has_description")) newPath = handleRemoveUrlParameter(newPath, "has_description");
+
+				setHasDescriptionFilter(false);
+			}
+
+			if (filterValue === "hasH1First" && filterChecked) {
+				setAllPagesFilter(false);
+				setHasTitleFilter(false);
+				setHasDescriptionFilter(false);
+				setHasH1FirstFilter(true);
+				setHasH1SecondFilter(false);
+				setHasH2FirstFilter(false);
+				setHasH2SecondFilter(false);
+				setHasNoH1FirstFilter(false);
+				setHasNoH1SecondFilter(false);
+				setHasNoH2FirstFilter(false);
+				setHasNoH2SecondFilter(false);
+				setHasDuplicatedTitleFilter(false);
+				setHasDuplicatedDescriptionFilter(false);
+				setTlsImagesFilter(false);
+				setTlsScriptsFilter(false);
+				setTlsStylesheetsFilter(false);
+				setTlsTotalFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "has_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_description");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
+				newPath = handleRemoveUrlParameter(newPath, "tls_images");
+				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
+				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
+				newPath = handleRemoveUrlParameter(newPath, "tls_total");
+
+				if (newPath.includes("?")) newPath += `&has_h1_first=true`;
+				else newPath += `?has_h1_first=true`;
+			} else if (filterValue === "hasH1First" && !filterChecked) {
+				filterQueryString?.delete("has_h1_first") ?? null;
+
+				if (newPath.includes("has_h1_first")) newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
+
+				setHasH1FirstFilter(false);
+			}
+
+			if (filterValue === "hasH1Second" && filterChecked) {
+				setAllPagesFilter(false);
+				setHasTitleFilter(false);
+				setHasDescriptionFilter(false);
+				setHasH1FirstFilter(false);
+				setHasH1SecondFilter(true);
+				setHasH2FirstFilter(false);
+				setHasH2SecondFilter(false);
+				setHasNoH1FirstFilter(false);
+				setHasNoH1SecondFilter(false);
+				setHasNoH2FirstFilter(false);
+				setHasNoH2SecondFilter(false);
+				setHasDuplicatedTitleFilter(false);
+				setHasDuplicatedDescriptionFilter(false);
+				setTlsImagesFilter(false);
+				setTlsScriptsFilter(false);
+				setTlsStylesheetsFilter(false);
+				setTlsTotalFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "has_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_description");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
+				newPath = handleRemoveUrlParameter(newPath, "tls_images");
+				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
+				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
+				newPath = handleRemoveUrlParameter(newPath, "tls_total");
+
+				if (newPath.includes("?")) newPath += `&has_h1_second=true`;
+				else newPath += `?has_h1_second=true`;
+			} else if (filterValue === "hasH1Second" && !filterChecked) {
+				filterQueryString?.delete("has_h1_second") ?? null;
+
+				if (newPath.includes("has_h1_second")) newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
+
+				setHasH1SecondFilter(false);
+			}
+
+			if (filterValue === "hasH2First" && filterChecked) {
+				setAllPagesFilter(false);
+				setHasTitleFilter(false);
+				setHasDescriptionFilter(false);
+				setHasH1FirstFilter(false);
+				setHasH1SecondFilter(false);
+				setHasH2FirstFilter(true);
+				setHasH2SecondFilter(false);
+				setHasNoH1FirstFilter(false);
+				setHasNoH1SecondFilter(false);
+				setHasNoH2FirstFilter(false);
+				setHasNoH2SecondFilter(false);
+				setHasDuplicatedTitleFilter(false);
+				setHasDuplicatedDescriptionFilter(false);
+				setTlsImagesFilter(false);
+				setTlsScriptsFilter(false);
+				setTlsStylesheetsFilter(false);
+				setTlsTotalFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "has_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_description");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
+				newPath = handleRemoveUrlParameter(newPath, "tls_images");
+				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
+				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
+				newPath = handleRemoveUrlParameter(newPath, "tls_total");
+
+				if (newPath.includes("?")) newPath += `&has_h2_first=true`;
+				else newPath += `?has_h2_first=true`;
+			} else if (filterValue === "hasH2First" && !filterChecked) {
+				filterQueryString?.delete("has_h2_first") ?? null;
+
+				if (newPath.includes("has_h2_first")) newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
+
+				setHasH2FirstFilter(false);
+			}
+
+			if (filterValue === "hasH2Second" && filterChecked) {
+				setAllPagesFilter(false);
+				setHasTitleFilter(false);
+				setHasDescriptionFilter(false);
+				setHasH1FirstFilter(false);
+				setHasH1SecondFilter(false);
+				setHasH2FirstFilter(false);
+				setHasH2SecondFilter(true);
+				setHasNoH1FirstFilter(false);
+				setHasNoH1SecondFilter(false);
+				setHasNoH2FirstFilter(false);
+				setHasNoH2SecondFilter(false);
+				setHasDuplicatedTitleFilter(false);
+				setHasDuplicatedDescriptionFilter(false);
+				setTlsImagesFilter(false);
+				setTlsScriptsFilter(false);
+				setTlsStylesheetsFilter(false);
+				setTlsTotalFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "has_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_description");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
+				newPath = handleRemoveUrlParameter(newPath, "tls_images");
+				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
+				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
+				newPath = handleRemoveUrlParameter(newPath, "tls_total");
+
+				if (newPath.includes("?")) newPath += `&has_h2_second=true`;
+				else newPath += `?has_h2_second=true`;
+			} else if (filterValue === "hasH2Second" && !filterChecked) {
+				filterQueryString?.delete("has_h2_second") ?? null;
+
+				if (newPath.includes("has_h2_second")) newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
+
+				setHasH2SecondFilter(false);
+			}
+
+			if (filterValue === "hasNoH1First" && filterChecked) {
+				setAllPagesFilter(false);
+				setHasTitleFilter(false);
+				setHasDescriptionFilter(false);
+				setHasH1FirstFilter(false);
+				setHasH1SecondFilter(false);
+				setHasH2FirstFilter(false);
+				setHasH2SecondFilter(false);
+				setHasNoH1FirstFilter(true);
+				setHasNoH1SecondFilter(false);
+				setHasNoH2FirstFilter(false);
+				setHasNoH2SecondFilter(false);
+				setHasDuplicatedTitleFilter(false);
+				setHasDuplicatedDescriptionFilter(false);
+				setTlsImagesFilter(false);
+				setTlsScriptsFilter(false);
+				setTlsStylesheetsFilter(false);
+				setTlsTotalFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "has_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_description");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
+				newPath = handleRemoveUrlParameter(newPath, "tls_images");
+				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
+				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
+				newPath = handleRemoveUrlParameter(newPath, "tls_total");
+
+				if (newPath.includes("?")) newPath += `&has_h1_first=false`;
+				else newPath += `?has_h1_first=false`;
+			} else if (filterValue === "hasNoH1First" && !filterChecked) {
+				filterQueryString?.delete("has_h1_first") ?? null;
+
+				if (newPath.includes("has_h1_first")) newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
+
+				setHasNoH1FirstFilter(false);
+			}
+
+			if (filterValue === "hasNoH1Second" && filterChecked) {
+				setAllPagesFilter(false);
+				setHasTitleFilter(false);
+				setHasDescriptionFilter(false);
+				setHasH1FirstFilter(false);
+				setHasH1SecondFilter(false);
+				setHasH2FirstFilter(false);
+				setHasH2SecondFilter(false);
+				setHasNoH1FirstFilter(false);
+				setHasNoH1SecondFilter(true);
+				setHasNoH2FirstFilter(false);
+				setHasNoH2SecondFilter(false);
+				setHasDuplicatedTitleFilter(false);
+				setHasDuplicatedDescriptionFilter(false);
+				setTlsImagesFilter(false);
+				setTlsScriptsFilter(false);
+				setTlsStylesheetsFilter(false);
+				setTlsTotalFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "has_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_description");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
+				newPath = handleRemoveUrlParameter(newPath, "tls_images");
+				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
+				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
+				newPath = handleRemoveUrlParameter(newPath, "tls_total");
+
+				if (newPath.includes("?")) newPath += `&has_h1_second=false`;
+				else newPath += `?has_h1_second=false`;
+			} else if (filterValue === "hasNoH1Second" && !filterChecked) {
+				filterQueryString?.delete("has_h1_second") ?? null;
+
+				if (newPath.includes("has_h1_second")) newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
+
+				setHasNoH1SecondFilter(false);
+			}
+
+			if (filterValue === "hasNoH2First" && filterChecked) {
+				setAllPagesFilter(false);
+				setHasTitleFilter(false);
+				setHasDescriptionFilter(false);
+				setHasH1FirstFilter(false);
+				setHasH1SecondFilter(false);
+				setHasH2FirstFilter(false);
+				setHasH2SecondFilter(false);
+				setHasNoH1FirstFilter(false);
+				setHasNoH1SecondFilter(false);
+				setHasNoH2FirstFilter(true);
+				setHasNoH2SecondFilter(false);
+				setHasDuplicatedTitleFilter(false);
+				setHasDuplicatedDescriptionFilter(false);
+				setTlsImagesFilter(false);
+				setTlsScriptsFilter(false);
+				setTlsStylesheetsFilter(false);
+				setTlsTotalFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "has_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_description");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
+				newPath = handleRemoveUrlParameter(newPath, "tls_images");
+				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
+				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
+				newPath = handleRemoveUrlParameter(newPath, "tls_total");
+
+				if (newPath.includes("?")) newPath += `&has_h2_first=false`;
+				else newPath += `?has_h2_first=false`;
+			} else if (filterValue === "hasNoH2First" && !filterChecked) {
+				filterQueryString?.delete("has_h2_first") ?? null;
+
+				if (newPath.includes("has_h2_first")) newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
+
+				setHasNoH2FirstFilter(false);
+			}
+
+			if (filterValue === "hasNoH2Second" && filterChecked) {
+				setAllPagesFilter(false);
+				setHasTitleFilter(false);
+				setHasDescriptionFilter(false);
+				setHasH1FirstFilter(false);
+				setHasH1SecondFilter(false);
+				setHasH2FirstFilter(false);
+				setHasH2SecondFilter(true);
+				setHasNoH1FirstFilter(false);
+				setHasNoH1SecondFilter(false);
+				setHasNoH2FirstFilter(false);
+				setHasNoH2SecondFilter(true);
+				setHasDuplicatedTitleFilter(false);
+				setHasDuplicatedDescriptionFilter(false);
+				setTlsImagesFilter(false);
+				setTlsScriptsFilter(false);
+				setTlsStylesheetsFilter(false);
+				setTlsTotalFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "has_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_description");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
+				newPath = handleRemoveUrlParameter(newPath, "tls_images");
+				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
+				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
+				newPath = handleRemoveUrlParameter(newPath, "tls_total");
+
+				if (newPath.includes("?")) newPath += `&has_h2_second=false`;
+				else newPath += `?has_h2_second=false`;
+			} else if (filterValue === "hasNoH2Second" && !filterChecked) {
+				filterQueryString?.delete("has_h2_second") ?? null;
+
+				if (newPath.includes("has_h2_second")) newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
+
+				setHasNoH2SecondFilter(false);
+			}
+
+			if (filterValue === "hasDuplicatedTitle" && filterChecked) {
+				setAllPagesFilter(false);
+				setHasTitleFilter(false);
+				setHasDescriptionFilter(false);
+				setHasH1FirstFilter(false);
+				setHasH1SecondFilter(false);
+				setHasH2FirstFilter(false);
+				setHasH2SecondFilter(false);
+				setHasNoH1FirstFilter(false);
+				setHasNoH1SecondFilter(false);
+				setHasNoH2FirstFilter(false);
+				setHasNoH2SecondFilter(false);
+				setHasDuplicatedTitleFilter(true);
+				setHasDuplicatedDescriptionFilter(false);
+				setTlsImagesFilter(false);
+				setTlsScriptsFilter(false);
+				setTlsStylesheetsFilter(false);
+				setTlsTotalFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "has_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_description");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
+				newPath = handleRemoveUrlParameter(newPath, "tls_images");
+				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
+				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
+				newPath = handleRemoveUrlParameter(newPath, "tls_total");
+
+				if (newPath.includes("?")) newPath += `&has_duplicated_title=true`;
+				else newPath += `?has_duplicated_title=true`;
+			} else if (filterValue === "hasDuplicatedTitle" && !filterChecked) {
+				filterQueryString?.delete("has_duplicated_title") ?? null;
+
+				if (newPath.includes("has_duplicated_title"))
+					newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
+
+				setHasDuplicatedTitleFilter(false);
+			}
+
+			if (filterValue === "hasDuplicatedDescription" && filterChecked) {
+				setAllPagesFilter(false);
+				setHasTitleFilter(false);
+				setHasDescriptionFilter(false);
+				setHasH1FirstFilter(false);
+				setHasH1SecondFilter(false);
+				setHasH2FirstFilter(false);
+				setHasH2SecondFilter(false);
+				setHasNoH1FirstFilter(false);
+				setHasNoH1SecondFilter(false);
+				setHasNoH2FirstFilter(false);
+				setHasNoH2SecondFilter(false);
+				setHasDuplicatedTitleFilter(false);
+				setHasDuplicatedDescriptionFilter(true);
+				setTlsImagesFilter(false);
+				setTlsScriptsFilter(false);
+				setTlsStylesheetsFilter(false);
+				setTlsTotalFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "has_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_description");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
+				newPath = handleRemoveUrlParameter(newPath, "tls_images");
+				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
+				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
+				newPath = handleRemoveUrlParameter(newPath, "tls_total");
+
+				if (newPath.includes("?")) newPath += `&has_duplicated_description=true`;
+				else newPath += `?has_duplicated_description=true`;
+			} else if (filterValue === "hasDuplicatedDescription" && !filterChecked) {
+				filterQueryString?.delete("has_duplicated_description") ?? null;
+
+				if (newPath.includes("has_duplicated_description"))
+					newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
+
+				setHasDuplicatedTitleFilter(false);
+			}
+
+			if (filterValue === "tlsImages" && filterChecked) {
+				setAllPagesFilter(false);
+				setHasTitleFilter(false);
+				setHasDescriptionFilter(false);
+				setHasH1FirstFilter(false);
+				setHasH1SecondFilter(false);
+				setHasH2FirstFilter(false);
+				setHasH2SecondFilter(false);
+				setHasNoH1FirstFilter(false);
+				setHasNoH1SecondFilter(false);
+				setHasNoH2FirstFilter(false);
+				setHasNoH2SecondFilter(false);
+				setHasDuplicatedTitleFilter(false);
+				setHasDuplicatedDescriptionFilter(false);
+				setTlsImagesFilter(true);
+				setTlsScriptsFilter(false);
+				setTlsStylesheetsFilter(false);
+				setTlsTotalFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "has_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_description");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
+				newPath = handleRemoveUrlParameter(newPath, "tls_images");
+				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
+				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
+				newPath = handleRemoveUrlParameter(newPath, "tls_total");
 
 				if (newPath.includes("?")) newPath += `&tls_images=true`;
 				else newPath += `?tls_images=true`;
-			} else if (filterValue === "imagesTlsStatus" && !filterChecked) {
+			} else if (filterValue === "tlsImages" && !filterChecked) {
 				filterQueryString?.delete("tls_images") ?? null;
 
 				if (newPath.includes("tls_images")) newPath = handleRemoveUrlParameter(newPath, "tls_images");
 
-				setImagesTlsStatusFilter(false);
+				setTlsImagesFilter(false);
 			}
 
-			if (filterValue === "scriptsTlsStatus" && filterChecked) {
+			if (filterValue === "tlsScripts" && filterChecked) {
 				setAllPagesFilter(false);
-				setTlsStatusFilter(false);
-				setImagesTlsStatusFilter(false);
-				setScriptsTlsStatusFilter(true);
-				setStylesheetsTlsStatusFilter(false);
+				setHasTitleFilter(false);
+				setHasDescriptionFilter(false);
+				setHasH1FirstFilter(false);
+				setHasH1SecondFilter(false);
+				setHasH2FirstFilter(false);
+				setHasH2SecondFilter(false);
+				setHasNoH1FirstFilter(false);
+				setHasNoH1SecondFilter(false);
+				setHasNoH2FirstFilter(false);
+				setHasNoH2SecondFilter(false);
+				setHasDuplicatedTitleFilter(false);
+				setHasDuplicatedDescriptionFilter(false);
+				setTlsImagesFilter(false);
+				setTlsScriptsFilter(true);
+				setTlsStylesheetsFilter(false);
+				setTlsTotalFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "tls_status");
+				newPath = handleRemoveUrlParameter(newPath, "has_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_description");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
 				newPath = handleRemoveUrlParameter(newPath, "tls_images");
+				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
 				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
+				newPath = handleRemoveUrlParameter(newPath, "tls_total");
 
 				if (newPath.includes("?")) newPath += `&tls_scripts=true`;
 				else newPath += `?tls_scripts=true`;
-			} else if (filterValue === "scriptsTlsStatus" && !filterChecked) {
+			} else if (filterValue === "tlsScripts" && !filterChecked) {
 				filterQueryString?.delete("tls_scripts") ?? null;
 
 				if (newPath.includes("tls_scripts")) newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
 
-				setScriptsTlsStatusFilter(false);
+				setTlsScriptsFilter(false);
 			}
 
-			if (filterValue === "stylesheetsTlsStatus" && filterChecked) {
+			if (filterValue === "tlsStylesheets" && filterChecked) {
 				setAllPagesFilter(false);
-				setTlsStatusFilter(false);
-				setImagesTlsStatusFilter(false);
-				setScriptsTlsStatusFilter(false);
-				setStylesheetsTlsStatusFilter(true);
+				setHasTitleFilter(false);
+				setHasDescriptionFilter(false);
+				setHasH1FirstFilter(false);
+				setHasH1SecondFilter(false);
+				setHasH2FirstFilter(false);
+				setHasH2SecondFilter(false);
+				setHasDuplicatedTitleFilter(false);
+				setHasDuplicatedDescriptionFilter(false);
+				setTlsImagesFilter(false);
+				setTlsScriptsFilter(false);
+				setTlsStylesheetsFilter(true);
+				setTlsTotalFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "tls_status");
+				newPath = handleRemoveUrlParameter(newPath, "has_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_description");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
 				newPath = handleRemoveUrlParameter(newPath, "tls_images");
 				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
+				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
+				newPath = handleRemoveUrlParameter(newPath, "tls_total");
 
 				if (newPath.includes("?")) newPath += `&tls_stylesheets=true`;
 				else newPath += `?tls_stylesheets=true`;
-			} else if (filterValue === "stylesheetsTlsStatus" && !filterChecked) {
+			} else if (filterValue === "tlsStylesheets" && !filterChecked) {
 				filterQueryString?.delete("tls_stylesheets") ?? null;
 
 				if (newPath.includes("tls_stylesheets")) newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
 
-				setStylesheetsTlsStatusFilter(false);
+				setTlsStylesheetsFilter(false);
+			}
+
+			if (filterValue === "tlsTotal" && filterChecked) {
+				setAllPagesFilter(false);
+				setHasTitleFilter(false);
+				setHasDescriptionFilter(false);
+				setHasH1FirstFilter(false);
+				setHasH1SecondFilter(false);
+				setHasH2FirstFilter(false);
+				setHasH2SecondFilter(false);
+				setHasNoH1FirstFilter(false);
+				setHasNoH1SecondFilter(false);
+				setHasNoH2FirstFilter(false);
+				setHasNoH2SecondFilter(false);
+				setHasDuplicatedTitleFilter(false);
+				setHasDuplicatedDescriptionFilter(false);
+				setTlsImagesFilter(false);
+				setTlsScriptsFilter(false);
+				setTlsStylesheetsFilter(false);
+				setTlsTotalFilter(true);
+
+				newPath = handleRemoveUrlParameter(newPath, "has_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_description");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
+				newPath = handleRemoveUrlParameter(newPath, "tls_images");
+				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
+				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
+				newPath = handleRemoveUrlParameter(newPath, "tls_total");
+
+				if (newPath.includes("?")) newPath += `&tls_total=true`;
+				else newPath += `?tls_total=true`;
+			} else if (filterValue === "tlsTotal" && !filterChecked) {
+				filterQueryString?.delete("tls_total") ?? null;
+
+				if (newPath.includes("tls_total")) newPath = handleRemoveUrlParameter(newPath, "tls_total");
+
+				setTlsTotalFilter(false);
 			}
 
 			if (filterValue === "allPages" && filterChecked) {
 				setAllPagesFilter(true);
-				setTlsStatusFilter(false);
-				setImagesTlsStatusFilter(false);
-				setScriptsTlsStatusFilter(false);
-				setStylesheetsTlsStatusFilter(false);
+				setHasTitleFilter(false);
+				setHasDescriptionFilter(false);
+				setHasH1FirstFilter(false);
+				setHasH1SecondFilter(false);
+				setHasH2FirstFilter(false);
+				setHasH2SecondFilter(false);
+				setHasNoH1FirstFilter(false);
+				setHasNoH1SecondFilter(false);
+				setHasNoH2FirstFilter(false);
+				setHasNoH2SecondFilter(false);
+				setHasDuplicatedTitleFilter(false);
+				setHasDuplicatedDescriptionFilter(false);
+				setTlsImagesFilter(false);
+				setTlsScriptsFilter(false);
+				setTlsStylesheetsFilter(false);
+				setTlsTotalFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "tls_status");
+				newPath = handleRemoveUrlParameter(newPath, "has_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_description");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
+				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
+				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
 				newPath = handleRemoveUrlParameter(newPath, "tls_images");
 				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
 				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
+				newPath = handleRemoveUrlParameter(newPath, "tls_total");
 			}
 		} else {
 			// Sites filter
@@ -440,35 +1051,115 @@ const Filter = ({
 					allLinksFilter
 				};
 			} else if (filterType === "pages") {
-				if (filterQueryString.has("tls_status")) {
-					setTlsStatusFilter(true);
+				if (filterQueryString.has("has_title")) {
+					setHasTitleFilter(true);
 				} else {
-					setTlsStatusFilter(false);
+					setHasTitleFilter(false);
+				}
+
+				if (filterQueryString.has("has_description")) {
+					setHasDescriptionFilter(true);
+				} else {
+					setHasDescriptionFilter(false);
+				}
+
+				if (filterQueryString.get("has_h1_first") === "true") {
+					setHasH1FirstFilter(true);
+				} else {
+					setHasH1FirstFilter(false);
+				}
+
+				if (filterQueryString.get("has_h1_first") === "false") {
+					setHasNoH1FirstFilter(true);
+				} else {
+					setHasNoH1FirstFilter(false);
+				}
+
+				if (filterQueryString.get("has_h1_second") === "true") {
+					setHasH1SecondFilter(true);
+				} else {
+					setHasH1SecondFilter(false);
+				}
+
+				if (filterQueryString.get("has_h1_second") === "false") {
+					setHasNoH1SecondFilter(true);
+				} else {
+					setHasNoH1SecondFilter(false);
+				}
+
+				if (filterQueryString.get("has_h2_first") === "true") {
+					setHasH2FirstFilter(true);
+				} else {
+					setHasH2FirstFilter(false);
+				}
+
+				if (filterQueryString.get("has_h2_first") === "false") {
+					setHasNoH2FirstFilter(true);
+				} else {
+					setHasNoH2FirstFilter(false);
+				}
+
+				if (filterQueryString.get("has_h2_second") === "true") {
+					setHasH2SecondFilter(true);
+				} else {
+					setHasH2SecondFilter(false);
+				}
+
+				if (filterQueryString.get("has_h2_second") === "false") {
+					setHasNoH2SecondFilter(true);
+				} else {
+					setHasNoH2SecondFilter(false);
+				}
+
+				if (filterQueryString.has("has_duplicated_title")) {
+					setHasDuplicatedTitleFilter(true);
+				} else {
+					setHasDuplicatedTitleFilter(false);
+				}
+
+				if (filterQueryString.has("has_duplicated_description")) {
+					setHasDuplicatedDescriptionFilter(true);
+				} else {
+					setHasDuplicatedDescriptionFilter(false);
 				}
 
 				if (filterQueryString.has("tls_images")) {
-					setImagesTlsStatusFilter(true);
+					setTlsImagesFilter(true);
 				} else {
-					setImagesTlsStatusFilter(false);
+					setTlsImagesFilter(false);
 				}
 
 				if (filterQueryString.has("tls_scripts")) {
-					setScriptsTlsStatusFilter(true);
+					setTlsScriptsFilter(true);
 				} else {
-					setScriptsTlsStatusFilter(false);
+					setTlsScriptsFilter(false);
 				}
 
 				if (filterQueryString.has("tls_stylesheets")) {
-					setStylesheetsTlsStatusFilter(true);
+					setTlsStylesheetsFilter(true);
 				} else {
-					setStylesheetsTlsStatusFilter(false);
+					setTlsStylesheetsFilter(false);
+				}
+
+				if (filterQueryString.has("tls_total")) {
+					setTlsTotalFilter(true);
+				} else {
+					setTlsTotalFilter(false);
 				}
 
 				if (
-					!filterQueryString.has("tls_status") &&
+					!filterQueryString.has("has_title") &&
+					!filterQueryString.has("has_description") &&
+					!filterQueryString.has("has_h1_first") &&
+					!filterQueryString.has("has_h1_second") &&
+					!filterQueryString.has("has_h2_first") &&
+					!filterQueryString.has("has_h2_second") &&
+					!filterQueryString.has("has_duplicated_title") &&
+					!filterQueryString.has("has_duplicated_description") &&
 					!filterQueryString.has("tls_images") &&
 					!filterQueryString.has("tls_scripts") &&
-					!filterQueryString.has("tls_stylesheets")
+					!filterQueryString.has("tls_stylesheets") &&
+					!filterQueryString.has("tls_total")
 				) {
 					setAllPagesFilter(true);
 				} else {
@@ -476,10 +1167,18 @@ const Filter = ({
 				}
 
 				return {
-					tlsStatusFilter,
-					imagesTlsStatusFilter,
-					scriptsTlsStatusFilter,
-					stylesheetsTlsStatusFilter,
+					hasTitleFilter,
+					hasDescriptionFilter,
+					hasH1FirstFilter,
+					hasH1SecondFilter,
+					hasH2FirstFilter,
+					hasH2SecondFilter,
+					hasDuplicatedTitleFilter,
+					hasDuplicatedDescriptionFilter,
+					tlsImagesFilter,
+					tlsScriptsFilter,
+					tlsStylesheetsFilter,
+					tlsTotalFilter,
 					allPagesFilter
 				};
 			} else {
@@ -512,36 +1211,38 @@ const Filter = ({
 
 	return isComponentReady ? (
 		<form className="rounded-lg border border-gray-300 bg-white px-4 py-5 sm:px-6 lg:flex lg:justify-between">
-			<div className="-ml-4 flex-wrap items-center sm:flex-nowrap lg:-mt-2 lg:flex">
+			<div className="-ml-4 flex-wrap items-start sm:flex-nowrap lg:-mt-2 lg:flex">
 				<h4 className="ml-4 mb-4 mt-2 mr-1 font-semibold leading-4 text-gray-600 lg:mb-0">{filterText}</h4>
 
-				{filtersArray
-					.filter(
-						(e) =>
-							e.type === filterType &&
-							e.value !== "allSites" &&
-							e.value !== "allLinks" &&
-							e.value !== "allPages" &&
-							e.value !== "allImages" &&
-							e.value !== "allSeo"
-					)
-					.map((value, key) => (
-						<div key={key} className="ml-4 mt-2">
-							<label className="flex items-center space-x-2">
-								<input
-									type="checkbox"
-									className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-									checked={value.checked}
-									onChange={handleFilterUrl}
-									value={value.value}
-								/>
-								<span className="ml-2 text-left text-xs font-normal leading-4 text-gray-500">{value.label}</span>
-							</label>
-						</div>
-					))}
+				<div className="ml-4 mt-2 grid grid-cols-1 gap-3 sm:grid-cols-6">
+					{filtersArray
+						.filter(
+							(e) =>
+								e.type === filterType &&
+								e.value !== "allSites" &&
+								e.value !== "allLinks" &&
+								e.value !== "allPages" &&
+								e.value !== "allImages" &&
+								e.value !== "allSeo"
+						)
+						.map((value, key) => (
+							<div key={key}>
+								<label className="flex items-center space-x-2">
+									<input
+										type="checkbox"
+										className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+										checked={value.checked}
+										onChange={handleFilterUrl}
+										value={value.value}
+									/>
+									<span className="ml-2 text-left text-xs font-normal leading-4 text-gray-500">{value.label}</span>
+								</label>
+							</div>
+						))}
+				</div>
 			</div>
 
-			<div className="flex-wrap items-center justify-end space-x-4 sm:flex-nowrap lg:-mt-2 lg:flex">
+			<div className="flex-wrap items-start justify-end space-x-4 sm:flex-nowrap lg:-mt-2 lg:flex">
 				{filtersArray
 					.filter(
 						(e) =>
@@ -570,7 +1271,7 @@ const Filter = ({
 		</form>
 	) : (
 		<div className="rounded-lg border border-gray-300 bg-white px-4 py-5 sm:px-6 lg:flex lg:justify-between">
-			<div className="-ml-4 flex-wrap items-center sm:flex-nowrap lg:-mt-2 lg:flex">
+			<div className="-ml-4 flex-wrap items-start sm:flex-nowrap lg:-mt-2 lg:flex">
 				<Skeleton duration={2} width={50} height={16} className="my-4 ml-4 mr-1 lg:mb-0" />
 
 				{filtersArray
@@ -593,7 +1294,7 @@ const Filter = ({
 					))}
 			</div>
 
-			<div className="flex-wrap items-center justify-end space-x-4 sm:flex-nowrap lg:-mt-2 lg:flex">
+			<div className="flex-wrap items-start justify-end space-x-4 sm:flex-nowrap lg:-mt-2 lg:flex">
 				{filtersArray
 					.filter(
 						(e) =>

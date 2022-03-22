@@ -195,7 +195,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 								</div>
 
 								<div className="flex items-center space-x-2 text-sm text-gray-500">
-									{isComponentReady && scanCount ? (
+									{isComponentReady && scanCount && scanResults?.length > 0 ? (
 										<>
 											<FontAwesomeIcon
 												icon={["fas", "spider"]}

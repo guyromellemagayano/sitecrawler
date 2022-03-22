@@ -1,6 +1,7 @@
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import { perPageQuery, sortByNameAscending } from "@constants/GlobalValues";
 import {
+	DashboardSitesLink,
 	SiteImageSlug,
 	SiteImagesSlug,
 	SiteLinkSlug,
@@ -55,8 +56,10 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 				SiteImageSlug +
 				(scanApiEndpoint.includes("?") ? "&" : "?") +
 				`${perPageQuery + linksPerPage}`)
-		: (scanApiEndpoint +=
-				SitesApiEndpoint + (scanApiEndpoint.includes("?") ? "&" : "?") + `${perPageQuery + linksPerPage}`);
+		: asPath === DashboardSitesLink
+		? (scanApiEndpoint +=
+				SitesApiEndpoint + (scanApiEndpoint.includes("?") ? "&" : "?") + `${perPageQuery + linksPerPage}`)
+		: null;
 
 	const typeString = query?.type ? (Array.isArray(query?.type) ? query.type.join("&type=") : query.type) : "";
 
@@ -87,25 +90,67 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 	const typeQuery = typeString ? (scanApiEndpoint.includes("?") ? `&type=${typeString}` : `?type=${typeString}`) : "";
 
 	// Pages
-	const tlsStatusQuery = query?.tls_status
+	const hasTitleQuery = query?.has_title
 		? scanApiEndpoint.includes("?")
-			? `&tls_status=${query.tls_status}`
-			: `?tls_status=${query.tls_status}`
+			? `&has_title=${query.has_title}`
+			: `?has_title=${query.has_title}`
 		: "";
 
-	const tlsStatusImagesQuery = query?.tls_images
+	const hasDescriptionQuery = query?.has_description
+		? scanApiEndpoint.includes("?")
+			? `&has_description=${query.has_description}`
+			: `?has_description=${query.has_description}`
+		: "";
+
+	const hasH1FirstQuery = query?.has_h1_first
+		? scanApiEndpoint.includes("?")
+			? `&has_h1_first=${query.has_h1_first}`
+			: `?has_h1_first=${query.has_h1_first}`
+		: "";
+
+	const hasH1SecondQuery = query?.has_h1_second
+		? scanApiEndpoint.includes("?")
+			? `&has_h1_second=${query.has_h1_second}`
+			: `?has_h1_second=${query.has_h1_second}`
+		: "";
+
+	const hasH2FirstQuery = query?.has_h2_first
+		? scanApiEndpoint.includes("?")
+			? `&has_h2_first=${query.has_h2_first}`
+			: `?has_h2_first=${query.has_h2_first}`
+		: "";
+
+	const hasH2SecondQuery = query?.has_h2_second
+		? scanApiEndpoint.includes("?")
+			? `&has_h2_second=${query.has_h2_second}`
+			: `?has_h2_second=${query.has_h2_second}`
+		: "";
+
+	const hasDuplicatedTitle = query?.has_duplicated_title
+		? scanApiEndpoint.includes("?")
+			? `&has_duplicated_title=${query.has_duplicated_title}`
+			: `?has_duplicated_title=${query.has_duplicated_title}`
+		: "";
+
+	const hasDuplicatedDescription = query?.has_duplicated_description
+		? scanApiEndpoint.includes("?")
+			? `&has_duplicated_description=${query.has_duplicated_description}`
+			: `?has_duplicated_description=${query.has_duplicated_description}`
+		: "";
+
+	const tlsImagesQuery = query?.tls_images
 		? scanApiEndpoint.includes("?")
 			? `&status=${query.tls_images}`
 			: `?status=${query.tls_images}`
 		: "";
 
-	const tlsStatusScriptsQuery = query?.tls_scripts
+	const tlsScriptsQuery = query?.tls_scripts
 		? scanApiEndpoint.includes("?")
 			? `&status=${query.tls_scripts}`
 			: `?status=${query.tls_scripts}`
 		: "";
 
-	const tlsStatusStylesheetsQuery = query?.tls_stylesheets
+	const tlsStylesheetsQuery = query?.tls_stylesheets
 		? scanApiEndpoint.includes("?")
 			? `&status=${query.tls_stylesheets}`
 			: `?status=${query.tls_stylesheets}`
@@ -134,10 +179,17 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 	queryString += statusNeqQuery;
 	queryString += statusQuery;
 	queryString += typeQuery;
-	queryString += tlsStatusQuery;
-	queryString += tlsStatusImagesQuery;
-	queryString += tlsStatusScriptsQuery;
-	queryString += tlsStatusStylesheetsQuery;
+	queryString += hasTitleQuery;
+	queryString += hasDescriptionQuery;
+	queryString += hasH1FirstQuery;
+	queryString += hasH1SecondQuery;
+	queryString += hasH2FirstQuery;
+	queryString += hasH2SecondQuery;
+	queryString += hasDuplicatedTitle;
+	queryString += hasDuplicatedDescription;
+	queryString += tlsImagesQuery;
+	queryString += tlsScriptsQuery;
+	queryString += tlsStylesheetsQuery;
 	queryString += pageQuery;
 	queryString += searchQuery;
 	queryString += orderingQuery;

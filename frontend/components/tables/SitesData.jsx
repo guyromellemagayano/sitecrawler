@@ -214,7 +214,7 @@ const SitesData = ({ site = null }) => {
 													"flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-yellow-600 transition duration-150 ease-in-out hover:text-yellow-500 focus:outline-none",
 													scanCount > 0 && "ml-3"
 												)}
-												onClick={() => setIsSiteVerifyModalVisible(!isSiteVerifyModalVisible)}
+												onClick={(e) => setIsSiteVerifyModalVisible(!isSiteVerifyModalVisible)}
 											>
 												{verifySiteText}
 											</button>
@@ -233,7 +233,7 @@ const SitesData = ({ site = null }) => {
 										<button
 											type="button"
 											className="ml-3 flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-red-600 transition duration-150 ease-in-out hover:text-red-500 focus:outline-none"
-											onClick={() => setIsSiteDeleteModalVisible(!isSiteDeleteModalVisible)}
+											onClick={(e) => setIsSiteDeleteModalVisible(!isSiteDeleteModalVisible)}
 										>
 											{deleteText}
 										</button>
