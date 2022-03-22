@@ -88,19 +88,22 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 				setupLogRocketReact(LogRocket);
 			}
 
-			if (user) {
-				if (!asPath.includes(DashboardSlug)) {
-					// Handle `user` promise data
-					if (Math.round(user.status / 100) === 4 && user.data?.detail) {
-						setIsComponentReady(true);
-						setIsUserReady(false);
-					}
+			if (!asPath.includes(DashboardSlug)) {
+				// Handle `user` promise data
+				if (user && Math.round(user.status / 100) === 4 && user.data?.detail) {
+					setIsComponentReady(true);
+					setIsUserReady(false);
 				} else {
-					// Handle `user` promise data
-					if (Math.round(user.status / 100) === 2 && !user.data?.detail) {
-						setIsComponentReady(true);
-						setIsUserReady(true);
-					}
+					setIsComponentReady(false);
+				}
+			} else {
+				// Handle `user` promise data
+				if (user && Math.round(user.status / 100) === 2 && !user.data?.detail) {
+					setIsComponentReady(true);
+					setIsUserReady(true);
+				} else {
+					setIsComponentReady(false);
+					setIsUserReady(false);
 				}
 			}
 		}
@@ -237,10 +240,10 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 
 	// Custom `stats` API endpoint state
 	useEffect(() => {
-		scan && scanObjId ? setCustomStatsApiEndpoint(customScanApiEndpoint + scanObjId) : setCustomStatsApiEndpoint(null);
+		scanObjId ? setCustomStatsApiEndpoint(customScanApiEndpoint + scanObjId) : setCustomStatsApiEndpoint(null);
 
 		return { customStatsApiEndpoint };
-	}, [scan, scanObjId]);
+	}, [scanObjId]);
 
 	// `stats` SWR hook
 	const { stats, errorStats, validatingStats } = useStats(customStatsApiEndpoint, {

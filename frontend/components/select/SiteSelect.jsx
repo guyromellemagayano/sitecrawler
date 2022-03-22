@@ -14,26 +14,14 @@ const SiteSelect = () => {
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
 	// Custom hooks
-	const {
-		siteSelectRef,
-		isSiteSelectComponentVisible,
-		setIsSiteSelectComponentVisible,
-		selectedSiteId,
-		setSelectedSiteId,
-		selectedSite,
-		setSelectedSite,
-		selectedSiteDetails,
-		setSelectedSiteDetails,
-		handleSiteSelectOnClick
-	} = useSiteSelection();
+	const { siteSelectRef, isSiteSelectComponentVisible, setIsSiteSelectComponentVisible, selectedSiteDetails } =
+		useSiteSelection();
 
 	return (
 		<div className="relative space-y-1">
 			<span className="inline-block w-full rounded-md shadow-sm">
 				{isComponentReady ? (
 					<MemoizedSiteSelectMenu
-						selectedSite={selectedSite}
-						selectedSiteDetails={selectedSiteDetails}
 						handleOpenDropdown={() => setIsSiteSelectComponentVisible(!isSiteSelectComponentVisible)}
 					/>
 				) : (
@@ -41,12 +29,7 @@ const SiteSelect = () => {
 				)}
 			</span>
 
-			<MemoizedSiteSelectDropdown
-				ref={siteSelectRef}
-				selectedSiteId={selectedSiteId}
-				handleSiteSelectOnClick={handleSiteSelectOnClick}
-				openDropdown={isSiteSelectComponentVisible}
-			/>
+			<MemoizedSiteSelectDropdown ref={siteSelectRef} openDropdown={isSiteSelectComponentVisible} />
 		</div>
 	);
 };

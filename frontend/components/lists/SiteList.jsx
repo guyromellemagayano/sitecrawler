@@ -1,13 +1,14 @@
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import { orderingByNameQuery, RevalidationInterval, sortByFinishedAtDescending } from "@constants/GlobalValues";
-import { DashboardSitesLink, ScanSlug, SiteOverviewSlug } from "@constants/PageLinks";
+import { ScanSlug } from "@constants/PageLinks";
 import { useScan } from "@hooks/useScan";
+import { useSiteSelection } from "@hooks/useSiteSelection";
 import { useStats } from "@hooks/useStats";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
-import Link from "next/link";
+import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
@@ -17,9 +18,8 @@ import "react-loading-skeleton/dist/skeleton.css";
  * Custom function to render the `SiteList` component
  *
  * @param {object} data
- * @param {function} handleSiteSelectOnClick
  */
-const SiteList = ({ data = null, handleSiteSelectOnClick }) => {
+const SiteList = ({ data = null }) => {
 	// Site data props
 	const siteId = data?.id ?? null;
 	const siteName = data?.name ?? null;
@@ -31,6 +31,9 @@ const SiteList = ({ data = null, handleSiteSelectOnClick }) => {
 	// Translations
 	const { t } = useTranslation();
 	const notYetCrawledText = t("sites:notYetCrawled");
+
+	// Router
+	const { push } = useRouter();
 
 	// DayJS options
 	const calendar = require("dayjs/plugin/calendar");
@@ -51,6 +54,9 @@ const SiteList = ({ data = null, handleSiteSelectOnClick }) => {
 	// Custom context
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
+	// Custom hooks
+	const { handleSiteSelectOnClick } = useSiteSelection();
+
 	// Custom `scan` API endpoint
 	let customScanApiEndpointQuery = "?" + orderingByNameQuery + sortByFinishedAtDescending;
 	const customScanApiEndpoint = SitesApiEndpoint + siteId + ScanSlug;
@@ -62,7 +68,7 @@ const SiteList = ({ data = null, handleSiteSelectOnClick }) => {
 	});
 
 	// Custom `stats` API endpoint
-	const customStatsApiEndpoint = scanObjId ? customScanApiEndpoint + scanObjId + "/" : null;
+	const customStatsApiEndpoint = siteLastFinishedScanId ? customScanApiEndpoint + siteLastFinishedScanId + "/" : null;
 
 	// `stats` SWR hooks
 	const { stats } = useStats(customStatsApiEndpoint, {
@@ -77,45 +83,47 @@ const SiteList = ({ data = null, handleSiteSelectOnClick }) => {
 
 	return isComponentReady ? (
 		<li id={`listbox-item-${siteId}`}>
-			<Link href={scanCount > 0 ? `${DashboardSitesLink + siteId + SiteOverviewSlug}` : "/"} passHref>
-				<a
-					className={classnames(
-						"relative block w-full select-none py-2 pl-3 pr-9 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none",
-						totalLinks > 0 || totalPages > 0 || totalImages > 0 || siteVerified || (!siteVerified && scanCount > 0)
-							? "cursor-pointer"
-							: "cursor-not-allowed"
-					)}
-				>
-					<div className="flex items-center space-x-3">
-						<span
-							aria-label={
-								siteVerified && !currentScan
-									? "Verified"
-									: siteVerified && currentScan
-									? "Recrawling in Process"
-									: "Not Verified"
-							}
-							className={classnames(
-								"inline-block h-2 w-2 flex-shrink-0 rounded-full",
-								siteVerified && !currentScan
-									? "bg-green-400"
-									: siteVerified && currentScan
-									? "bg-yellow-400"
-									: "bg-red-400"
-							)}
-						/>
+			<button
+				disabled={scanCount === 0}
+				aria-disabled={scanCount === 0}
+				aria-hidden={scanCount === 0}
+				className={classnames(
+					"relative block w-full select-none py-2 pl-3 pr-9 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none",
+					totalLinks > 0 || totalPages > 0 || totalImages > 0 || siteVerified || (!siteVerified && scanCount > 0)
+						? "cursor-pointer"
+						: "cursor-not-allowed"
+				)}
+				onClick={(e) => handleSiteSelectOnClick(siteId)}
+			>
+				<div className="flex items-center space-x-3">
+					<span
+						aria-label={
+							siteVerified && !currentScan
+								? "Verified"
+								: siteVerified && currentScan
+								? "Recrawling in Process"
+								: "Not Verified"
+						}
+						className={classnames(
+							"inline-block h-2 w-2 flex-shrink-0 rounded-full",
+							siteVerified && !currentScan
+								? "bg-green-400"
+								: siteVerified && currentScan
+								? "bg-yellow-400"
+								: "bg-red-400"
+						)}
+					/>
 
-						<span
-							className={classnames(
-								"block truncate font-medium",
-								siteVerified && scanCount > 0 ? "text-gray-500" : "text-gray-400"
-							)}
-						>
-							{siteName}
-						</span>
-					</div>
-				</a>
-			</Link>
+					<span
+						className={classnames(
+							"block truncate font-medium",
+							siteVerified && scanCount > 0 ? "text-gray-500" : "text-gray-400"
+						)}
+					>
+						{siteName}
+					</span>
+				</div>
+			</button>
 		</li>
 	) : (
 		<li>

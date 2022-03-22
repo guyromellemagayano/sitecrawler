@@ -17,11 +17,9 @@ import "react-loading-skeleton/dist/skeleton.css";
 /**
  * Custom function to render the `SiteSelectDropdown` component
  *
- * @param {number} selectedSiteId
- * @param {function} handleSiteSelectOnClick
  * @param {boolean} openDropdown
  */
-const SiteSelectDropdown = ({ handleSiteSelectOnClick, openDropdown = false }, ref) => {
+const SiteSelectDropdown = ({ openDropdown = false }, ref) => {
 	// Sidebar Menu Labels
 	const labelsArray = SidebarMenuLabels();
 
@@ -60,14 +58,15 @@ const SiteSelectDropdown = ({ handleSiteSelectOnClick, openDropdown = false }, r
 				leaveTo="transform opacity-0 scale-95"
 			>
 				<div ref={ref} className="absolute z-50 mt-1 w-full overflow-hidden rounded-md bg-white shadow-lg">
-					<MemoizedSitesList isOpen={openDropdown} handleSiteSelectOnClick={handleSiteSelectOnClick} />
+					<MemoizedSitesList sites={sites} />
+
 					<span className="relative m-2 flex justify-center rounded-md shadow-sm">
 						{isComponentReady ? (
 							hasSiteLimitReached ? (
 								<button
 									type="button"
 									className="flex w-full cursor-pointer items-center justify-center rounded-md border border-transparent bg-yellow-600 px-3 py-2 text-sm font-medium leading-4 text-white hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 active:bg-yellow-700"
-									onClick={() => setIsSiteLimitComponentVisible(!isSiteLimitComponentVisible)}
+									onClick={(e) => setIsSiteLimitComponentVisible(!isSiteLimitComponentVisible)}
 								>
 									<div className="flex items-center space-x-2">
 										<FontAwesomeIcon icon={["fas", "crown"]} className="h-4 w-4" />

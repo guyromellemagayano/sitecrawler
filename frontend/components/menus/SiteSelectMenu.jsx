@@ -1,26 +1,20 @@
 import { SidebarMenuLabels } from "@constants/SidebarMenuLabels";
 import { SelectorIcon } from "@heroicons/react/solid";
+import { useSiteSelection } from "@hooks/useSiteSelection";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
-import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { memo, useContext } from "react";
 
 /**
  * Custom function to render the `SiteSelectMenu` component
  *
- * @param {string} selectedSite
- * @param {object} selectedSiteDetails
  * @param {function} handleOpenDropdown
  */
-const SiteSelectMenu = ({ selectedSite = null, selectedSiteDetails = null, handleOpenDropdown }) => {
-	// Router
-	const { query } = useRouter();
-	const { siteId } = query;
-
+const SiteSelectMenu = ({ handleOpenDropdown }) => {
 	// Custom context
-	const { currentScan } = useContext(SiteCrawlerAppContext);
+	const { currentScan, querySiteId } = useContext(SiteCrawlerAppContext);
 
 	// Translations
 	const { t } = useTranslation("sidebar");
@@ -30,6 +24,9 @@ const SiteSelectMenu = ({ selectedSite = null, selectedSiteDetails = null, handl
 
 	// Sidebar Menu Labels
 	const labelsArray = SidebarMenuLabels();
+
+	// Custom hooks
+	const { selectedSiteDetails } = useSiteSelection();
 
 	return (
 		<button
@@ -42,21 +39,17 @@ const SiteSelectMenu = ({ selectedSite = null, selectedSiteDetails = null, handl
 		>
 			<div className="flex items-center space-x-3">
 				<span className="block truncate text-gray-600">
-					{selectedSite ? (
-						Object.keys(selectedSiteDetails)?.length > 0 ? (
-							<div className="flex items-center space-x-3">
-								<span
-									aria-label={
-										selectedSiteDetails?.verified ? (currentScan ? recrawlingInProcess : verified) : notVerified
-									}
-									className={classnames(
-										"inline-block h-2 w-2 flex-shrink-0 rounded-full",
-										selectedSiteDetails?.verified ? (currentScan ? "bg-yellow-400" : "bg-green-400") : "bg-red-400"
-									)}
-								></span>
-								<span className="block truncate font-medium text-gray-500">{selectedSite}</span>
-							</div>
-						) : null
+					{selectedSiteDetails ? (
+						<div className="flex items-center space-x-3">
+							<span
+								aria-label={selectedSiteDetails.verified ? (currentScan ? recrawlingInProcess : verified) : notVerified}
+								className={classnames(
+									"inline-block h-2 w-2 flex-shrink-0 rounded-full",
+									selectedSiteDetails.verified ? (currentScan ? "bg-yellow-400" : "bg-green-400") : "bg-red-400"
+								)}
+							></span>
+							<span className="block truncate font-medium text-gray-500">{selectedSiteDetails.name}</span>
+						</div>
 					) : (
 						labelsArray[0].label
 					)}
@@ -70,9 +63,7 @@ const SiteSelectMenu = ({ selectedSite = null, selectedSiteDetails = null, handl
 };
 
 SiteSelectMenu.propTypes = {
-	handleOpenDropdown: PropTypes.func,
-	selectedSite: PropTypes.string,
-	selectedSiteDetails: PropTypes.object
+	handleOpenDropdown: PropTypes.func
 };
 
 /**
