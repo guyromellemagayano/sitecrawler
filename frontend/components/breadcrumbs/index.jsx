@@ -86,7 +86,7 @@ const Breadcrumbs = ({
 									<Link
 										href={`${
 											DashboardSitesLink +
-											sanitizedSid +
+											querySiteId +
 											"/" +
 											(isLinks ? "links" : isPages ? "pages" : isImages ? "images" : "seo")
 										}`}
