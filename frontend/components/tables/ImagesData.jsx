@@ -149,7 +149,7 @@ const ImagesData = ({ image = null }) => {
 											<button
 												type="button"
 												className="ml-3 flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-green-600 transition duration-150 ease-in-out hover:text-green-500 focus:outline-none"
-												onClick={() => {}}
+												onClick={(e) => {}}
 											>
 												{markAsResolvedText}
 											</button>

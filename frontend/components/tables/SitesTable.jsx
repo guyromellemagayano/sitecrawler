@@ -5,7 +5,6 @@ import { SitesTableLabels } from "@constants/SitesTableLabels";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
-import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { memo, useContext } from "react";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -22,9 +21,6 @@ const SitesTable = ({ count = 0, results = [] }) => {
 	const { t } = useTranslation();
 	const noAvailableSites = t("sites:noAvailableSites");
 	const loaderMessage = t("common:loaderMessage");
-
-	// Router
-	const { query } = useRouter();
 
 	// Custom context
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);

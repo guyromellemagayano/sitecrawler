@@ -73,8 +73,7 @@ const LinksTable = ({ count = 0, results = [] }) => {
 
 LinksTable.propTypes = {
 	count: PropTypes.number,
-	results: PropTypes.array,
-	validatingLinks: PropTypes.bool
+	results: PropTypes.array
 };
 
 /**

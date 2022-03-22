@@ -38,7 +38,7 @@ const LinksData = ({ link = null }) => {
 	const nonWebText = t("sites:nonWeb");
 
 	// Custom context
-	const { isComponentReady, querySiteId, user, pages } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady, querySiteId, user, links } = useContext(SiteCrawlerAppContext);
 
 	// Custom variables
 	const disableLocalTime = user?.data?.settings?.disableLocalTime ?? false;
@@ -109,7 +109,7 @@ const LinksData = ({ link = null }) => {
 										<button
 											type="button"
 											className="ml-3 flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-green-600 transition duration-150 ease-in-out hover:text-green-500 focus:outline-none"
-											onClick={() => {}}
+											onClick={(e) => {}}
 										>
 											{markAsResolvedText}
 										</button>
