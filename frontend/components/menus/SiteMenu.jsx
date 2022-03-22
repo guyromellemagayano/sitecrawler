@@ -24,7 +24,7 @@ const SiteMenu = () => {
 	const appLogo = t("appLogo");
 
 	// Router
-	const { asPath, pathname, query, prefetch } = useRouter();
+	const { asPath, query, prefetch } = useRouter();
 
 	// Custom context
 	const { isComponentReady, isUserReady, stats, scan, siteId, querySiteId } = useContext(SiteCrawlerAppContext);
@@ -40,7 +40,7 @@ const SiteMenu = () => {
 
 	// Prefetch page
 	useEffect(() => {
-		prefetch(`/dashboard/sites/${querySiteId}/overview`);
+		prefetch(`/dashboard/sites/${querySiteId}/`);
 	}, []);
 
 	return (
@@ -78,8 +78,10 @@ const SiteMenu = () => {
 														<a
 															className={classnames(
 																"group mt-1 flex items-center justify-between rounded-md px-3 py-2 text-sm font-medium leading-5",
-																asPath.includes(value2.url) && isComponentReady ? "!cursor-default bg-gray-1100" : null,
-																asPath.includes(value2.url) ||
+																asPath === DashboardSitesLink + querySiteId + value2.url && isComponentReady
+																	? "!cursor-default bg-gray-1100"
+																	: null,
+																asPath === DashboardSitesLink + querySiteId + value2.url ||
 																	(asPath.includes(SettingsSlug) && SettingsSlug.includes(value2.url))
 																	? "text-gray-100"
 																	: "text-gray-400",

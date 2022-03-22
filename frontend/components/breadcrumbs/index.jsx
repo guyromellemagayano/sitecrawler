@@ -1,7 +1,6 @@
-import { DashboardSitesLink, SiteOverviewSlug } from "@constants/PageLinks";
+import { DashboardSitesLink } from "@constants/PageLinks";
 import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
 import { SiteCrawlerAppContext } from "@pages/_app";
-import { handleConversionStringToBoolean } from "@utils/convertCase";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -40,14 +39,11 @@ const Breadcrumbs = ({
 	const home = t("home");
 
 	// Custom context
-	const { isComponentReady } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady, querySiteId } = useContext(SiteCrawlerAppContext);
 
 	// Custom variables
-	const sanitizedSid = siteId ? handleConversionStringToBoolean(siteId) : null;
 	const sitesIdOverviewPageLink =
-		sanitizedSid && !asPath.includes(DashboardSitesLink)
-			? `${DashboardSitesLink + sanitizedSid + SiteOverviewSlug}`
-			: null;
+		querySiteId && !asPath.includes(DashboardSitesLink) ? `${DashboardSitesLink + querySiteId + "/"}` : null;
 
 	return (
 		<nav className="w-full flex-none border-b border-gray-200 pt-4 pb-8" aria-label="Breadcrumb">
@@ -55,7 +51,7 @@ const Breadcrumbs = ({
 				<li>
 					<div>
 						{isComponentReady ? (
-							<Link href={isOther && siteId == null ? DashboardSitesLink : sitesIdOverviewPageLink} passHref>
+							<Link href={isOther && siteId == null ? DashboardSitesLink : sitesIdOverviewPageLink} passHref replace>
 								<a className="text-gray-400 hover:text-gray-500">
 									<HomeIcon className="h-4 w-4 flex-shrink-0" />
 									<span className="sr-only">{home}</span>

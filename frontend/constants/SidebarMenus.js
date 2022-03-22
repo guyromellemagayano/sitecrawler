@@ -9,7 +9,6 @@ import {
 	SettingsSlug,
 	SiteImagesSlug,
 	SiteLinksSlug,
-	SiteOverviewSlug,
 	SitePagesSlug,
 	SubscriptionPlansSettingsLink
 } from "@constants/PageLinks";
@@ -89,7 +88,7 @@ export const SidebarMenus = () => {
 	const GeneralMenu = {
 		category: general,
 		slug: "general",
-		links: [{ title: overview, slug: "overview", url: SiteOverviewSlug }]
+		links: [{ title: overview, slug: "overview", url: "/" }]
 	};
 
 	const DetailsMenu = {

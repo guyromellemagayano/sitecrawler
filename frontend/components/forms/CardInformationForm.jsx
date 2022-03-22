@@ -312,7 +312,7 @@ const CardInformationForm = () => {
 															? "cursor-not-allowed opacity-50"
 															: "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 													)}
-													onClick={() => {
+													onClick={(e) => {
 														setCardNumberError(null);
 														setCardExpiryError(null);
 														setCardCvcError(null);
@@ -382,7 +382,7 @@ const CardInformationForm = () => {
 									<button
 										type="button"
 										className="relative mt-3 mr-3 inline-flex w-full items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium leading-5 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0"
-										onClick={() => setDisableForm(!disableForm)}
+										onClick={(e) => setDisableForm(!disableForm)}
 									>
 										{defaultPaymentMethodData?.id ? updateText : addCardText}
 									</button>

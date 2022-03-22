@@ -1,7 +1,6 @@
 import { ResetLoadingStateTimeout } from "@constants/GlobalValues";
 import { AddNewSiteLink, DashboardSitesLink, SubscriptionPlansSettingsLink } from "@constants/PageLinks";
 import { ExclamationIcon, FolderAddIcon } from "@heroicons/react/outline";
-import { PlusIcon, ViewBoardsIcon } from "@heroicons/react/solid";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
@@ -24,12 +23,10 @@ const EmptyState = ({ isSites = false }) => {
 	const { asPath, push } = useRouter();
 
 	// Handle `onClick` event on <Link> element
-	const handleRouterOnClick = (e) => {
-		e.preventDefault();
-
+	const handleRouterOnClick = () => {
 		const addNewSitePage = AddNewSiteLink + "?step=1&edit=false&verified=false";
 
-		setIsLoading(!isLoading);
+		setIsLoading(true);
 
 		if (asPath === DashboardSitesLink && isSites) {
 			push(addNewSitePage);
@@ -37,9 +34,13 @@ const EmptyState = ({ isSites = false }) => {
 			push(SubscriptionPlansSettingsLink);
 		}
 
-		setTimeout(() => {
-			setIsLoading(!isLoading);
+		const timeout = setTimeout(() => {
+			setIsLoading(false);
 		}, ResetLoadingStateTimeout);
+
+		return () => {
+			clearTimeout(timeout);
+		};
 	};
 
 	return (
@@ -73,21 +74,7 @@ const EmptyState = ({ isSites = false }) => {
 							: "cursor-pointer bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
 					)}
 				>
-					{!isLoading ? (
-						asPath !== DashboardSitesLink && !isSites ? (
-							<>
-								<ViewBoardsIcon className="-ml-1 mr-2 h-4 w-4" aria-hidden="true" />
-								{upgradePlanText}
-							</>
-						) : (
-							<>
-								<PlusIcon className="-ml-1 mr-2 h-4 w-4" aria-hidden="true" />
-								{addNewSiteText}
-							</>
-						)
-					) : (
-						loaderMessage
-					)}
+					{!isLoading ? (asPath !== DashboardSitesLink && !isSites ? upgradePlanText : addNewSiteText) : loaderMessage}
 				</button>
 			</div>
 		</div>

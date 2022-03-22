@@ -301,7 +301,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 									) : !siteIdVerified ? (
 										<button
 											type="button"
-											onClick={() => setIsSiteVerifyErrorModalVisible(!isSiteVerifyErrorModalVisible)}
+											onClick={(e) => setIsSiteVerifyErrorModalVisible(!isSiteVerifyErrorModalVisible)}
 											className="ml-2 inline-flex items-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
 										>
 											<span className="flex items-center space-x-2">
@@ -313,7 +313,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 								) : (
 									<button
 										type="button"
-										onClick={() => setIsUpgradeErrorModalVisible(!isUpgradeErrorModalVisible)}
+										onClick={(e) => setIsUpgradeErrorModalVisible(!isUpgradeErrorModalVisible)}
 										className="ml-2 inline-flex items-center rounded-md border border-transparent bg-yellow-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
 									>
 										<span className="flex items-center space-x-2">
@@ -328,35 +328,22 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 
 							{!isSites ? (
 								isComponentReady && (linksCount || sitesCount || pagesCount) ? (
-									siteIdVerified ? (
-										<button
-											type="button"
-											disabled={isDownloading}
-											className={classnames(
-												"ml-2 inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm",
-												isDownloading
-													? "cursor-not-allowed opacity-50"
-													: "bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-											)}
-											onClick={handleCsvDownload}
-										>
-											<span className="flex items-center space-x-2">
-												<DownloadIcon className="h-4 w-4 text-white" />
-												<span>{isDownloading ? downloadingText : csvDownloadText}</span>
-											</span>
-										</button>
-									) : !siteIdVerified ? (
-										<button
-											type="button"
-											onClick={() => setIsSiteVerifyErrorModalVisible(!isSiteVerifyErrorModalVisible)}
-											className="ml-2 inline-flex items-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-										>
-											<span className="flex items-center space-x-2">
-												<DownloadIcon className="h-4 w-4 text-white" />
-												<span>{csvDownloadText}</span>
-											</span>
-										</button>
-									) : null
+									<button
+										type="button"
+										disabled={isDownloading}
+										className={classnames(
+											"ml-2 inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm",
+											isDownloading
+												? "cursor-not-allowed opacity-50"
+												: "bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+										)}
+										onClick={handleCsvDownload}
+									>
+										<span className="flex items-center space-x-2">
+											<DownloadIcon className="h-4 w-4 text-white" />
+											<span>{isDownloading ? downloadingText : csvDownloadText}</span>
+										</span>
+									</button>
 								) : (
 									<Skeleton duration={2} width={150} height={40} className="ml-2" />
 								)

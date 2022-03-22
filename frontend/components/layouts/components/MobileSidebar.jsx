@@ -52,7 +52,7 @@ const MobileSidebarLayout = ({ openSidebar = false, setOpenSidebar }, ref) => {
 								<button
 									type="button"
 									className="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-									onClick={() => setOpenSidebar(false)}
+									onClick={(e) => setOpenSidebar(false)}
 								>
 									<span className="sr-only">{closeSidebarText}</span>
 									<XIcon className="h-5 w-5 text-white" aria-hidden="true" />
