@@ -1,3 +1,4 @@
+import { MemoizedProgressBar } from "@components/progress-bar";
 import {
 	CurrentSubscriptionApiEndpoint,
 	DefaultPaymentMethodApiEndpoint,
@@ -427,6 +428,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 				validatingUser
 			}}
 		>
+			<MemoizedProgressBar />
 			<DefaultSeo {...AppSeo} />
 			<Component {...pageProps} err={err} />
 		</SiteCrawlerAppContext.Provider>
