@@ -172,7 +172,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 								aria-disabled={isLoading}
 								aria-hidden={isLoading}
 								className="inline-flex w-full cursor-pointer items-center rounded-md border border-transparent bg-yellow-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
-								onClick={() => setIsSiteLimitReachedModalVisible(!isSiteLimitReachedModalVisible)}
+								onClick={(e) => setIsSiteLimitReachedModalVisible(!isSiteLimitReachedModalVisible)}
 							>
 								<span className="flex items-center space-x-2">
 									<FontAwesomeIcon icon={["fas", "crown"]} className="mr-2 h-4 w-4 text-white" />

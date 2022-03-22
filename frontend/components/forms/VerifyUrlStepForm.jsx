@@ -1,6 +1,6 @@
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import { NotificationDisplayInterval } from "@constants/GlobalValues";
-import { AddNewSiteLink, DashboardSitesLink, SiteOverviewSlug } from "@constants/PageLinks";
+import { AddNewSiteLink, DashboardSitesLink } from "@constants/PageLinks";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
@@ -140,12 +140,7 @@ const VerifyUrlStepForm = ({ siteData = null, sid = null, step = null, verified 
 							(step === 3 || step === 2) && sid ? (
 								<span className="sm:col-span-3">
 									{siteData ? (
-										<Link
-											href={DashboardSitesLink + "[id]" + SiteOverviewSlug}
-											as={DashboardSitesLink + sid + SiteOverviewSlug}
-											passHref
-											replace
-										>
+										<Link href={DashboardSitesLink + "[id]" + "/"} as={DashboardSitesLink + sid + "/"} passHref replace>
 											<a className="relative inline-flex cursor-pointer items-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-sm font-medium leading-5 text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 sm:mt-0">
 												{goToSiteOverview}
 											</a>

@@ -77,7 +77,7 @@ const SubscriptionPlansPricing = ({
 						<span
 							role="checkbox"
 							tabIndex="0"
-							onClick={() => setTogglePaymentPeriod(!togglePaymentPeriod)}
+							onClick={(e) => setTogglePaymentPeriod(!togglePaymentPeriod)}
 							aria-checked={togglePaymentPeriod}
 							className={classnames(
 								"relative mx-auto inline-flex h-6 w-12 flex-shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring",

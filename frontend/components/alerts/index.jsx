@@ -71,7 +71,7 @@ const Alert = ({ responseText = null, isSuccess = false }) => {
 										? "bg-green-50 text-green-500 hover:bg-green-100  focus:ring-green-600 focus:ring-offset-green-50"
 										: "bg-red-50 text-red-500 hover:bg-red-100  focus:ring-red-600 focus:ring-offset-red-50"
 								)}
-								onClick={() => setIsOpen(false)}
+								onClick={(e) => setIsOpen(false)}
 							>
 								<span className="sr-only">{dismiss}</span>
 								<XIcon className="h-4 w-4" aria-hidden="true" />

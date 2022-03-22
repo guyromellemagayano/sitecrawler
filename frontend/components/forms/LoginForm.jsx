@@ -169,7 +169,7 @@ const LoginForm = () => {
 											"cursor-pointer font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none",
 											isSubmitting && "pointer-events-none cursor-not-allowed text-gray-500 opacity-50"
 										)}
-										onClick={() => setIsPasswordShown(!isPasswordShown)}
+										onClick={(e) => setIsPasswordShown(!isPasswordShown)}
 									>
 										{isPasswordShown ? hidePassword : showPassword}
 									</button>

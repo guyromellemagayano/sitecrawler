@@ -204,7 +204,7 @@ const PasswordSettingsForm = () => {
 																? "cursor-not-allowed opacity-50"
 																: "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 														)}
-														onClick={() => {
+														onClick={(e) => {
 															handleReset();
 															setDisableForm(!disableForm);
 														}}
@@ -251,7 +251,7 @@ const PasswordSettingsForm = () => {
 															? "cursor-not-allowed opacity-50"
 															: "hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 													)}
-													onClick={() => {
+													onClick={(e) => {
 														handleReset();
 														setDisableForm(!disableForm);
 													}}

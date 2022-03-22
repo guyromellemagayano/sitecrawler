@@ -192,7 +192,7 @@ const VerifyUrlStep = (props) => {
 															type="button"
 															className="ml-3 inline-flex items-center text-gray-400 focus:outline-none"
 															title={needHelp}
-															onClick={() => setShowModal(!showModal)}
+															onClick={(e) => setShowModal(!showModal)}
 														>
 															<QuestionMarkCircleIcon className="h-7 w-7" />
 														</button>
