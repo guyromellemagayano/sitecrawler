@@ -89,7 +89,11 @@ const SiteList = ({ data = null }) => {
 				aria-hidden={scanCount === 0}
 				className={classnames(
 					"relative block w-full select-none py-2 pl-3 pr-9 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none",
-					totalLinks > 0 || totalPages > 0 || totalImages > 0 || siteVerified || (!siteVerified && scanCount > 0)
+					totalLinks > 0 ||
+						totalPages > 0 ||
+						totalImages > 0 ||
+						(siteVerified && scanCount > 0) ||
+						(!siteVerified && scanCount > 0)
 						? "cursor-pointer"
 						: "cursor-not-allowed"
 				)}
