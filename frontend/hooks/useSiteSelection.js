@@ -1,3 +1,4 @@
+import { DashboardSitesLink } from "@constants/PageLinks";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
@@ -17,7 +18,7 @@ export const useSiteSelection = () => {
 	const loaderMessage = t("common:loaderMessage");
 
 	// Router
-	const { push, asPath, pathname } = useRouter();
+	const { push, asPath } = useRouter();
 
 	// Custom contexts
 	const { sites, querySiteId } = useContext(SiteCrawlerAppContext);
@@ -51,13 +52,18 @@ export const useSiteSelection = () => {
 
 	// Handle site selection on click
 	const handleSiteSelectOnClick = useCallback(
-		async (id) =>
-			push({
-				query: {
-					siteId: id
-				}
-			}),
-		[sitesResults]
+		async (id) => {
+			return id
+				? asPath.includes("settings") || asPath.includes("add-new-site") || asPath === DashboardSitesLink
+					? push(DashboardSitesLink + id + "/")
+					: push({
+							query: {
+								siteId: id
+							}
+					  })
+				: null;
+		},
+		[asPath]
 	);
 
 	return {
