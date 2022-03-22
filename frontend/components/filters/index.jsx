@@ -17,15 +17,13 @@ import { useSWRConfig } from "swr";
  * @param {boolean} isSitesLinksFilter
  * @param {boolean} isSitesPagesFilter
  * @param {boolean} isSitesImagesFilter
- * @param {boolean} isSitesSeoFilter
  * @param {boolean} isValidating
  */
 const Filter = ({
 	isSitesFilter = false,
 	isSitesLinksFilter = false,
 	isSitesPagesFilter = false,
-	isSitesImagesFilter = false,
-	isSitesSeoFilter = false
+	isSitesImagesFilter = false
 }) => {
 	// Translations
 	const { t } = useTranslation("filters");
@@ -48,6 +46,8 @@ const Filter = ({
 		setInternalLinksFilter,
 		nonWebLinksFilter,
 		setNonWebLinksFilter,
+		otherLinksFilter,
+		setOtherLinksFilter,
 		linksWithIssuesFilter,
 		setLinksWithIssuesFilter,
 		noLinkIssuesFilter,
@@ -106,8 +106,6 @@ const Filter = ({
 		? "pages"
 		: isSitesImagesFilter
 		? "images"
-		: isSitesSeoFilter
-		? "seo"
 		: null;
 
 	// Custom hooks
@@ -166,9 +164,10 @@ const Filter = ({
 			}
 
 			if (filterValue === "internalLinks" && filterChecked) {
+				setNonWebLinksFilter(false);
 				setInternalLinksFilter(true);
 				setExternalLinksFilter(false);
-				setNonWebLinksFilter(false);
+				setOtherLinksFilter(false);
 				setAllLinksFilter(false);
 
 				newPath = handleRemoveUrlParameter(newPath, "type");
@@ -184,9 +183,10 @@ const Filter = ({
 			}
 
 			if (filterValue === "externalLinks" && filterChecked) {
+				setNonWebLinksFilter(false);
 				setInternalLinksFilter(false);
 				setExternalLinksFilter(true);
-				setNonWebLinksFilter(false);
+				setOtherLinksFilter(false);
 				setAllLinksFilter(false);
 
 				newPath = handleRemoveUrlParameter(newPath, "type");
@@ -205,6 +205,7 @@ const Filter = ({
 				setNonWebLinksFilter(true);
 				setInternalLinksFilter(false);
 				setExternalLinksFilter(false);
+				setOtherLinksFilter(false);
 				setAllLinksFilter(false);
 
 				newPath = handleRemoveUrlParameter(newPath, "type");
@@ -219,19 +220,41 @@ const Filter = ({
 				setNonWebLinksFilter(false);
 			}
 
+			if (filterValue === "otherLinks" && filterChecked) {
+				setNonWebLinksFilter(false);
+				setInternalLinksFilter(false);
+				setExternalLinksFilter(false);
+				setOtherLinksFilter(true);
+				setAllLinksFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "type");
+
+				if (newPath.includes("?")) newPath += `&type=OTHER`;
+				else newPath += `?type=OTHER`;
+			} else if (filterValue === "otherLinks" && !filterChecked) {
+				filterQueryString?.delete("type") ?? null;
+
+				if (newPath.includes("type")) newPath = handleRemoveUrlParameter(newPath, "type");
+
+				setOtherLinksFilter(false);
+			}
+
 			if (
 				(filterValue === "allSites" && filterChecked) ||
 				(filterValue !== "linksWithIssues" &&
 					filterValue !== "noLinkIssues" &&
 					filterValue !== "internalLinks" &&
 					filterValue !== "externalLinks" &&
-					filterValue !== "nonWebLinks")
+					filterValue !== "nonWebLinks" &&
+					filterValue !== "otherLinks")
 			) {
 				setAllLinksFilter(true);
 				setLinksWithIssuesFilter(false);
 				setNoLinkIssuesFilter(false);
 				setExternalLinksFilter(false);
 				setInternalLinksFilter(false);
+				setNonWebLinksFilter(false);
+				setOtherLinksFilter(false);
 
 				newPath = handleRemoveUrlParameter(newPath, "status");
 				newPath = handleRemoveUrlParameter(newPath, "status__neq");
@@ -1222,8 +1245,7 @@ const Filter = ({
 								e.value !== "allSites" &&
 								e.value !== "allLinks" &&
 								e.value !== "allPages" &&
-								e.value !== "allImages" &&
-								e.value !== "allSeo"
+								e.value !== "allImages"
 						)
 						.map((value, key) => (
 							<div key={key}>
@@ -1247,11 +1269,7 @@ const Filter = ({
 					.filter(
 						(e) =>
 							e.type === filterType &&
-							(e.value === "allSites" ||
-								e.value === "allLinks" ||
-								e.value === "allPages" ||
-								e.value === "allImages" ||
-								e.value === "allSeo")
+							(e.value === "allSites" || e.value === "allLinks" || e.value === "allPages" || e.value === "allImages")
 					)
 					.map((value, key) => (
 						<div key={key} className="ml-4 mt-2">
@@ -1281,8 +1299,7 @@ const Filter = ({
 							e.value !== "allSites" &&
 							e.value !== "allLinks" &&
 							e.value !== "allPages" &&
-							e.value !== "allImages" &&
-							e.value !== "allSeo"
+							e.value !== "allImages"
 					)
 					.map((value, key) => (
 						<div key={key} className="ml-4 mt-2">
@@ -1299,11 +1316,7 @@ const Filter = ({
 					.filter(
 						(e) =>
 							e.type === filterType &&
-							(e.value === "allSites" ||
-								e.value === "allLinks" ||
-								e.value === "allPages" ||
-								e.value === "allImages" ||
-								e.value === "allSeo")
+							(e.value === "allSites" || e.value === "allLinks" || e.value === "allPages" || e.value === "allImages")
 					)
 					.map((value, key) => (
 						<div key={key} className="ml-4 mt-2">

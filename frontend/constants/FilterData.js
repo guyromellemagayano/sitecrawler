@@ -9,6 +9,7 @@ export const FilterData = () => {
 	const [externalLinksFilter, setExternalLinksFilter] = useState(false);
 	const [internalLinksFilter, setInternalLinksFilter] = useState(false);
 	const [nonWebLinksFilter, setNonWebLinksFilter] = useState(false);
+	const [otherLinksFilter, setOtherLinksFilter] = useState(false);
 	const [linksWithIssuesFilter, setLinksWithIssuesFilter] = useState(false);
 	const [noLinkIssuesFilter, setNoLinkIssuesFilter] = useState(false);
 	const [allPagesFilter, setAllPagesFilter] = useState(false);
@@ -43,6 +44,7 @@ export const FilterData = () => {
 	const internalLinksText = t("internalLinks");
 	const externalLinksText = t("externalLinks");
 	const nonWebLinksText = t("nonWebLinks");
+	const otherLinksText = t("otherLinks");
 	const noLinkIssuesText = t("noLinkIssues");
 
 	// Pages
@@ -63,6 +65,9 @@ export const FilterData = () => {
 	const tlsScriptsText = t("tlsScripts");
 	const tlsStylesheetsText = t("tlsStylesheets");
 	const tlsTotalText = t("tlsTotal");
+
+	// Images
+	const allImagesText = t("allImages");
 
 	const filtersArray = [];
 
@@ -109,6 +114,12 @@ export const FilterData = () => {
 		label: nonWebLinksText,
 		checked: nonWebLinksFilter,
 		value: "nonWebLinks",
+		type: "links"
+	};
+	const otherLinksData = {
+		label: otherLinksText,
+		checked: otherLinksFilter,
+		value: "otherLinks",
 		type: "links"
 	};
 	const linksWithIssuesData = {
@@ -239,6 +250,7 @@ export const FilterData = () => {
 	filtersArray.push(internalLinksData);
 	filtersArray.push(externalLinksData);
 	filtersArray.push(nonWebLinksData);
+	filtersArray.push(otherLinksData);
 	filtersArray.push(allSitePagesData);
 	filtersArray.push(hasTitleData);
 	filtersArray.push(hasDescriptionData);
@@ -273,6 +285,8 @@ export const FilterData = () => {
 		setInternalLinksFilter,
 		nonWebLinksFilter,
 		setNonWebLinksFilter,
+		otherLinksFilter,
+		setOtherLinksFilter,
 		linksWithIssuesFilter,
 		setLinksWithIssuesFilter,
 		noLinkIssuesFilter,
