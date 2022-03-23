@@ -2,7 +2,7 @@ import { useNProgress } from "@tanem/react-nprogress";
 import { classnames } from "@utils/classnames";
 import { useRouter } from "next/router";
 import { memo, useEffect, useState } from "react";
-import { css } from "styled-components";
+import styledComponents, { css } from "styled-components";
 
 /**
  * Custom function to render the `ProgressBar` component
@@ -78,19 +78,17 @@ const ProgressBar = () => {
 		isAnimating: state.isRouteChanging
 	});
 
+	const ProgressBarAnimationStyled = styledComponents.div`
+		margin-left: ${(-1 + progress) * 100}%;
+		transition-property: margin-left;
+		transition-delay: ${animationDuration}ms;
+		transition-duration: ${animationDuration}ms;
+	`;
+
 	return (
-		<div
+		<ProgressBarAnimationStyled
 			className={classnames(
 				"pointer-events-none fixed top-0 left-0 z-50 h-1 w-full bg-red-400 transition-opacity ease-linear",
-				css`
-					margin-left: ${(-1 + progress) * 100} + "%";
-					transition-property: margin-left;
-				`,
-				animationDuration
-					? css`
-							transition-delay: ${animationDuration}ms;
-					  `
-					: null,
 				isFinished ? "opacity-0" : "opacity-100"
 			)}
 		>
@@ -103,7 +101,7 @@ const ProgressBar = () => {
 					`
 				)}
 			/>
-		</div>
+		</ProgressBarAnimationStyled>
 	);
 };
 
