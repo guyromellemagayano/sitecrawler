@@ -29,6 +29,34 @@ export const FilterData = () => {
 	const [tlsScriptsFilter, setTlsScriptsFilter] = useState(false);
 	const [tlsStylesheetsFilter, setTlsStylesheetsFilter] = useState(false);
 	const [tlsTotalFilter, setTlsTotalFilter] = useState(false);
+	const [allImagesFilter, setAllImagesFilter] = useState(false);
+	const [externalImagesFilter, setExternalImagesFilter] = useState(false);
+	const [internalImagesFilter, setInternalImagesFilter] = useState(false);
+	const [nonWebImagesFilter, setNonWebImagesFilter] = useState(false);
+	const [otherImagesFilter, setOtherImagesFilter] = useState(false);
+	const [allExceptExternalImagesFilter, setAllExceptExternalImagesFilter] = useState(false);
+	const [allExceptInternalImagesFilter, setAllExceptInternalImagesFilter] = useState(false);
+	const [allExceptNonWebImagesFilter, setAllExceptNonWebImagesFilter] = useState(false);
+	const [allExceptOtherImagesFilter, setAllExceptOtherImagesFilter] = useState(false);
+	const [okHttpStatusImagesFilter, setOkHttpStatusImagesFilter] = useState(false);
+	const [timeoutHttpStatusImagesFilter, setTimeoutHttpStatusImagesFilter] = useState(false);
+	const [errorHttpStatusImagesFilter, setErrorHttpStatusImagesFilter] = useState(false);
+	const [otherErrorHttpStatusImagesFilter, setOtherErrorHttpStatusImagesFilter] = useState(false);
+	const [tooManyRedirectsHttpStatusImagesFilter, setTooManyRedirectsHttpStatusImagesFilter] = useState(false);
+	const [allExceptOkHttpStatusImagesFilter, setAllExceptOkHttpStatusImagesFilter] = useState(false);
+	const [allExceptTimeoutHttpStatusImagesFilter, setAllExceptTimeoutHttpStatusImagesFilter] = useState(false);
+	const [allExceptErrorHttpStatusImagesFilter, setAllExceptErrorHttpStatusImagesFilter] = useState(false);
+	const [allExceptOtherErrorHttpStatusImagesFilter, setAllExceptOtherErrorHttpStatusImagesFilter] = useState(false);
+	const [allExceptTooManyRedirectsHttpStatusImagesFilter, setAllExceptTooManyRedirectsHttpStatusImagesFilter] =
+		useState(false);
+	const [tlsStatusNoneImagesFilter, setTlsStatusNoneImagesFilter] = useState(false);
+	const [tlsStatusOkImagesFilter, setTlsStatusOkImagesFilter] = useState(false);
+	const [tlsStatusErrorImagesFilter, setTlsStatusErrorImagesFilter] = useState(false);
+	const [allExceptTlsStatusNoneImagesFilter, setAllExceptTlsStatusNoneImagesFilter] = useState(false);
+	const [allExceptTlsStatusOkImagesFilter, setAllExceptTlsStatusOkImagesFilter] = useState(false);
+	const [allExceptTlsStatusErrorImagesFilter, setAllExceptTlsStatusErrorImagesFilter] = useState(false);
+	const [noMissingAltsFilter, setNoMissingAltsFilter] = useState(false);
+	const [missingAltsFilter, setMissingAltsFilter] = useState(false);
 
 	// Translations
 	const { t } = useTranslation("filters");
@@ -41,11 +69,11 @@ export const FilterData = () => {
 	// Links
 	const allLinksText = t("allLinks");
 	const linksWithIssuesText = t("linksWithIssues");
+	const noLinkIssuesText = t("noLinkIssues");
 	const internalLinksText = t("internalLinks");
 	const externalLinksText = t("externalLinks");
 	const nonWebLinksText = t("nonWebLinks");
 	const otherLinksText = t("otherLinks");
-	const noLinkIssuesText = t("noLinkIssues");
 
 	// Pages
 	const allPagesText = t("allPages");
@@ -68,6 +96,32 @@ export const FilterData = () => {
 
 	// Images
 	const allImagesText = t("allImages");
+	const internalImagesText = t("internalImages");
+	const externalImagesText = t("externalImages");
+	const nonWebImagesText = t("nonWebImages");
+	const otherImagesText = t("otherImages");
+	const allExceptInternalImagesText = t("allExceptInternalImages");
+	const allExceptExternalImagesText = t("allExceptExternalImages");
+	const allExceptNonWebImagesText = t("allExceptNonWebImages");
+	const allExceptOtherImagesText = t("allExceptOtherImages");
+	const okHttpStatusText = t("okHttpStatus");
+	const timeoutHttpStatusText = t("timeoutHttpStatus");
+	const errorHttpStatusText = t("errorHttpStatus");
+	const otherErrorHttpStatusText = t("otherErrorHttpStatus");
+	const tooManyRedirectsHttpStatusText = t("tooManyRedirectsHttpStatus");
+	const allExceptOkHttpStatusText = t("allExceptOkHttpStatus");
+	const allExceptTimeoutHttpStatusText = t("allExceptTimeoutHttpStatus");
+	const allExceptErrorHttpStatusText = t("allExceptErrorHttpStatus");
+	const allExceptOtherErrorHttpStatusText = t("allExceptOtherErrorHttpStatus");
+	const allExceptTooManyRedirectsHttpStatusText = t("allExceptTooManyRedirectsHttpStatus");
+	const tlsStatusNoneText = t("tlsStatusNone");
+	const tlsStatusOkText = t("tlsStatusOk");
+	const tlsStatusErrorText = t("tlsStatusError");
+	const allExceptTlsStatusNoneText = t("allExceptTlsStatusNone");
+	const allExceptTlsStatusOkText = t("allExceptTlsStatusOk");
+	const allExceptTlsStatusErrorText = t("allExceptTlsStatusError");
+	const noMissingAltsText = t("noMissingAlts");
+	const missingAltsText = t("missingAlts");
 
 	const filtersArray = [];
 
@@ -90,6 +144,10 @@ export const FilterData = () => {
 		value: "verified",
 		type: "sites"
 	};
+
+	filtersArray.push(allSitesData);
+	filtersArray.push(unverifiedSitesData);
+	filtersArray.push(verifiedSitesData);
 
 	// Links filters
 	const allSiteLinksData = {
@@ -134,6 +192,14 @@ export const FilterData = () => {
 		value: "noLinkIssues",
 		type: "links"
 	};
+
+	filtersArray.push(allSiteLinksData);
+	filtersArray.push(linksWithIssuesData);
+	filtersArray.push(noLinkIssuesData);
+	filtersArray.push(internalLinksData);
+	filtersArray.push(externalLinksData);
+	filtersArray.push(nonWebLinksData);
+	filtersArray.push(otherLinksData);
 
 	// Pages filters
 	const allSitePagesData = {
@@ -203,7 +269,6 @@ export const FilterData = () => {
 		value: "hasNoH2Second",
 		type: "pages"
 	};
-
 	const hasDuplicatedTitleData = {
 		label: hasDuplicatedTitleText,
 		checked: hasDuplicatedTitleFilter,
@@ -241,16 +306,6 @@ export const FilterData = () => {
 		type: "pages"
 	};
 
-	filtersArray.push(allSitesData);
-	filtersArray.push(linksWithIssuesData);
-	filtersArray.push(noLinkIssuesData);
-	filtersArray.push(unverifiedSitesData);
-	filtersArray.push(verifiedSitesData);
-	filtersArray.push(allSiteLinksData);
-	filtersArray.push(internalLinksData);
-	filtersArray.push(externalLinksData);
-	filtersArray.push(nonWebLinksData);
-	filtersArray.push(otherLinksData);
 	filtersArray.push(allSitePagesData);
 	filtersArray.push(hasTitleData);
 	filtersArray.push(hasDescriptionData);
@@ -268,6 +323,198 @@ export const FilterData = () => {
 	filtersArray.push(tlsScriptsData);
 	filtersArray.push(tlsStylesheetsData);
 	filtersArray.push(tlsTotalData);
+
+	// Images filters
+	const allSiteImagesData = {
+		label: allImagesText,
+		checked: allImagesFilter,
+		value: "allImages",
+		type: "images"
+	};
+	const internalImagesData = {
+		label: internalImagesText,
+		checked: internalImagesFilter,
+		value: "internalImages",
+		type: "images"
+	};
+	const externalImagesData = {
+		label: externalImagesText,
+		checked: externalImagesFilter,
+		value: "externalImages",
+		type: "images"
+	};
+	const nonWebImagesData = {
+		label: nonWebImagesText,
+		checked: nonWebImagesFilter,
+		value: "nonWebImages",
+		type: "images"
+	};
+	const otherImagesData = {
+		label: otherImagesText,
+		checked: otherImagesFilter,
+		value: "otherImages",
+		type: "images"
+	};
+	const allExceptInternalImagesData = {
+		label: allExceptInternalImagesText,
+		checked: allExceptInternalImagesFilter,
+		value: "allExceptInternalImages",
+		type: "images"
+	};
+	const allExceptExternalImagesData = {
+		label: allExceptExternalImagesText,
+		checked: allExceptExternalImagesFilter,
+		value: "allExceptExternalImages",
+		type: "images"
+	};
+	const allExceptNonWebImagesData = {
+		label: allExceptNonWebImagesText,
+		checked: nonWebImagesFilter,
+		value: "allExceptNonWebImages",
+		type: "images"
+	};
+	const allExceptOtherImagesData = {
+		label: allExceptOtherImagesText,
+		checked: otherImagesFilter,
+		value: "allExceptOtherImages",
+		type: "images"
+	};
+	const okHttpStatusImagesData = {
+		label: okHttpStatusText,
+		checked: okHttpStatusImagesFilter,
+		value: "okHttpStatusImages",
+		type: "images"
+	};
+	const timeoutHttpStatusImagesData = {
+		label: timeoutHttpStatusText,
+		checked: timeoutHttpStatusImagesFilter,
+		value: "timeoutHttpStatusImages",
+		type: "images"
+	};
+	const errorHttpStatusImagesData = {
+		label: errorHttpStatusText,
+		checked: errorHttpStatusImagesFilter,
+		value: "errorHttpStatusImages",
+		type: "images"
+	};
+	const otherErrorHttpStatusImagesData = {
+		label: otherErrorHttpStatusText,
+		checked: otherErrorHttpStatusImagesFilter,
+		value: "otherErrorHttpStatusImages",
+		type: "images"
+	};
+	const tooManyRedirectsHttpStatusImagesData = {
+		label: tooManyRedirectsHttpStatusText,
+		checked: tooManyRedirectsHttpStatusImagesFilter,
+		value: "tooManyRedirectsHttpStatusImages",
+		type: "images"
+	};
+	const allExceptOkHttpStatusImagesData = {
+		label: allExceptOkHttpStatusText,
+		checked: allExceptOkHttpStatusImagesFilter,
+		value: "allExceptOkHttpStatusImages",
+		type: "images"
+	};
+	const allExceptTimeoutHttpStatusImagesData = {
+		label: allExceptTimeoutHttpStatusText,
+		checked: allExceptTimeoutHttpStatusImagesFilter,
+		value: "allExceptTimeoutHttpStatusImages",
+		type: "images"
+	};
+	const allExceptErrorHttpStatusImagesData = {
+		label: allExceptErrorHttpStatusText,
+		checked: allExceptErrorHttpStatusImagesFilter,
+		value: "allExceptErrorHttpStatusImages",
+		type: "images"
+	};
+	const allExceptOtherErrorHttpStatusImagesData = {
+		label: allExceptOtherErrorHttpStatusText,
+		checked: allExceptOtherErrorHttpStatusImagesFilter,
+		value: "allExceptOtherErrorHttpStatusImages",
+		type: "images"
+	};
+	const allExceptTooManyRedirectsHttpStatusImagesData = {
+		label: allExceptTooManyRedirectsHttpStatusText,
+		checked: allExceptTooManyRedirectsHttpStatusImagesFilter,
+		value: "allExceptTooManyRedirectsHttpStatusImages",
+		type: "images"
+	};
+	const tlsStatusNoneImagesData = {
+		label: tlsStatusNoneText,
+		checked: tlsStatusNoneImagesFilter,
+		value: "tlsStatusNoneImages",
+		type: "images"
+	};
+	const tlsStatusOkImagesData = {
+		label: tlsStatusOkText,
+		checked: tlsStatusOkImagesFilter,
+		value: "tlsStatusOkImages",
+		type: "images"
+	};
+	const tlsStatusErrorImagesData = {
+		label: tlsStatusErrorText,
+		checked: tlsStatusErrorImagesFilter,
+		value: "tlsStatusErrorImages",
+		type: "images"
+	};
+	const allExceptTlsStatusNoneImagesData = {
+		label: allExceptTlsStatusNoneText,
+		checked: allExceptTlsStatusNoneImagesFilter,
+		value: "allExceptTlsStatusNoneImages",
+		type: "images"
+	};
+	const allExceptTlsStatusOkImagesData = {
+		label: allExceptTlsStatusOkText,
+		checked: allExceptTlsStatusOkImagesFilter,
+		value: "allExceptTlsStatusOkImages",
+		type: "images"
+	};
+	const allExceptTlsStatusErrorImagesData = {
+		label: allExceptTlsStatusErrorText,
+		checked: allExceptTlsStatusErrorImagesFilter,
+		value: "allExceptTlsStatusErrorImages",
+		type: "images"
+	};
+	const noMissingAltsImagesData = {
+		label: noMissingAltsText,
+		checked: noMissingAltsFilter,
+		value: "noMissingAltsImages",
+		type: "images"
+	};
+	const missingAltsImagesData = {
+		label: missingAltsText,
+		checked: missingAltsFilter,
+		value: "missingAltsImages",
+		type: "images"
+	};
+
+	filtersArray.push(allSiteImagesData);
+	filtersArray.push(internalImagesData);
+	filtersArray.push(externalImagesData);
+	filtersArray.push(nonWebImagesData);
+	filtersArray.push(otherImagesData);
+	filtersArray.push(allExceptInternalImagesData);
+	filtersArray.push(allExceptExternalImagesData);
+	filtersArray.push(allExceptNonWebImagesData);
+	filtersArray.push(allExceptOtherImagesData);
+	filtersArray.push(okHttpStatusImagesData);
+	filtersArray.push(timeoutHttpStatusImagesData);
+	filtersArray.push(errorHttpStatusImagesData);
+	filtersArray.push(otherErrorHttpStatusImagesData);
+	filtersArray.push(tooManyRedirectsHttpStatusImagesData);
+	filtersArray.push(allExceptOkHttpStatusImagesData);
+	filtersArray.push(allExceptTimeoutHttpStatusImagesData);
+	filtersArray.push(allExceptErrorHttpStatusImagesData);
+	filtersArray.push(allExceptOtherErrorHttpStatusImagesData);
+	filtersArray.push(allExceptTooManyRedirectsHttpStatusImagesData);
+	filtersArray.push(tlsStatusNoneImagesData);
+	filtersArray.push(tlsStatusOkImagesData);
+	filtersArray.push(tlsStatusErrorImagesData);
+	filtersArray.push(allExceptTlsStatusNoneImagesData);
+	filtersArray.push(allExceptTlsStatusOkImagesData);
+	filtersArray.push(allExceptTlsStatusErrorImagesData);
+	filtersArray.push(noMissingAltsImagesData);
+	filtersArray.push(missingAltsImagesData);
 
 	return {
 		filtersArray,
@@ -324,6 +571,60 @@ export const FilterData = () => {
 		tlsStylesheetsFilter,
 		setTlsStylesheetsFilter,
 		tlsTotalFilter,
-		setTlsTotalFilter
+		setTlsTotalFilter,
+		allImagesFilter,
+		setAllImagesFilter,
+		internalImagesFilter,
+		setInternalImagesFilter,
+		externalImagesFilter,
+		setExternalImagesFilter,
+		nonWebImagesFilter,
+		setNonWebImagesFilter,
+		otherImagesFilter,
+		setOtherImagesFilter,
+		allExceptExternalImagesFilter,
+		setAllExceptExternalImagesFilter,
+		allExceptInternalImagesFilter,
+		setAllExceptInternalImagesFilter,
+		allExceptNonWebImagesFilter,
+		setAllExceptNonWebImagesFilter,
+		allExceptOtherImagesFilter,
+		setAllExceptOtherImagesFilter,
+		okHttpStatusImagesFilter,
+		setOkHttpStatusImagesFilter,
+		timeoutHttpStatusImagesFilter,
+		setTimeoutHttpStatusImagesFilter,
+		errorHttpStatusImagesFilter,
+		setErrorHttpStatusImagesFilter,
+		otherErrorHttpStatusImagesFilter,
+		setOtherErrorHttpStatusImagesFilter,
+		tooManyRedirectsHttpStatusImagesFilter,
+		setTooManyRedirectsHttpStatusImagesFilter,
+		allExceptOkHttpStatusImagesFilter,
+		setAllExceptOkHttpStatusImagesFilter,
+		allExceptTimeoutHttpStatusImagesFilter,
+		setAllExceptTimeoutHttpStatusImagesFilter,
+		allExceptErrorHttpStatusImagesFilter,
+		setAllExceptErrorHttpStatusImagesFilter,
+		allExceptOtherErrorHttpStatusImagesFilter,
+		setAllExceptOtherErrorHttpStatusImagesFilter,
+		allExceptTooManyRedirectsHttpStatusImagesFilter,
+		setAllExceptTooManyRedirectsHttpStatusImagesFilter,
+		tlsStatusNoneImagesFilter,
+		setTlsStatusNoneImagesFilter,
+		tlsStatusOkImagesFilter,
+		setTlsStatusOkImagesFilter,
+		tlsStatusErrorImagesFilter,
+		setTlsStatusErrorImagesFilter,
+		allExceptTlsStatusNoneImagesFilter,
+		setAllExceptTlsStatusNoneImagesFilter,
+		allExceptTlsStatusOkImagesFilter,
+		setAllExceptTlsStatusOkImagesFilter,
+		allExceptTlsStatusErrorImagesFilter,
+		setAllExceptTlsStatusErrorImagesFilter,
+		noMissingAltsFilter,
+		setNoMissingAltsFilter,
+		missingAltsFilter,
+		setMissingAltsFilter
 	};
 };
