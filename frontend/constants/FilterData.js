@@ -369,13 +369,13 @@ export const FilterData = () => {
 	};
 	const allExceptNonWebImagesData = {
 		label: allExceptNonWebImagesText,
-		checked: nonWebImagesFilter,
+		checked: allExceptNonWebImagesFilter,
 		value: "allExceptNonWebImages",
 		type: "images"
 	};
 	const allExceptOtherImagesData = {
 		label: allExceptOtherImagesText,
-		checked: otherImagesFilter,
+		checked: allExceptOtherImagesFilter,
 		value: "allExceptOtherImages",
 		type: "images"
 	};
