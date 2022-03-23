@@ -178,9 +178,6 @@ const Filter = ({
 		if (filterType === "links") {
 			if (filterValue === "linksWithIssues" && filterChecked) {
 				setLinksWithIssuesFilter(true);
-				setInternalLinksFilter(false);
-				setExternalLinksFilter(false);
-				setNonWebLinksFilter(false);
 				setNoLinkIssuesFilter(false);
 				setAllLinksFilter(false);
 
@@ -199,9 +196,6 @@ const Filter = ({
 
 			if (filterValue === "noLinkIssues" && filterChecked) {
 				setLinksWithIssuesFilter(false);
-				setInternalLinksFilter(false);
-				setExternalLinksFilter(false);
-				setNonWebLinksFilter(false);
 				setNoLinkIssuesFilter(true);
 				setAllLinksFilter(false);
 
@@ -319,34 +313,8 @@ const Filter = ({
 			if (filterValue === "hasTitle" && filterChecked) {
 				setAllPagesFilter(false);
 				setHasTitleFilter(true);
-				setHasDescriptionFilter(false);
-				setHasH1FirstFilter(false);
-				setHasH1SecondFilter(false);
-				setHasH2FirstFilter(false);
-				setHasH2SecondFilter(false);
-				setHasNoH1FirstFilter(false);
-				setHasNoH1SecondFilter(false);
-				setHasNoH2FirstFilter(false);
-				setHasNoH2SecondFilter(false);
-				setHasDuplicatedTitleFilter(false);
-				setHasDuplicatedDescriptionFilter(false);
-				setTlsImagesFilter(false);
-				setTlsScriptsFilter(false);
-				setTlsStylesheetsFilter(false);
-				setTlsTotalFilter(false);
 
 				newPath = handleRemoveUrlParameter(newPath, "has_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_description");
-				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
-				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
-				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
-				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
-				newPath = handleRemoveUrlParameter(newPath, "tls_images");
-				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
-				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
-				newPath = handleRemoveUrlParameter(newPath, "tls_total");
 
 				if (newPath.includes("?")) newPath += `&has_title=true`;
 				else newPath += `?has_title=true`;
@@ -360,35 +328,9 @@ const Filter = ({
 
 			if (filterValue === "hasDescription" && filterChecked) {
 				setAllPagesFilter(false);
-				setHasTitleFilter(false);
 				setHasDescriptionFilter(true);
-				setHasH1FirstFilter(false);
-				setHasH1SecondFilter(false);
-				setHasH2FirstFilter(false);
-				setHasH2SecondFilter(false);
-				setHasNoH1FirstFilter(false);
-				setHasNoH1SecondFilter(false);
-				setHasNoH2FirstFilter(false);
-				setHasNoH2SecondFilter(false);
-				setHasDuplicatedTitleFilter(false);
-				setHasDuplicatedDescriptionFilter(false);
-				setTlsImagesFilter(false);
-				setTlsScriptsFilter(false);
-				setTlsStylesheetsFilter(false);
-				setTlsTotalFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "has_title");
 				newPath = handleRemoveUrlParameter(newPath, "has_description");
-				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
-				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
-				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
-				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
-				newPath = handleRemoveUrlParameter(newPath, "tls_images");
-				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
-				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
-				newPath = handleRemoveUrlParameter(newPath, "tls_total");
 
 				if (newPath.includes("?")) newPath += `&has_description=true`;
 				else newPath += `?has_description=true`;
@@ -402,35 +344,9 @@ const Filter = ({
 
 			if (filterValue === "hasH1First" && filterChecked) {
 				setAllPagesFilter(false);
-				setHasTitleFilter(false);
-				setHasDescriptionFilter(false);
 				setHasH1FirstFilter(true);
-				setHasH1SecondFilter(false);
-				setHasH2FirstFilter(false);
-				setHasH2SecondFilter(false);
-				setHasNoH1FirstFilter(false);
-				setHasNoH1SecondFilter(false);
-				setHasNoH2FirstFilter(false);
-				setHasNoH2SecondFilter(false);
-				setHasDuplicatedTitleFilter(false);
-				setHasDuplicatedDescriptionFilter(false);
-				setTlsImagesFilter(false);
-				setTlsScriptsFilter(false);
-				setTlsStylesheetsFilter(false);
-				setTlsTotalFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "has_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_description");
 				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
-				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
-				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
-				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
-				newPath = handleRemoveUrlParameter(newPath, "tls_images");
-				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
-				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
-				newPath = handleRemoveUrlParameter(newPath, "tls_total");
 
 				if (newPath.includes("?")) newPath += `&has_h1_first=true`;
 				else newPath += `?has_h1_first=true`;
@@ -444,35 +360,9 @@ const Filter = ({
 
 			if (filterValue === "hasH1Second" && filterChecked) {
 				setAllPagesFilter(false);
-				setHasTitleFilter(false);
-				setHasDescriptionFilter(false);
-				setHasH1FirstFilter(false);
 				setHasH1SecondFilter(true);
-				setHasH2FirstFilter(false);
-				setHasH2SecondFilter(false);
-				setHasNoH1FirstFilter(false);
-				setHasNoH1SecondFilter(false);
-				setHasNoH2FirstFilter(false);
-				setHasNoH2SecondFilter(false);
-				setHasDuplicatedTitleFilter(false);
-				setHasDuplicatedDescriptionFilter(false);
-				setTlsImagesFilter(false);
-				setTlsScriptsFilter(false);
-				setTlsStylesheetsFilter(false);
-				setTlsTotalFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "has_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_description");
-				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
 				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
-				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
-				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
-				newPath = handleRemoveUrlParameter(newPath, "tls_images");
-				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
-				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
-				newPath = handleRemoveUrlParameter(newPath, "tls_total");
 
 				if (newPath.includes("?")) newPath += `&has_h1_second=true`;
 				else newPath += `?has_h1_second=true`;
@@ -486,35 +376,9 @@ const Filter = ({
 
 			if (filterValue === "hasH2First" && filterChecked) {
 				setAllPagesFilter(false);
-				setHasTitleFilter(false);
-				setHasDescriptionFilter(false);
-				setHasH1FirstFilter(false);
-				setHasH1SecondFilter(false);
 				setHasH2FirstFilter(true);
-				setHasH2SecondFilter(false);
-				setHasNoH1FirstFilter(false);
-				setHasNoH1SecondFilter(false);
-				setHasNoH2FirstFilter(false);
-				setHasNoH2SecondFilter(false);
-				setHasDuplicatedTitleFilter(false);
-				setHasDuplicatedDescriptionFilter(false);
-				setTlsImagesFilter(false);
-				setTlsScriptsFilter(false);
-				setTlsStylesheetsFilter(false);
-				setTlsTotalFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "has_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_description");
-				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
-				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
 				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
-				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
-				newPath = handleRemoveUrlParameter(newPath, "tls_images");
-				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
-				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
-				newPath = handleRemoveUrlParameter(newPath, "tls_total");
 
 				if (newPath.includes("?")) newPath += `&has_h2_first=true`;
 				else newPath += `?has_h2_first=true`;
@@ -528,35 +392,9 @@ const Filter = ({
 
 			if (filterValue === "hasH2Second" && filterChecked) {
 				setAllPagesFilter(false);
-				setHasTitleFilter(false);
-				setHasDescriptionFilter(false);
-				setHasH1FirstFilter(false);
-				setHasH1SecondFilter(false);
-				setHasH2FirstFilter(false);
 				setHasH2SecondFilter(true);
-				setHasNoH1FirstFilter(false);
-				setHasNoH1SecondFilter(false);
-				setHasNoH2FirstFilter(false);
-				setHasNoH2SecondFilter(false);
-				setHasDuplicatedTitleFilter(false);
-				setHasDuplicatedDescriptionFilter(false);
-				setTlsImagesFilter(false);
-				setTlsScriptsFilter(false);
-				setTlsStylesheetsFilter(false);
-				setTlsTotalFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "has_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_description");
-				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
-				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
-				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
 				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
-				newPath = handleRemoveUrlParameter(newPath, "tls_images");
-				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
-				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
-				newPath = handleRemoveUrlParameter(newPath, "tls_total");
 
 				if (newPath.includes("?")) newPath += `&has_h2_second=true`;
 				else newPath += `?has_h2_second=true`;
@@ -570,35 +408,10 @@ const Filter = ({
 
 			if (filterValue === "hasNoH1First" && filterChecked) {
 				setAllPagesFilter(false);
-				setHasTitleFilter(false);
-				setHasDescriptionFilter(false);
 				setHasH1FirstFilter(false);
-				setHasH1SecondFilter(false);
-				setHasH2FirstFilter(false);
-				setHasH2SecondFilter(false);
 				setHasNoH1FirstFilter(true);
-				setHasNoH1SecondFilter(false);
-				setHasNoH2FirstFilter(false);
-				setHasNoH2SecondFilter(false);
-				setHasDuplicatedTitleFilter(false);
-				setHasDuplicatedDescriptionFilter(false);
-				setTlsImagesFilter(false);
-				setTlsScriptsFilter(false);
-				setTlsStylesheetsFilter(false);
-				setTlsTotalFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "has_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_description");
 				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
-				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
-				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
-				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
-				newPath = handleRemoveUrlParameter(newPath, "tls_images");
-				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
-				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
-				newPath = handleRemoveUrlParameter(newPath, "tls_total");
 
 				if (newPath.includes("?")) newPath += `&has_h1_first=false`;
 				else newPath += `?has_h1_first=false`;
@@ -612,35 +425,10 @@ const Filter = ({
 
 			if (filterValue === "hasNoH1Second" && filterChecked) {
 				setAllPagesFilter(false);
-				setHasTitleFilter(false);
-				setHasDescriptionFilter(false);
-				setHasH1FirstFilter(false);
 				setHasH1SecondFilter(false);
-				setHasH2FirstFilter(false);
-				setHasH2SecondFilter(false);
-				setHasNoH1FirstFilter(false);
 				setHasNoH1SecondFilter(true);
-				setHasNoH2FirstFilter(false);
-				setHasNoH2SecondFilter(false);
-				setHasDuplicatedTitleFilter(false);
-				setHasDuplicatedDescriptionFilter(false);
-				setTlsImagesFilter(false);
-				setTlsScriptsFilter(false);
-				setTlsStylesheetsFilter(false);
-				setTlsTotalFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "has_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_description");
-				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
 				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
-				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
-				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
-				newPath = handleRemoveUrlParameter(newPath, "tls_images");
-				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
-				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
-				newPath = handleRemoveUrlParameter(newPath, "tls_total");
 
 				if (newPath.includes("?")) newPath += `&has_h1_second=false`;
 				else newPath += `?has_h1_second=false`;
@@ -654,35 +442,10 @@ const Filter = ({
 
 			if (filterValue === "hasNoH2First" && filterChecked) {
 				setAllPagesFilter(false);
-				setHasTitleFilter(false);
-				setHasDescriptionFilter(false);
-				setHasH1FirstFilter(false);
-				setHasH1SecondFilter(false);
 				setHasH2FirstFilter(false);
-				setHasH2SecondFilter(false);
-				setHasNoH1FirstFilter(false);
-				setHasNoH1SecondFilter(false);
 				setHasNoH2FirstFilter(true);
-				setHasNoH2SecondFilter(false);
-				setHasDuplicatedTitleFilter(false);
-				setHasDuplicatedDescriptionFilter(false);
-				setTlsImagesFilter(false);
-				setTlsScriptsFilter(false);
-				setTlsStylesheetsFilter(false);
-				setTlsTotalFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "has_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_description");
-				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
-				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
 				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
-				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
-				newPath = handleRemoveUrlParameter(newPath, "tls_images");
-				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
-				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
-				newPath = handleRemoveUrlParameter(newPath, "tls_total");
 
 				if (newPath.includes("?")) newPath += `&has_h2_first=false`;
 				else newPath += `?has_h2_first=false`;
@@ -696,35 +459,10 @@ const Filter = ({
 
 			if (filterValue === "hasNoH2Second" && filterChecked) {
 				setAllPagesFilter(false);
-				setHasTitleFilter(false);
-				setHasDescriptionFilter(false);
-				setHasH1FirstFilter(false);
-				setHasH1SecondFilter(false);
-				setHasH2FirstFilter(false);
 				setHasH2SecondFilter(true);
-				setHasNoH1FirstFilter(false);
-				setHasNoH1SecondFilter(false);
-				setHasNoH2FirstFilter(false);
 				setHasNoH2SecondFilter(true);
-				setHasDuplicatedTitleFilter(false);
-				setHasDuplicatedDescriptionFilter(false);
-				setTlsImagesFilter(false);
-				setTlsScriptsFilter(false);
-				setTlsStylesheetsFilter(false);
-				setTlsTotalFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "has_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_description");
-				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
-				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
-				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
 				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
-				newPath = handleRemoveUrlParameter(newPath, "tls_images");
-				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
-				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
-				newPath = handleRemoveUrlParameter(newPath, "tls_total");
 
 				if (newPath.includes("?")) newPath += `&has_h2_second=false`;
 				else newPath += `?has_h2_second=false`;
@@ -738,35 +476,9 @@ const Filter = ({
 
 			if (filterValue === "hasDuplicatedTitle" && filterChecked) {
 				setAllPagesFilter(false);
-				setHasTitleFilter(false);
-				setHasDescriptionFilter(false);
-				setHasH1FirstFilter(false);
-				setHasH1SecondFilter(false);
-				setHasH2FirstFilter(false);
-				setHasH2SecondFilter(false);
-				setHasNoH1FirstFilter(false);
-				setHasNoH1SecondFilter(false);
-				setHasNoH2FirstFilter(false);
-				setHasNoH2SecondFilter(false);
 				setHasDuplicatedTitleFilter(true);
-				setHasDuplicatedDescriptionFilter(false);
-				setTlsImagesFilter(false);
-				setTlsScriptsFilter(false);
-				setTlsStylesheetsFilter(false);
-				setTlsTotalFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "has_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_description");
-				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
-				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
-				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
-				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
 				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
-				newPath = handleRemoveUrlParameter(newPath, "tls_images");
-				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
-				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
-				newPath = handleRemoveUrlParameter(newPath, "tls_total");
 
 				if (newPath.includes("?")) newPath += `&has_duplicated_title=true`;
 				else newPath += `?has_duplicated_title=true`;
@@ -781,35 +493,9 @@ const Filter = ({
 
 			if (filterValue === "hasDuplicatedDescription" && filterChecked) {
 				setAllPagesFilter(false);
-				setHasTitleFilter(false);
-				setHasDescriptionFilter(false);
-				setHasH1FirstFilter(false);
-				setHasH1SecondFilter(false);
-				setHasH2FirstFilter(false);
-				setHasH2SecondFilter(false);
-				setHasNoH1FirstFilter(false);
-				setHasNoH1SecondFilter(false);
-				setHasNoH2FirstFilter(false);
-				setHasNoH2SecondFilter(false);
-				setHasDuplicatedTitleFilter(false);
 				setHasDuplicatedDescriptionFilter(true);
-				setTlsImagesFilter(false);
-				setTlsScriptsFilter(false);
-				setTlsStylesheetsFilter(false);
-				setTlsTotalFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "has_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_description");
-				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
-				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
-				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
-				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
 				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
-				newPath = handleRemoveUrlParameter(newPath, "tls_images");
-				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
-				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
-				newPath = handleRemoveUrlParameter(newPath, "tls_total");
 
 				if (newPath.includes("?")) newPath += `&has_duplicated_description=true`;
 				else newPath += `?has_duplicated_description=true`;
@@ -824,35 +510,9 @@ const Filter = ({
 
 			if (filterValue === "tlsImages" && filterChecked) {
 				setAllPagesFilter(false);
-				setHasTitleFilter(false);
-				setHasDescriptionFilter(false);
-				setHasH1FirstFilter(false);
-				setHasH1SecondFilter(false);
-				setHasH2FirstFilter(false);
-				setHasH2SecondFilter(false);
-				setHasNoH1FirstFilter(false);
-				setHasNoH1SecondFilter(false);
-				setHasNoH2FirstFilter(false);
-				setHasNoH2SecondFilter(false);
-				setHasDuplicatedTitleFilter(false);
-				setHasDuplicatedDescriptionFilter(false);
 				setTlsImagesFilter(true);
-				setTlsScriptsFilter(false);
-				setTlsStylesheetsFilter(false);
-				setTlsTotalFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "has_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_description");
-				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
-				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
-				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
-				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
 				newPath = handleRemoveUrlParameter(newPath, "tls_images");
-				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
-				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
-				newPath = handleRemoveUrlParameter(newPath, "tls_total");
 
 				if (newPath.includes("?")) newPath += `&tls_images=true`;
 				else newPath += `?tls_images=true`;
@@ -866,35 +526,9 @@ const Filter = ({
 
 			if (filterValue === "tlsScripts" && filterChecked) {
 				setAllPagesFilter(false);
-				setHasTitleFilter(false);
-				setHasDescriptionFilter(false);
-				setHasH1FirstFilter(false);
-				setHasH1SecondFilter(false);
-				setHasH2FirstFilter(false);
-				setHasH2SecondFilter(false);
-				setHasNoH1FirstFilter(false);
-				setHasNoH1SecondFilter(false);
-				setHasNoH2FirstFilter(false);
-				setHasNoH2SecondFilter(false);
-				setHasDuplicatedTitleFilter(false);
-				setHasDuplicatedDescriptionFilter(false);
-				setTlsImagesFilter(false);
 				setTlsScriptsFilter(true);
-				setTlsStylesheetsFilter(false);
-				setTlsTotalFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "has_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_description");
-				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
-				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
-				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
-				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
-				newPath = handleRemoveUrlParameter(newPath, "tls_images");
 				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
-				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
-				newPath = handleRemoveUrlParameter(newPath, "tls_total");
 
 				if (newPath.includes("?")) newPath += `&tls_scripts=true`;
 				else newPath += `?tls_scripts=true`;
@@ -908,31 +542,9 @@ const Filter = ({
 
 			if (filterValue === "tlsStylesheets" && filterChecked) {
 				setAllPagesFilter(false);
-				setHasTitleFilter(false);
-				setHasDescriptionFilter(false);
-				setHasH1FirstFilter(false);
-				setHasH1SecondFilter(false);
-				setHasH2FirstFilter(false);
-				setHasH2SecondFilter(false);
-				setHasDuplicatedTitleFilter(false);
-				setHasDuplicatedDescriptionFilter(false);
-				setTlsImagesFilter(false);
-				setTlsScriptsFilter(false);
 				setTlsStylesheetsFilter(true);
-				setTlsTotalFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "has_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_description");
-				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
-				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
-				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
-				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
-				newPath = handleRemoveUrlParameter(newPath, "tls_images");
-				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
 				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
-				newPath = handleRemoveUrlParameter(newPath, "tls_total");
 
 				if (newPath.includes("?")) newPath += `&tls_stylesheets=true`;
 				else newPath += `?tls_stylesheets=true`;
@@ -946,34 +558,8 @@ const Filter = ({
 
 			if (filterValue === "tlsTotal" && filterChecked) {
 				setAllPagesFilter(false);
-				setHasTitleFilter(false);
-				setHasDescriptionFilter(false);
-				setHasH1FirstFilter(false);
-				setHasH1SecondFilter(false);
-				setHasH2FirstFilter(false);
-				setHasH2SecondFilter(false);
-				setHasNoH1FirstFilter(false);
-				setHasNoH1SecondFilter(false);
-				setHasNoH2FirstFilter(false);
-				setHasNoH2SecondFilter(false);
-				setHasDuplicatedTitleFilter(false);
-				setHasDuplicatedDescriptionFilter(false);
-				setTlsImagesFilter(false);
-				setTlsScriptsFilter(false);
-				setTlsStylesheetsFilter(false);
 				setTlsTotalFilter(true);
 
-				newPath = handleRemoveUrlParameter(newPath, "has_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_description");
-				newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
-				newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
-				newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
-				newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
-				newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
-				newPath = handleRemoveUrlParameter(newPath, "tls_images");
-				newPath = handleRemoveUrlParameter(newPath, "tls_scripts");
-				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
 				newPath = handleRemoveUrlParameter(newPath, "tls_total");
 
 				if (newPath.includes("?")) newPath += `&tls_total=true`;
@@ -1003,7 +589,7 @@ const Filter = ({
 				setTlsImagesFilter(false);
 				setTlsScriptsFilter(false);
 				setTlsStylesheetsFilter(false);
-				setTlsTotalFilter(false);
+				setTlsTotalFilter(true);
 
 				newPath = handleRemoveUrlParameter(newPath, "has_title");
 				newPath = handleRemoveUrlParameter(newPath, "has_description");
