@@ -1,11 +1,14 @@
 import { MemoizedSitesList } from "@components/lists/SitesList";
 import { MemoizedSiteLimitReachedModal } from "@components/modals/SiteLimitReachedModal";
+import { SitesApiEndpoint } from "@constants/ApiEndpoints";
+import { orderingByNameQuery, sortByNameAscending } from "@constants/GlobalValues";
 import { AddNewSiteLink } from "@constants/PageLinks";
 import { SidebarMenuLabels } from "@constants/SidebarMenuLabels";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Transition } from "@headlessui/react";
 import { PlusIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
+import { useSites } from "@hooks/useSites";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
@@ -31,7 +34,10 @@ const SiteSelectDropdown = ({ openDropdown = false }, ref) => {
 	const addNewSite = t("addNewSite");
 
 	// Custom context
-	const { isComponentReady, user, sites, hasSiteLimitReached } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady, user, hasSiteLimitReached } = useContext(SiteCrawlerAppContext);
+
+	// SWR hooks
+	const { sites } = useSites(SitesApiEndpoint + `?${orderingByNameQuery + sortByNameAscending}`);
 
 	// Custom hooks
 	const {
