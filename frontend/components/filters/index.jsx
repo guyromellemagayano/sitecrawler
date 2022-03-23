@@ -3,6 +3,7 @@ import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
 import { useSiteQueries } from "@hooks/useSiteQueries";
 import { SiteCrawlerAppContext } from "@pages/_app";
+import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import { memo, useContext, useEffect } from "react";
@@ -85,7 +86,61 @@ const Filter = ({
 		tlsStylesheetsFilter,
 		setTlsStylesheetsFilter,
 		tlsTotalFilter,
-		setTlsTotalFilter
+		setTlsTotalFilter,
+		allImagesFilter,
+		setAllImagesFilter,
+		internalImagesFilter,
+		setInternalImagesFilter,
+		externalImagesFilter,
+		setExternalImagesFilter,
+		nonWebImagesFilter,
+		setNonWebImagesFilter,
+		otherImagesFilter,
+		setOtherImagesFilter,
+		allExceptExternalImagesFilter,
+		setAllExceptExternalImagesFilter,
+		allExceptInternalImagesFilter,
+		setAllExceptInternalImagesFilter,
+		allExceptNonWebImagesFilter,
+		setAllExceptNonWebImagesFilter,
+		allExceptOtherImagesFilter,
+		setAllExceptOtherImagesFilter,
+		okHttpStatusImagesFilter,
+		setOkHttpStatusImagesFilter,
+		timeoutHttpStatusImagesFilter,
+		setTimeoutHttpStatusImagesFilter,
+		errorHttpStatusImagesFilter,
+		setErrorHttpStatusImagesFilter,
+		otherErrorHttpStatusImagesFilter,
+		setOtherErrorHttpStatusImagesFilter,
+		tooManyRedirectsHttpStatusImagesFilter,
+		setTooManyRedirectsHttpStatusImagesFilter,
+		allExceptOkHttpStatusImagesFilter,
+		setAllExceptOkHttpStatusImagesFilter,
+		allExceptTimeoutHttpStatusImagesFilter,
+		setAllExceptTimeoutHttpStatusImagesFilter,
+		allExceptErrorHttpStatusImagesFilter,
+		setAllExceptErrorHttpStatusImagesFilter,
+		allExceptOtherErrorHttpStatusImagesFilter,
+		setAllExceptOtherErrorHttpStatusImagesFilter,
+		allExceptTooManyRedirectsHttpStatusImagesFilter,
+		setAllExceptTooManyRedirectsHttpStatusImagesFilter,
+		tlsStatusNoneImagesFilter,
+		setTlsStatusNoneImagesFilter,
+		tlsStatusOkImagesFilter,
+		setTlsStatusOkImagesFilter,
+		tlsStatusErrorImagesFilter,
+		setTlsStatusErrorImagesFilter,
+		allExceptTlsStatusNoneImagesFilter,
+		setAllExceptTlsStatusNoneImagesFilter,
+		allExceptTlsStatusOkImagesFilter,
+		setAllExceptTlsStatusOkImagesFilter,
+		allExceptTlsStatusErrorImagesFilter,
+		setAllExceptTlsStatusErrorImagesFilter,
+		noMissingAltsFilter,
+		setNoMissingAltsFilter,
+		missingAltsFilter,
+		setMissingAltsFilter
 	} = FilterData();
 
 	// Custom context
@@ -963,6 +1018,1146 @@ const Filter = ({
 				newPath = handleRemoveUrlParameter(newPath, "tls_stylesheets");
 				newPath = handleRemoveUrlParameter(newPath, "tls_total");
 			}
+		} else if (filterType === "images") {
+			if (filterValue === "internalImages" && filterChecked) {
+				setExternalImagesFilter(false);
+				setInternalImagesFilter(true);
+				setNonWebImagesFilter(false);
+				setOtherImagesFilter(false);
+				setAllExceptExternalImagesFilter(false);
+				setAllExceptInternalImagesFilter(false);
+				setAllExceptNonWebImagesFilter(false);
+				setAllExceptOtherImagesFilter(false);
+				setOkHttpStatusImagesFilter(false);
+				setTimeoutHttpStatusImagesFilter(false);
+				setErrorHttpStatusImagesFilter(false);
+				setOtherErrorHttpStatusImagesFilter(false);
+				setTooManyRedirectsHttpStatusImagesFilter(false);
+				setAllExceptOkHttpStatusImagesFilter(false);
+				setAllExceptTimeoutHttpStatusImagesFilter(false);
+				setAllExceptErrorHttpStatusImagesFilter(false);
+				setAllExceptOtherErrorHttpStatusImagesFilter(false);
+				setAllExceptTooManyRedirectsHttpStatusImagesFilter(false);
+				setTlsStatusNoneImagesFilter(false);
+				setTlsStatusOkImagesFilter(false);
+				setTlsStatusErrorImagesFilter(false);
+				setAllExceptTlsStatusNoneImagesFilter(false);
+				setAllExceptTlsStatusOkImagesFilter(false);
+				setAllExceptTlsStatusErrorImagesFilter(false);
+				setNoMissingAltsFilter(false);
+				setMissingAltsFilter(false);
+				setAllImagesFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "type");
+				newPath = handleRemoveUrlParameter(newPath, "type__neq");
+				newPath = handleRemoveUrlParameter(newPath, "status");
+				newPath = handleRemoveUrlParameter(newPath, "status__neq");
+				newPath = handleRemoveUrlParameter(newPath, "tls_status");
+				newPath = handleRemoveUrlParameter(newPath, "tls_status__neq");
+				newPath = handleRemoveUrlParameter(newPath, "missing_alts__iszero");
+
+				if (newPath.includes("?")) newPath += `&type=PAGE`;
+				else newPath += `?type=PAGE`;
+			} else if (filterValue === "internalImages" && !filterChecked) {
+				filterQueryString?.delete("type") ?? null;
+
+				if (newPath.includes("type")) newPath = handleRemoveUrlParameter(newPath, "type");
+
+				setInternalImagesFilter(false);
+			}
+
+			if (filterValue === "allExceptInternalImages" && filterChecked) {
+				setExternalImagesFilter(false);
+				setInternalImagesFilter(false);
+				setNonWebImagesFilter(false);
+				setOtherImagesFilter(false);
+				setAllExceptExternalImagesFilter(false);
+				setAllExceptInternalImagesFilter(true);
+				setAllExceptNonWebImagesFilter(false);
+				setAllExceptOtherImagesFilter(false);
+				setOkHttpStatusImagesFilter(false);
+				setTimeoutHttpStatusImagesFilter(false);
+				setErrorHttpStatusImagesFilter(false);
+				setOtherErrorHttpStatusImagesFilter(false);
+				setTooManyRedirectsHttpStatusImagesFilter(false);
+				setAllExceptOkHttpStatusImagesFilter(false);
+				setAllExceptTimeoutHttpStatusImagesFilter(false);
+				setAllExceptErrorHttpStatusImagesFilter(false);
+				setAllExceptOtherErrorHttpStatusImagesFilter(false);
+				setAllExceptTooManyRedirectsHttpStatusImagesFilter(false);
+				setTlsStatusNoneImagesFilter(false);
+				setTlsStatusOkImagesFilter(false);
+				setTlsStatusErrorImagesFilter(false);
+				setAllExceptTlsStatusNoneImagesFilter(false);
+				setAllExceptTlsStatusOkImagesFilter(false);
+				setAllExceptTlsStatusErrorImagesFilter(false);
+				setNoMissingAltsFilter(false);
+				setMissingAltsFilter(false);
+				setAllImagesFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "type__neq");
+
+				if (newPath.includes("?")) newPath += `&type__neq=PAGE`;
+				else newPath += `?type__neq=PAGE`;
+			} else if (filterValue === "allExceptInternalImages" && !filterChecked) {
+				filterQueryString?.delete("type") ?? null;
+
+				if (newPath.includes("type__neq")) newPath = handleRemoveUrlParameter(newPath, "type__neq");
+
+				setAllExceptInternalImagesFilter(false);
+			}
+
+			if (filterValue === "externalImages" && filterChecked) {
+				setExternalImagesFilter(true);
+				setInternalImagesFilter(false);
+				setNonWebImagesFilter(false);
+				setOtherImagesFilter(false);
+				setAllExceptExternalImagesFilter(false);
+				setAllExceptInternalImagesFilter(false);
+				setAllExceptNonWebImagesFilter(false);
+				setAllExceptOtherImagesFilter(false);
+				setOkHttpStatusImagesFilter(false);
+				setTimeoutHttpStatusImagesFilter(false);
+				setErrorHttpStatusImagesFilter(false);
+				setOtherErrorHttpStatusImagesFilter(false);
+				setTooManyRedirectsHttpStatusImagesFilter(false);
+				setAllExceptOkHttpStatusImagesFilter(false);
+				setAllExceptTimeoutHttpStatusImagesFilter(false);
+				setAllExceptErrorHttpStatusImagesFilter(false);
+				setAllExceptOtherErrorHttpStatusImagesFilter(false);
+				setAllExceptTooManyRedirectsHttpStatusImagesFilter(false);
+				setTlsStatusNoneImagesFilter(false);
+				setTlsStatusOkImagesFilter(false);
+				setTlsStatusErrorImagesFilter(false);
+				setAllExceptTlsStatusNoneImagesFilter(false);
+				setAllExceptTlsStatusOkImagesFilter(false);
+				setAllExceptTlsStatusErrorImagesFilter(false);
+				setNoMissingAltsFilter(false);
+				setMissingAltsFilter(false);
+				setAllImagesFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "type");
+
+				if (newPath.includes("?")) newPath += `&type=EXTERNAL`;
+				else newPath += `?type=EXTERNAL`;
+			} else if (filterValue === "externalImages" && !filterChecked) {
+				filterQueryString?.delete("type") ?? null;
+
+				if (newPath.includes("type")) newPath = handleRemoveUrlParameter(newPath, "type");
+
+				setExternalImagesFilter(false);
+			}
+
+			if (filterValue === "allExceptExternalImages" && filterChecked) {
+				setExternalImagesFilter(false);
+				setInternalImagesFilter(false);
+				setNonWebImagesFilter(false);
+				setOtherImagesFilter(false);
+				setAllExceptExternalImagesFilter(true);
+				setAllExceptInternalImagesFilter(false);
+				setAllExceptNonWebImagesFilter(false);
+				setAllExceptOtherImagesFilter(false);
+				setOkHttpStatusImagesFilter(false);
+				setTimeoutHttpStatusImagesFilter(false);
+				setErrorHttpStatusImagesFilter(false);
+				setOtherErrorHttpStatusImagesFilter(false);
+				setTooManyRedirectsHttpStatusImagesFilter(false);
+				setAllExceptOkHttpStatusImagesFilter(false);
+				setAllExceptTimeoutHttpStatusImagesFilter(false);
+				setAllExceptErrorHttpStatusImagesFilter(false);
+				setAllExceptOtherErrorHttpStatusImagesFilter(false);
+				setAllExceptTooManyRedirectsHttpStatusImagesFilter(false);
+				setTlsStatusNoneImagesFilter(false);
+				setTlsStatusOkImagesFilter(false);
+				setTlsStatusErrorImagesFilter(false);
+				setAllExceptTlsStatusNoneImagesFilter(false);
+				setAllExceptTlsStatusOkImagesFilter(false);
+				setAllExceptTlsStatusErrorImagesFilter(false);
+				setNoMissingAltsFilter(false);
+				setMissingAltsFilter(false);
+				setAllImagesFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "type__neq");
+
+				if (newPath.includes("?")) newPath += `&type__neq=EXTERNAL`;
+				else newPath += `?type__neq=EXTERNAL`;
+			} else if (filterValue === "allExceptExternalImages" && !filterChecked) {
+				filterQueryString?.delete("type__neq") ?? null;
+
+				if (newPath.includes("type__neq")) newPath = handleRemoveUrlParameter(newPath, "type__neq");
+
+				setAllExceptExternalImagesFilter(false);
+			}
+
+			if (filterValue === "nonWebImages" && filterChecked) {
+				setExternalImagesFilter(false);
+				setInternalImagesFilter(false);
+				setNonWebImagesFilter(true);
+				setOtherImagesFilter(false);
+				setAllExceptExternalImagesFilter(false);
+				setAllExceptInternalImagesFilter(false);
+				setAllExceptNonWebImagesFilter(false);
+				setAllExceptOtherImagesFilter(false);
+				setOkHttpStatusImagesFilter(false);
+				setTimeoutHttpStatusImagesFilter(false);
+				setErrorHttpStatusImagesFilter(false);
+				setOtherErrorHttpStatusImagesFilter(false);
+				setTooManyRedirectsHttpStatusImagesFilter(false);
+				setAllExceptOkHttpStatusImagesFilter(false);
+				setAllExceptTimeoutHttpStatusImagesFilter(false);
+				setAllExceptErrorHttpStatusImagesFilter(false);
+				setAllExceptOtherErrorHttpStatusImagesFilter(false);
+				setAllExceptTooManyRedirectsHttpStatusImagesFilter(false);
+				setTlsStatusNoneImagesFilter(false);
+				setTlsStatusOkImagesFilter(false);
+				setTlsStatusErrorImagesFilter(false);
+				setAllExceptTlsStatusNoneImagesFilter(false);
+				setAllExceptTlsStatusOkImagesFilter(false);
+				setAllExceptTlsStatusErrorImagesFilter(false);
+				setNoMissingAltsFilter(false);
+				setMissingAltsFilter(false);
+				setAllImagesFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "type");
+
+				if (newPath.includes("?")) newPath += `&type=NON_WEB`;
+				else newPath += `?type=NON_WEB`;
+			} else if (filterValue === "nonWebImages" && !filterChecked) {
+				filterQueryString?.delete("type") ?? null;
+
+				if (newPath.includes("type")) newPath = handleRemoveUrlParameter(newPath, "type");
+
+				setNonWebImagesFilter(false);
+			}
+
+			if (filterValue === "allExceptNonWebImages" && filterChecked) {
+				setExternalImagesFilter(false);
+				setInternalImagesFilter(false);
+				setNonWebImagesFilter(false);
+				setOtherImagesFilter(false);
+				setAllExceptExternalImagesFilter(false);
+				setAllExceptInternalImagesFilter(false);
+				setAllExceptNonWebImagesFilter(true);
+				setAllExceptOtherImagesFilter(false);
+				setOkHttpStatusImagesFilter(false);
+				setTimeoutHttpStatusImagesFilter(false);
+				setErrorHttpStatusImagesFilter(false);
+				setOtherErrorHttpStatusImagesFilter(false);
+				setTooManyRedirectsHttpStatusImagesFilter(false);
+				setAllExceptOkHttpStatusImagesFilter(false);
+				setAllExceptTimeoutHttpStatusImagesFilter(false);
+				setAllExceptErrorHttpStatusImagesFilter(false);
+				setAllExceptOtherErrorHttpStatusImagesFilter(false);
+				setAllExceptTooManyRedirectsHttpStatusImagesFilter(false);
+				setTlsStatusNoneImagesFilter(false);
+				setTlsStatusOkImagesFilter(false);
+				setTlsStatusErrorImagesFilter(false);
+				setAllExceptTlsStatusNoneImagesFilter(false);
+				setAllExceptTlsStatusOkImagesFilter(false);
+				setAllExceptTlsStatusErrorImagesFilter(false);
+				setNoMissingAltsFilter(false);
+				setMissingAltsFilter(false);
+				setAllImagesFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "type__neq");
+
+				if (newPath.includes("?")) newPath += `&type__neq=NON_WEB`;
+				else newPath += `?type__neq=NON_WEB`;
+			} else if (filterValue === "allExceptNonWebImages" && !filterChecked) {
+				filterQueryString?.delete("type__neq") ?? null;
+
+				if (newPath.includes("type__neq")) newPath = handleRemoveUrlParameter(newPath, "type__neq");
+
+				setAllExceptNonWebImagesFilter(false);
+			}
+
+			if (filterValue === "otherImages" && filterChecked) {
+				setExternalImagesFilter(false);
+				setInternalImagesFilter(false);
+				setNonWebImagesFilter(false);
+				setOtherImagesFilter(true);
+				setAllExceptExternalImagesFilter(false);
+				setAllExceptInternalImagesFilter(false);
+				setAllExceptNonWebImagesFilter(false);
+				setAllExceptOtherImagesFilter(false);
+				setOkHttpStatusImagesFilter(false);
+				setTimeoutHttpStatusImagesFilter(false);
+				setErrorHttpStatusImagesFilter(false);
+				setOtherErrorHttpStatusImagesFilter(false);
+				setTooManyRedirectsHttpStatusImagesFilter(false);
+				setAllExceptOkHttpStatusImagesFilter(false);
+				setAllExceptTimeoutHttpStatusImagesFilter(false);
+				setAllExceptErrorHttpStatusImagesFilter(false);
+				setAllExceptOtherErrorHttpStatusImagesFilter(false);
+				setAllExceptTooManyRedirectsHttpStatusImagesFilter(false);
+				setTlsStatusNoneImagesFilter(false);
+				setTlsStatusOkImagesFilter(false);
+				setTlsStatusErrorImagesFilter(false);
+				setAllExceptTlsStatusNoneImagesFilter(false);
+				setAllExceptTlsStatusOkImagesFilter(false);
+				setAllExceptTlsStatusErrorImagesFilter(false);
+				setNoMissingAltsFilter(false);
+				setMissingAltsFilter(false);
+				setAllImagesFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "type");
+
+				if (newPath.includes("?")) newPath += `&type=OTHER`;
+				else newPath += `?type=OTHER`;
+			} else if (filterValue === "otherImages" && !filterChecked) {
+				filterQueryString?.delete("type") ?? null;
+
+				if (newPath.includes("type")) newPath = handleRemoveUrlParameter(newPath, "type");
+
+				setOtherImagesFilter(false);
+			}
+
+			if (filterValue === "allExceptOtherImages" && filterChecked) {
+				setExternalImagesFilter(false);
+				setInternalImagesFilter(false);
+				setNonWebImagesFilter(false);
+				setOtherImagesFilter(false);
+				setAllExceptExternalImagesFilter(false);
+				setAllExceptInternalImagesFilter(false);
+				setAllExceptNonWebImagesFilter(false);
+				setAllExceptOtherImagesFilter(true);
+				setOkHttpStatusImagesFilter(false);
+				setTimeoutHttpStatusImagesFilter(false);
+				setErrorHttpStatusImagesFilter(false);
+				setOtherErrorHttpStatusImagesFilter(false);
+				setTooManyRedirectsHttpStatusImagesFilter(false);
+				setAllExceptOkHttpStatusImagesFilter(false);
+				setAllExceptTimeoutHttpStatusImagesFilter(false);
+				setAllExceptErrorHttpStatusImagesFilter(false);
+				setAllExceptOtherErrorHttpStatusImagesFilter(false);
+				setAllExceptTooManyRedirectsHttpStatusImagesFilter(false);
+				setTlsStatusNoneImagesFilter(false);
+				setTlsStatusOkImagesFilter(false);
+				setTlsStatusErrorImagesFilter(false);
+				setAllExceptTlsStatusNoneImagesFilter(false);
+				setAllExceptTlsStatusOkImagesFilter(false);
+				setAllExceptTlsStatusErrorImagesFilter(false);
+				setNoMissingAltsFilter(false);
+				setMissingAltsFilter(false);
+				setAllImagesFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "type__neq");
+
+				if (newPath.includes("?")) newPath += `&type__neq=OTHER`;
+				else newPath += `?type__neq=OTHER`;
+			} else if (filterValue === "allExceptOtherImages" && !filterChecked) {
+				filterQueryString?.delete("type__neq") ?? null;
+
+				if (newPath.includes("type__neq")) newPath = handleRemoveUrlParameter(newPath, "type__neq");
+
+				setAllExceptOtherImagesFilter(false);
+			}
+
+			if (filterValue === "okHttpStatusImages" && filterChecked) {
+				setExternalImagesFilter(false);
+				setInternalImagesFilter(false);
+				setNonWebImagesFilter(false);
+				setOtherImagesFilter(false);
+				setAllExceptExternalImagesFilter(false);
+				setAllExceptInternalImagesFilter(false);
+				setAllExceptNonWebImagesFilter(false);
+				setAllExceptOtherImagesFilter(false);
+				setOkHttpStatusImagesFilter(true);
+				setTimeoutHttpStatusImagesFilter(false);
+				setErrorHttpStatusImagesFilter(false);
+				setOtherErrorHttpStatusImagesFilter(false);
+				setTooManyRedirectsHttpStatusImagesFilter(false);
+				setAllExceptOkHttpStatusImagesFilter(false);
+				setAllExceptTimeoutHttpStatusImagesFilter(false);
+				setAllExceptErrorHttpStatusImagesFilter(false);
+				setAllExceptOtherErrorHttpStatusImagesFilter(false);
+				setAllExceptTooManyRedirectsHttpStatusImagesFilter(false);
+				setTlsStatusNoneImagesFilter(false);
+				setTlsStatusOkImagesFilter(false);
+				setTlsStatusErrorImagesFilter(false);
+				setAllExceptTlsStatusNoneImagesFilter(false);
+				setAllExceptTlsStatusOkImagesFilter(false);
+				setAllExceptTlsStatusErrorImagesFilter(false);
+				setNoMissingAltsFilter(false);
+				setMissingAltsFilter(false);
+				setAllImagesFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "status");
+
+				if (newPath.includes("?")) newPath += `&status=OK`;
+				else newPath += `?status=OK`;
+			} else if (filterValue === "okHttpStatusImages" && !filterChecked) {
+				filterQueryString?.delete("status") ?? null;
+
+				if (newPath.includes("status")) newPath = handleRemoveUrlParameter(newPath, "status");
+
+				setOkHttpStatusImagesFilter(false);
+			}
+
+			if (filterValue === "allExceptOkHttpStatusImages" && filterChecked) {
+				setExternalImagesFilter(false);
+				setInternalImagesFilter(false);
+				setNonWebImagesFilter(false);
+				setOtherImagesFilter(false);
+				setAllExceptExternalImagesFilter(false);
+				setAllExceptInternalImagesFilter(false);
+				setAllExceptNonWebImagesFilter(false);
+				setAllExceptOtherImagesFilter(false);
+				setOkHttpStatusImagesFilter(false);
+				setTimeoutHttpStatusImagesFilter(false);
+				setErrorHttpStatusImagesFilter(false);
+				setOtherErrorHttpStatusImagesFilter(false);
+				setTooManyRedirectsHttpStatusImagesFilter(false);
+				setAllExceptOkHttpStatusImagesFilter(true);
+				setAllExceptTimeoutHttpStatusImagesFilter(false);
+				setAllExceptErrorHttpStatusImagesFilter(false);
+				setAllExceptOtherErrorHttpStatusImagesFilter(false);
+				setAllExceptTooManyRedirectsHttpStatusImagesFilter(false);
+				setTlsStatusNoneImagesFilter(false);
+				setTlsStatusOkImagesFilter(false);
+				setTlsStatusErrorImagesFilter(false);
+				setAllExceptTlsStatusNoneImagesFilter(false);
+				setAllExceptTlsStatusOkImagesFilter(false);
+				setAllExceptTlsStatusErrorImagesFilter(false);
+				setNoMissingAltsFilter(false);
+				setMissingAltsFilter(false);
+				setAllImagesFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "status__neq");
+
+				if (newPath.includes("?")) newPath += `&status__neq=OK`;
+				else newPath += `?status__neq=OK`;
+			} else if (filterValue === "allExceptOkHttpStatusImages" && !filterChecked) {
+				filterQueryString?.delete("status__neq") ?? null;
+
+				if (newPath.includes("status__neq")) newPath = handleRemoveUrlParameter(newPath, "status__neq");
+
+				setAllExceptOkHttpStatusImagesFilter(false);
+			}
+
+			if (filterValue === "timeoutHttpStatusImages" && filterChecked) {
+				setExternalImagesFilter(false);
+				setInternalImagesFilter(false);
+				setNonWebImagesFilter(false);
+				setOtherImagesFilter(false);
+				setAllExceptExternalImagesFilter(false);
+				setAllExceptInternalImagesFilter(false);
+				setAllExceptNonWebImagesFilter(false);
+				setAllExceptOtherImagesFilter(false);
+				setOkHttpStatusImagesFilter(false);
+				setTimeoutHttpStatusImagesFilter(true);
+				setErrorHttpStatusImagesFilter(false);
+				setOtherErrorHttpStatusImagesFilter(false);
+				setTooManyRedirectsHttpStatusImagesFilter(false);
+				setAllExceptOkHttpStatusImagesFilter(false);
+				setAllExceptTimeoutHttpStatusImagesFilter(false);
+				setAllExceptErrorHttpStatusImagesFilter(false);
+				setAllExceptOtherErrorHttpStatusImagesFilter(false);
+				setAllExceptTooManyRedirectsHttpStatusImagesFilter(false);
+				setTlsStatusNoneImagesFilter(false);
+				setTlsStatusOkImagesFilter(false);
+				setTlsStatusErrorImagesFilter(false);
+				setAllExceptTlsStatusNoneImagesFilter(false);
+				setAllExceptTlsStatusOkImagesFilter(false);
+				setAllExceptTlsStatusErrorImagesFilter(false);
+				setNoMissingAltsFilter(false);
+				setMissingAltsFilter(false);
+				setAllImagesFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "status");
+
+				if (newPath.includes("?")) newPath += `&status=TIMEOUT`;
+				else newPath += `?status=TIMEOUT`;
+			} else if (filterValue === "timeoutHttpStatusImages" && !filterChecked) {
+				filterQueryString?.delete("status") ?? null;
+
+				if (newPath.includes("status")) newPath = handleRemoveUrlParameter(newPath, "status");
+
+				setTimeoutHttpStatusImagesFilter(false);
+			}
+
+			if (filterValue === "allExceptTimeoutHttpStatusImages" && filterChecked) {
+				setExternalImagesFilter(false);
+				setInternalImagesFilter(false);
+				setNonWebImagesFilter(false);
+				setOtherImagesFilter(false);
+				setAllExceptExternalImagesFilter(false);
+				setAllExceptInternalImagesFilter(false);
+				setAllExceptNonWebImagesFilter(false);
+				setAllExceptOtherImagesFilter(false);
+				setOkHttpStatusImagesFilter(false);
+				setTimeoutHttpStatusImagesFilter(false);
+				setErrorHttpStatusImagesFilter(false);
+				setOtherErrorHttpStatusImagesFilter(false);
+				setTooManyRedirectsHttpStatusImagesFilter(false);
+				setAllExceptOkHttpStatusImagesFilter(false);
+				setAllExceptTimeoutHttpStatusImagesFilter(true);
+				setAllExceptErrorHttpStatusImagesFilter(false);
+				setAllExceptOtherErrorHttpStatusImagesFilter(false);
+				setAllExceptTooManyRedirectsHttpStatusImagesFilter(false);
+				setTlsStatusNoneImagesFilter(false);
+				setTlsStatusOkImagesFilter(false);
+				setTlsStatusErrorImagesFilter(false);
+				setAllExceptTlsStatusNoneImagesFilter(false);
+				setAllExceptTlsStatusOkImagesFilter(false);
+				setAllExceptTlsStatusErrorImagesFilter(false);
+				setNoMissingAltsFilter(false);
+				setMissingAltsFilter(false);
+				setAllImagesFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "status__neq");
+
+				if (newPath.includes("?")) newPath += `&status__neq=TIMEOUT`;
+				else newPath += `?status__neq=TIMEOUT`;
+			} else if (filterValue === "allExceptTimeoutHttpStatusImages" && !filterChecked) {
+				filterQueryString?.delete("status__neq") ?? null;
+
+				if (newPath.includes("status__neq")) newPath = handleRemoveUrlParameter(newPath, "status__neq");
+
+				setAllExceptTimeoutHttpStatusImagesFilter(false);
+			}
+
+			if (filterValue === "errorHttpStatusImages" && filterChecked) {
+				setExternalImagesFilter(false);
+				setInternalImagesFilter(false);
+				setNonWebImagesFilter(false);
+				setOtherImagesFilter(false);
+				setAllExceptExternalImagesFilter(false);
+				setAllExceptInternalImagesFilter(false);
+				setAllExceptNonWebImagesFilter(false);
+				setAllExceptOtherImagesFilter(false);
+				setOkHttpStatusImagesFilter(false);
+				setTimeoutHttpStatusImagesFilter(false);
+				setErrorHttpStatusImagesFilter(true);
+				setOtherErrorHttpStatusImagesFilter(false);
+				setTooManyRedirectsHttpStatusImagesFilter(false);
+				setAllExceptOkHttpStatusImagesFilter(false);
+				setAllExceptTimeoutHttpStatusImagesFilter(false);
+				setAllExceptErrorHttpStatusImagesFilter(false);
+				setAllExceptOtherErrorHttpStatusImagesFilter(false);
+				setAllExceptTooManyRedirectsHttpStatusImagesFilter(false);
+				setTlsStatusNoneImagesFilter(false);
+				setTlsStatusOkImagesFilter(false);
+				setTlsStatusErrorImagesFilter(false);
+				setAllExceptTlsStatusNoneImagesFilter(false);
+				setAllExceptTlsStatusOkImagesFilter(false);
+				setAllExceptTlsStatusErrorImagesFilter(false);
+				setNoMissingAltsFilter(false);
+				setMissingAltsFilter(false);
+				setAllImagesFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "status");
+
+				if (newPath.includes("?")) newPath += `&status=HTTP_ERROR`;
+				else newPath += `?status=HTTP_ERROR`;
+			} else if (filterValue === "errorHttpStatusImages" && !filterChecked) {
+				filterQueryString?.delete("status") ?? null;
+
+				if (newPath.includes("status")) newPath = handleRemoveUrlParameter(newPath, "status");
+
+				setErrorHttpStatusImagesFilter(false);
+			}
+
+			if (filterValue === "allExceptErrorHttpStatusImages" && filterChecked) {
+				setExternalImagesFilter(false);
+				setInternalImagesFilter(false);
+				setNonWebImagesFilter(false);
+				setOtherImagesFilter(false);
+				setAllExceptExternalImagesFilter(false);
+				setAllExceptInternalImagesFilter(false);
+				setAllExceptNonWebImagesFilter(false);
+				setAllExceptOtherImagesFilter(false);
+				setOkHttpStatusImagesFilter(false);
+				setTimeoutHttpStatusImagesFilter(false);
+				setErrorHttpStatusImagesFilter(false);
+				setOtherErrorHttpStatusImagesFilter(false);
+				setTooManyRedirectsHttpStatusImagesFilter(false);
+				setAllExceptOkHttpStatusImagesFilter(false);
+				setAllExceptTimeoutHttpStatusImagesFilter(false);
+				setAllExceptErrorHttpStatusImagesFilter(true);
+				setAllExceptOtherErrorHttpStatusImagesFilter(false);
+				setAllExceptTooManyRedirectsHttpStatusImagesFilter(false);
+				setTlsStatusNoneImagesFilter(false);
+				setTlsStatusOkImagesFilter(false);
+				setTlsStatusErrorImagesFilter(false);
+				setAllExceptTlsStatusNoneImagesFilter(false);
+				setAllExceptTlsStatusOkImagesFilter(false);
+				setAllExceptTlsStatusErrorImagesFilter(false);
+				setNoMissingAltsFilter(false);
+				setMissingAltsFilter(false);
+				setAllImagesFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "status__neq");
+
+				if (newPath.includes("?")) newPath += `&status__neq=HTTP_ERROR`;
+				else newPath += `?status__neq=HTTP_ERROR`;
+			} else if (filterValue === "allExceptErrorHttpStatusImages" && !filterChecked) {
+				filterQueryString?.delete("status__neq") ?? null;
+
+				if (newPath.includes("status__neq")) newPath = handleRemoveUrlParameter(newPath, "status__neq");
+
+				setAllExceptErrorHttpStatusImagesFilter(false);
+			}
+
+			if (filterValue === "otherErrorHttpStatusImages" && filterChecked) {
+				setExternalImagesFilter(false);
+				setInternalImagesFilter(false);
+				setNonWebImagesFilter(false);
+				setOtherImagesFilter(false);
+				setAllExceptExternalImagesFilter(false);
+				setAllExceptInternalImagesFilter(false);
+				setAllExceptNonWebImagesFilter(false);
+				setAllExceptOtherImagesFilter(false);
+				setOkHttpStatusImagesFilter(false);
+				setTimeoutHttpStatusImagesFilter(false);
+				setErrorHttpStatusImagesFilter(false);
+				setOtherErrorHttpStatusImagesFilter(true);
+				setTooManyRedirectsHttpStatusImagesFilter(false);
+				setAllExceptOkHttpStatusImagesFilter(false);
+				setAllExceptTimeoutHttpStatusImagesFilter(false);
+				setAllExceptErrorHttpStatusImagesFilter(false);
+				setAllExceptOtherErrorHttpStatusImagesFilter(false);
+				setAllExceptTooManyRedirectsHttpStatusImagesFilter(false);
+				setTlsStatusNoneImagesFilter(false);
+				setTlsStatusOkImagesFilter(false);
+				setTlsStatusErrorImagesFilter(false);
+				setAllExceptTlsStatusNoneImagesFilter(false);
+				setAllExceptTlsStatusOkImagesFilter(false);
+				setAllExceptTlsStatusErrorImagesFilter(false);
+				setNoMissingAltsFilter(false);
+				setMissingAltsFilter(false);
+				setAllImagesFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "status");
+
+				if (newPath.includes("?")) newPath += `&status=OTHER_ERROR`;
+				else newPath += `?status=OTHER_ERROR`;
+			} else if (filterValue === "otherErrorHttpStatusImages" && !filterChecked) {
+				filterQueryString?.delete("status") ?? null;
+
+				if (newPath.includes("status")) newPath = handleRemoveUrlParameter(newPath, "status");
+
+				setOtherErrorHttpStatusImagesFilter(false);
+			}
+
+			if (filterValue === "allExceptOtherErrorHttpStatusImages" && filterChecked) {
+				setExternalImagesFilter(false);
+				setInternalImagesFilter(false);
+				setNonWebImagesFilter(false);
+				setOtherImagesFilter(false);
+				setAllExceptExternalImagesFilter(false);
+				setAllExceptInternalImagesFilter(false);
+				setAllExceptNonWebImagesFilter(false);
+				setAllExceptOtherImagesFilter(false);
+				setOkHttpStatusImagesFilter(false);
+				setTimeoutHttpStatusImagesFilter(false);
+				setErrorHttpStatusImagesFilter(false);
+				setOtherErrorHttpStatusImagesFilter(false);
+				setTooManyRedirectsHttpStatusImagesFilter(false);
+				setAllExceptOkHttpStatusImagesFilter(false);
+				setAllExceptTimeoutHttpStatusImagesFilter(false);
+				setAllExceptErrorHttpStatusImagesFilter(false);
+				setAllExceptOtherErrorHttpStatusImagesFilter(true);
+				setAllExceptTooManyRedirectsHttpStatusImagesFilter(false);
+				setTlsStatusNoneImagesFilter(false);
+				setTlsStatusOkImagesFilter(false);
+				setTlsStatusErrorImagesFilter(false);
+				setAllExceptTlsStatusNoneImagesFilter(false);
+				setAllExceptTlsStatusOkImagesFilter(false);
+				setAllExceptTlsStatusErrorImagesFilter(false);
+				setNoMissingAltsFilter(false);
+				setMissingAltsFilter(false);
+				setAllImagesFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "status__neq");
+
+				if (newPath.includes("?")) newPath += `&status__neq=OTHER_ERROR`;
+				else newPath += `?status__neq=OTHER_ERROR`;
+			} else if (filterValue === "allExceptOtherErrorHttpStatusImages" && !filterChecked) {
+				filterQueryString?.delete("status__neq") ?? null;
+
+				if (newPath.includes("status__neq")) newPath = handleRemoveUrlParameter(newPath, "status__neq");
+
+				setAllExceptOtherErrorHttpStatusImagesFilter(false);
+			}
+
+			if (filterValue === "tooManyRedirectsHttpStatusImages" && filterChecked) {
+				setExternalImagesFilter(false);
+				setInternalImagesFilter(false);
+				setNonWebImagesFilter(false);
+				setOtherImagesFilter(false);
+				setAllExceptExternalImagesFilter(false);
+				setAllExceptInternalImagesFilter(false);
+				setAllExceptNonWebImagesFilter(false);
+				setAllExceptOtherImagesFilter(false);
+				setOkHttpStatusImagesFilter(false);
+				setTimeoutHttpStatusImagesFilter(false);
+				setErrorHttpStatusImagesFilter(false);
+				setOtherErrorHttpStatusImagesFilter(false);
+				setTooManyRedirectsHttpStatusImagesFilter(true);
+				setAllExceptOkHttpStatusImagesFilter(false);
+				setAllExceptTimeoutHttpStatusImagesFilter(false);
+				setAllExceptErrorHttpStatusImagesFilter(false);
+				setAllExceptOtherErrorHttpStatusImagesFilter(false);
+				setAllExceptTooManyRedirectsHttpStatusImagesFilter(false);
+				setTlsStatusNoneImagesFilter(false);
+				setTlsStatusOkImagesFilter(false);
+				setTlsStatusErrorImagesFilter(false);
+				setAllExceptTlsStatusNoneImagesFilter(false);
+				setAllExceptTlsStatusOkImagesFilter(false);
+				setAllExceptTlsStatusErrorImagesFilter(false);
+				setNoMissingAltsFilter(false);
+				setMissingAltsFilter(false);
+				setAllImagesFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "status");
+
+				if (newPath.includes("?")) newPath += `&status=TOO_MANY_REDIRECTS`;
+				else newPath += `?status=TOO_MANY_REDIRECTS`;
+			} else if (filterValue === "tooManyRedirectsHttpStatusImages" && !filterChecked) {
+				filterQueryString?.delete("status") ?? null;
+
+				if (newPath.includes("status")) newPath = handleRemoveUrlParameter(newPath, "status");
+
+				setTooManyRedirectsHttpStatusImagesFilter(false);
+			}
+
+			if (filterValue === "allExceptTooManyRedirectsHttpStatusImages" && filterChecked) {
+				setExternalImagesFilter(false);
+				setInternalImagesFilter(false);
+				setNonWebImagesFilter(false);
+				setOtherImagesFilter(false);
+				setAllExceptExternalImagesFilter(false);
+				setAllExceptInternalImagesFilter(false);
+				setAllExceptNonWebImagesFilter(false);
+				setAllExceptOtherImagesFilter(false);
+				setOkHttpStatusImagesFilter(false);
+				setTimeoutHttpStatusImagesFilter(false);
+				setErrorHttpStatusImagesFilter(false);
+				setOtherErrorHttpStatusImagesFilter(false);
+				setTooManyRedirectsHttpStatusImagesFilter(false);
+				setAllExceptOkHttpStatusImagesFilter(false);
+				setAllExceptTimeoutHttpStatusImagesFilter(false);
+				setAllExceptErrorHttpStatusImagesFilter(false);
+				setAllExceptOtherErrorHttpStatusImagesFilter(false);
+				setAllExceptTooManyRedirectsHttpStatusImagesFilter(true);
+				setTlsStatusNoneImagesFilter(false);
+				setTlsStatusOkImagesFilter(false);
+				setTlsStatusErrorImagesFilter(false);
+				setAllExceptTlsStatusNoneImagesFilter(false);
+				setAllExceptTlsStatusOkImagesFilter(false);
+				setAllExceptTlsStatusErrorImagesFilter(false);
+				setNoMissingAltsFilter(false);
+				setMissingAltsFilter(false);
+				setAllImagesFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "status__neq");
+
+				if (newPath.includes("?")) newPath += `&status__neq=TOO_MANY_REDIRECTS`;
+				else newPath += `?status__neq=TOO_MANY_REDIRECTS`;
+			} else if (filterValue === "allExceptTooManyRedirectsHttpStatusImages" && !filterChecked) {
+				filterQueryString?.delete("status__neq") ?? null;
+
+				if (newPath.includes("status__neq")) newPath = handleRemoveUrlParameter(newPath, "status__neq");
+
+				setAllExceptTooManyRedirectsHttpStatusImagesFilter(false);
+			}
+
+			if (filterValue === "tlsStatusNoneImages" && filterChecked) {
+				setExternalImagesFilter(false);
+				setInternalImagesFilter(false);
+				setNonWebImagesFilter(false);
+				setOtherImagesFilter(false);
+				setAllExceptExternalImagesFilter(false);
+				setAllExceptInternalImagesFilter(false);
+				setAllExceptNonWebImagesFilter(false);
+				setAllExceptOtherImagesFilter(false);
+				setOkHttpStatusImagesFilter(false);
+				setTimeoutHttpStatusImagesFilter(false);
+				setErrorHttpStatusImagesFilter(false);
+				setOtherErrorHttpStatusImagesFilter(false);
+				setTooManyRedirectsHttpStatusImagesFilter(false);
+				setAllExceptOkHttpStatusImagesFilter(false);
+				setAllExceptTimeoutHttpStatusImagesFilter(false);
+				setAllExceptErrorHttpStatusImagesFilter(false);
+				setAllExceptOtherErrorHttpStatusImagesFilter(false);
+				setAllExceptTooManyRedirectsHttpStatusImagesFilter(false);
+				setTlsStatusNoneImagesFilter(true);
+				setTlsStatusOkImagesFilter(false);
+				setTlsStatusErrorImagesFilter(false);
+				setAllExceptTlsStatusNoneImagesFilter(false);
+				setAllExceptTlsStatusOkImagesFilter(false);
+				setAllExceptTlsStatusErrorImagesFilter(false);
+				setNoMissingAltsFilter(false);
+				setMissingAltsFilter(false);
+				setAllImagesFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "tls_status");
+
+				if (newPath.includes("?")) newPath += `&tls_status=NONE`;
+				else newPath += `?tls_status=NONE`;
+			} else if (filterValue === "tlsStatusNoneImages" && !filterChecked) {
+				filterQueryString?.delete("tls_status") ?? null;
+
+				if (newPath.includes("tls_status")) newPath = handleRemoveUrlParameter(newPath, "tls_status");
+
+				setTlsStatusNoneImagesFilter(false);
+			}
+
+			if (filterValue === "allExceptTlsStatusNoneImages" && filterChecked) {
+				setExternalImagesFilter(false);
+				setInternalImagesFilter(false);
+				setNonWebImagesFilter(false);
+				setOtherImagesFilter(false);
+				setAllExceptExternalImagesFilter(false);
+				setAllExceptInternalImagesFilter(false);
+				setAllExceptNonWebImagesFilter(false);
+				setAllExceptOtherImagesFilter(false);
+				setOkHttpStatusImagesFilter(false);
+				setTimeoutHttpStatusImagesFilter(false);
+				setErrorHttpStatusImagesFilter(false);
+				setOtherErrorHttpStatusImagesFilter(false);
+				setTooManyRedirectsHttpStatusImagesFilter(false);
+				setAllExceptOkHttpStatusImagesFilter(false);
+				setAllExceptTimeoutHttpStatusImagesFilter(false);
+				setAllExceptErrorHttpStatusImagesFilter(false);
+				setAllExceptOtherErrorHttpStatusImagesFilter(false);
+				setAllExceptTooManyRedirectsHttpStatusImagesFilter(false);
+				setTlsStatusNoneImagesFilter(false);
+				setTlsStatusOkImagesFilter(false);
+				setTlsStatusErrorImagesFilter(false);
+				setAllExceptTlsStatusNoneImagesFilter(true);
+				setAllExceptTlsStatusOkImagesFilter(false);
+				setAllExceptTlsStatusErrorImagesFilter(false);
+				setNoMissingAltsFilter(false);
+				setMissingAltsFilter(false);
+				setAllImagesFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "tls_status__neq");
+
+				if (newPath.includes("?")) newPath += `&tls_status__neq=NONE`;
+				else newPath += `?tls_status__neq=NONE`;
+			} else if (filterValue === "allExceptTlsStatusNoneImages" && !filterChecked) {
+				filterQueryString?.delete("tls_status__neq") ?? null;
+
+				if (newPath.includes("tls_status__neq")) newPath = handleRemoveUrlParameter(newPath, "tls_status__neq");
+
+				setAllExceptTlsStatusNoneImagesFilter(false);
+			}
+
+			if (filterValue === "tlsStatusOkImages" && filterChecked) {
+				setExternalImagesFilter(false);
+				setInternalImagesFilter(false);
+				setNonWebImagesFilter(false);
+				setOtherImagesFilter(false);
+				setAllExceptExternalImagesFilter(false);
+				setAllExceptInternalImagesFilter(false);
+				setAllExceptNonWebImagesFilter(false);
+				setAllExceptOtherImagesFilter(false);
+				setOkHttpStatusImagesFilter(false);
+				setTimeoutHttpStatusImagesFilter(false);
+				setErrorHttpStatusImagesFilter(false);
+				setOtherErrorHttpStatusImagesFilter(false);
+				setTooManyRedirectsHttpStatusImagesFilter(false);
+				setAllExceptOkHttpStatusImagesFilter(false);
+				setAllExceptTimeoutHttpStatusImagesFilter(false);
+				setAllExceptErrorHttpStatusImagesFilter(false);
+				setAllExceptOtherErrorHttpStatusImagesFilter(false);
+				setAllExceptTooManyRedirectsHttpStatusImagesFilter(false);
+				setTlsStatusNoneImagesFilter(false);
+				setTlsStatusOkImagesFilter(true);
+				setTlsStatusErrorImagesFilter(false);
+				setAllExceptTlsStatusNoneImagesFilter(false);
+				setAllExceptTlsStatusOkImagesFilter(false);
+				setAllExceptTlsStatusErrorImagesFilter(false);
+				setNoMissingAltsFilter(false);
+				setMissingAltsFilter(false);
+				setAllImagesFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "tls_status");
+
+				if (newPath.includes("?")) newPath += `&tls_status=OK`;
+				else newPath += `?tls_status=OK`;
+			} else if (filterValue === "tlsStatusOkImages" && !filterChecked) {
+				filterQueryString?.delete("tls_status") ?? null;
+
+				if (newPath.includes("tls_status")) newPath = handleRemoveUrlParameter(newPath, "tls_status");
+
+				setTlsStatusOkImagesFilter(false);
+			}
+
+			if (filterValue === "allExceptTlsStatusOkImages" && filterChecked) {
+				setExternalImagesFilter(false);
+				setInternalImagesFilter(false);
+				setNonWebImagesFilter(false);
+				setOtherImagesFilter(false);
+				setAllExceptExternalImagesFilter(false);
+				setAllExceptInternalImagesFilter(false);
+				setAllExceptNonWebImagesFilter(false);
+				setAllExceptOtherImagesFilter(false);
+				setOkHttpStatusImagesFilter(false);
+				setTimeoutHttpStatusImagesFilter(false);
+				setErrorHttpStatusImagesFilter(false);
+				setOtherErrorHttpStatusImagesFilter(false);
+				setTooManyRedirectsHttpStatusImagesFilter(false);
+				setAllExceptOkHttpStatusImagesFilter(false);
+				setAllExceptTimeoutHttpStatusImagesFilter(false);
+				setAllExceptErrorHttpStatusImagesFilter(false);
+				setAllExceptOtherErrorHttpStatusImagesFilter(false);
+				setAllExceptTooManyRedirectsHttpStatusImagesFilter(false);
+				setTlsStatusNoneImagesFilter(false);
+				setTlsStatusOkImagesFilter(false);
+				setTlsStatusErrorImagesFilter(false);
+				setAllExceptTlsStatusNoneImagesFilter(false);
+				setAllExceptTlsStatusOkImagesFilter(true);
+				setAllExceptTlsStatusErrorImagesFilter(false);
+				setNoMissingAltsFilter(false);
+				setMissingAltsFilter(false);
+				setAllImagesFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "tls_status__neq");
+
+				if (newPath.includes("?")) newPath += `&tls_status__neq=OK`;
+				else newPath += `?tls_status__neq=OK`;
+			} else if (filterValue === "allExceptTlsStatusOkImages" && !filterChecked) {
+				filterQueryString?.delete("tls_status__neq") ?? null;
+
+				if (newPath.includes("tls_status__neq")) newPath = handleRemoveUrlParameter(newPath, "tls_status__neq");
+
+				setAllExceptTlsStatusOkImagesFilter(false);
+			}
+
+			if (filterValue === "tlsStatusErrorImages" && filterChecked) {
+				setExternalImagesFilter(false);
+				setInternalImagesFilter(false);
+				setNonWebImagesFilter(false);
+				setOtherImagesFilter(false);
+				setAllExceptExternalImagesFilter(false);
+				setAllExceptInternalImagesFilter(false);
+				setAllExceptNonWebImagesFilter(false);
+				setAllExceptOtherImagesFilter(false);
+				setOkHttpStatusImagesFilter(false);
+				setTimeoutHttpStatusImagesFilter(false);
+				setErrorHttpStatusImagesFilter(false);
+				setOtherErrorHttpStatusImagesFilter(false);
+				setTooManyRedirectsHttpStatusImagesFilter(false);
+				setAllExceptOkHttpStatusImagesFilter(false);
+				setAllExceptTimeoutHttpStatusImagesFilter(false);
+				setAllExceptErrorHttpStatusImagesFilter(false);
+				setAllExceptOtherErrorHttpStatusImagesFilter(false);
+				setAllExceptTooManyRedirectsHttpStatusImagesFilter(false);
+				setTlsStatusNoneImagesFilter(false);
+				setTlsStatusOkImagesFilter(false);
+				setTlsStatusErrorImagesFilter(true);
+				setAllExceptTlsStatusNoneImagesFilter(false);
+				setAllExceptTlsStatusOkImagesFilter(false);
+				setAllExceptTlsStatusErrorImagesFilter(false);
+				setNoMissingAltsFilter(false);
+				setMissingAltsFilter(false);
+				setAllImagesFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "tls_status");
+
+				if (newPath.includes("?")) newPath += `&tls_status=ERROR`;
+				else newPath += `?tls_status=ERROR`;
+			} else if (filterValue === "tlsStatusErrorImages" && !filterChecked) {
+				filterQueryString?.delete("tls_status") ?? null;
+
+				if (newPath.includes("tls_status")) newPath = handleRemoveUrlParameter(newPath, "tls_status");
+
+				setTlsStatusErrorImagesFilter(false);
+			}
+
+			if (filterValue === "allExceptTlsStatusErrorImages" && filterChecked) {
+				setExternalImagesFilter(false);
+				setInternalImagesFilter(false);
+				setNonWebImagesFilter(false);
+				setOtherImagesFilter(false);
+				setAllExceptExternalImagesFilter(false);
+				setAllExceptInternalImagesFilter(false);
+				setAllExceptNonWebImagesFilter(false);
+				setAllExceptOtherImagesFilter(false);
+				setOkHttpStatusImagesFilter(false);
+				setTimeoutHttpStatusImagesFilter(false);
+				setErrorHttpStatusImagesFilter(false);
+				setOtherErrorHttpStatusImagesFilter(false);
+				setTooManyRedirectsHttpStatusImagesFilter(false);
+				setAllExceptOkHttpStatusImagesFilter(false);
+				setAllExceptTimeoutHttpStatusImagesFilter(false);
+				setAllExceptErrorHttpStatusImagesFilter(false);
+				setAllExceptOtherErrorHttpStatusImagesFilter(false);
+				setAllExceptTooManyRedirectsHttpStatusImagesFilter(false);
+				setTlsStatusNoneImagesFilter(false);
+				setTlsStatusOkImagesFilter(false);
+				setTlsStatusErrorImagesFilter(false);
+				setAllExceptTlsStatusNoneImagesFilter(false);
+				setAllExceptTlsStatusOkImagesFilter(false);
+				setAllExceptTlsStatusErrorImagesFilter(true);
+				setNoMissingAltsFilter(false);
+				setMissingAltsFilter(false);
+				setAllImagesFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "tls_status__neq");
+
+				if (newPath.includes("?")) newPath += `&tls_status__neq=ERROR`;
+				else newPath += `?tls_status__neq=ERROR`;
+			} else if (filterValue === "allExceptTlsStatusErrorImages" && !filterChecked) {
+				filterQueryString?.delete("tls_status__neq") ?? null;
+
+				if (newPath.includes("tls_status__neq")) newPath = handleRemoveUrlParameter(newPath, "tls_status__neq");
+
+				setAllExceptTlsStatusErrorImagesFilter(false);
+			}
+
+			if (filterValue === "noMissingAltsImages" && filterChecked) {
+				setExternalImagesFilter(false);
+				setInternalImagesFilter(false);
+				setNonWebImagesFilter(false);
+				setOtherImagesFilter(false);
+				setAllExceptExternalImagesFilter(false);
+				setAllExceptInternalImagesFilter(false);
+				setAllExceptNonWebImagesFilter(false);
+				setAllExceptOtherImagesFilter(false);
+				setOkHttpStatusImagesFilter(false);
+				setTimeoutHttpStatusImagesFilter(false);
+				setErrorHttpStatusImagesFilter(false);
+				setOtherErrorHttpStatusImagesFilter(false);
+				setTooManyRedirectsHttpStatusImagesFilter(false);
+				setAllExceptOkHttpStatusImagesFilter(false);
+				setAllExceptTimeoutHttpStatusImagesFilter(false);
+				setAllExceptErrorHttpStatusImagesFilter(false);
+				setAllExceptOtherErrorHttpStatusImagesFilter(false);
+				setAllExceptTooManyRedirectsHttpStatusImagesFilter(false);
+				setTlsStatusNoneImagesFilter(false);
+				setTlsStatusOkImagesFilter(false);
+				setTlsStatusErrorImagesFilter(false);
+				setAllExceptTlsStatusNoneImagesFilter(false);
+				setAllExceptTlsStatusOkImagesFilter(false);
+				setAllExceptTlsStatusErrorImagesFilter(false);
+				setNoMissingAltsFilter(true);
+				setMissingAltsFilter(false);
+				setAllImagesFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "missing_alts__iszero");
+
+				if (newPath.includes("?")) newPath += `&missing_alts__iszero=true`;
+				else newPath += `?missing_alts__iszero=true`;
+			} else if (filterValue === "noMissingAltsImages" && !filterChecked) {
+				filterQueryString?.delete("missing_alts__iszero") ?? null;
+
+				if (newPath.includes("missing_alts__iszero"))
+					newPath = handleRemoveUrlParameter(newPath, "missing_alts__iszero");
+
+				setNoMissingAltsFilter(false);
+			}
+
+			if (filterValue === "missingAltsImages" && filterChecked) {
+				setExternalImagesFilter(false);
+				setInternalImagesFilter(false);
+				setNonWebImagesFilter(false);
+				setOtherImagesFilter(false);
+				setAllExceptExternalImagesFilter(false);
+				setAllExceptInternalImagesFilter(false);
+				setAllExceptNonWebImagesFilter(false);
+				setAllExceptOtherImagesFilter(false);
+				setOkHttpStatusImagesFilter(false);
+				setTimeoutHttpStatusImagesFilter(false);
+				setErrorHttpStatusImagesFilter(false);
+				setOtherErrorHttpStatusImagesFilter(false);
+				setTooManyRedirectsHttpStatusImagesFilter(false);
+				setAllExceptOkHttpStatusImagesFilter(false);
+				setAllExceptTimeoutHttpStatusImagesFilter(false);
+				setAllExceptErrorHttpStatusImagesFilter(false);
+				setAllExceptOtherErrorHttpStatusImagesFilter(false);
+				setAllExceptTooManyRedirectsHttpStatusImagesFilter(false);
+				setTlsStatusNoneImagesFilter(false);
+				setTlsStatusOkImagesFilter(false);
+				setTlsStatusErrorImagesFilter(false);
+				setAllExceptTlsStatusNoneImagesFilter(false);
+				setAllExceptTlsStatusOkImagesFilter(false);
+				setAllExceptTlsStatusErrorImagesFilter(false);
+				setNoMissingAltsFilter(false);
+				setMissingAltsFilter(true);
+				setAllImagesFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "missing_alts__iszero");
+
+				if (newPath.includes("?")) newPath += `&missing_alts__iszero=false`;
+				else newPath += `?missing_alts__iszero=false`;
+			} else if (filterValue === "missingAltsImages" && !filterChecked) {
+				filterQueryString?.delete("missing_alts__iszero") ?? null;
+
+				if (newPath.includes("missing_alts__iszero"))
+					newPath = handleRemoveUrlParameter(newPath, "missing_alts__iszero");
+
+				setMissingAltsFilter(false);
+			}
+
+			if (
+				(filterValue === "allImages" && filterChecked) ||
+				(filterValue !== "internalImages" &&
+					filterValue !== "externalImages" &&
+					filterValue !== "nonWebImages" &&
+					filterValue !== "otherImages" &&
+					filterValue !== "allExceptExternalImages" &&
+					filterValue !== "allExceptInternalImages" &&
+					filterValue !== "allExceptNonWebImages" &&
+					filterValue !== "allExceptOtherImages" &&
+					filterValue !== "okHttpStatusImages" &&
+					filterValue !== "timeoutHttpStatusImages" &&
+					filterValue !== "errorHttpStatusImages" &&
+					filterValue !== "otherErrorHttpStatusImages" &&
+					filterValue !== "tooManyRedirectsHttpStatusImages" &&
+					filterValue !== "allExceptOkHttpStatusImages" &&
+					filterValue !== "allExceptTimeoutHttpStatusImages" &&
+					filterValue !== "allExceptErrorHttpStatusImages" &&
+					filterValue !== "allExceptOtherErrorHttpStatusImages" &&
+					filterValue !== "allExceptTooManyRedirectsHttpStatusImages" &&
+					filterValue !== "tlsStatusNoneImages" &&
+					filterValue !== "tlsStatusOkImages" &&
+					filterValue !== "tlsStatusErrorImages" &&
+					filterValue !== "allExceptTlsStatusNoneImages" &&
+					filterValue !== "allExceptTlsStatusOkImages" &&
+					filterValue !== "allExceptTlsStatusErrorImages" &&
+					filterValue !== "noMissingAlts" &&
+					filterValue !== "missingAlts")
+			) {
+				setAllImagesFilter(true);
+				setExternalImagesFilter(false);
+				setInternalImagesFilter(false);
+				setNonWebImagesFilter(false);
+				setOtherImagesFilter(false);
+				setAllExceptExternalImagesFilter(false);
+				setAllExceptInternalImagesFilter(false);
+				setAllExceptNonWebImagesFilter(false);
+				setAllExceptOtherImagesFilter(false);
+				setOkHttpStatusImagesFilter(false);
+				setTimeoutHttpStatusImagesFilter(false);
+				setErrorHttpStatusImagesFilter(false);
+				setOtherErrorHttpStatusImagesFilter(false);
+				setTooManyRedirectsHttpStatusImagesFilter(false);
+				setAllExceptOkHttpStatusImagesFilter(false);
+				setAllExceptTimeoutHttpStatusImagesFilter(false);
+				setAllExceptErrorHttpStatusImagesFilter(false);
+				setAllExceptOtherErrorHttpStatusImagesFilter(false);
+				setAllExceptTooManyRedirectsHttpStatusImagesFilter(false);
+				setTlsStatusNoneImagesFilter(false);
+				setTlsStatusOkImagesFilter(false);
+				setTlsStatusErrorImagesFilter(false);
+				setAllExceptTlsStatusNoneImagesFilter(false);
+				setAllExceptTlsStatusOkImagesFilter(false);
+				setAllExceptTlsStatusErrorImagesFilter(false);
+				setNoMissingAltsFilter(false);
+				setMissingAltsFilter(false);
+
+				newPath = handleRemoveUrlParameter(newPath, "status");
+				newPath = handleRemoveUrlParameter(newPath, "status__neq");
+				newPath = handleRemoveUrlParameter(newPath, "type");
+				newPath = handleRemoveUrlParameter(newPath, "type__neq");
+				newPath = handleRemoveUrlParameter(newPath, "tls_status");
+				newPath = handleRemoveUrlParameter(newPath, "tls_status__neq");
+				newPath = handleRemoveUrlParameter(newPath, "missing_alts__iszero");
+			}
 		} else {
 			// Sites filter
 			if (filterValue === "verified" && filterChecked) {
@@ -1053,6 +2248,12 @@ const Filter = ({
 					setNonWebLinksFilter(true);
 				} else {
 					setNonWebLinksFilter(false);
+				}
+
+				if (filterQueryString.get("type") === "OTHER") {
+					setOtherLinksFilter(true);
+				} else {
+					setOtherLinksFilter(false);
 				}
 
 				if (
@@ -1204,6 +2405,209 @@ const Filter = ({
 					tlsTotalFilter,
 					allPagesFilter
 				};
+			} else if (filterType === "images") {
+				if (filterQueryString.get("type") === "PAGE") {
+					setInternalImagesFilter(true);
+				} else {
+					setInternalImagesFilter(false);
+				}
+
+				if (filterQueryString.get("type") === "EXTERNAL" || filterQueryString.get("type") === "EXTERNALOTHER") {
+					setExternalImagesFilter(true);
+				} else {
+					setExternalImagesFilter(false);
+				}
+
+				if (filterQueryString.get("type") === "NON_WEB") {
+					setNonWebImagesFilter(true);
+				} else {
+					setNonWebImagesFilter(false);
+				}
+
+				if (filterQueryString.get("type") === "OTHER") {
+					setOtherImagesFilter(true);
+				} else {
+					setOtherImagesFilter(false);
+				}
+
+				if (filterQueryString.get("type__neq") === "PAGE") {
+					setAllExceptInternalImagesFilter(true);
+				} else {
+					setAllExceptInternalImagesFilter(false);
+				}
+
+				if (
+					filterQueryString.get("type__neq") === "EXTERNAL" ||
+					filterQueryString.get("type__neq") === "EXTERNALOTHER"
+				) {
+					setAllExceptExternalImagesFilter(true);
+				} else {
+					setAllExceptExternalImagesFilter(false);
+				}
+
+				if (filterQueryString.get("type__neq") === "OTHER") {
+					setAllExceptOtherImagesFilter(true);
+				} else {
+					setAllExceptOtherImagesFilter(false);
+				}
+
+				if (filterQueryString.get("type__neq") === "NON_WEB") {
+					setAllExceptNonWebImagesFilter(true);
+				} else {
+					setAllExceptNonWebImagesFilter(false);
+				}
+
+				if (filterQueryString.get("status") === "OK") {
+					setOkHttpStatusImagesFilter(true);
+				} else {
+					setOkHttpStatusImagesFilter(false);
+				}
+
+				if (filterQueryString.get("status") === "TIMEOUT") {
+					setTimeoutHttpStatusImagesFilter(true);
+				} else {
+					setTimeoutHttpStatusImagesFilter(false);
+				}
+
+				if (filterQueryString.get("status") === "HTTP_ERROR") {
+					setErrorHttpStatusImagesFilter(true);
+				} else {
+					setErrorHttpStatusImagesFilter(false);
+				}
+
+				if (filterQueryString.get("status") === "OTHER_ERROR") {
+					setOtherErrorHttpStatusImagesFilter(true);
+				} else {
+					setOtherErrorHttpStatusImagesFilter(false);
+				}
+
+				if (filterQueryString.get("status") === "TOO_MANY_REDIRECTS") {
+					setTooManyRedirectsHttpStatusImagesFilter(true);
+				} else {
+					setTooManyRedirectsHttpStatusImagesFilter(false);
+				}
+
+				if (filterQueryString.get("status__neq") === "OK") {
+					setAllExceptOkHttpStatusImagesFilter(true);
+				} else {
+					setAllExceptOkHttpStatusImagesFilter(false);
+				}
+
+				if (filterQueryString.get("status__neq") === "TIMEOUT") {
+					setAllExceptTimeoutHttpStatusImagesFilter(true);
+				} else {
+					setAllExceptTimeoutHttpStatusImagesFilter(false);
+				}
+
+				if (filterQueryString.get("status__neq") === "HTTP_ERROR") {
+					setAllExceptErrorHttpStatusImagesFilter(true);
+				} else {
+					setAllExceptErrorHttpStatusImagesFilter(false);
+				}
+
+				if (filterQueryString.get("status__neq") === "OTHER_ERROR") {
+					setAllExceptOtherErrorHttpStatusImagesFilter(true);
+				} else {
+					setAllExceptOtherErrorHttpStatusImagesFilter(false);
+				}
+
+				if (filterQueryString.get("status__neq") === "TOO_MANY_REDIRECTS") {
+					setAllExceptTooManyRedirectsHttpStatusImagesFilter(true);
+				} else {
+					setAllExceptTooManyRedirectsHttpStatusImagesFilter(false);
+				}
+
+				if (filterQueryString.get("tls_status") === "NONE") {
+					setTlsStatusNoneImagesFilter(true);
+				} else {
+					setTlsStatusNoneImagesFilter(false);
+				}
+
+				if (filterQueryString.get("tls_status") === "OK") {
+					setTlsStatusOkImagesFilter(true);
+				} else {
+					setTlsStatusOkImagesFilter(false);
+				}
+
+				if (filterQueryString.get("tls_status") === "ERROR") {
+					setTlsStatusErrorImagesFilter(true);
+				} else {
+					setTlsStatusErrorImagesFilter(false);
+				}
+
+				if (filterQueryString.get("tls_status__neq") === "NONE") {
+					setAllExceptTlsStatusNoneImagesFilter(true);
+				} else {
+					setAllExceptTlsStatusNoneImagesFilter(false);
+				}
+
+				if (filterQueryString.get("tls_status__neq") === "OK") {
+					setAllExceptTlsStatusOkImagesFilter(true);
+				} else {
+					setAllExceptTlsStatusOkImagesFilter(false);
+				}
+
+				if (filterQueryString.get("tls_status__neq") === "ERROR") {
+					setAllExceptTlsStatusErrorImagesFilter(true);
+				} else {
+					setAllExceptTlsStatusErrorImagesFilter(false);
+				}
+
+				if (filterQueryString.get("missing_alts__iszero") === "true") {
+					setNoMissingAltsFilter(true);
+				} else {
+					setNoMissingAltsFilter(false);
+				}
+
+				if (filterQueryString.get("missing_alts__iszero") === "false") {
+					setMissingAltsFilter(true);
+				} else {
+					setMissingAltsFilter(false);
+				}
+
+				if (
+					!filterQueryString.has("type") &&
+					!filterQueryString.has("type__neq") &&
+					!filterQueryString.has("status") &&
+					!filterQueryString.has("status__neq") &&
+					!filterQueryString.has("tls_status") &&
+					!filterQueryString.has("tls_status__neq") &&
+					!filterQueryString.has("missing_alts__iszero")
+				) {
+					setAllImagesFilter(true);
+				} else {
+					setAllImagesFilter(false);
+				}
+
+				return {
+					internalImagesFilter,
+					externalImagesFilter,
+					nonWebImagesFilter,
+					otherImagesFilter,
+					allExceptExternalImagesFilter,
+					allExceptInternalImagesFilter,
+					allExceptNonWebImagesFilter,
+					allExceptOtherImagesFilter,
+					okHttpStatusImagesFilter,
+					timeoutHttpStatusImagesFilter,
+					errorHttpStatusImagesFilter,
+					otherErrorHttpStatusImagesFilter,
+					tooManyRedirectsHttpStatusImagesFilter,
+					allExceptOkHttpStatusImagesFilter,
+					allExceptTimeoutHttpStatusImagesFilter,
+					allExceptErrorHttpStatusImagesFilter,
+					allExceptOtherErrorHttpStatusImagesFilter,
+					allExceptTooManyRedirectsHttpStatusImagesFilter,
+					tlsStatusNoneImagesFilter,
+					tlsStatusOkImagesFilter,
+					tlsStatusErrorImagesFilter,
+					allExceptTlsStatusNoneImagesFilter,
+					allExceptTlsStatusOkImagesFilter,
+					allExceptTlsStatusErrorImagesFilter,
+					noMissingAltsFilter,
+					missingAltsFilter,
+					allImagesFilter
+				};
 			} else {
 				if (filterQueryString.get("verified") === "true") {
 					setVerifiedFilter(true);
@@ -1237,7 +2641,18 @@ const Filter = ({
 			<div className="-ml-4 flex-wrap items-start sm:flex-nowrap lg:-mt-2 lg:flex">
 				<h4 className="ml-4 mb-4 mt-2 mr-1 font-semibold leading-4 text-gray-600 lg:mb-0">{filterText}</h4>
 
-				<div className="ml-4 mt-2 grid grid-cols-1 gap-3 sm:grid-cols-6">
+				<div
+					className={classnames(
+						"ml-4 mt-2 grid grid-flow-col grid-cols-1",
+						isSitesFilter
+							? "gap-3 sm:grid-rows-1"
+							: isSitesLinksFilter
+							? "gap-3 sm:grid-rows-2"
+							: isSitesPagesFilter
+							? "gap-3 sm:grid-rows-4"
+							: "gap-3 sm:grid-rows-6"
+					)}
+				>
 					{filtersArray
 						.filter(
 							(e) =>

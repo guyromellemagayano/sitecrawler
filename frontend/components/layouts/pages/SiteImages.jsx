@@ -2,14 +2,10 @@ import { MemoizedPageOption } from "@components/options/PageOption";
 import { MemoizedDataPagination } from "@components/pagination";
 import { MemoizedImagesTable } from "@components/tables/ImagesTable";
 import { useImages } from "@hooks/useImages";
-import { useScan } from "@hooks/useScan";
 import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
 import { useSiteQueries } from "@hooks/useSiteQueries";
-import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
-import { handleConversionStringToNumber } from "@utils/convertCase";
-import { useRouter } from "next/router";
 import { memo, useContext } from "react";
 
 /**
@@ -17,48 +13,30 @@ import { memo, useContext } from "react";
  */
 const SiteImagesPageLayout = () => {
 	// Custom context
-	const { isComponentReady } = useContext(SiteCrawlerAppContext);
-
-	// Router
-	const { query } = useRouter();
-	const { siteId } = query;
-
-	// Custom variables
-	const sanitizedSiteId = handleConversionStringToNumber(siteId);
+	const { isComponentReady, querySiteId, user } = useContext(SiteCrawlerAppContext);
 
 	// Helper functions
 	const { linksPerPage } = useSiteQueries();
-	const { scanObjId } = useScan(sanitizedSiteId);
 	const { scanApiEndpoint } = useScanApiEndpoint(linksPerPage);
 
 	// SWR hooks
-	const { user, permissions } = useUser();
-	const { imagesCount, imagesResults } = useImages(scanApiEndpoint, sanitizedSiteId, scanObjId);
+	const { images } = useImages(scanApiEndpoint);
+
+	// Custom variables
+	const disableLocalTime = user?.data?.settings?.disableLocalTime ?? false;
+	const permissions = user?.data?.permissions ?? null;
+	const imagesCount = images?.data?.count ?? null;
+	const imagesResults = images?.data?.results ?? null;
 
 	return (
 		<>
-			{isComponentReady &&
-			user &&
-			Math.round(user?.status / 100) === 2 &&
-			!user?.data?.detail &&
-			permissions.includes("can_see_pages") &&
-			permissions.includes("can_see_scripts") &&
-			permissions.includes("can_see_stylesheets") &&
-			permissions.includes("can_see_images") ? (
-				<MemoizedPageOption isLinks />
+			{isComponentReady && permissions && permissions?.includes("can_see_images") ? (
+				<MemoizedPageOption isImages />
 			) : null}
 			<div
 				className={classnames(
 					"flex-grow px-4 pt-8 focus:outline-none sm:px-6 md:px-0",
-					isComponentReady &&
-						user &&
-						Math.round(user?.status / 100) === 2 &&
-						!user?.data?.detail &&
-						permissions.includes("can_see_pages") &&
-						permissions.includes("can_see_scripts") &&
-						permissions.includes("can_see_stylesheets") &&
-						permissions.includes("can_see_images") &&
-						imagesCount === 0
+					isComponentReady && permissions && permissions?.includes("can_see_images") && imagesCount === 0
 						? "flex flex-auto flex-col items-center justify-center"
 						: null
 				)}
@@ -66,15 +44,7 @@ const SiteImagesPageLayout = () => {
 				<div
 					className={classnames(
 						"h-full w-full flex-1 overflow-y-hidden py-2",
-						isComponentReady &&
-							user &&
-							Math.round(user?.status / 100) === 2 &&
-							!user?.data?.detail &&
-							permissions.includes("can_see_pages") &&
-							permissions.includes("can_see_scripts") &&
-							permissions.includes("can_see_stylesheets") &&
-							permissions.includes("can_see_images") &&
-							imagesCount === 0
+						isComponentReady && permissions && permissions?.includes("can_see_images") && imagesCount === 0
 							? "flex items-center justify-center"
 							: null
 					)}
@@ -83,14 +53,7 @@ const SiteImagesPageLayout = () => {
 				</div>
 			</div>
 
-			{isComponentReady &&
-			user &&
-			Math.round(user?.status / 100) === 2 &&
-			!user?.data?.detail &&
-			permissions.includes("can_see_pages") &&
-			permissions.includes("can_see_scripts") &&
-			permissions.includes("can_see_stylesheets") &&
-			permissions.includes("can_see_images") ? (
+			{isComponentReady && permissions && permissions?.includes("can_see_images") ? (
 				<div className="flex-none">
 					<MemoizedDataPagination />
 				</div>

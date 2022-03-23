@@ -2,14 +2,11 @@ import { MemoizedBadge } from "@components/badges";
 import { MemoizedSiteDanagerIcon } from "@components/icons/SiteDangerIcon";
 import { MemoizedSiteSuccessIcon } from "@components/icons/SiteSuccessIcon";
 import { useComponentVisible } from "@hooks/useComponentVisible";
-import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
-import { handleConversionStringToNumber } from "@utils/convertCase";
 import bytes from "bytes";
 import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
@@ -35,13 +32,6 @@ const ImagesData = ({ image = null }) => {
 	const imageResolvedMissingAlts = image?.resolved_missing_alts ?? null;
 	const imageResolvedTls = image?.resolved_tls ?? null;
 
-	// Router
-	const { query } = useRouter();
-	const { siteId } = query;
-
-	// Custom variables
-	const sanitizedSiteId = handleConversionStringToNumber(siteId);
-
 	// Translations
 	const { t } = useTranslation();
 	const markAsResolvedText = t("sites:markAsResolved");
@@ -54,10 +44,11 @@ const ImagesData = ({ image = null }) => {
 	const nonWebText = t("sites:nonWeb");
 
 	// Custom context
-	const { isComponentReady } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady, querySiteId, user, images } = useContext(SiteCrawlerAppContext);
 
-	// SWR hooks
-	const { user, disableLocalTime, permissions } = useUser();
+	// Custom variables
+	const disableLocalTime = user?.data?.settings?.disableLocalTime ?? false;
+	const permissions = user?.data?.permissions ?? null;
 
 	// Custom hooks
 	const {
@@ -89,74 +80,47 @@ const ImagesData = ({ image = null }) => {
 
 	return (
 		<tr>
-			<td className="flex-none whitespace-nowrap p-4">
+			<td className="truncate-link flex-none whitespace-nowrap p-4">
 				<div className="flex flex-col items-start">
 					<div>
-						{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-							<>
-								{imageStatus === "OK" && imageTlsStatus === "OK" ? (
-									<span
-										aria-label="Ok"
-										className="relative -left-3 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-green-400 leading-5"
-									></span>
-								) : imageStatus === "TIMEOUT" ? (
-									<span
-										aria-label="Timeout"
-										className="relative -left-3 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-yellow-400 leading-5"
-									></span>
-								) : (
-									<span
-										aria-label={
-											imageStatus === "HTTP_ERROR" && imageTlsStatus === "ERROR"
-												? "HTTP Error"
-												: imageStatus === "TOO MANY REDIRECTS"
-												? "Too Many Redirects"
-												: "Other Error"
-										}
-										className="relative -left-3 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-red-400 leading-5"
-									></span>
-								)}
-
-								<div className="inline-flex flex-col items-start justify-start">
-									<span className="flex items-center justify-start text-sm font-semibold leading-6 text-gray-500">
-										<p className="truncate-link">{imageUrl}</p>
-									</span>
-									<span className="flex justify-start space-x-2 text-sm leading-5 text-gray-500">
-										<Link
-											href="/dashboard/sites/[siteId]/images/[imageId]/"
-											as={`/dashboard/sites/${sanitizedSiteId}/images/${imageId}`}
-											passHref
-										>
-											<a
-												type="button"
-												className="flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-indigo-600 transition duration-150 ease-in-out hover:text-indigo-500 focus:outline-none"
-											>
-												{goToSiteOverviewText}
-											</a>
-										</Link>
-
+						{isComponentReady ? (
+							<div>
+								<p className="block truncate text-sm font-semibold leading-6 text-gray-500">{imageUrl}</p>
+								<span className="flex justify-start space-x-2 text-sm leading-5 text-gray-500">
+									<Link
+										href="/dashboard/sites/[siteId]/images/[imageId]/"
+										as={`/dashboard/sites/${querySiteId}/images/${imageId}`}
+										passHref
+									>
 										<a
-											href={imageUrl}
-											className="flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-gray-600 transition duration-150 ease-in-out hover:text-gray-500 focus:outline-none"
-											title={visitExternalSiteText}
-											target="_blank"
-											rel="noreferrer"
+											type="button"
+											className="flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-indigo-600 transition duration-150 ease-in-out hover:text-indigo-500 focus:outline-none"
 										>
-											{visitExternalSiteText}
+											{goToSiteOverviewText}
 										</a>
+									</Link>
 
-										{imageStatus !== "OK" ? (
-											<button
-												type="button"
-												className="ml-3 flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-green-600 transition duration-150 ease-in-out hover:text-green-500 focus:outline-none"
-												onClick={(e) => {}}
-											>
-												{markAsResolvedText}
-											</button>
-										) : null}
-									</span>
-								</div>
-							</>
+									<a
+										href={imageUrl}
+										className="flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-gray-600 transition duration-150 ease-in-out hover:text-gray-500 focus:outline-none"
+										title={visitExternalSiteText}
+										target="_blank"
+										rel="noreferrer"
+									>
+										{visitExternalSiteText}
+									</a>
+
+									{imageStatus !== "OK" ? (
+										<button
+											type="button"
+											className="ml-3 flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-green-600 transition duration-150 ease-in-out hover:text-green-500 focus:outline-none"
+											onClick={(e) => {}}
+										>
+											{markAsResolvedText}
+										</button>
+									) : null}
+								</span>
+							</div>
 						) : (
 							<span className="flex items-start space-x-3 py-2">
 								<Skeleton
@@ -185,8 +149,8 @@ const ImagesData = ({ image = null }) => {
 					</div>
 				</div>
 			</td>
-			<td className="whitespace-nowrap px-6 py-4 text-sm leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+			<td className="truncate-link whitespace-nowrap px-6 py-4 text-sm leading-5 text-gray-500">
+				{isComponentReady ? (
 					imageType === "PAGE" ? (
 						internalText
 					) : imageType === "EXTERNAL" ? (
@@ -200,49 +164,43 @@ const ImagesData = ({ image = null }) => {
 					<Skeleton duration={2} width={100} />
 				)}
 			</td>
-			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-					imageStatus === "OK" ? (
-						<MemoizedBadge text="OK" isSuccess />
-					) : imageStatus === "TIMEOUT" ? (
-						<MemoizedBadge text="TIMEOUT" isWarning />
-					) : imageStatus === "HTTP_ERROR" ? (
-						<MemoizedBadge text={`${imageHttpStatus} HTTP ERROR`} isDanger />
-					) : (
-						<MemoizedBadge text="OTHER ERROR" isDanger />
-					)
+			<td className="truncate-link whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
+				{isComponentReady && imageStatus === "OK" ? (
+					<MemoizedBadge text="OK" isSuccess />
+				) : isComponentReady && imageStatus === "TIMEOUT" ? (
+					<MemoizedBadge text="TIMEOUT" isWarning />
+				) : isComponentReady && imageStatus === "HTTP_ERROR" ? (
+					<MemoizedBadge text={`${imageHttpStatus} HTTP ERROR`} isDanger />
+				) : isComponentReady && imageStatus === "OTHER_ERROR" ? (
+					<MemoizedBadge text="OTHER ERROR" isDanger />
 				) : (
 					<Skeleton duration={2} width={150} />
 				)}
 			</td>
-			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-					imageTlsStatus ? (
-						<MemoizedSiteSuccessIcon />
-					) : !imageTlsStatus ? (
-						<MemoizedSiteDanagerIcon />
-					) : null
+			<td className="truncate-link whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
+				{isComponentReady && imageTlsStatus ? (
+					<MemoizedSiteSuccessIcon />
+				) : isComponentReady && !imageTlsStatus ? (
+					<MemoizedSiteDanagerIcon />
 				) : (
 					<Skeleton duration={2} width={150} />
 				)}
 			</td>
-			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-					Math.round(imageHttpStatus / 100) === 2 ? (
-						<span className="text-green-500">{imageHttpStatus}</span>
-					) : Math.round(imageHttpStatus / 100) === 4 || Math.round(imageHttpStatus / 100) === 5 ? (
-						<span className="text-red-500">{imageHttpStatus}</span>
-					) : Math.round(imageHttpStatus / 100) === 3 ? (
-						<span className="text-yellow-500">{imageHttpStatus}</span>
-					) : (
-						<span className="text-gray-500">{imageHttpStatus}</span>
-					)
+			<td className="truncate-link whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
+				{isComponentReady && Math.round(imageHttpStatus / 100) === 2 ? (
+					<span className="text-green-500">{imageHttpStatus}</span>
+				) : isComponentReady && (Math.round(imageHttpStatus / 100) === 4 || Math.round(imageHttpStatus / 100) === 5) ? (
+					<span className="text-red-500">{imageHttpStatus}</span>
+				) : isComponentReady && Math.round(imageHttpStatus / 100) === 3 ? (
+					<span className="text-yellow-500">{imageHttpStatus}</span>
+				) : isComponentReady && Math.round(imageHttpStatus / 100) === 1 ? (
+					<span className="text-gray-500">{imageHttpStatus}</span>
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+			<td className="truncate-link whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
+				{isComponentReady ? (
 					<span className="text-gray-500">
 						{imageSize > 0
 							? bytes(imageSize, {
@@ -255,25 +213,23 @@ const ImagesData = ({ image = null }) => {
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-					imageOccurences ? (
-						<span className="text-gray-500">{imageOccurences}</span>
-					) : null
+			<td className="truncate-link whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
+				{isComponentReady && imageOccurences ? (
+					<span className="text-gray-500">{imageOccurences}</span>
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+			<td className="truncate-link whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
+				{isComponentReady ? (
 					<span className="text-gray-500">{imageMissingAlts > 0 ? imageMissingAlts : 0}</span>
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
 
-			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+			<td className="truncate-link whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
+				{isComponentReady ? (
 					imageResolvedStatus ? (
 						<span className="text-gray-500">{imageResolvedStatus}</span>
 					) : null
@@ -281,8 +237,8 @@ const ImagesData = ({ image = null }) => {
 					<Skeleton duration={2} width={75} />
 				)}
 			</td>
-			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+			<td className="truncate-link whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
+				{isComponentReady ? (
 					imageResolvedMissingAlts ? (
 						<span className="text-gray-500">{imageResolvedMissingAlts}</span>
 					) : null
@@ -290,8 +246,8 @@ const ImagesData = ({ image = null }) => {
 					<Skeleton duration={2} width={75} />
 				)}
 			</td>
-			<td className="whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+			<td className="truncate-link whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
+				{isComponentReady ? (
 					imageResolvedTls ? (
 						<span className="text-gray-500">{imageResolvedTls}</span>
 					) : null
