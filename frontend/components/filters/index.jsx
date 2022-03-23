@@ -1095,7 +1095,13 @@ const Filter = ({
 				setMissingAltsFilter(false);
 				setAllImagesFilter(false);
 
+				newPath = handleRemoveUrlParameter(newPath, "type");
 				newPath = handleRemoveUrlParameter(newPath, "type__neq");
+				newPath = handleRemoveUrlParameter(newPath, "status");
+				newPath = handleRemoveUrlParameter(newPath, "status__neq");
+				newPath = handleRemoveUrlParameter(newPath, "tls_status");
+				newPath = handleRemoveUrlParameter(newPath, "tls_status__neq");
+				newPath = handleRemoveUrlParameter(newPath, "missing_alts__iszero");
 
 				if (newPath.includes("?")) newPath += `&type__neq=PAGE`;
 				else newPath += `?type__neq=PAGE`;
@@ -1177,7 +1183,13 @@ const Filter = ({
 				setMissingAltsFilter(false);
 				setAllImagesFilter(false);
 
+				newPath = handleRemoveUrlParameter(newPath, "type");
 				newPath = handleRemoveUrlParameter(newPath, "type__neq");
+				newPath = handleRemoveUrlParameter(newPath, "status");
+				newPath = handleRemoveUrlParameter(newPath, "status__neq");
+				newPath = handleRemoveUrlParameter(newPath, "tls_status");
+				newPath = handleRemoveUrlParameter(newPath, "tls_status__neq");
+				newPath = handleRemoveUrlParameter(newPath, "missing_alts__iszero");
 
 				if (newPath.includes("?")) newPath += `&type__neq=EXTERNAL`;
 				else newPath += `?type__neq=EXTERNAL`;
@@ -1259,7 +1271,13 @@ const Filter = ({
 				setMissingAltsFilter(false);
 				setAllImagesFilter(false);
 
+				newPath = handleRemoveUrlParameter(newPath, "type");
 				newPath = handleRemoveUrlParameter(newPath, "type__neq");
+				newPath = handleRemoveUrlParameter(newPath, "status");
+				newPath = handleRemoveUrlParameter(newPath, "status__neq");
+				newPath = handleRemoveUrlParameter(newPath, "tls_status");
+				newPath = handleRemoveUrlParameter(newPath, "tls_status__neq");
+				newPath = handleRemoveUrlParameter(newPath, "missing_alts__iszero");
 
 				if (newPath.includes("?")) newPath += `&type__neq=NON_WEB`;
 				else newPath += `?type__neq=NON_WEB`;
@@ -1341,7 +1359,13 @@ const Filter = ({
 				setMissingAltsFilter(false);
 				setAllImagesFilter(false);
 
+				newPath = handleRemoveUrlParameter(newPath, "type");
 				newPath = handleRemoveUrlParameter(newPath, "type__neq");
+				newPath = handleRemoveUrlParameter(newPath, "status");
+				newPath = handleRemoveUrlParameter(newPath, "status__neq");
+				newPath = handleRemoveUrlParameter(newPath, "tls_status");
+				newPath = handleRemoveUrlParameter(newPath, "tls_status__neq");
+				newPath = handleRemoveUrlParameter(newPath, "missing_alts__iszero");
 
 				if (newPath.includes("?")) newPath += `&type__neq=OTHER`;
 				else newPath += `?type__neq=OTHER`;
