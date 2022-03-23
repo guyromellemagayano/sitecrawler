@@ -4,6 +4,13 @@ import { useRouter } from "next/router";
 import { memo, useEffect, useState } from "react";
 import styledComponents, { css } from "styled-components";
 
+const ProgressBarAnimationStyled = styledComponents.div`
+		margin-left: ${(props) => (-1 + props.progress) * 100 + "%"};
+		transition-property: margin-left;
+		transition-delay: ${(props) => props.animationDuration + "ms"};
+		transition-duration: ${(props) => props.animationDuration + "ms"};
+	`;
+
 /**
  * Custom function to render the `ProgressBar` component
  */
@@ -78,15 +85,10 @@ const ProgressBar = () => {
 		isAnimating: state.isRouteChanging
 	});
 
-	const ProgressBarAnimationStyled = styledComponents.div`
-		margin-left: ${(-1 + progress) * 100}%;
-		transition-property: margin-left;
-		transition-delay: ${animationDuration}ms;
-		transition-duration: ${animationDuration}ms;
-	`;
-
 	return (
 		<ProgressBarAnimationStyled
+			progress
+			animationDuration
 			className={classnames(
 				"pointer-events-none fixed top-0 left-0 z-50 h-1 w-full bg-red-400 transition-opacity ease-linear",
 				isFinished ? "opacity-0" : "opacity-100"
