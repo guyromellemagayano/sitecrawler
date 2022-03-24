@@ -52,8 +52,11 @@ export const useSiteSelection = () => {
 
 	// Handle site selection on click
 	const handleSiteSelectOnClick = useCallback(async (id) => {
+		const pageExclusions = ["settings", "add-new-site", "audit-logs"];
+		const page = pageExclusions.find((page) => asPath.includes(page));
+
 		return id
-			? asPath.includes("settings") || asPath.includes("add-new-site") || asPath === DashboardSitesLink
+			? page || asPath === DashboardSitesLink
 				? push(DashboardSitesLink + id + "/")
 				: push({
 						query: {
