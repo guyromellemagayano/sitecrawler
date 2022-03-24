@@ -9,7 +9,7 @@ import {
 	UserApiEndpoint
 } from "@constants/ApiEndpoints";
 import AppSeo from "@constants/AppSeo";
-import { ComponentReadyInterval, NoInterval, RevalidationInterval } from "@constants/GlobalValues";
+import { ComponentReadyInterval, RevalidationInterval } from "@constants/GlobalValues";
 import { DashboardSlug, ScanSlug, SiteImageSlug, SiteLinkSlug, SitePageSlug } from "@constants/PageLinks";
 import { isProd } from "@constants/ServerEnv";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -39,7 +39,7 @@ import LogRocket from "logrocket";
 import setupLogRocketReact from "logrocket-react";
 import { DefaultSeo } from "next-seo";
 import { useRouter } from "next/router";
-import { createContext, useEffect, useMemo, useState } from "react";
+import { createContext, useMemo, useState } from "react";
 
 // Font Awesome
 library.add(fab);
@@ -81,7 +81,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	const { user, errorUser, validatingUser } = useUser(UserApiEndpoint);
 
 	// Handle component loading
-	useEffect(() => {
+	useMemo(() => {
 		if (isReady) {
 			// LogRocket setup
 			if (isProd) {
@@ -116,7 +116,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [isReady, user, asPath]);
 
 	// Custom API endpoint states that rely on `user` value
-	useEffect(() => {
+	useMemo(() => {
 		if (isUserReady) {
 			setCustomSitesApiEndpoint(SitesApiEndpoint);
 			setCustomStripePromiseApiEndpoint(StripePromiseApiEndpoint);
@@ -168,8 +168,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 
 	// `sites` SWR hook
 	const { sites, errorSites, validatingSites } = useSites(customSitesApiEndpoint, {
-		refreshInterval: (e) =>
-			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
+		refreshInterval: RevalidationInterval
 	});
 
 	// console.log("sites", sites);
@@ -181,7 +180,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	const queryImageId = query?.imageId ? handleConversionStringToNumber(query.imageId) : null;
 
 	// Custom `siteId` SWR hook
-	useEffect(() => {
+	useMemo(() => {
 		const verifiedSiteId = sites?.data?.results?.find((site) => site.id === querySiteId) ? querySiteId : null;
 
 		sites && isUserReady && verifiedSiteId
@@ -193,8 +192,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 
 	// `siteId` SWR hook
 	const { siteId, errorSiteId, validatingSiteId } = useSiteId(customSitesIdApiEndpoint, {
-		refreshInterval: (e) =>
-			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
+		refreshInterval: RevalidationInterval
 	});
 
 	// console.log("siteId", siteId);
@@ -233,8 +231,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 		selectedSiteRef,
 		validatingScan
 	} = useScan(customScanApiEndpoint, {
-		refreshInterval: (e) =>
-			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
+		refreshInterval: RevalidationInterval
 	});
 
 	// console.log("scan", scan);
@@ -248,8 +245,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 
 	// `stats` SWR hook
 	const { stats, errorStats, validatingStats } = useStats(customStatsApiEndpoint, {
-		refreshInterval: (e) =>
-			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
+		refreshInterval: RevalidationInterval
 	});
 
 	// console.log("stats", stats);

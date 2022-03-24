@@ -24,12 +24,14 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 	const { asPath, query } = useRouter();
 
 	// Custom context
-	const { isUserReady, customScanApiEndpoint } = useContext(SiteCrawlerAppContext);
+	const { isUserReady, customScanApiEndpoint, user } = useContext(SiteCrawlerAppContext);
 
 	// Custom variables
 	let scanApiEndpoint = "";
 	let queryString = "";
 	let filterQueryString = "";
+
+	const largePageSizeThreshold = user?.data?.large_page_size_threshold ?? null;
 
 	// Site `scan` SWR hook
 	const { scanObjId } = useScan(customScanApiEndpoint);
@@ -154,6 +156,18 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 			: `?status=${query.tls_stylesheets}`
 		: "";
 
+	const sizeTotalMaxQuery = query?.size_total_max
+		? scanApiEndpoint.includes("?")
+			? `&size_total_max=${query.size_total_max}`
+			: `?size_total_max=${query.size_total_max}`
+		: "";
+
+	const sizeTotalMinQuery = query?.size_total_min
+		? scanApiEndpoint.includes("?")
+			? `&size_total_min=${query.size_total_min}`
+			: `?size_total_min=${query.size_total_min}`
+		: "";
+
 	// Images
 	const tlsStatusQuery = query?.tls_status
 		? scanApiEndpoint.includes("?")
@@ -208,6 +222,8 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 	queryString += tlsImagesQuery;
 	queryString += tlsScriptsQuery;
 	queryString += tlsStylesheetsQuery;
+	queryString += sizeTotalMaxQuery;
+	queryString += sizeTotalMinQuery;
 	queryString += tlsStatusQuery;
 	queryString += tlsStatusNeqQuery;
 	queryString += missingAltsIsZeroQuery;

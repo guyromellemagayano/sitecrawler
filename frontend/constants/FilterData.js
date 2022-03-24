@@ -55,8 +55,8 @@ export const FilterData = () => {
 	const [allExceptTlsStatusNoneImagesFilter, setAllExceptTlsStatusNoneImagesFilter] = useState(false);
 	const [allExceptTlsStatusOkImagesFilter, setAllExceptTlsStatusOkImagesFilter] = useState(false);
 	const [allExceptTlsStatusErrorImagesFilter, setAllExceptTlsStatusErrorImagesFilter] = useState(false);
-	const [noMissingAltsFilter, setNoMissingAltsFilter] = useState(false);
-	const [missingAltsFilter, setMissingAltsFilter] = useState(false);
+	const [noMissingAltsImagesFilter, setNoMissingAltsImagesFilter] = useState(false);
+	const [missingAltsImagesFilter, setMissingAltsImagesFilter] = useState(false);
 
 	// Translations
 	const { t } = useTranslation("filters");
@@ -477,13 +477,13 @@ export const FilterData = () => {
 	};
 	const noMissingAltsImagesData = {
 		label: noMissingAltsText,
-		checked: noMissingAltsFilter,
+		checked: noMissingAltsImagesFilter,
 		value: "noMissingAltsImages",
 		type: "images"
 	};
 	const missingAltsImagesData = {
 		label: missingAltsText,
-		checked: missingAltsFilter,
+		checked: missingAltsImagesFilter,
 		value: "missingAltsImages",
 		type: "images"
 	};
@@ -622,9 +622,9 @@ export const FilterData = () => {
 		setAllExceptTlsStatusOkImagesFilter,
 		allExceptTlsStatusErrorImagesFilter,
 		setAllExceptTlsStatusErrorImagesFilter,
-		noMissingAltsFilter,
-		setNoMissingAltsFilter,
-		missingAltsFilter,
-		setMissingAltsFilter
+		noMissingAltsImagesFilter,
+		setNoMissingAltsImagesFilter,
+		missingAltsImagesFilter,
+		setMissingAltsImagesFilter
 	};
 };

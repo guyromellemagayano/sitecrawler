@@ -35,4 +35,7 @@ const HowToSetupSkeleton = () => {
 	return <MemoizedSkeletonEntries str={skeletonEntry} limit={skeletonLimit} />;
 };
 
+/**
+ * Memoized custom `HowToSetupSkeleton` component
+ */
 export const MemoizedHowToSetupSkeleton = memo(HowToSetupSkeleton);

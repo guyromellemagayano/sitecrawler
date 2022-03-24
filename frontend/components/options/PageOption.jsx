@@ -1,6 +1,7 @@
 import { MemoizedFilter } from "@components/filters";
 import { MemoizedSiteVerifyErrorModal } from "@components/modals/SiteVerifyErrorModal";
 import { MemoizedUpgradeErrorModal } from "@components/modals/UpgradeErrorModal";
+import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import { RedirectInterval } from "@constants/GlobalValues";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DocumentTextIcon, ExternalLinkIcon, LinkIcon } from "@heroicons/react/outline";
@@ -26,12 +27,13 @@ import "react-loading-skeleton/dist/skeleton.css";
 /**
  * Custom function to render the `PageOption` component
  *
+ * @param {boolean} isOverview
  * @param {boolean} isImages
  * @param {boolean} isLinks
  * @param {boolean} isPages
  * @param {boolean} isSites
  */
-const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSites = false }) => {
+const PageOption = ({ isOverview = false, isImages = false, isLinks = false, isPages = false, isSites = false }) => {
 	const [isDownloading, setIsDownloading] = useState(false);
 
 	// Translations
@@ -95,9 +97,11 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 	const { images } = useImages(scanApiEndpoint);
 
 	// Custom variables
+
 	const disableLocalTime = user?.data?.settings?.disableLocalTime ?? false;
 	const permissions = user?.data?.permissions ?? null;
 	const siteIdVerified = siteId?.data?.verified ?? null;
+	const currentSiteId = siteId?.data?.id ?? null;
 	const siteName = siteId?.data?.name ?? null;
 	const siteUrl = siteId?.data?.url ?? null;
 	const scanCount = scan?.data?.count ?? null;
@@ -111,6 +115,8 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 	const imagesCount = images?.data?.count ?? null;
 	const imagesResults = images?.data?.results ?? null;
 	const previousScanFinishedAt = previousScan?.finished_at ?? null;
+
+	let handleCrawlEndpoint = SitesApiEndpoint + currentSiteId;
 
 	const calendar = require("dayjs/plugin/calendar");
 	const timezone = require("dayjs/plugin/timezone");
@@ -274,7 +280,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 											: noAvailableImagesText}
 									</span>
 								</>
-							) : (
+							) : isComponentReady && isOverview ? null : (
 								<>
 									<Skeleton duration={2} width={20} height={20} className="flex-shrink-0" />
 									<Skeleton duration={2} width={60} height={20} />
@@ -285,9 +291,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 
 					{!isSites ? (
 						<div className="mt-4 flex md:mt-0 md:ml-4">
-							{isComponentReady &&
-							(linksCount || sitesCount || pagesCount || imagesCount) &&
-							(isCrawlStarted || !isCrawlStarted || isCrawlFinished || !isCrawlFinished) ? (
+							{isComponentReady && (isCrawlStarted || !isCrawlStarted || isCrawlFinished || !isCrawlFinished) ? (
 								permissions &&
 								permissions?.includes("can_start_scan") &&
 								permissions?.includes("can_see_pages") &&
@@ -298,11 +302,11 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 										<button
 											type="button"
 											disabled={(isCrawlStarted && !isCrawlFinished) || isProcessing}
-											onClick={handleCrawl}
+											onClick={(e) => handleCrawl(e, handleCrawlEndpoint)}
 											className={classnames(
 												"inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm ",
 												(isCrawlStarted && !isCrawlFinished) || isProcessing
-													? "cursor-not-allowed opacity-50"
+													? "cursor-not-allowed bg-green-500 opacity-50"
 													: "bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
 											)}
 										>
@@ -339,7 +343,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 								<Skeleton duration={2} width={150} height={40} />
 							)}
 
-							{!isSites ? (
+							{!isSites && !isOverview ? (
 								isComponentReady && (linksCount || sitesCount || pagesCount || imagesCount) ? (
 									<button
 										type="button"
@@ -371,9 +375,9 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 					<MemoizedFilter isSitesPagesFilter />
 				) : isImages ? (
 					<MemoizedFilter isSitesImagesFilter />
-				) : (
+				) : isSites ? (
 					<MemoizedFilter isSitesFilter />
-				)}
+				) : null}
 			</div>
 		</div>
 	);
@@ -382,6 +386,7 @@ const PageOption = ({ isImages = false, isLinks = false, isPages = false, isSite
 PageOption.propTypes = {
 	isImages: PropTypes.bool,
 	isLinks: PropTypes.bool,
+	isOverview: PropTypes.bool,
 	isPages: PropTypes.bool,
 	isSites: PropTypes.bool
 };
