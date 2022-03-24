@@ -39,7 +39,7 @@ import LogRocket from "logrocket";
 import setupLogRocketReact from "logrocket-react";
 import { DefaultSeo } from "next-seo";
 import { useRouter } from "next/router";
-import { createContext, useEffect, useMemo, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 // Font Awesome
 library.add(fab);
@@ -200,7 +200,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// console.log("siteId", siteId);
 
 	// Update `hasSiteLimitReached` state value
-	useMemo(() => {
+	useEffect(() => {
 		// Handle `hasSiteLimitReached` value
 		const userMaxSites = user?.data?.group?.max_sites ?? null;
 		const sitesCount = sites?.data?.count ?? null;
@@ -213,7 +213,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [sites, user]);
 
 	// Custom `scan` SWR hook
-	useMemo(() => {
+	useEffect(() => {
 		siteId ? setCustomScanApiEndpoint(customSitesIdApiEndpoint + ScanSlug) : setCustomScanApiEndpoint(null);
 
 		return { customScanApiEndpoint };
@@ -240,7 +240,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// console.log("scan", scan);
 
 	// Custom `stats` API endpoint state
-	useMemo(() => {
+	useEffect(() => {
 		scanObjId ? setCustomStatsApiEndpoint(customScanApiEndpoint + scanObjId) : setCustomStatsApiEndpoint(null);
 
 		return { customStatsApiEndpoint };
@@ -255,7 +255,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// console.log("stats", stats);
 
 	// Custom API endpoint states that rely on `siteId` and `scanObjId` values
-	useMemo(() => {
+	useEffect(() => {
 		if (user) {
 			const permissions = user?.data?.permissions ?? null;
 
@@ -305,7 +305,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// console.log("images", images);
 
 	// Custom `linkId` SWR hook
-	useMemo(() => {
+	useEffect(() => {
 		const verifiedLinkId = queryLinkId ? links?.data?.results?.find((link) => link.id === queryLinkId) ?? null : null;
 
 		links && isUserReady && verifiedLinkId
@@ -321,7 +321,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// console.log("linkId", linkId);
 
 	// Custom `pageId` SWR hook
-	useMemo(() => {
+	useEffect(() => {
 		const verifiedPageId = queryPageId ? pages?.data?.results?.find((page) => page.id === queryPageId) ?? null : null;
 
 		pages && isUserReady && verifiedPageId
@@ -337,7 +337,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// console.log("pageId", pageId);
 
 	// Custom `imageId` API endpoint
-	useMemo(() => {
+	useEffect(() => {
 		const verifiedImageId = queryImageId
 			? images?.data?.results?.find((image) => image.id === queryImageId) ?? null
 			: null;
