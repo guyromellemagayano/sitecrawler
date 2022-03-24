@@ -165,7 +165,7 @@ const VerifyUrlStepForm = ({ siteData = null, sid = null, step = null, verified 
 								<>
 									{state?.isVerifyUrlStep && state?.responses?.length > 0 ? (
 										<div className="sm:col-span-6">
-											<div className="relative mt-1">
+											<div className="relative my-1">
 												{state.responses.map((value, key) => {
 													// Alert Messsages
 													const responseText = value.responseText;

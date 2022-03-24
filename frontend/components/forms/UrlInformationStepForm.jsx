@@ -358,13 +358,11 @@ const UrlInformationStepForm = (props) => {
 										id="sitename"
 										type="text"
 										name="sitename"
-										disabled={isSubmitting || disableForm || Object.keys(errors).length > 0}
+										disabled={isSubmitting || disableForm}
 										placeholder={formSiteNamePlaceholder}
 										className={classnames(
 											"block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
-											isSubmitting || disableForm || Object.keys(errors).length > 0
-												? "cursor-not-allowed bg-gray-300 opacity-50"
-												: null,
+											isSubmitting || disableForm ? "cursor-not-allowed bg-gray-300 opacity-50" : null,
 											errors.sitename ? "border-red-300" : "border-gray-300"
 										)}
 										aria-describedby="sitename"
@@ -399,12 +397,7 @@ const UrlInformationStepForm = (props) => {
 													"h-full rounded-md border-transparent bg-transparent py-0 pl-3 pr-7 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
 													edit && step === 1 && sid && !verified ? "cursor-not-allowed bg-gray-300 opacity-50" : null
 												)}
-												disabled={
-													isSubmitting ||
-													disableForm ||
-													Object.keys(errors).length > 0 ||
-													(edit && step === 1 && sid && !verified)
-												}
+												disabled={isSubmitting || disableForm || (edit && step === 1 && sid && !verified)}
 												onChange={handleChange}
 												onBlur={handleBlur}
 												value={edit && step === 1 && sid && !verified ? siteUrlProtocol : values.siteurlprotocol}
@@ -418,18 +411,10 @@ const UrlInformationStepForm = (props) => {
 											id="siteurl"
 											type="text"
 											name="siteurl"
-											disabled={
-												isSubmitting ||
-												disableForm ||
-												Object.keys(errors).length > 0 ||
-												(edit && step === 1 && sid && !verified)
-											}
+											disabled={isSubmitting || disableForm || (edit && step === 1 && sid && !verified)}
 											className={classnames(
 												"block w-full rounded-md border-gray-300 pl-24 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
-												(edit && step === 1 && sid && !verified) ||
-													isSubmitting ||
-													disableForm ||
-													Object.keys(errors).length > 0
+												(edit && step === 1 && sid && !verified) || isSubmitting || disableForm
 													? "cursor-not-allowed bg-gray-300 text-gray-500 opacity-50"
 													: null,
 												errors.siteurl ? "border-red-300" : "border-gray-300"
@@ -480,12 +465,10 @@ const UrlInformationStepForm = (props) => {
 								{isComponentReady ? (
 									<button
 										type="submit"
-										disabled={
-											isSubmitting || disableForm || Object.keys(errors).length > 0 || !urlRegex.test(values.siteurl)
-										}
+										disabled={isSubmitting || disableForm || !urlRegex.test(values.siteurl)}
 										className={classnames(
 											"relative mt-3 inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium leading-5 text-white sm:mt-0",
-											isSubmitting || disableForm || Object.keys(errors).length > 0 || !urlRegex.test(values.siteurl)
+											isSubmitting || disableForm || !urlRegex.test(values.siteurl)
 												? "cursor-not-allowed bg-indigo-300 opacity-50"
 												: "hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 										)}
