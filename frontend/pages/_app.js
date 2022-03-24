@@ -9,7 +9,7 @@ import {
 	UserApiEndpoint
 } from "@constants/ApiEndpoints";
 import AppSeo from "@constants/AppSeo";
-import { ComponentReadyInterval, NoInterval, RevalidationInterval } from "@constants/GlobalValues";
+import { ComponentReadyInterval, RevalidationInterval } from "@constants/GlobalValues";
 import { DashboardSlug, ScanSlug, SiteImageSlug, SiteLinkSlug, SitePageSlug } from "@constants/PageLinks";
 import { isProd } from "@constants/ServerEnv";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -168,8 +168,9 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 
 	// `sites` SWR hook
 	const { sites, errorSites, validatingSites } = useSites(customSitesApiEndpoint, {
-		refreshInterval: (e) =>
-			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
+		// refreshInterval: (e) =>
+		// 	e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
+		refreshInterval: RevalidationInterval
 	});
 
 	// console.log("sites", sites);
@@ -193,8 +194,9 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 
 	// `siteId` SWR hook
 	const { siteId, errorSiteId, validatingSiteId } = useSiteId(customSitesIdApiEndpoint, {
-		refreshInterval: (e) =>
-			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
+		// refreshInterval: (e) =>
+		// 	e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
+		refreshInterval: RevalidationInterval
 	});
 
 	// console.log("siteId", siteId);
@@ -233,8 +235,9 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 		selectedSiteRef,
 		validatingScan
 	} = useScan(customScanApiEndpoint, {
-		refreshInterval: (e) =>
-			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
+		// refreshInterval: (e) =>
+		// 	e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
+		refreshInterval: RevalidationInterval
 	});
 
 	// console.log("scan", scan);
@@ -248,8 +251,9 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 
 	// `stats` SWR hook
 	const { stats, errorStats, validatingStats } = useStats(customStatsApiEndpoint, {
-		refreshInterval: (e) =>
-			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
+		// refreshInterval: (e) =>
+		// 	e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
+		refreshInterval: RevalidationInterval
 	});
 
 	// console.log("stats", stats);
