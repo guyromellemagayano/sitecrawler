@@ -213,7 +213,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [sites, user]);
 
 	// Custom `scan` SWR hook
-	useEffect(() => {
+	useMemo(() => {
 		siteId ? setCustomScanApiEndpoint(customSitesIdApiEndpoint + ScanSlug) : setCustomScanApiEndpoint(null);
 
 		return { customScanApiEndpoint };
@@ -240,7 +240,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// console.log("scan", scan);
 
 	// Custom `stats` API endpoint state
-	useEffect(() => {
+	useMemo(() => {
 		scanObjId ? setCustomStatsApiEndpoint(customScanApiEndpoint + scanObjId) : setCustomStatsApiEndpoint(null);
 
 		return { customStatsApiEndpoint };
@@ -255,7 +255,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// console.log("stats", stats);
 
 	// Custom API endpoint states that rely on `siteId` and `scanObjId` values
-	useEffect(() => {
+	useMemo(() => {
 		if (user) {
 			const permissions = user?.data?.permissions ?? null;
 
@@ -305,7 +305,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// console.log("images", images);
 
 	// Custom `linkId` SWR hook
-	useEffect(() => {
+	useMemo(() => {
 		const verifiedLinkId = queryLinkId ? links?.data?.results?.find((link) => link.id === queryLinkId) ?? null : null;
 
 		links && isUserReady && verifiedLinkId
@@ -321,7 +321,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// console.log("linkId", linkId);
 
 	// Custom `pageId` SWR hook
-	useEffect(() => {
+	useMemo(() => {
 		const verifiedPageId = queryPageId ? pages?.data?.results?.find((page) => page.id === queryPageId) ?? null : null;
 
 		pages && isUserReady && verifiedPageId
@@ -337,7 +337,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// console.log("pageId", pageId);
 
 	// Custom `imageId` API endpoint
-	useEffect(() => {
+	useMemo(() => {
 		const verifiedImageId = queryImageId
 			? images?.data?.results?.find((image) => image.id === queryImageId) ?? null
 			: null;
