@@ -83,7 +83,7 @@ tr div {
 }
 
 .apexcharts-legend-marker {
-	@apply mr-2.5;
+	@apply !mr-2.5;
 }
 
 .apexcharts-legend-series {
@@ -92,8 +92,16 @@ tr div {
 	-webkit-tap-highlight-color: transparent;
 }
 
-.apexcharts-legend-series::last-child {
+.apexcharts-legend-series {
 	@apply border-0 border-none;
+}
+
+.legend-val {
+	@apply text-gray-1300 font-semibold;
+}
+
+.legend-text {
+	@apply mr-3;
 }
 
 .rc-pagination {
@@ -260,8 +268,8 @@ tr div {
 	@apply h-6 border-0 border-none bg-transparent;
 }
 
-.rc-pagination-simple .rc-pagination-prev .rc-pagination-item-link::after,
-.rc-pagination-simple .rc-pagination-next .rc-pagination-item-link::after {
+.rc-pagination-simple .rc-pagination-prev .rc-pagination-item-link:after,
+.rc-pagination-simple .rc-pagination-next .rc-pagination-item-link:after {
 	@apply h-6 leading-6;
 }
 

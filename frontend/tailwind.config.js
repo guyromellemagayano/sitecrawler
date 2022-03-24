@@ -43,13 +43,6 @@ module.exports = {
 					1200: "#40a9ff"
 				}
 			},
-			width: {
-				600: "600px",
-				270: "270px"
-			},
-			height: {
-				530: "530px"
-			},
 			minHeight: {
 				page: "calc(100vh - 70px)"
 			},
