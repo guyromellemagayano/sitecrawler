@@ -196,7 +196,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	const { siteId, errorSiteId, validatingSiteId } = useSiteId(customSitesIdApiEndpoint, {
 		// refreshInterval: (e) =>
 		// 	e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
-		refresh
+		refreshInterval: RevalidationInterval
 	});
 
 	// console.log("siteId", siteId);
@@ -237,7 +237,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	} = useScan(customScanApiEndpoint, {
 		// refreshInterval: (e) =>
 		// 	e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
-		refresh
+		refreshInterval: RevalidationInterval
 	});
 
 	// console.log("scan", scan);
@@ -253,7 +253,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	const { stats, errorStats, validatingStats } = useStats(customStatsApiEndpoint, {
 		// refreshInterval: (e) =>
 		// 	e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
-		refresh
+		refreshInterval: RevalidationInterval
 	});
 
 	// console.log("stats", stats);
