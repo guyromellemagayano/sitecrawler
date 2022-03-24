@@ -39,7 +39,7 @@ export const useSiteSelection = () => {
 			if (querySiteId && sitesResults) {
 				const site = await sitesResults?.find((site) => site.id === querySiteId);
 
-				if (Object.keys(site)?.length > 0) {
+				if (site && Object.keys(site)?.length > 0) {
 					setSelectedSiteDetails(site);
 				} else {
 					setSelectedSiteDetails(null);
