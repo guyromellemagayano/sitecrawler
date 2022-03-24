@@ -60,10 +60,6 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 
 	const typeString = query?.type ? (Array.isArray(query?.type) ? query.type.join("&type=") : query.type) : "";
 
-	if (typeof window !== "undefined") {
-		filterQueryString = new URLSearchParams(window.location.search);
-	}
-
 	// Sites
 	const verifiedQuery = query?.verified
 		? scanApiEndpoint.includes("?")
@@ -72,19 +68,24 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 		: "";
 
 	// Links
-	const statusNeqQuery = query?.status__neq
-		? scanApiEndpoint.includes("?")
-			? `&status__neq=${query.status__neq}`
-			: `?status__neq=${query.status__neq}`
-		: "";
-
 	const statusQuery = query?.status
 		? scanApiEndpoint.includes("?")
 			? `&status=${query.status}`
 			: `?status=${query.status}`
 		: "";
 
+	const statusNeqQuery = query?.status__neq
+		? scanApiEndpoint.includes("?")
+			? `&status__neq=${query.status__neq}`
+			: `?status__neq=${query.status__neq}`
+		: "";
+
 	const typeQuery = typeString ? (scanApiEndpoint.includes("?") ? `&type=${typeString}` : `?type=${typeString}`) : "";
+	const typeNeqQuery = typeString
+		? scanApiEndpoint.includes("?")
+			? `&type__neq=${typeString}`
+			: `?type__neq=${typeString}`
+		: "";
 
 	// Pages
 	const hasTitleQuery = query?.has_title
@@ -153,6 +154,25 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 			: `?status=${query.tls_stylesheets}`
 		: "";
 
+	// Images
+	const tlsStatusQuery = query?.tls_status
+		? scanApiEndpoint.includes("?")
+			? `&tls_status=${query.tls_status}`
+			: `?tls_status=${query.tls_status}`
+		: "";
+
+	const tlsStatusNeqQuery = query?.tls_status__neq
+		? scanApiEndpoint.includes("?")
+			? `&tls_status__neq=${query.tls_status__neq}`
+			: `?tls_status__neq=${query.tls_status__neq}`
+		: "";
+
+	const missingAltsIsZeroQuery = query?.missing_alts__iszero
+		? scanApiEndpoint.includes("?")
+			? `&missing_alts__iszero=${query.missing_alts__iszero}`
+			: `?missing_alts__iszero=${query.missing_alts__iszero}`
+		: "";
+
 	// Pagination
 	const pageQuery = query?.page ? (scanApiEndpoint.includes("?") ? `&page=${query.page}` : `?page=${query.page}`) : "";
 
@@ -173,9 +193,10 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 		: `?ordering=${sortByNameAscending}`;
 
 	queryString += verifiedQuery;
-	queryString += statusNeqQuery;
 	queryString += statusQuery;
+	queryString += statusNeqQuery;
 	queryString += typeQuery;
+	queryString += typeNeqQuery;
 	queryString += hasTitleQuery;
 	queryString += hasDescriptionQuery;
 	queryString += hasH1FirstQuery;
@@ -187,11 +208,18 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 	queryString += tlsImagesQuery;
 	queryString += tlsScriptsQuery;
 	queryString += tlsStylesheetsQuery;
+	queryString += tlsStatusQuery;
+	queryString += tlsStatusNeqQuery;
+	queryString += missingAltsIsZeroQuery;
 	queryString += pageQuery;
 	queryString += searchQuery;
 	queryString += orderingQuery;
 
 	scanApiEndpoint += queryString;
+
+	if (typeof window !== "undefined") {
+		filterQueryString = new URLSearchParams(window.location.search);
+	}
 
 	// console.log(scanApiEndpoint);
 
