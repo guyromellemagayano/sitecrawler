@@ -39,7 +39,7 @@ import LogRocket from "logrocket";
 import setupLogRocketReact from "logrocket-react";
 import { DefaultSeo } from "next-seo";
 import { useRouter } from "next/router";
-import { createContext, useMemo, useState } from "react";
+import { createContext, useEffect, useMemo, useState } from "react";
 
 // Font Awesome
 library.add(fab);
@@ -80,30 +80,19 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// `user` SWR hook
 	const { user, errorUser, validatingUser } = useUser(UserApiEndpoint);
 
-	useMemo(() => {
-		if (isReady) {
-			// LogRocket setup
-			if (isProd) {
-				LogRocket.init(process.env.LOGROCKET_APP_ID);
-				setupLogRocketReact(LogRocket);
-			}
+	// LogRocket setup
+	useEffect(() => {
+		if (isProd) {
+			LogRocket.init(process.env.LOGROCKET_APP_ID);
+			setupLogRocketReact(LogRocket);
 		}
-	}, [isReady]);
+	}, []);
 
-	// Handle component loading
-	useMemo(() => {
-		if (!asPath.includes(DashboardSlug) && user && Math.round(user.status / 100) === 4 && user.data?.detail) {
-			setIsComponentReady(true);
-			setIsUserReady(false);
-		} else {
-			setIsComponentReady(true);
-			setIsUserReady(true);
-		}
-	}, [user]);
+	useEffect(() => (isReady ? setIsComponentReady(true) : setIsComponentReady(false)), [isReady]);
 
 	// Custom API endpoint states that rely on `user` value
-	useMemo(() => {
-		if (isUserReady) {
+	useEffect(() => {
+		if (asPath.includes(DashboardSlug) && user && Math.round(user.status / 100) === 2 && user.data?.detail) {
 			setCustomSitesApiEndpoint(SitesApiEndpoint);
 			setCustomStripePromiseApiEndpoint(StripePromiseApiEndpoint);
 			setCustomPaymentMethodsApiEndpoint(PaymentMethodApiEndpoint);
@@ -127,7 +116,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			customSubscriptionsApiEndpoint,
 			customCurrentSubscriptionApiEndpoint
 		};
-	}, [isUserReady]);
+	}, [asPath]);
 
 	// `stripePromise` SWR hook
 	const { stripePromise, errorStripePromise, validatingStripePromise } =
@@ -158,7 +147,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
 	});
 
-	// console.log("sites", sites);
+	console.log("sites", sites);
 
 	// Custom variables
 	const querySiteId = query?.siteId ? handleConversionStringToNumber(query.siteId) : null;
@@ -183,7 +172,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
 	});
 
-	// console.log("siteId", siteId);
+	console.log("siteId", siteId);
 
 	// Update `hasSiteLimitReached` state value
 	useMemo(() => {
@@ -225,13 +214,13 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
 	});
 
-	// console.log("scan", scan);
+	console.log("scan", scan);
 
 	// Custom `stats` API endpoint state
 	useMemo(() => {
 		const verifiedScanObjId = scan?.data?.results?.find((scan) => scan.id === scanObjId) ?? null;
 
-		// console.log(scanObjId, scan, customScanApiEndpoint);
+		console.log(scanObjId, scan, customScanApiEndpoint);
 
 		verifiedScanObjId && Object.keys(verifiedScanObjId)?.length > 0 && customScanApiEndpoint
 			? setCustomStatsApiEndpoint(customScanApiEndpoint + scanObjId)
@@ -246,7 +235,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
 	});
 
-	// console.log("stats", stats);
+	console.log("stats", stats);
 
 	// Custom API endpoint states that rely on `siteId` and `scanObjId` values
 	useMemo(() => {
@@ -287,7 +276,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
 	});
 
-	// console.log("links", links);
+	console.log("links", links);
 
 	// `pages` SWR hook
 	const { pages, errorPages, validatingPages } = usePages(customPagesApiEndpoint, {
@@ -295,7 +284,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
 	});
 
-	// console.log("pages", pages);
+	console.log("pages", pages);
 
 	// `images` SWR hook
 	const { images, errorImages, validatingImages } = useImages(customImagesApiEndpoint, {
@@ -303,7 +292,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
 	});
 
-	// console.log("images", images);
+	console.log("images", images);
 
 	// Custom `linkId` SWR hook
 	useMemo(() => {
@@ -319,7 +308,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// `linkId` SWR hook
 	const { linkId, errorLinkId, validatingLinkId } = useLinkId(customLinksIdApiEndpoint);
 
-	// console.log("linkId", linkId);
+	console.log("linkId", linkId);
 
 	// Custom `pageId` SWR hook
 	useMemo(() => {
@@ -335,7 +324,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// `pageId` SWR hook
 	const { pageId, errorPageId, validatingPageId } = usePageId(customPagesIdApiEndpoint);
 
-	// console.log("pageId", pageId);
+	console.log("pageId", pageId);
 
 	// Custom `imageId` API endpoint
 	useMemo(() => {
@@ -351,7 +340,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// `imageId` SWR hook
 	const { imageId, errorImageId, validatingImageId } = useImageId(customImagesIdApiEndpoint);
 
-	// console.log("imageId", imageId);
+	console.log("imageId", imageId);
 
 	// Use the layout defined at the page level, if available
 	const getLayout = Component.getLayout || ((page) => page);

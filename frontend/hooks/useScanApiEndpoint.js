@@ -25,7 +25,7 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 	const { asPath, query } = useRouter();
 
 	// Custom context
-	const { isUserReady, customScanApiEndpoint, user } = useContext(SiteCrawlerAppContext);
+	const { customScanApiEndpoint, user } = useContext(SiteCrawlerAppContext);
 
 	// Custom variables
 	let scanApiEndpoint = "";
