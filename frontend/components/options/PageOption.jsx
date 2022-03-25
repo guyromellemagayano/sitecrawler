@@ -72,7 +72,6 @@ const PageOption = ({ isOverview = false, isImages = false, isLinks = false, isP
 	// Custom context
 	const {
 		isComponentReady,
-		isUserReady,
 		querySiteId,
 		user,
 		siteId,

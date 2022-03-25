@@ -52,16 +52,14 @@ const SitesData = ({ site = null }) => {
 	let handleCrawlEndpoint = SitesApiEndpoint + siteId;
 
 	// Custom context
-	const { isComponentReady, user, isUserReady } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady, user } = useContext(SiteCrawlerAppContext);
 
 	// Custom `scan` API endpoint
 	useMemo(() => {
-		isUserReady && siteId
-			? setCustomScanApiEndpoint(SitesApiEndpoint + siteId + ScanSlug)
-			: setCustomScanApiEndpoint(null);
+		siteId ? setCustomScanApiEndpoint(SitesApiEndpoint + siteId + ScanSlug) : setCustomScanApiEndpoint(null);
 
 		return { customScanApiEndpoint };
-	}, [isUserReady, siteId]);
+	}, [siteId]);
 
 	// SWR hooks
 	const { scan, previousScan, isCrawlStarted, isCrawlFinished, handleCrawl, selectedSiteRef } = useScan(
