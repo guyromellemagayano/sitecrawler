@@ -27,7 +27,7 @@ const SiteMenu = () => {
 	const { asPath, query, prefetch } = useRouter();
 
 	// Custom context
-	const { isComponentReady, isUserReady, stats, scan, siteId, querySiteId } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady, stats, scan, siteId, querySiteId } = useContext(SiteCrawlerAppContext);
 
 	// Custom variables
 	const scanCount = scan?.data?.count ?? 0;
