@@ -37,11 +37,11 @@ const IssuesStats = () => {
 			count: isComponentReady && stats ? linkErrors : <Skeleton duration={2} width={108} height={36} />
 		},
 		{
-			title: isComponentReady && stats ? totalPageIssuesText : <Skeleton duration={2} width={108} height={36} />,
+			title: isComponentReady && stats ? totalPageIssuesText : <Skeleton duration={2} width={108} height={20} />,
 			count: isComponentReady && stats ? pageErrors : <Skeleton duration={2} width={108} height={36} />
 		},
 		{
-			title: isComponentReady && stats ? totalImageIssuesText : <Skeleton duration={2} width={108} height={36} />,
+			title: isComponentReady && stats ? totalImageIssuesText : <Skeleton duration={2} width={108} height={20} />,
 			count: isComponentReady && stats ? imageErrors : <Skeleton duration={2} width={108} height={36} />
 		}
 	];
