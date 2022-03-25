@@ -155,7 +155,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 		refreshInterval: RevalidationInterval
 	});
 
-	console.log("sites", sites);
+	console.log("sites", sites, customSitesApiEndpoint);
 
 	// Custom variables
 	const querySiteId = query?.siteId ? handleConversionStringToNumber(query.siteId) : null;
@@ -179,7 +179,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 		refreshInterval: RevalidationInterval
 	});
 
-	console.log("siteId", siteId);
+	console.log("siteId", siteId, customSitesIdApiEndpoint);
 
 	// Update `hasSiteLimitReached` state value
 	useEffect(() => {
@@ -220,7 +220,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 		refreshInterval: RevalidationInterval
 	});
 
-	console.log("scan", scan);
+	console.log("scan", scan, customScanApiEndpoint);
 
 	// Custom `stats` API endpoint state
 	useEffect(() => {
@@ -240,7 +240,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 		refreshInterval: RevalidationInterval
 	});
 
-	console.log("stats", stats);
+	console.log("stats", stats, customStatsApiEndpoint);
 
 	// Custom API endpoint states that rely on `siteId` and `scanObjId` values
 	useEffect(() => {
@@ -280,21 +280,21 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 		refreshInterval: RevalidationInterval
 	});
 
-	console.log("links", links);
+	console.log("links", links, customLinksApiEndpoint);
 
 	// `pages` SWR hook
 	const { pages, errorPages, validatingPages } = usePages(customPagesApiEndpoint, {
 		refreshInterval: RevalidationInterval
 	});
 
-	console.log("pages", pages);
+	console.log("pages", pages, customPagesApiEndpoint);
 
 	// `images` SWR hook
 	const { images, errorImages, validatingImages } = useImages(customImagesApiEndpoint, {
 		refreshInterval: RevalidationInterval
 	});
 
-	console.log("images", images);
+	console.log("images", images, customImagesApiEndpoint);
 
 	// Custom `linkId` SWR hook
 	useEffect(() => {
@@ -310,7 +310,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// `linkId` SWR hook
 	const { linkId, errorLinkId, validatingLinkId } = useLinkId(customLinksIdApiEndpoint);
 
-	console.log("linkId", linkId);
+	// console.log("linkId", linkId);
 
 	// Custom `pageId` SWR hook
 	useEffect(() => {
@@ -326,7 +326,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// `pageId` SWR hook
 	const { pageId, errorPageId, validatingPageId } = usePageId(customPagesIdApiEndpoint);
 
-	console.log("pageId", pageId);
+	// console.log("pageId", pageId);
 
 	// Custom `imageId` API endpoint
 	useEffect(() => {
@@ -342,7 +342,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// `imageId` SWR hook
 	const { imageId, errorImageId, validatingImageId } = useImageId(customImagesIdApiEndpoint);
 
-	console.log("imageId", imageId);
+	// console.log("imageId", imageId);
 
 	// Use the layout defined at the page level, if available
 	const getLayout = Component.getLayout || ((page) => page);
