@@ -1,13 +1,13 @@
 import { MemoizedAlert } from "@components/alerts";
 import { MemoizedNotification } from "@components/notifications";
 import { MemoizedAddSite } from "@components/sites/AddSite";
-import { DashboardSitesLink, DashboardSlug } from "@constants/PageLinks";
+import { DashboardSlug } from "@constants/PageLinks";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import { memo, useContext, useEffect } from "react";
+import { memo, useContext } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import { MemoizedSidebarLayout } from "./components/Sidebar";
 
@@ -99,16 +99,8 @@ export const MemoizedDashboardLayout = memo(DashboardLayout);
  * @param {any} children
  */
 export const StaticLayout = ({ children }) => {
-	// Router
-	const { prefetch } = useRouter();
-
 	// Custom context
 	const { state } = useContext(SiteCrawlerAppContext);
-
-	useEffect(() => {
-		// Prefetch sites page for faster loading
-		prefetch(DashboardSitesLink);
-	}, []);
 
 	return (
 		<>

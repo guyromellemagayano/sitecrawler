@@ -8,8 +8,7 @@ import { SiteCrawlerAppContext } from "@pages/_app";
 import AppAxiosInstance from "@utils/axios";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
-import { useRouter } from "next/router";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { SWRConfig } from "swr";
 
 // Pre-render `user` data with NextJS SSR. Redirect to a login page if current user is not allowed to access that page (403 Forbidden) or redirect to the sites dashboard page if the user is still currently logged in (200 OK).
@@ -45,13 +44,6 @@ const SignupAuth = () => {
 	// Translations
 	const { t } = useTranslation("signup");
 	const completeSignupText = t("completeSignup");
-
-	// Router
-	const { prefetch } = useRouter();
-
-	useEffect(() => {
-		prefetch(DashboardSitesLink);
-	}, []);
 
 	// Custom context
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);

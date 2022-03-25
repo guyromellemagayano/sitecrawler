@@ -10,7 +10,7 @@ import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { memo, useContext, useEffect } from "react";
+import { memo, useContext } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -24,7 +24,7 @@ const SiteMenu = () => {
 	const appLogo = t("appLogo");
 
 	// Router
-	const { asPath, query, prefetch } = useRouter();
+	const { asPath, query } = useRouter();
 
 	// Custom context
 	const { isComponentReady, stats, scan, siteId, querySiteId } = useContext(SiteCrawlerAppContext);
@@ -37,11 +37,6 @@ const SiteMenu = () => {
 
 	// Sidebar menus
 	const { SiteSidebarMenus } = SidebarMenus();
-
-	// Prefetch page
-	useEffect(() => {
-		prefetch(`/dashboard/sites/${querySiteId}/`);
-	}, []);
 
 	return (
 		<Scrollbars autoHide renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />} universal>

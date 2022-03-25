@@ -1,10 +1,10 @@
 import { MemoizedBreadcrumbs } from "@components/breadcrumbs";
-import { LoginLink, SubscriptionPlansSlug } from "@constants/PageLinks";
+import { SubscriptionPlansSlug } from "@constants/PageLinks";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import { memo, useContext, useEffect } from "react";
+import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { MemoizedFooter } from "./Footer";
@@ -17,14 +17,10 @@ import { MemoizedFooter } from "./Footer";
  */
 const PageLayout = ({ children, pageTitle = null }) => {
 	// Router
-	const { asPath, prefetch } = useRouter();
+	const { asPath } = useRouter();
 
 	// Custom context
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
-
-	useEffect(() => {
-		prefetch(LoginLink);
-	}, []);
 
 	return (
 		<section className="flex min-h-page flex-col flex-nowrap items-start justify-start px-12 py-8">
