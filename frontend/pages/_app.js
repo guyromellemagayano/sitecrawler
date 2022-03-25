@@ -137,7 +137,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			customSubscriptionsApiEndpoint,
 			customCurrentSubscriptionApiEndpoint
 		};
-	}, [isUserReady]);
+	});
 
 	// `stripePromise` SWR hook
 	const { stripePromise, errorStripePromise, validatingStripePromise } =
@@ -196,7 +196,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// console.log("siteId", siteId);
 
 	// Update `hasSiteLimitReached` state value
-	useMemo(() => {
+	useEffect(() => {
 		// Handle `hasSiteLimitReached` value
 		const userMaxSites = user?.data?.group?.max_sites ?? null;
 		const sitesCount = sites?.data?.count ?? null;
@@ -257,7 +257,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// console.log("stats", stats);
 
 	// Custom API endpoint states that rely on `siteId` and `scanObjId` values
-	useMemo(() => {
+	useEffect(() => {
 		if (user) {
 			const permissions = user?.data?.permissions ?? null;
 
