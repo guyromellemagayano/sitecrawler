@@ -9,7 +9,6 @@ import {
 	UserApiEndpoint
 } from "@constants/ApiEndpoints";
 import AppSeo from "@constants/AppSeo";
-import { RevalidationInterval } from "@constants/GlobalValues";
 import { DashboardSlug, ScanSlug, SiteImageSlug, SiteLinkSlug, SitePageSlug } from "@constants/PageLinks";
 import { isProd } from "@constants/ServerEnv";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -151,9 +150,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	);
 
 	// `sites` SWR hook
-	const { sites, errorSites, validatingSites } = useSites(customSitesApiEndpoint, {
-		refreshInterval: RevalidationInterval
-	});
+	const { sites, errorSites, validatingSites } = useSites(customSitesApiEndpoint);
 
 	console.log("sites", sites, customSitesApiEndpoint);
 
@@ -175,9 +172,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [sites, querySiteId, customSitesApiEndpoint]);
 
 	// `siteId` SWR hook
-	const { siteId, errorSiteId, validatingSiteId } = useSiteId(customSitesIdApiEndpoint, {
-		refreshInterval: RevalidationInterval
-	});
+	const { siteId, errorSiteId, validatingSiteId } = useSiteId(customSitesIdApiEndpoint);
 
 	console.log("siteId", siteId, customSitesIdApiEndpoint);
 
@@ -216,9 +211,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 		scanObjId,
 		selectedSiteRef,
 		validatingScan
-	} = useScan(customScanApiEndpoint, {
-		refreshInterval: RevalidationInterval
-	});
+	} = useScan(customScanApiEndpoint);
 
 	console.log("scan", scan, customScanApiEndpoint);
 
@@ -236,9 +229,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [scan, customScanApiEndpoint]);
 
 	// `stats` SWR hook
-	const { stats, errorStats, validatingStats } = useStats(customStatsApiEndpoint, {
-		refreshInterval: RevalidationInterval
-	});
+	const { stats, errorStats, validatingStats } = useStats(customStatsApiEndpoint);
 
 	console.log("stats", stats, customStatsApiEndpoint);
 
@@ -276,23 +267,17 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [stats, user, customStatsApiEndpoint]);
 
 	// `links` SWR hook
-	const { links, errorLinks, validatingLinks } = useLinks(customLinksApiEndpoint, {
-		refreshInterval: RevalidationInterval
-	});
+	const { links, errorLinks, validatingLinks } = useLinks(customLinksApiEndpoint);
 
 	console.log("links", links, customLinksApiEndpoint);
 
 	// `pages` SWR hook
-	const { pages, errorPages, validatingPages } = usePages(customPagesApiEndpoint, {
-		refreshInterval: RevalidationInterval
-	});
+	const { pages, errorPages, validatingPages } = usePages(customPagesApiEndpoint);
 
 	console.log("pages", pages, customPagesApiEndpoint);
 
 	// `images` SWR hook
-	const { images, errorImages, validatingImages } = useImages(customImagesApiEndpoint, {
-		refreshInterval: RevalidationInterval
-	});
+	const { images, errorImages, validatingImages } = useImages(customImagesApiEndpoint);
 
 	console.log("images", images, customImagesApiEndpoint);
 
