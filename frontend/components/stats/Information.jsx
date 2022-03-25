@@ -27,15 +27,15 @@ const InformationStats = () => {
 	const SectionTabs = [
 		{
 			title: totalLinksText,
-			count: isComponentReady ? linksCount > 0 ? linksCount : 0 : <Skeleton duration={2} width={36} height={36} />
+			count: isComponentReady && linksCount ? linksCount : <Skeleton duration={2} width={36} height={36} />
 		},
 		{
 			title: totalPagesText,
-			count: isComponentReady ? pagesCount > 0 ? pagesCount : 0 : <Skeleton duration={2} width={36} height={36} />
+			count: isComponentReady && pagesCount ? pagesCount : <Skeleton duration={2} width={36} height={36} />
 		},
 		{
 			title: totalImagesText,
-			count: isComponentReady ? imagesCount > 0 ? imagesCount : 0 : <Skeleton duration={2} width={36} height={36} />
+			count: isComponentReady && imagesCount ? imagesCount : <Skeleton duration={2} width={36} height={36} />
 		}
 	];
 

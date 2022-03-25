@@ -98,7 +98,7 @@ const OverviewStats = () => {
 								</dd>
 							</dl>
 						</div>
-					) : (
+					) : isComponentReady && permissions && !permissions?.includes("can_see_pages") ? null : (
 						<div className="py-3 sm:col-span-1">
 							<dl>
 								<dt className="text-sm font-medium leading-5 text-gray-500">
