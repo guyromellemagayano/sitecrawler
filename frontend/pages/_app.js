@@ -9,6 +9,7 @@ import {
 	UserApiEndpoint
 } from "@constants/ApiEndpoints";
 import AppSeo from "@constants/AppSeo";
+import { NoInterval, RevalidationInterval } from "@constants/GlobalValues";
 import { DashboardSlug, ScanSlug, SiteImageSlug, SiteLinkSlug, SitePageSlug } from "@constants/PageLinks";
 import { isProd } from "@constants/ServerEnv";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -38,7 +39,7 @@ import LogRocket from "logrocket";
 import setupLogRocketReact from "logrocket-react";
 import { DefaultSeo } from "next-seo";
 import { useRouter } from "next/router";
-import { createContext, useMemo, useState } from "react";
+import { createContext, useEffect, useMemo, useState } from "react";
 
 // Font Awesome
 library.add(fab);
@@ -77,41 +78,33 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	const { state, setConfig } = useNotificationMessage();
 
 	// `user` SWR hook
-	const { user, errorUser, validatingUser } = useUser(UserApiEndpoint);
+	const { user, errorUser, validatingUser } = useUser(UserApiEndpoint, {
+		refreshInterval: RevalidationInterval
+	});
 
-	// Handle component loading
-	useMemo(() => {
+	useEffect(() => {
 		if (isReady) {
 			// LogRocket setup
 			if (isProd) {
 				LogRocket.init(process.env.LOGROCKET_APP_ID);
 				setupLogRocketReact(LogRocket);
 			}
-
-			if (!asPath.includes(DashboardSlug)) {
-				// Handle `user` promise data
-				if (user && Math.round(user.status / 100) === 4 && user.data?.detail) {
-					setIsComponentReady(true);
-					setIsUserReady(false);
-				} else {
-					setIsComponentReady(false);
-					setIsUserReady(false);
-				}
-			} else {
-				// Handle `user` promise data
-				if (user && Math.round(user.status / 100) === 2 && !user.data?.detail) {
-					setIsComponentReady(true);
-					setIsUserReady(true);
-				} else {
-					setIsComponentReady(false);
-					setIsUserReady(false);
-				}
-			}
 		}
-	}, [isReady, user, asPath]);
+	}, [isReady]);
+
+	// Handle component loading
+	useEffect(() => {
+		if (!asPath.includes(DashboardSlug) && user && Math.round(user.status / 100) === 4 && user.data?.detail) {
+			setIsComponentReady(true);
+			setIsUserReady(false);
+		} else {
+			setIsComponentReady(true);
+			setIsUserReady(true);
+		}
+	}, [user, asPath]);
 
 	// Custom API endpoint states that rely on `user` value
-	useMemo(() => {
+	useEffect(() => {
 		if (isUserReady) {
 			setCustomSitesApiEndpoint(SitesApiEndpoint);
 			setCustomStripePromiseApiEndpoint(StripePromiseApiEndpoint);
@@ -162,7 +155,10 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	);
 
 	// `sites` SWR hook
-	const { sites, errorSites, validatingSites } = useSites(customSitesApiEndpoint);
+	const { sites, errorSites, validatingSites } = useSites(customSitesApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
+	});
 
 	// console.log("sites", sites);
 
@@ -184,7 +180,10 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [sites, querySiteId, customSitesApiEndpoint]);
 
 	// `siteId` SWR hook
-	const { siteId, errorSiteId, validatingSiteId } = useSiteId(customSitesIdApiEndpoint);
+	const { siteId, errorSiteId, validatingSiteId } = useSiteId(customSitesIdApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
+	});
 
 	// console.log("siteId", siteId);
 
@@ -223,7 +222,10 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 		scanObjId,
 		selectedSiteRef,
 		validatingScan
-	} = useScan(customScanApiEndpoint);
+	} = useScan(customScanApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
+	});
 
 	// console.log("scan", scan);
 
@@ -239,7 +241,10 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [scanObjId, scan, customScanApiEndpoint]);
 
 	// `stats` SWR hook
-	const { stats, errorStats, validatingStats } = useStats(customStatsApiEndpoint);
+	const { stats, errorStats, validatingStats } = useStats(customStatsApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
+	});
 
 	// console.log("stats", stats);
 
@@ -277,17 +282,26 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [stats, user, customStatsApiEndpoint]);
 
 	// `links` SWR hook
-	const { links, errorLinks, validatingLinks } = useLinks(customLinksApiEndpoint);
+	const { links, errorLinks, validatingLinks } = useLinks(customLinksApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
+	});
 
 	// console.log("links", links);
 
 	// `pages` SWR hook
-	const { pages, errorPages, validatingPages } = usePages(customPagesApiEndpoint);
+	const { pages, errorPages, validatingPages } = usePages(customPagesApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
+	});
 
 	// console.log("pages", pages);
 
 	// `images` SWR hook
-	const { images, errorImages, validatingImages } = useImages(customImagesApiEndpoint);
+	const { images, errorImages, validatingImages } = useImages(customImagesApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
+	});
 
 	// console.log("images", images);
 
