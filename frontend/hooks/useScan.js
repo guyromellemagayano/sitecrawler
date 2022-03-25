@@ -1,6 +1,6 @@
 import { handlePostMethod } from "@helpers/handleHttpMethods";
 import dayjs from "dayjs";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSWRConfig } from "swr";
 import { useMainSWRConfig } from "./useMainSWRConfig";
 import { useNotificationMessage } from "./useNotificationMessage";
@@ -14,11 +14,11 @@ import { useNotificationMessage } from "./useNotificationMessage";
  */
 export const useScan = (endpoint = null, options = null) => {
 	const [currentScan, setCurrentScan] = useState(null);
+	const [previousScan, setPreviousScan] = useState(null);
 	const [isCrawlFinished, setIsCrawlFinished] = useState(true);
 	const [isCrawlStarted, setIsCrawlStarted] = useState(false);
 	const [isProcessing, setIsProcessing] = useState(false);
-	const [previousScan, setPreviousScan] = useState(null);
-	const [scanObjId, setScanObjId] = useState(null);
+	const [scanObjId, setScanObjId] = useState(0);
 
 	// DayJS options
 	const calendar = require("dayjs/plugin/calendar");
@@ -96,30 +96,39 @@ export const useScan = (endpoint = null, options = null) => {
 	};
 
 	// Handle scan process
-	const handleScan = useCallback(() => {
-		if (scan) {
-			const previousScanResult =
-				scan?.data?.results?.find((result) => result.finished_at && result.force_https) ?? null;
-			const currentScanResult =
-				scan?.data?.results?.find((result) => result.finished_at == null && result.force_https == null) ?? null;
+	useEffect(() => {
+		const previousScanResult =
+			scan && Object.keys(scan)?.length > 0
+				? scan?.data?.results?.find((result) => result.finished_at !== null && result.force_https !== null)
+				: null;
+		const currentScanResult =
+			scan && Object.keys(scan)?.length > 0
+				? scan?.data?.results?.find((result) => result.finished_at == null && result.force_https == null)
+				: null;
 
-			setCurrentScan(currentScanResult);
-			setPreviousScan(previousScanResult);
+		currentScanResult && Object.keys(currentScanResult)?.length > 0
+			? setCurrentScan(currentScanResult)
+			: setCurrentScan(null);
 
-			// Set `scanObjId` state
-			(currentScan && previousScan) || (!currentScan && previousScan)
-				? setScanObjId(previousScan?.id)
-				: setScanObjId(currentScan?.id);
+		previousScanResult && Object.keys(previousScanResult)?.length > 0
+			? setPreviousScan(previousScanResult)
+			: setPreviousScan(null);
 
-			return { currentScan, previousScan, scanObjId };
-		}
+		const currentScanObjId =
+			(currentScanResult &&
+				Object.keys(currentScanResult)?.length > 0 &&
+				previousScanResult &&
+				Object.keys(previousScanResult)?.length > 0) ||
+			(!currentScanResult && previousScanResult && Object.keys(previousScanResult)?.length > 0)
+				? previousScanResult?.id
+				: currentScanResult?.id;
+
+		// Set `scanObjId` state
+		setScanObjId(currentScanObjId);
+
+		return { isCrawlStarted, isCrawlFinished, scanObjId };
 	}, [scan]);
 
-	useEffect(() => {
-		handleScan();
-	}, [handleScan]);
-
-	// Check currentScan
 	useEffect(() => {
 		currentScan && Object.keys(currentScan)?.length > 0
 			? (() => {
@@ -132,16 +141,16 @@ export const useScan = (endpoint = null, options = null) => {
 			  })();
 
 		return { isCrawlStarted, isCrawlFinished };
-	}, [currentScan]);
+	}, [currentScan, previousScan]);
 
 	return {
-		currentScan,
 		errorScan,
 		handleCrawl,
 		isCrawlFinished,
 		isCrawlStarted,
 		isProcessing,
 		previousScan,
+		currentScan,
 		scan,
 		scanObjId,
 		selectedSiteRef,

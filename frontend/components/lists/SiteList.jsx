@@ -63,7 +63,7 @@ const SiteList = ({ data = null }) => {
 	const fullCustomScanApiEndpoint = customScanApiEndpoint + customScanApiEndpointQuery;
 
 	// `scan` SWR hooks
-	const { scan, currentScan, previousScan, scanObjId } = useScan(fullCustomScanApiEndpoint, {
+	const { scan, isCrawlStarted, isCrawlFinished, scanObjId } = useScan(fullCustomScanApiEndpoint, {
 		refreshInterval: RevalidationInterval
 	});
 
@@ -102,17 +102,17 @@ const SiteList = ({ data = null }) => {
 				<div className="flex items-center space-x-3">
 					<span
 						aria-label={
-							siteVerified && !currentScan
+							siteVerified && !isCrawlStarted && isCrawlFinished
 								? "Verified"
-								: siteVerified && currentScan
-								? "Recrawling in Process"
+								: siteVerified && isCrawlStarted && !isCrawlFinished
+								? "Crawling in Process"
 								: "Not Verified"
 						}
 						className={classnames(
 							"inline-block h-2 w-2 flex-shrink-0 rounded-full",
-							siteVerified && !currentScan
+							siteVerified && !isCrawlStarted && isCrawlFinished
 								? "bg-green-400"
-								: siteVerified && currentScan
+								: siteVerified && isCrawlStarted && !isCrawlFinished
 								? "bg-yellow-400"
 								: "bg-red-400"
 						)}

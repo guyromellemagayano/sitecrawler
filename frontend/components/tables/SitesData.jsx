@@ -64,9 +64,12 @@ const SitesData = ({ site = null }) => {
 	}, [isUserReady, siteId]);
 
 	// SWR hooks
-	const { scan, currentScan, previousScan, handleCrawl, selectedSiteRef } = useScan(customScanApiEndpoint, {
-		refreshInterval: RevalidationInterval
-	});
+	const { scan, previousScan, isCrawlStarted, isCrawlFinished, handleCrawl, selectedSiteRef } = useScan(
+		customScanApiEndpoint,
+		{
+			refreshInterval: RevalidationInterval
+		}
+	);
 
 	// Custom `stats` API endpoint state
 	useMemo(() => {
@@ -166,7 +169,7 @@ const SitesData = ({ site = null }) => {
 						{isComponentReady ? (
 							<>
 								{siteVerified ? (
-									currentScan ? (
+									isCrawlStarted && !isCrawlFinished ? (
 										<span
 											aria-label="Recrawling in Process"
 											className="relative -left-3 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-yellow-400 leading-5"
@@ -223,7 +226,8 @@ const SitesData = ({ site = null }) => {
 										{siteVerified &&
 										permissions &&
 										permissions?.includes("can_start_scan") &&
-										!currentScan &&
+										!isCrawlStarted &&
+										isCrawlFinished &&
 										scanCount > 0 ? (
 											<button
 												type="button"
@@ -282,7 +286,7 @@ const SitesData = ({ site = null }) => {
 								) : (
 									dayjs.utc(previousScanFinishedAt).calendar(null, calendarStrings)
 								)
-							) : scanCount === 1 && currentScan ? (
+							) : scanCount === 1 && isCrawlStarted && !isCrawlFinished ? (
 								<span className="text-sm leading-5 text-gray-500">{siteCrawlingInProcessText}</span>
 							) : !disableLocalTime ? (
 								dayjs(previousScanFinishedAt).calendar(null, calendarStrings)

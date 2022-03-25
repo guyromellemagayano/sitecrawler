@@ -33,6 +33,7 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 	let filterQueryString = "";
 
 	const largePageSizeThreshold = user?.data?.large_page_size_threshold ?? null;
+	const permissions = user?.data?.permissions ?? null;
 
 	// Site `scan` SWR hook
 	const { scanObjId } = useScan(customScanApiEndpoint);
