@@ -106,28 +106,33 @@ export const useScan = (endpoint = null, options = null) => {
 			setCurrentScan(currentScanResult);
 			setPreviousScan(previousScanResult);
 
-			currentScan
-				? () => {
-						setIsCrawlStarted(true);
-						setIsCrawlFinished(false);
-				  }
-				: () => {
-						setIsCrawlStarted(false);
-						setIsCrawlFinished(true);
-				  };
-
 			// Set `scanObjId` state
 			(currentScan && previousScan) || (!currentScan && previousScan)
 				? setScanObjId(previousScan?.id)
 				: setScanObjId(currentScan?.id);
 
-			return { currentScan, previousScan, scanObjId, isCrawlStarted, isCrawlFinished };
+			return { currentScan, previousScan, scanObjId };
 		}
-	});
+	}, [scan]);
 
 	useEffect(() => {
 		handleScan();
 	}, [handleScan]);
+
+	// Check currentScan
+	useEffect(() => {
+		currentScan && Object.keys(currentScan)?.length > 0
+			? (() => {
+					setIsCrawlStarted(true);
+					setIsCrawlFinished(false);
+			  })()
+			: (() => {
+					setIsCrawlStarted(false);
+					setIsCrawlFinished(true);
+			  })();
+
+		return { isCrawlStarted, isCrawlFinished };
+	}, [currentScan]);
 
 	return {
 		currentScan,

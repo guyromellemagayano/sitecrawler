@@ -21,7 +21,7 @@ const OverviewStats = () => {
 	const crawlData = t("sites:crawlData");
 
 	// Custom context
-	const { isComponentReady, stats, user, siteId, isCrawlFinished, isCrawlStarted, scan } =
+	const { isComponentReady, stats, user, siteId, isCrawlFinished, isCrawlStarted, scan, currentScan, previousScan } =
 		useContext(SiteCrawlerAppContext);
 
 	// Custom variables
@@ -47,7 +47,14 @@ const OverviewStats = () => {
 					<div className="py-3 sm:col-span-1">
 						<dl>
 							<dt className="text-sm font-medium leading-5 text-gray-500">
-								{isComponentReady ? verificationStatusText : <Skeleton duration={2} width={100} height={15}></Skeleton>}
+								{isComponentReady &&
+								(!isCrawlStarted || isCrawlStarted) &&
+								(isCrawlFinished || !isCrawlFinished) &&
+								(siteVerified || !siteVerified) ? (
+									verificationStatusText
+								) : (
+									<Skeleton duration={2} width={100} height={15}></Skeleton>
+								)}
 							</dt>
 
 							<dd className="mt-1">
@@ -65,30 +72,41 @@ const OverviewStats = () => {
 						</dl>
 					</div>
 
-					{isComponentReady && permissions && permissions?.includes("can_see_pages") ? (
+					{isComponentReady &&
+					permissions &&
+					permissions?.includes("can_see_pages") &&
+					permissions?.includes("can_see_scripts") &&
+					permissions?.includes("can_see_stylesheets") ? (
 						<div className="py-3 sm:col-span-1">
 							<dl>
 								<dt className="text-sm font-medium leading-5 text-gray-500">
-									{isComponentReady ? sslStatusText : <Skeleton duration={2} width={100} height={15}></Skeleton>}
+									{isComponentReady && (!isCrawlStarted || isCrawlStarted) && (isCrawlFinished || !isCrawlFinished) ? (
+										sslStatusText
+									) : (
+										<Skeleton duration={2} width={100} height={15}></Skeleton>
+									)}
 								</dt>
 
 								<dd className="mt-1">
-									{isComponentReady ? (
-										!isCrawlStarted && isCrawlFinished ? (
-											siteValid === 0 ? (
-												<MemoizedSiteSuccessStatus text="Valid" />
-											) : (
-												<span className="flex flex-col items-start justify-start space-x-1">
-													<button type="button" onClick={() => {}} className="hover:text-gray-50 focus:outline-none">
-														<span className="flex items-center">
-															<MemoizedSiteDangerStatus text="Not Valid" />
-														</span>
-													</button>
-												</span>
-											)
+									{isComponentReady && !isCrawlStarted && isCrawlFinished ? (
+										siteValid === 0 ? (
+											<MemoizedSiteSuccessStatus text="Valid" />
+										) : siteValid > 0 ? (
+											<span className="flex flex-col items-start justify-start space-x-1">
+												<button type="button" onClick={() => {}} className="hover:text-gray-50 focus:outline-none">
+													<span className="flex items-center">
+														<MemoizedSiteDangerStatus text="Not Valid" />
+													</span>
+												</button>
+											</span>
 										) : (
-											<MemoizedSiteInProgressStatus text="Checking..." />
+											<span className="flex space-x-3">
+												<Skeleton circle={true} duration={2} width={15} height={15} />
+												<Skeleton duration={2} width={100} height={15} />
+											</span>
 										)
+									) : isComponentReady && isCrawlStarted && !isCrawlFinished ? (
+										<MemoizedSiteInProgressStatus text="Checking..." />
 									) : (
 										<span className="flex space-x-3">
 											<Skeleton circle={true} duration={2} width={15} height={15} />
@@ -98,7 +116,11 @@ const OverviewStats = () => {
 								</dd>
 							</dl>
 						</div>
-					) : isComponentReady && permissions && !permissions?.includes("can_see_pages") ? null : (
+					) : isComponentReady &&
+					  permissions &&
+					  !permissions?.includes("can_see_pages") &&
+					  !permissions?.includes("can_see_scripts") &&
+					  !permissions?.includes("can_see_stylesheets") ? null : (
 						<div className="py-3 sm:col-span-1">
 							<dl>
 								<dt className="text-sm font-medium leading-5 text-gray-500">
@@ -118,15 +140,27 @@ const OverviewStats = () => {
 					<div className="py-3 sm:col-span-1">
 						<dl>
 							<dt className="text-sm font-medium leading-5 text-gray-500">
-								{isComponentReady ? forcedHttpsText : <Skeleton duration={2} width={100} height={15}></Skeleton>}
+								{isComponentReady &&
+								(!isCrawlStarted || isCrawlStarted) &&
+								(isCrawlFinished || !isCrawlFinished) &&
+								(statsForceHttps || !statsForceHttps) ? (
+									forcedHttpsText
+								) : (
+									<Skeleton duration={2} width={100} height={15}></Skeleton>
+								)}
 							</dt>
 
 							<dd className="mt-1">
 								{isComponentReady && !isCrawlStarted && isCrawlFinished ? (
 									statsForceHttps ? (
 										<MemoizedSiteSuccessStatus text="Yes" />
-									) : (
+									) : !statsForceHttps ? (
 										<MemoizedSiteDangerStatus text="No" />
+									) : (
+										<span className="flex space-x-3">
+											<Skeleton circle={true} duration={2} width={15} height={15} />
+											<Skeleton duration={2} width={100} height={15} />
+										</span>
 									)
 								) : isComponentReady && isCrawlStarted && !isCrawlFinished ? (
 									<MemoizedSiteInProgressStatus text="Checking..." />
@@ -143,16 +177,23 @@ const OverviewStats = () => {
 					<div className="py-3 sm:col-span-1">
 						<dl>
 							<dt className="text-sm font-medium leading-5 text-gray-500">
-								{isComponentReady ? crawlStatusText : <Skeleton duration={2} width={100} height={15}></Skeleton>}
+								{isComponentReady &&
+								(!isCrawlStarted || isCrawlStarted) &&
+								(isCrawlFinished || !isCrawlFinished) &&
+								scanCount ? (
+									crawlStatusText
+								) : (
+									<Skeleton duration={2} width={100} height={15}></Skeleton>
+								)}
 							</dt>
 
+							{console.log(isCrawlStarted, isCrawlFinished, scanCount)}
+
 							<dd className="mt-1">
-								{isComponentReady && !isCrawlStarted && isCrawlFinished ? (
-									scanCount > 0 ? (
-										<MemoizedSiteSuccessStatus text="Finished" />
-									) : (
-										<MemoizedSiteInfoStatus text="Not Crawled Yet" />
-									)
+								{isComponentReady && !isCrawlStarted && isCrawlFinished && scanCount > 0 ? (
+									<MemoizedSiteSuccessStatus text="Finished" />
+								) : isComponentReady && !isCrawlStarted && isCrawlFinished && scanCount === 0 ? (
+									<MemoizedSiteInfoStatus text="Not Crawled Yet" />
 								) : isComponentReady && isCrawlStarted && !isCrawlFinished ? (
 									<MemoizedSiteInProgressStatus text="Crawling Site..." />
 								) : (

@@ -29,20 +29,20 @@ const IssuesStats = () => {
 
 	const SectionTabs = [
 		{
-			title: totalIssuesText,
-			count: isComponentReady ? totalErrors > 0 ? totalErrors : 0 : <Skeleton duration={2} width={36} height={36} />
+			title: isComponentReady && stats ? totalIssuesText : <Skeleton duration={2} width={72} height={20} />,
+			count: isComponentReady && stats ? totalErrors : <Skeleton duration={2} width={108} height={36} />
 		},
 		{
-			title: totalLinkIssuesText,
-			count: isComponentReady ? linkErrors > 0 ? linkErrors : 0 : <Skeleton duration={2} width={36} height={36} />
+			title: isComponentReady && stats ? totalLinkIssuesText : <Skeleton duration={2} width={72} height={20} />,
+			count: isComponentReady && stats ? linkErrors : <Skeleton duration={2} width={108} height={36} />
 		},
 		{
-			title: totalPageIssuesText,
-			count: isComponentReady ? pageErrors > 0 ? pageErrors : 0 : <Skeleton duration={2} width={36} height={36} />
+			title: isComponentReady && stats ? totalPageIssuesText : <Skeleton duration={2} width={108} height={36} />,
+			count: isComponentReady && stats ? pageErrors : <Skeleton duration={2} width={108} height={36} />
 		},
 		{
-			title: totalImageIssuesText,
-			count: isComponentReady ? imageErrors > 0 ? imageErrors : 0 : <Skeleton duration={2} width={36} height={36} />
+			title: isComponentReady && stats ? totalImageIssuesText : <Skeleton duration={2} width={108} height={36} />,
+			count: isComponentReady && stats ? imageErrors : <Skeleton duration={2} width={108} height={36} />
 		}
 	];
 
