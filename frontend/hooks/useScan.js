@@ -1,6 +1,6 @@
 import { handlePostMethod } from "@helpers/handleHttpMethods";
 import dayjs from "dayjs";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSWRConfig } from "swr";
 import { useMainSWRConfig } from "./useMainSWRConfig";
 import { useNotificationMessage } from "./useNotificationMessage";
@@ -96,7 +96,7 @@ export const useScan = (endpoint = null, options = null) => {
 	};
 
 	// Handle scan process
-	useEffect(() => {
+	const handleScanWatching = useCallback(() => {
 		const previousScanResult =
 			scan && Object.keys(scan)?.length > 0
 				? scan?.data?.results?.find((result) => result.finished_at !== null && result.force_https !== null)
@@ -127,7 +127,11 @@ export const useScan = (endpoint = null, options = null) => {
 		setScanObjId(currentScanObjId);
 
 		return { isCrawlStarted, isCrawlFinished, scanObjId };
-	}, [scan]);
+	});
+
+	useEffect(() => {
+		handleScanWatching();
+	}, [handleScanWatching]);
 
 	useEffect(() => {
 		currentScan && Object.keys(currentScan)?.length > 0
