@@ -16,28 +16,41 @@ const InformationStats = () => {
 	const totalImagesText = t("sites:totalImages");
 
 	// Custom context
-	const { isComponentReady, links, pages, images, isCrawlFinished, isCrawlStarted, scan } =
+	const { isComponentReady, links, pages, images, isCrawlFinished, isCrawlStarted, scan, user } =
 		useContext(SiteCrawlerAppContext);
 
 	// Custom variables
+	const permissions = user?.data?.permissions ?? null;
 	const linksCount = links?.data?.count ?? null;
 	const pagesCount = pages?.data?.count ?? null;
 	const imagesCount = images?.data?.count ?? null;
 
-	const SectionTabs = [
-		{
-			title: totalLinksText,
-			count: isComponentReady && linksCount ? linksCount : <Skeleton duration={2} width={36} height={36} />
-		},
-		{
-			title: totalPagesText,
-			count: isComponentReady && pagesCount ? pagesCount : <Skeleton duration={2} width={36} height={36} />
-		},
-		{
-			title: totalImagesText,
-			count: isComponentReady && imagesCount ? imagesCount : <Skeleton duration={2} width={36} height={36} />
-		}
-	];
+	const totalLinksTab = {
+		title: isComponentReady && links ? totalLinksText : <Skeleton duration={2} width={72} height={20} />,
+		count: isComponentReady && links ? linksCount : <Skeleton duration={2} width={108} height={36} />
+	};
+	const totalPagesTab = {
+		title: isComponentReady && pages ? totalPagesText : <Skeleton duration={2} width={72} height={20} />,
+		count: isComponentReady && pages ? pagesCount : <Skeleton duration={2} width={108} height={36} />
+	};
+	const totalImagesTab = {
+		title: isComponentReady && images ? totalImagesText : <Skeleton duration={2} width={72} height={20} />,
+		count: isComponentReady && images ? imagesCount : <Skeleton duration={2} width={108} height={36} />
+	};
+
+	const SectionTabs = [];
+
+	SectionTabs.push(totalLinksTab);
+
+	isComponentReady &&
+	permissions &&
+	permissions?.includes("can_see_pages") &&
+	permissions?.includes("can_see_scripts") &&
+	permissions?.includes("can_see_stylesheets")
+		? SectionTabs.push(totalPagesTab)
+		: null;
+
+	isComponentReady && permissions && permissions?.includes("can_see_images") ? SectionTabs.push(totalImagesTab) : null;
 
 	return (
 		<div className="h-full overflow-hidden rounded-lg border">
