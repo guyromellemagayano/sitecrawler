@@ -70,6 +70,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	const [customImagesApiEndpoint, setCustomImagesApiEndpoint] = useState(null);
 	const [customImagesIdApiEndpoint, setCustomImagesIdApiEndpoint] = useState(null);
 	const [hasSiteLimitReached, setHasSiteLimitReached] = useState(false);
+	const [isUserForbidden, setIsUserForbidden] = useState(true);
 
 	// Router
 	const { isReady, query, asPath } = useRouter();
@@ -77,22 +78,30 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// Custom hooks
 	const { state, setConfig } = useNotificationMessage();
 
-	// `user` SWR hook
-	const { user, errorUser, validatingUser } = useUser(UserApiEndpoint);
+	useEffect(
+		() =>
+			isReady
+				? (() => {
+						asPath.includes(DashboardSlug) ? setIsUserForbidden(false) : setIsUserForbidden(true);
 
-	// LogRocket setup
+						setIsComponentReady(true);
+				  })()
+				: setIsComponentReady(false),
+		[isReady]
+	);
+
+	// `user` SWR hook
+	const { user, errorUser, validatingUser } = useUser(!isUserForbidden ? UserApiEndpoint : null);
+
 	useEffect(() => {
+		// LogRocket setup
 		if (isProd) {
 			LogRocket.init(process.env.LOGROCKET_APP_ID);
 			setupLogRocketReact(LogRocket);
 		}
-	}, []);
 
-	useEffect(() => (isReady ? setIsComponentReady(true) : setIsComponentReady(false)), [isReady]);
-
-	// Custom API endpoint states that rely on `user` value
-	useEffect(() => {
-		if (asPath.includes(DashboardSlug) && user && Math.round(user.status / 100) === 2 && user.data?.detail) {
+		// Custom API endpoint states that rely on `user` value
+		if (isComponentReady && user && Math.round(user.status / 100) === 2 && !user.data?.detail) {
 			setCustomSitesApiEndpoint(SitesApiEndpoint);
 			setCustomStripePromiseApiEndpoint(StripePromiseApiEndpoint);
 			setCustomPaymentMethodsApiEndpoint(PaymentMethodApiEndpoint);
@@ -116,7 +125,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			customSubscriptionsApiEndpoint,
 			customCurrentSubscriptionApiEndpoint
 		};
-	}, [asPath]);
+	}, [isComponentReady, user]);
 
 	// `stripePromise` SWR hook
 	const { stripePromise, errorStripePromise, validatingStripePromise } =

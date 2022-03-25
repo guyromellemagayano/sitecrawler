@@ -4,7 +4,6 @@ import { MemoizedLoader } from "@components/loaders";
 import { UserApiEndpoint } from "@constants/ApiEndpoints";
 import { DashboardSitesLink } from "@constants/PageLinks";
 import { SSR_SITE_URL } from "@constants/ServerEnv";
-import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import AppAxiosInstance from "@utils/axios";
 import { NextSeo } from "next-seo";
@@ -37,11 +36,7 @@ export async function getServerSideProps({ req }) {
 		};
 	} else {
 		return {
-			props: {
-				fallback: {
-					"/api/auth/user/": userData
-				}
-			}
+			props: {}
 		};
 	}
 }
@@ -52,31 +47,26 @@ const SignupAuth = () => {
 	const completeSignupText = t("completeSignup");
 
 	// Router
-	const router = useRouter();
+	const { prefetch } = useRouter();
 
 	useEffect(() => {
-		router.prefetch(DashboardSitesLink);
+		prefetch(DashboardSitesLink);
 	}, []);
 
 	// Custom context
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
-	// SWR hooks
-	const { user } = useUser("/api/auth/user/");
-
-	return isComponentReady && user && Math.round(user?.status / 100) === 4 && user?.data?.detail ? (
+	return (
 		<MemoizedLayout>
 			<NextSeo title={completeSignupText} />
-			<MemoizedSignupPageLayout />
+			{isComponentReady ? <MemoizedSignupPageLayout /> : <MemoizedLoader />}
 		</MemoizedLayout>
-	) : (
-		<MemoizedLoader />
 	);
 };
 
-export default function Signup({ fallback }) {
+export default function Signup() {
 	return (
-		<SWRConfig value={{ fallback }}>
+		<SWRConfig>
 			<SignupAuth />
 		</SWRConfig>
 	);
