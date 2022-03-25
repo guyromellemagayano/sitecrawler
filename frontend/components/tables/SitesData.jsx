@@ -220,7 +220,11 @@ const SitesData = ({ site = null }) => {
 											</button>
 										) : null}
 
-										{siteVerified && permissions.includes("can_start_scan") && !currentScan && scanCount > 0 ? (
+										{siteVerified &&
+										permissions &&
+										permissions?.includes("can_start_scan") &&
+										!currentScan &&
+										scanCount > 0 ? (
 											<button
 												type="button"
 												className="ml-3 flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-green-600 transition duration-150 ease-in-out hover:text-green-500 focus:outline-none"
