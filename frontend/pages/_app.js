@@ -53,6 +53,7 @@ export const SiteCrawlerAppContext = createContext();
 export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	const [isComponentReady, setIsComponentReady] = useState(false);
 	const [isUserReady, setIsUserReady] = useState(false);
+	const [customUserApiEndpoint, setCustomUserApiEndpoint] = useState(null);
 	const [customSitesApiEndpoint, setCustomSitesApiEndpoint] = useState(null);
 	const [customStatsApiEndpoint, setCustomStatsApiEndpoint] = useState(null);
 	const [customStripePromiseApiEndpoint, setCustomStripePromiseApiEndpoint] = useState(null);
@@ -89,8 +90,13 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 		[isReady]
 	);
 
+	useEffect(
+		() => (!isUserForbidden ? setCustomUserApiEndpoint(UserApiEndpoint) : setCustomUserApiEndpoint(null)),
+		[isUserForbidden]
+	);
+
 	// `user` SWR hook
-	const { user, errorUser, validatingUser } = useUser(!isUserForbidden ? UserApiEndpoint : null);
+	const { user, errorUser, validatingUser } = useUser(customUserApiEndpoint);
 
 	useEffect(() => {
 		// LogRocket setup
@@ -213,7 +219,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 		validatingScan
 	} = useScan(customScanApiEndpoint);
 
-	console.log("scan", scan, customScanApiEndpoint);
+	console.log("scan", scan, customScanApiEndpoint, scanObjId);
 
 	// Custom `stats` API endpoint state
 	useEffect(() => {
@@ -226,7 +232,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			: setCustomStatsApiEndpoint(null);
 
 		return { customStatsApiEndpoint };
-	}, [scan, customScanApiEndpoint]);
+	}, [scan, customScanApiEndpoint, scanObjId]);
 
 	// `stats` SWR hook
 	const { stats, errorStats, validatingStats } = useStats(customStatsApiEndpoint);
