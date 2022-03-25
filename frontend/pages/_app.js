@@ -9,7 +9,7 @@ import {
 	UserApiEndpoint
 } from "@constants/ApiEndpoints";
 import AppSeo from "@constants/AppSeo";
-import { RevalidationInterval } from "@constants/GlobalValues";
+import { NoInterval, RevalidationInterval } from "@constants/GlobalValues";
 import { DashboardSlug, ScanSlug, SiteImageSlug, SiteLinkSlug, SitePageSlug } from "@constants/PageLinks";
 import { isProd } from "@constants/ServerEnv";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -154,7 +154,8 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 
 	// `sites` SWR hook
 	const { sites, errorSites, validatingSites } = useSites(customSitesApiEndpoint, {
-		refreshInterval: RevalidationInterval
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
 	});
 
 	// console.log("sites", sites);
@@ -174,11 +175,12 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			: setCustomSitesIdApiEndpoint(null);
 
 		return { customSitesIdApiEndpoint };
-	}, [sites, querySiteId]);
+	}, [sites, querySiteId, customSitesApiEndpoint]);
 
 	// `siteId` SWR hook
 	const { siteId, errorSiteId, validatingSiteId } = useSiteId(customSitesIdApiEndpoint, {
-		refreshInterval: RevalidationInterval
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
 	});
 
 	// console.log("siteId", siteId);
@@ -203,7 +205,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			: setCustomScanApiEndpoint(null);
 
 		return { customScanApiEndpoint };
-	}, [siteId]);
+	}, [siteId, customSitesIdApiEndpoint]);
 
 	// `scan` SWR hook
 	const {
@@ -219,7 +221,8 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 		selectedSiteRef,
 		validatingScan
 	} = useScan(customScanApiEndpoint, {
-		refreshInterval: RevalidationInterval
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
 	});
 
 	// console.log("scan", scan);
@@ -233,11 +236,12 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			: setCustomStatsApiEndpoint(null);
 
 		return { customStatsApiEndpoint };
-	}, [scanObjId, scan]);
+	}, [scanObjId, scan, customScanApiEndpoint]);
 
 	// `stats` SWR hook
 	const { stats, errorStats, validatingStats } = useStats(customStatsApiEndpoint, {
-		refreshInterval: RevalidationInterval
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
 	});
 
 	// console.log("stats", stats);
@@ -273,25 +277,28 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			customPagesApiEndpoint,
 			customImagesApiEndpoint
 		};
-	}, [stats, user]);
+	}, [stats, user, customStatsApiEndpoint]);
 
 	// `links` SWR hook
 	const { links, errorLinks, validatingLinks } = useLinks(customLinksApiEndpoint, {
-		refreshInterval: RevalidationInterval
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
 	});
 
 	// console.log("links", links);
 
 	// `pages` SWR hook
 	const { pages, errorPages, validatingPages } = usePages(customPagesApiEndpoint, {
-		refreshInterval: RevalidationInterval
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
 	});
 
 	// console.log("pages", pages);
 
 	// `images` SWR hook
 	const { images, errorImages, validatingImages } = useImages(customImagesApiEndpoint, {
-		refreshInterval: RevalidationInterval
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
 	});
 
 	// console.log("images", images);
@@ -305,7 +312,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			: setCustomLinksIdApiEndpoint(null);
 
 		return { customLinksIdApiEndpoint };
-	}, [links, queryLinkId]);
+	}, [links, queryLinkId, customLinksApiEndpoint]);
 
 	// `linkId` SWR hook
 	const { linkId, errorLinkId, validatingLinkId } = useLinkId(customLinksIdApiEndpoint);
@@ -321,7 +328,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			: setCustomPagesIdApiEndpoint(null);
 
 		return { customPagesIdApiEndpoint };
-	}, [pages, queryPageId]);
+	}, [pages, queryPageId, customPagesApiEndpoint]);
 
 	// `pageId` SWR hook
 	const { pageId, errorPageId, validatingPageId } = usePageId(customPagesIdApiEndpoint);
@@ -337,7 +344,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			: setCustomImagesIdApiEndpoint(null);
 
 		return { customImagesIdApiEndpoint };
-	}, [images, queryImageId]);
+	}, [images, queryImageId, customImagesApiEndpoint]);
 
 	// `imageId` SWR hook
 	const { imageId, errorImageId, validatingImageId } = useImageId(customImagesIdApiEndpoint);
