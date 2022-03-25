@@ -9,7 +9,7 @@ import {
 	UserApiEndpoint
 } from "@constants/ApiEndpoints";
 import AppSeo from "@constants/AppSeo";
-import { RevalidationInterval } from "@constants/GlobalValues";
+import { NoInterval, RevalidationInterval } from "@constants/GlobalValues";
 import { DashboardSlug, ScanSlug, SiteImageSlug, SiteLinkSlug, SitePageSlug } from "@constants/PageLinks";
 import { isProd } from "@constants/ServerEnv";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -154,7 +154,8 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 
 	// `sites` SWR hook
 	const { sites, errorSites, validatingSites } = useSites(customSitesApiEndpoint, {
-		refreshInterval: RevalidationInterval
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
 	});
 
 	// console.log("sites", sites);
@@ -178,7 +179,8 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 
 	// `siteId` SWR hook
 	const { siteId, errorSiteId, validatingSiteId } = useSiteId(customSitesIdApiEndpoint, {
-		refreshInterval: RevalidationInterval
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
 	});
 
 	// console.log("siteId", siteId);
@@ -219,7 +221,8 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 		selectedSiteRef,
 		validatingScan
 	} = useScan(customScanApiEndpoint, {
-		refreshInterval: RevalidationInterval
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
 	});
 
 	// console.log("scan", scan);
@@ -239,7 +242,8 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 
 	// `stats` SWR hook
 	const { stats, errorStats, validatingStats } = useStats(customStatsApiEndpoint, {
-		refreshInterval: RevalidationInterval
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
 	});
 
 	// console.log("stats", stats);
@@ -279,21 +283,24 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 
 	// `links` SWR hook
 	const { links, errorLinks, validatingLinks } = useLinks(customLinksApiEndpoint, {
-		refreshInterval: RevalidationInterval
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
 	});
 
 	// console.log("links", links);
 
 	// `pages` SWR hook
 	const { pages, errorPages, validatingPages } = usePages(customPagesApiEndpoint, {
-		refreshInterval: RevalidationInterval
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
 	});
 
 	// console.log("pages", pages);
 
 	// `images` SWR hook
 	const { images, errorImages, validatingImages } = useImages(customImagesApiEndpoint, {
-		refreshInterval: RevalidationInterval
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
 	});
 
 	// console.log("images", images);
