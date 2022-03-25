@@ -1,5 +1,5 @@
 import { UserApiEndpoint } from "@constants/ApiEndpoints";
-import { OnErrorRetryCount, RevalidationInterval } from "@constants/GlobalValues";
+import { NoInterval, OnErrorRetryCount, RevalidationInterval } from "@constants/GlobalValues";
 import { DashboardSitesLink, DashboardSlug, LoginLink } from "@constants/PageLinks";
 import { handleGetMethod } from "@helpers/handleHttpMethods";
 import * as Sentry from "@sentry/nextjs";
@@ -20,7 +20,8 @@ export const useMainSWRConfig = (endpoint = null, options = null) => {
 
 	// Default options
 	const defaultOptions = {
-		refreshInterval: RevalidationInterval,
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval,
 		errorRetryCount: OnErrorRetryCount,
 		onSuccess: (data, key) => {
 			// If the user is not authenticated, redirect to the login page, otherwise redirect to the dashboard
