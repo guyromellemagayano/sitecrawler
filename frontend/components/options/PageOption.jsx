@@ -77,7 +77,6 @@ const PageOption = ({ isOverview = false, isImages = false, isLinks = false, isP
 		user,
 		siteId,
 		scan,
-		currentScan,
 		previousScan,
 		scanObjId,
 		selectedSiteRef,
@@ -216,7 +215,7 @@ const PageOption = ({ isOverview = false, isImages = false, isLinks = false, isP
 													) : (
 														dayjs.utc(previousScanFinishedAt).calendar(null, calendarStrings)
 													)
-												) : scanCount === 1 && currentScan ? (
+												) : scanCount === 1 && isCrawlStarted && !isCrawlFinished ? (
 													<span className="text-sm leading-5 text-gray-500">{siteCrawlingInProcessText}</span>
 												) : !disableLocalTime ? (
 													dayjs(previousScanFinishedAt).calendar(null, calendarStrings)

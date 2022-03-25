@@ -21,7 +21,7 @@ const OverviewStats = () => {
 	const crawlData = t("sites:crawlData");
 
 	// Custom context
-	const { isComponentReady, stats, user, siteId, isCrawlFinished, isCrawlStarted, scan, currentScan, previousScan } =
+	const { isComponentReady, stats, user, siteId, isCrawlFinished, isCrawlStarted, scan } =
 		useContext(SiteCrawlerAppContext);
 
 	// Custom variables
