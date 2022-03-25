@@ -326,7 +326,9 @@ const PageOption = ({ isOverview = false, isImages = false, isLinks = false, isP
 												<span>{crawlText}</span>
 											</span>
 										</button>
-									) : null
+									) : (
+										<Skeleton duration={2} width={150} height={40} className="ml-2" />
+									)
 								) : (
 									<button
 										type="button"
