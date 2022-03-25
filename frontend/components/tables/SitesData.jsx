@@ -11,9 +11,8 @@ import { classnames } from "@utils/classnames";
 import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import { memo, useContext, useEffect, useMemo, useState } from "react";
+import { memo, useContext, useMemo, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
@@ -43,9 +42,6 @@ const SitesData = ({ site = null }) => {
 	const deleteText = t("sites:delete");
 	const crawlSiteText = t("sites:crawlSite");
 	const siteCrawlingInProcessText = t("sites:siteCrawlingInProcess");
-
-	// Router
-	const { prefetch } = useRouter();
 
 	// Custom variables
 	let customScanApiEndpointQuery = "?" + orderingByNameQuery + sortByFinishedAtDescending;
@@ -110,10 +106,6 @@ const SitesData = ({ site = null }) => {
 		sameDay: "[Today], dddd [at] hh:mm:ss A",
 		sameElse: "MMMM DD, YYYY [at] hh:mm:ss A"
 	};
-
-	useEffect(() => {
-		prefetch(`/dashboard/sites/${siteId}/`);
-	}, [siteId]);
 
 	// Custom variables
 	const disableLocalTime = user?.data?.settings?.disableLocalTime ?? false;
