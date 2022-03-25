@@ -2,7 +2,7 @@ import { DashboardSitesLink } from "@constants/PageLinks";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
-import { useCallback, useContext, useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { useComponentVisible } from "./useComponentVisible";
 
 /**
@@ -51,20 +51,21 @@ export const useSiteSelection = () => {
 	}, [querySiteId, sitesResults, selectedSiteDetails]);
 
 	// Handle site selection on click
-	const handleSiteSelectOnClick = useCallback(async (id) => {
+	const handleSiteSelectOnClick = async (id) => {
 		const pageExclusions = ["settings", "add-new-site", "audit-logs"];
 		const page = pageExclusions.find((page) => asPath.includes(page));
 
-		return id
-			? page || asPath === DashboardSitesLink
-				? push(DashboardSitesLink + id + "/")
-				: push({
-						query: {
-							siteId: id
-						}
-				  })
-			: null;
-	});
+		let fromSiteDetail = null;
+		let fromDashboard = null;
+
+		fromSiteDetail = {
+			pathname: "/dashboard/sites/[siteId]/",
+			query: { siteId: id }
+		};
+		fromDashboard = DashboardSitesLink + id + "/";
+
+		return page || asPath === DashboardSitesLink ? push(fromDashboard) : push(fromSiteDetail);
+	};
 
 	return {
 		siteSelectRef,
