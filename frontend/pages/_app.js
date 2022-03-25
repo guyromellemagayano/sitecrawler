@@ -9,7 +9,7 @@ import {
 	UserApiEndpoint
 } from "@constants/ApiEndpoints";
 import AppSeo from "@constants/AppSeo";
-import { ComponentReadyInterval, NoInterval, RevalidationInterval } from "@constants/GlobalValues";
+import { NoInterval, RevalidationInterval } from "@constants/GlobalValues";
 import { DashboardSlug, ScanSlug, SiteImageSlug, SiteLinkSlug, SitePageSlug } from "@constants/PageLinks";
 import { isProd } from "@constants/ServerEnv";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -39,7 +39,7 @@ import LogRocket from "logrocket";
 import setupLogRocketReact from "logrocket-react";
 import { DefaultSeo } from "next-seo";
 import { useRouter } from "next/router";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useMemo, useState } from "react";
 
 // Font Awesome
 library.add(fab);
@@ -81,7 +81,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	const { user, errorUser, validatingUser } = useUser(UserApiEndpoint);
 
 	// Handle component loading
-	useEffect(() => {
+	useMemo(() => {
 		if (isReady) {
 			// LogRocket setup
 			if (isProd) {
@@ -96,6 +96,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 					setIsUserReady(false);
 				} else {
 					setIsComponentReady(false);
+					setIsUserReady(false);
 				}
 			} else {
 				// Handle `user` promise data
@@ -108,15 +109,10 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 				}
 			}
 		}
-
-		return async () =>
-			await new Promise((resolve) => {
-				setTimeout(() => resolve(isComponentReady), ComponentReadyInterval);
-			}).then((result) => result);
 	}, [isReady, user, asPath]);
 
 	// Custom API endpoint states that rely on `user` value
-	useEffect(() => {
+	useMemo(() => {
 		if (isUserReady) {
 			setCustomSitesApiEndpoint(SitesApiEndpoint);
 			setCustomStripePromiseApiEndpoint(StripePromiseApiEndpoint);
@@ -181,15 +177,15 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	const queryImageId = query?.imageId ? handleConversionStringToNumber(query.imageId) : null;
 
 	// Custom `siteId` SWR hook
-	useEffect(() => {
-		const verifiedSiteId = sites?.data?.results?.find((site) => site.id === querySiteId) ? querySiteId : null;
+	useMemo(() => {
+		const verifiedSiteId = sites?.data?.results?.find((site) => site.id === querySiteId) ?? null;
 
-		sites && isUserReady && verifiedSiteId
-			? setCustomSitesIdApiEndpoint(customSitesApiEndpoint + verifiedSiteId)
+		verifiedSiteId && Object.keys(verifiedSiteId)?.length > 0
+			? setCustomSitesIdApiEndpoint(customSitesApiEndpoint + querySiteId)
 			: setCustomSitesIdApiEndpoint(null);
 
 		return { customSitesIdApiEndpoint };
-	}, [querySiteId]);
+	}, [sites, querySiteId, customSitesApiEndpoint]);
 
 	// `siteId` SWR hook
 	const { siteId, errorSiteId, validatingSiteId } = useSiteId(customSitesIdApiEndpoint, {
@@ -213,11 +209,13 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [sites, user]);
 
 	// Custom `scan` SWR hook
-	useEffect(() => {
-		siteId ? setCustomScanApiEndpoint(customSitesIdApiEndpoint + ScanSlug) : setCustomScanApiEndpoint(null);
+	useMemo(() => {
+		siteId && Object.keys(siteId)?.length > 0 && customSitesIdApiEndpoint
+			? setCustomScanApiEndpoint(customSitesIdApiEndpoint + ScanSlug)
+			: setCustomScanApiEndpoint(null);
 
 		return { customScanApiEndpoint };
-	}, [siteId]);
+	}, [siteId, customSitesIdApiEndpoint]);
 
 	// `scan` SWR hook
 	const {
@@ -240,11 +238,15 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// console.log("scan", scan);
 
 	// Custom `stats` API endpoint state
-	useEffect(() => {
-		scanObjId ? setCustomStatsApiEndpoint(customScanApiEndpoint + scanObjId) : setCustomStatsApiEndpoint(null);
+	useMemo(() => {
+		const verifiedScanObjId = scan?.data?.results?.find((scan) => scan.id === scanObjId) ?? null;
+
+		verifiedScanObjId && Object.keys(verifiedScanObjId)?.length > 0
+			? setCustomStatsApiEndpoint(customScanApiEndpoint + scanObjId)
+			: setCustomStatsApiEndpoint(null);
 
 		return { customStatsApiEndpoint };
-	}, [scanObjId]);
+	}, [scanObjId, scan, customScanApiEndpoint]);
 
 	// `stats` SWR hook
 	const { stats, errorStats, validatingStats } = useStats(customStatsApiEndpoint, {
@@ -259,7 +261,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 		if (user) {
 			const permissions = user?.data?.permissions ?? null;
 
-			if (stats) {
+			if (stats && customStatsApiEndpoint) {
 				setCustomLinksApiEndpoint(customStatsApiEndpoint + SiteLinkSlug);
 
 				if (
@@ -269,16 +271,14 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 					permissions?.includes("can_see_stylesheets") &&
 					permissions?.includes("can_see_images")
 				) {
-					if (customStatsApiEndpoint) {
-						setCustomPagesApiEndpoint(customStatsApiEndpoint + SitePageSlug);
-						setCustomImagesApiEndpoint(customStatsApiEndpoint + SiteImageSlug);
-					} else {
-						setCustomPagesIdApiEndpoint(null);
-						setCustomImagesIdApiEndpoint(null);
-					}
+					setCustomPagesApiEndpoint(customStatsApiEndpoint + SitePageSlug);
+					setCustomImagesApiEndpoint(customStatsApiEndpoint + SiteImageSlug);
+				} else {
+					setCustomPagesApiEndpoint(null);
+					setCustomImagesApiEndpoint(null);
 				}
 			} else {
-				setCustomLinksIdApiEndpoint(null);
+				setCustomLinksApiEndpoint(null);
 			}
 		}
 
@@ -287,33 +287,42 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			customPagesApiEndpoint,
 			customImagesApiEndpoint
 		};
-	}, [stats, user]);
+	}, [stats, user, customStatsApiEndpoint]);
 
 	// `links` SWR hook
-	const { links, errorLinks, validatingLinks } = useLinks(customLinksApiEndpoint);
+	const { links, errorLinks, validatingLinks } = useLinks(customLinksApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
+	});
 
 	// console.log("links", links);
 
 	// `pages` SWR hook
-	const { pages, errorPages, validatingPages } = usePages(customPagesApiEndpoint);
+	const { pages, errorPages, validatingPages } = usePages(customPagesApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
+	});
 
 	// console.log("pages", pages);
 
 	// `images` SWR hook
-	const { images, errorImages, validatingImages } = useImages(customImagesApiEndpoint);
+	const { images, errorImages, validatingImages } = useImages(customImagesApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
+	});
 
 	// console.log("images", images);
 
 	// Custom `linkId` SWR hook
-	useEffect(() => {
-		const verifiedLinkId = queryLinkId ? links?.data?.results?.find((link) => link.id === queryLinkId) ?? null : null;
+	useMemo(() => {
+		const verifiedLinkId = links?.data?.results?.find((link) => link.id === queryLinkId) ?? null;
 
-		links && isUserReady && verifiedLinkId
-			? setCustomLinksIdApiEndpoint(customSitesApiEndpoint + verifiedLinkId)
+		verifiedLinkId && Object.keys(verifiedLinkId)?.length > 0
+			? setCustomLinksIdApiEndpoint(customLinksApiEndpoint + queryLinkId)
 			: setCustomLinksIdApiEndpoint(null);
 
 		return { customLinksIdApiEndpoint };
-	}, [queryLinkId]);
+	}, [links, queryLinkId, customLinksApiEndpoint]);
 
 	// `linkId` SWR hook
 	const { linkId, errorLinkId, validatingLinkId } = useLinkId(customLinksIdApiEndpoint);
@@ -321,15 +330,15 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// console.log("linkId", linkId);
 
 	// Custom `pageId` SWR hook
-	useEffect(() => {
-		const verifiedPageId = queryPageId ? pages?.data?.results?.find((page) => page.id === queryPageId) ?? null : null;
+	useMemo(() => {
+		const verifiedPageId = pages?.data?.results?.find((page) => page.id === queryPageId) ?? null;
 
-		pages && isUserReady && verifiedPageId
-			? setCustomPagesIdApiEndpoint(customSitesApiEndpoint + verifiedPageId)
+		verifiedPageId && Object.keys(verifiedPageId)?.length > 0
+			? setCustomPagesIdApiEndpoint(customPagesApiEndpoint + queryPageId)
 			: setCustomPagesIdApiEndpoint(null);
 
 		return { customPagesIdApiEndpoint };
-	}, [queryPageId]);
+	}, [pages, queryPageId, customPagesApiEndpoint]);
 
 	// `pageId` SWR hook
 	const { pageId, errorPageId, validatingPageId } = usePageId(customPagesIdApiEndpoint);
@@ -337,17 +346,15 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// console.log("pageId", pageId);
 
 	// Custom `imageId` API endpoint
-	useEffect(() => {
-		const verifiedImageId = queryImageId
-			? images?.data?.results?.find((image) => image.id === queryImageId) ?? null
-			: null;
+	useMemo(() => {
+		const verifiedImageId = images?.data?.results?.find((image) => image.id === queryImageId) ?? null;
 
-		images && isUserReady && verifiedImageId
-			? setCustomImagesIdApiEndpoint(customSitesApiEndpoint + verifiedImageId)
+		verifiedImageId && Object.keys(verifiedImageId)?.length > 0
+			? setCustomImagesIdApiEndpoint(customImagesApiEndpoint + queryImageId)
 			: setCustomImagesIdApiEndpoint(null);
 
-		return { customImagesApiEndpoint };
-	}, [queryImageId]);
+		return { customImagesIdApiEndpoint };
+	}, [images, queryImageId, customImagesApiEndpoint]);
 
 	// `imageId` SWR hook
 	const { imageId, errorImageId, validatingImageId } = useImageId(customImagesIdApiEndpoint);
