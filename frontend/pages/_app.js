@@ -9,7 +9,6 @@ import {
 	UserApiEndpoint
 } from "@constants/ApiEndpoints";
 import AppSeo from "@constants/AppSeo";
-import { NoInterval, RevalidationInterval } from "@constants/GlobalValues";
 import { DashboardSlug, ScanSlug, SiteImageSlug, SiteLinkSlug, SitePageSlug } from "@constants/PageLinks";
 import { isProd } from "@constants/ServerEnv";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -151,10 +150,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	);
 
 	// `sites` SWR hook
-	const { sites, errorSites, validatingSites } = useSites(customSitesApiEndpoint, {
-		refreshInterval: (e) =>
-			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
-	});
+	const { sites, errorSites, validatingSites } = useSites(customSitesApiEndpoint);
 
 	console.log("sites", sites, customSitesApiEndpoint);
 
@@ -176,10 +172,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [sites, querySiteId, customSitesApiEndpoint]);
 
 	// `siteId` SWR hook
-	const { siteId, errorSiteId, validatingSiteId } = useSiteId(customSitesIdApiEndpoint, {
-		refreshInterval: (e) =>
-			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
-	});
+	const { siteId, errorSiteId, validatingSiteId } = useSiteId(customSitesIdApiEndpoint);
 
 	console.log("siteId", siteId, customSitesIdApiEndpoint);
 
@@ -218,10 +211,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 		scanObjId,
 		selectedSiteRef,
 		validatingScan
-	} = useScan(customScanApiEndpoint, {
-		refreshInterval: (e) =>
-			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
-	});
+	} = useScan(customScanApiEndpoint);
 
 	console.log("scan", scan, customScanApiEndpoint);
 
@@ -239,10 +229,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [scan, customScanApiEndpoint]);
 
 	// `stats` SWR hook
-	const { stats, errorStats, validatingStats } = useStats(customStatsApiEndpoint, {
-		refreshInterval: (e) =>
-			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
-	});
+	const { stats, errorStats, validatingStats } = useStats(customStatsApiEndpoint);
 
 	console.log("stats", stats, customStatsApiEndpoint);
 
@@ -280,26 +267,17 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [stats, user, customStatsApiEndpoint]);
 
 	// `links` SWR hook
-	const { links, errorLinks, validatingLinks } = useLinks(customLinksApiEndpoint, {
-		refreshInterval: (e) =>
-			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
-	});
+	const { links, errorLinks, validatingLinks } = useLinks(customLinksApiEndpoint);
 
 	console.log("links", links, customLinksApiEndpoint);
 
 	// `pages` SWR hook
-	const { pages, errorPages, validatingPages } = usePages(customPagesApiEndpoint, {
-		refreshInterval: (e) =>
-			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
-	});
+	const { pages, errorPages, validatingPages } = usePages(customPagesApiEndpoint);
 
 	console.log("pages", pages, customPagesApiEndpoint);
 
 	// `images` SWR hook
-	const { images, errorImages, validatingImages } = useImages(customImagesApiEndpoint, {
-		refreshInterval: (e) =>
-			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail ? NoInterval : RevalidationInterval
-	});
+	const { images, errorImages, validatingImages } = useImages(customImagesApiEndpoint);
 
 	console.log("images", images, customImagesApiEndpoint);
 
