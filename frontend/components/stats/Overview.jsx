@@ -187,8 +187,6 @@ const OverviewStats = () => {
 								)}
 							</dt>
 
-							{console.log(isCrawlStarted, isCrawlFinished, scanCount)}
-
 							<dd className="mt-1">
 								{isComponentReady && !isCrawlStarted && isCrawlFinished && scanCount > 0 ? (
 									<MemoizedSiteSuccessStatus text="Finished" />

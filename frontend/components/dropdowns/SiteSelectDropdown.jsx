@@ -1,7 +1,7 @@
 import { MemoizedSitesList } from "@components/lists/SitesList";
 import { MemoizedSiteLimitReachedModal } from "@components/modals/SiteLimitReachedModal";
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
-import { orderingByNameQuery, sortByNameAscending } from "@constants/GlobalValues";
+import { MaxTotalSitesLimit, orderingByNameQuery, perPageQuery, sortByNameAscending } from "@constants/GlobalValues";
 import { AddNewSiteLink } from "@constants/PageLinks";
 import { SidebarMenuLabels } from "@constants/SidebarMenuLabels";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -37,7 +37,9 @@ const SiteSelectDropdown = ({ openDropdown = false }, ref) => {
 	const { isComponentReady, user, hasSiteLimitReached } = useContext(SiteCrawlerAppContext);
 
 	// SWR hooks
-	const { sites } = useSites(SitesApiEndpoint + `?${orderingByNameQuery + sortByNameAscending}`);
+	const { sites } = useSites(
+		SitesApiEndpoint + `?${orderingByNameQuery + sortByNameAscending}&${perPageQuery + MaxTotalSitesLimit}`
+	);
 
 	// Custom hooks
 	const {
