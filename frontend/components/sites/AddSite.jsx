@@ -86,7 +86,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 		push(newPath);
 
 		// Mutate function here
-		mutate(scanApiEndpoint);
+		mutate(scanApiEndpoint, null, { rollbackOnError: true, revalidate: true });
 	};
 
 	// Handle `onClick` event on <Link> element

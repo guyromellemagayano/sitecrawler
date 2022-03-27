@@ -1,7 +1,7 @@
 import { MemoizedSiteSelect } from "@components/select/SiteSelect";
 import { SiteLogoWhite } from "@components/svgs/SiteLogo";
 import { AuthAppLogo } from "@constants/GlobalValues";
-import { DashboardSitesLink, SettingsSlug } from "@constants/PageLinks";
+import { DashboardSitesLink } from "@constants/PageLinks";
 import { SidebarMenus } from "@constants/SidebarMenus";
 import { CogIcon, DocumentTextIcon, PhotographIcon } from "@heroicons/react/outline";
 import { ArrowLeftIcon, LinkIcon, SearchIcon, ViewGridIcon } from "@heroicons/react/solid";
@@ -75,12 +75,7 @@ const SiteMenu = () => {
 																"group mt-1 flex items-center justify-between rounded-md px-3 py-2 text-sm font-medium leading-5",
 																asPath === DashboardSitesLink + querySiteId + value2.url + window.location.search &&
 																	isComponentReady
-																	? "!cursor-default bg-gray-1100"
-																	: null,
-																(asPath === DashboardSitesLink + querySiteId + value2.url + window.location.search &&
-																	isComponentReady) ||
-																	(asPath.includes(SettingsSlug) && SettingsSlug.includes(value2.url))
-																	? "text-gray-100"
+																	? "!cursor-default bg-gray-1100 text-gray-100"
 																	: "text-gray-400",
 																isComponentReady
 																	? "cursor-pointer transition duration-150 ease-in-out hover:bg-gray-1100 hover:text-gray-100 focus:bg-gray-1100 focus:outline-none"

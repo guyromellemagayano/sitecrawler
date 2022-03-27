@@ -14,6 +14,11 @@
 		"headline": "Are you sure you want to delete your account?",
 		"subheadline": "This action cannot be undone."
 	},
+	"deleteSiteModalRequest": {
+		"title": "Delete Site",
+		"headline": "Are you sure you want to delete this site?",
+		"subheadline": "This action cannot be undone."
+	},
 	"helpSupportForm": {
 		"title": "App Support Form",
 		"tellUsYourThoughts": "Tell us your thoughts about the app.",
@@ -81,5 +86,8 @@
 		"hasBeenRequested": "plan has been requested successfully",
 		"planActive": "plan is now active",
 		"currentPlanExpiresOn": "plan expires on"
+	},
+	"siteInformationSettings": {
+		"title": "Site Information Settings"
 	}
 }

@@ -38,7 +38,7 @@ const SubscriptionPlansPageLayout = () => {
 	const [currentPaymentMethod, setCurrentPaymentMethod] = useState(loadingCardInformationText);
 
 	// Custom context
-	const { isComponentReady, stripePromise, subscriptions, currentSubscription, setConfig } =
+	const { isComponentReady, stripePromise, subscriptions, currentSubscription, setConfig, user } =
 		useContext(SiteCrawlerAppContext);
 
 	// SWR hook for global mutations
@@ -110,7 +110,21 @@ const SubscriptionPlansPageLayout = () => {
 
 				if (currentSubscriptionResponseDataStatus === "paid") {
 					// Mutate `currentSubscription` endpoint after successful 200 OK or 201 Created response is issued
-					mutate(CurrentSubscriptionApiEndpoint, { ...currentSubscription, data: currentSubscriptionResponseData });
+					mutate(
+						CurrentSubscriptionApiEndpoint,
+						{ ...currentSubscription, data: currentSubscriptionResponseData },
+						{
+							optimisticData: currentSubscription?.data,
+							rollbackOnError: true,
+							revalidate: true
+						}
+					);
+
+					mutate(UserApiEndpoint, null, {
+						optimisticData: user?.data,
+						rollbackOnError: true,
+						revalidate: true
+					});
 
 					// Update plan name and id to reflect the updated subscription plan
 					await subscriptions?.data?.results
@@ -212,7 +226,11 @@ const SubscriptionPlansPageLayout = () => {
 
 					if (changeToBasicPlanResponseData && Math.round(changeToBasicPlanResponseStatus / 100) === 2) {
 						// Mutate `currentSubscription` endpoint after successful 200 OK or 201 Created response is issued
-						mutate(CurrentSubscriptionApiEndpoint, { ...currentSubscription, data: changeToBasicPlanResponseData });
+						mutate(
+							CurrentSubscriptionApiEndpoint,
+							{ ...currentSubscription, data: changeToBasicPlanResponseData },
+							{ optimisticData: currentSubscription?.data, rollbackOnError: true, revalidate: true }
+						);
 
 						const sanitizedChangeToBasicPlanResponseDataStatus = changeToBasicPlanResponseData?.status
 							? handleConversionStringToLowercase(changeToBasicPlanResponseData.status)
@@ -220,7 +238,16 @@ const SubscriptionPlansPageLayout = () => {
 
 						if (sanitizedChangeToBasicPlanResponseDataStatus === "paid") {
 							// Mutate `currentSubscription` endpoint after successful 200 OK or 201 Created response is issued
-							mutate(CurrentSubscriptionApiEndpoint, { ...currentSubscription, data: changeToBasicPlanResponseData });
+							mutate(
+								CurrentSubscriptionApiEndpoint,
+								{ ...currentSubscription, data: changeToBasicPlanResponseData },
+								{ optimisticData: currentSubscription?.data, rollbackOnError: true, revalidate: true }
+							);
+							mutate(UserApiEndpoint, null, {
+								optimisticData: user?.data,
+								rollbackOnError: true,
+								revalidate: true
+							});
 
 							// Update plan name and id to reflect the updated subscription plan
 							await subscriptions?.data?.results
@@ -246,7 +273,7 @@ const SubscriptionPlansPageLayout = () => {
 							setLoadingAgencySemiAnnually(false);
 
 							// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-							mutate(UserApiEndpoint);
+							mutate(UserApiEndpoint, null, { optimisticData: user?.data, rollbackOnError: true, revalidate: true });
 
 							// Don't load monthly `Basic` plan
 							setLoadingBasic(false);

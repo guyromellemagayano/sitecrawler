@@ -1,4 +1,3 @@
-import { useSWRConfig } from "swr";
 import { useMainSWRConfig } from "./useMainSWRConfig";
 
 /**
@@ -9,9 +8,6 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  * @returns {object} linkId, errorLinkId, validatingLinkId
  */
 export const useLinkId = (endpoint = null, options = null) => {
-	// SWR hook for global mutations
-	const { mutate } = useSWRConfig();
-
 	// SWR hook
 	const { data: linkId, error: errorLinkId, isValidating: validatingLinkId } = useMainSWRConfig(endpoint, options);
 

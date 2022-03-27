@@ -252,9 +252,13 @@ const PaymentMethodModal = (
 																mutate(
 																	PaymentMethodApiEndpoint,
 																	{ ...paymentMethods, data: paymentMethodResponseData },
-																	false
+																	{ optimisticData: paymentMethods?.data, rollbackOnError: true, revalidate: true }
 																);
-																mutate(DefaultPaymentMethodApiEndpoint);
+																mutate(DefaultPaymentMethodApiEndpoint, null, {
+																	optimisticData: defaultPaymentMethod?.data,
+																	rollbackOnError: true,
+																	revalidate: true
+																});
 
 																// Disable submission form and as soon as 200 OK or 201 Created response is issued
 																setIsSubmitting(false);

@@ -119,7 +119,11 @@ const PersonalSettingsForm = () => {
 				const personalSettingsResponseTimeout = setTimeout(() => {
 					if (personalSettingsResponseData && Math.round(personalSettingsResponseStatus / 200) === 1) {
 						// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-						mutate(UserApiEndpoint, { ...user, data: personalSettingsResponseData }, false);
+						mutate(
+							UserApiEndpoint,
+							{ ...user, data: personalSettingsResponseData },
+							{ optimisticData: user?.data, rollbackOnError: true, revalidate: true }
+						);
 
 						// Disable submission and disable form as soon as 200 OK or 201 Created response was issued
 						setIsSubmitting(false);

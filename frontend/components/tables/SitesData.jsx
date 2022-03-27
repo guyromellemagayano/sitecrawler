@@ -12,7 +12,7 @@ import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import PropTypes from "prop-types";
-import { memo, useContext, useMemo, useState } from "react";
+import { memo, useContext, useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
@@ -51,7 +51,7 @@ const SitesData = ({ site = null }) => {
 	const { isComponentReady, user } = useContext(SiteCrawlerAppContext);
 
 	// Custom `scan` API endpoint
-	useMemo(() => {
+	useEffect(() => {
 		siteId ? setCustomScanApiEndpoint(SitesApiEndpoint + siteId + ScanSlug) : setCustomScanApiEndpoint(null);
 
 		return { customScanApiEndpoint };
@@ -66,7 +66,7 @@ const SitesData = ({ site = null }) => {
 	);
 
 	// Custom `stats` API endpoint state
-	useMemo(() => {
+	useEffect(() => {
 		customScanApiEndpoint && siteLastFinishedScanId
 			? setCustomStatsApiEndpoint(customScanApiEndpoint + siteLastFinishedScanId)
 			: setCustomStatsApiEndpoint(null);

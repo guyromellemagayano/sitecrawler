@@ -1,17 +1,21 @@
+import { SitesApiEndpoint } from "@constants/ApiEndpoints";
+import { MaxTotalSitesLimit, orderingByNameQuery, perPageQuery, sortByNameAscending } from "@constants/GlobalValues";
 import { useSiteSelection } from "@hooks/useSiteSelection";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import Scrollbars from "react-custom-scrollbars-2";
 import "react-loading-skeleton/dist/skeleton.css";
+import { useSWRConfig } from "swr";
 import { MemoizedSiteList } from "./SiteList";
 
 /**
  * Custom function to render the `SitesList` component
  *
+ * @param {boolean} openDropdown
  * @param {object} sites
  */
-const SitesList = ({ sites = null }) => {
+const SitesList = ({ openDropdown = false, sites = null }) => {
 	// Translations
 	const { t } = useTranslation();
 	const noAvailableSites = t("sites:noAvailableSites");
@@ -26,9 +30,22 @@ const SitesList = ({ sites = null }) => {
 		selectedSiteDetails
 	} = useSiteSelection();
 
+	// SWR hook for global mutations
+	const { mutate } = useSWRConfig();
+
 	// Custom variables
 	const sitesCount = sites?.data?.count ?? null;
 	const sitesResults = sites?.data?.results ?? null;
+
+	useEffect(() => {
+		if (openDropdown) {
+			mutate(
+				SitesApiEndpoint + `?${orderingByNameQuery + sortByNameAscending}&${perPageQuery + MaxTotalSitesLimit}`,
+				null,
+				{ optimisticData: sites?.data, rollbackOnError: true, revalidate: true }
+			);
+		}
+	}, [openDropdown]);
 
 	return sitesCount > 0 ? (
 		<ul
@@ -55,6 +72,7 @@ const SitesList = ({ sites = null }) => {
 };
 
 SitesList.propTypes = {
+	openDropdown: PropTypes.bool,
 	sites: PropTypes.shape({
 		data: PropTypes.shape({
 			count: PropTypes.any,

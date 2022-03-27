@@ -77,7 +77,7 @@ export const useScan = (endpoint = null, options = null) => {
 			}
 
 			// Mutate `scan` state
-			mutate(site, { ...scan, data: currentScanResponseData });
+			mutate(site, { ...scan, data: currentScanResponseData }, { rollbackOnError: true, revalidate: true });
 
 			// Set `isProcessing` state
 			setIsProcessing(false);

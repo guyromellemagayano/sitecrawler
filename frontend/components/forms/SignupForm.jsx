@@ -37,7 +37,7 @@ const SignupForm = () => {
 	const tooShort = t("common:tooShort");
 
 	// Custom context
-	const { setConfig } = useContext(SiteCrawlerAppContext);
+	const { setConfig, user } = useContext(SiteCrawlerAppContext);
 
 	// Set the "uid" and "token" from the URL query parameters
 	const handleUid = useCallback(async () => {
@@ -89,7 +89,7 @@ const SignupForm = () => {
 					resetForm({ values: "" });
 
 					// Mutate "user" endpoint after successful 200 OK or 201 Created response is issued
-					mutate(UserApiEndpoint);
+					mutate(UserApiEndpoint, null, { optimisticData: user?.data, rollbackOnError: true, revalidate: true });
 
 					// Show alert message after successful 200 OK or 201 Created response is issued
 					setConfig({

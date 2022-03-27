@@ -1078,6 +1078,7 @@ export const useAlertTranslations = () => {
 		sitesPut504GatewayTimeoutErrorResponse,
 		sitesDelete200OkSuccessResponse,
 		sitesDelete201CreatedSuccessResponse,
+		sitesDelete204NoContentSuccessResponse,
 		sitesDelete400BadRequestErrorResponse,
 		sitesDelete401UnauthorizedErrorResponse,
 		sitesDelete403ForbiddenErrorResponse,

@@ -164,8 +164,16 @@ const CardInformationForm = () => {
 						const paymentMethodResponseTimeout = setTimeout(() => {
 							if (paymentMethodResponseData && Math.round(paymentMethodResponseStatus / 200) === 1) {
 								// Mutate `defaultPaymentMethod` endpoint after successful 200 OK or 201 Created response is issued
-								mutate(PaymentMethodApiEndpoint, { ...paymentMethods, data: paymentMethodResponseData }, false);
-								mutate(DefaultPaymentMethodApiEndpoint);
+								mutate(
+									PaymentMethodApiEndpoint,
+									{ ...paymentMethods, data: paymentMethodResponseData },
+									{ optimisticData: paymentMethods?.data, rollbackOnError: true, revalidate: true }
+								);
+								mutate(DefaultPaymentMethodApiEndpoint, null, {
+									optimisticData: defaultPaymentMethod?.data,
+									rollbackOnError: true,
+									revalidate: true
+								});
 
 								// Disable submission form and as soon as 200 OK or 201 Created response is issued
 								setIsSubmitting(false);
