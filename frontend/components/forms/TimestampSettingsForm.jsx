@@ -87,10 +87,14 @@ const TimestampSettingsForm = () => {
 															...user,
 															data: timestampSettingsResponseData
 														},
-														false
+														{ optimisticData: user?.data, rollbackOnError: true, revalidate: true }
 													);
 												} else {
-													mutate(UserApiEndpoint);
+													mutate(UserApiEndpoint, null, {
+														optimisticData: user?.data,
+														rollbackOnError: true,
+														revalidate: true
+													});
 													setDisableLocalTime(!disableLocalTime);
 												}
 											}, NotificationDisplayInterval);

@@ -44,7 +44,7 @@ const DeleteUserAccountModal = ({ setShowModal, showModal = false }, ref) => {
 	const userDeletionRef = useRef(null);
 
 	// Custom context
-	const { state, setConfig } = useContext(SiteCrawlerAppContext);
+	const { state, setConfig, user } = useContext(SiteCrawlerAppContext);
 
 	// Handle user deletion
 	const handleUserDeletion = () => {
@@ -70,7 +70,7 @@ const DeleteUserAccountModal = ({ setShowModal, showModal = false }, ref) => {
 
 				const timeout = setTimeout(() => {
 					// Mutate "user" endpoint after successful 200 OK or 201 Created response is issued
-					mutate(UserApiEndpoint);
+					mutate(UserApiEndpoint, null, { optimisticData: user?.data, rollbackOnError: true, revalidate: true });
 
 					// Redirect to the login page after successful 200 OK or 201 Created response is issued
 					setIsLoading(false);

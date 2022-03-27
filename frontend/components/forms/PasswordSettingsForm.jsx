@@ -78,7 +78,10 @@ const PasswordSettingsForm = () => {
 				const passwordSettingsResponseTimeout = setTimeout(() => {
 					if (passwordSettingsResponseData && Math.round(passwordSettingsResponseStatus / 200) === 1) {
 						// Mutate `password` endpoint after successful 200 OK or 201 Created response is issued
-						mutate(PasswordChangeApiEndpoint);
+						mutate(PasswordChangeApiEndpoint, null, {
+							rollbackOnError: true,
+							revalidate: true
+						});
 
 						// Disable submission, reset, and disable form as soon as 200 OK or 201 Created response was issued
 						setIsSubmitting(false);

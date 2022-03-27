@@ -11,7 +11,7 @@ import "react-loading-skeleton/dist/skeleton.css";
  */
 const SiteSelect = () => {
 	// Custom context
-	const { isComponentReady } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady, sites } = useContext(SiteCrawlerAppContext);
 
 	// Custom hooks
 	const { siteSelectRef, isSiteSelectComponentVisible, setIsSiteSelectComponentVisible, selectedSiteDetails } =

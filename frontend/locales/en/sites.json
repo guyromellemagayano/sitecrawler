@@ -5,7 +5,7 @@
 	"sitesPages": "Pages",
 	"sitesImages": "Images",
 	"sitesSeo": "SEO",
-	"sitesSettings": "Settings",
+	"sitesSettings": "Site Settings",
 	"sitesDashboard": "Sites Dashboard",
 	"noAvailableSites": "No Available Sites",
 	"noAvailableLinks": "No Available Links",
@@ -175,5 +175,7 @@
 	"imagesTlsNonOk": "Images with Non-OK TLS",
 	"pagesBig": "Big Pages",
 	"pagesTlsNonOk": "Pages with Non-OK TLS",
-	"pagesSmallTlsOk": "Small Pages with OK TLS"
+	"pagesSmallTlsOk": "Small Pages with OK TLS",
+	"verified": "Verified",
+	"unverified": "Unverified"
 }

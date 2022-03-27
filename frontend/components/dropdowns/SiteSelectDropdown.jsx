@@ -66,7 +66,7 @@ const SiteSelectDropdown = ({ openDropdown = false }, ref) => {
 				leaveTo="transform opacity-0 scale-95"
 			>
 				<div ref={ref} className="absolute z-50 mt-1 w-full overflow-hidden rounded-md bg-white shadow-lg">
-					<MemoizedSitesList sites={sites} />
+					<MemoizedSitesList openDropdown={openDropdown} sites={sites} />
 
 					<span className="relative m-2 flex justify-center rounded-md shadow-sm">
 						{isComponentReady ? (

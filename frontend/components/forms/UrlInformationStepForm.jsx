@@ -65,7 +65,7 @@ const UrlInformationStepForm = (props) => {
 	const { mutate } = useSWRConfig();
 
 	// Custom context
-	const { isComponentReady, setConfig, user, state } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady, setConfig, user, state, sites } = useContext(SiteCrawlerAppContext);
 
 	// Custom variables
 	const largePageSizeThreshold = user?.data?.large_page_size_threshold ?? null;
@@ -133,12 +133,15 @@ const UrlInformationStepForm = (props) => {
 					.max(FormUrlNameMaxChars, tooLong)
 					.required(requiredField)
 			})}
-			onSubmit={async (values, { setSubmitting, setErrors }) => {
+			onSubmit={async (values, { setErrors }) => {
 				if (!editMode) {
+					// Disable form after successful 200 OK or 201 Created response is issued
+					setDisableForm(!disableForm);
+
 					const body = {
 						url: (values.siteurlprotocol !== "" ? values.siteurlprotocol : "https://") + values.siteurl,
-						name: values.sitename,
-						large_page_size_threshold: largePageSizeThreshold
+						name: values.sitename
+						// large_page_size_threshold: largePageSizeThreshold
 					};
 
 					const siteValidationResponse = await handleGetMethod(SitesApiEndpoint);
@@ -147,83 +150,76 @@ const UrlInformationStepForm = (props) => {
 					const siteValidationResponseMethod = siteValidationResponse?.config?.method ?? null;
 
 					// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
-					const siteValidationResponseTimeout = setTimeout(() => {
-						(async () => {
-							if (siteValidationResponseData !== null && Math.round(siteValidationResponseStatus / 200) === 1) {
-								let siteValidationResponseDataResultsArray = [];
-								let siteValidationResponseDataResult = null;
+					(async () => {
+						if (siteValidationResponseData !== null && Math.round(siteValidationResponseStatus / 200) === 1) {
+							let siteValidationResponseDataResultsArray = [];
+							let siteValidationResponseDataResult = null;
 
-								siteValidationResponseData?.results?.map((val) =>
-									siteValidationResponseDataResultsArray.push(val.url)
-								) ?? null;
+							siteValidationResponseData?.results?.map((val) => siteValidationResponseDataResultsArray.push(val.url)) ??
+								null;
 
-								if (siteValidationResponseDataResultsArray?.length > 0) {
-									siteValidationResponseDataResult = stringSimilarity.findBestMatch(
-										body.url,
-										siteValidationResponseDataResultsArray
-									);
-								}
+							if (siteValidationResponseDataResultsArray?.length > 0) {
+								siteValidationResponseDataResult = stringSimilarity.findBestMatch(
+									body.url,
+									siteValidationResponseDataResultsArray
+								);
+							}
 
-								if (siteValidationResponseDataResult?.bestMatch?.rating === 1) {
-									// Report error message that site URL already exists
-									setErrors({ siteurl: siteUrlAlreadyExists });
-								} else {
-									const siteAdditionResponse = await handlePostMethod(SitesApiEndpoint, body);
-									const siteAdditionResponseData = siteAdditionResponse?.data ?? null;
-									const siteAdditionResponseStatus = siteAdditionResponse?.status ?? null;
-									const siteAdditionResponseMethod = siteAdditionResponse?.config?.method ?? null;
+							if (siteValidationResponseDataResult?.bestMatch?.rating === 1) {
+								// Report error message that site URL already exists
+								setErrors({ siteurl: siteUrlAlreadyExists });
 
-									// Show alert message after successful 200 OK or 201 Created response is issued
-									setConfig({
-										isSites: true,
-										method: siteAdditionResponseMethod,
-										status: siteAdditionResponseStatus,
-										isAlert: false,
-										isNotification: false
+								setDisableForm(false);
+
+								return;
+							} else {
+								const siteAdditionResponse = await handlePostMethod(SitesApiEndpoint, body);
+								const siteAdditionResponseData = siteAdditionResponse?.data ?? null;
+								const siteAdditionResponseStatus = siteAdditionResponse?.status ?? null;
+								const siteAdditionResponseMethod = siteAdditionResponse?.config?.method ?? null;
+
+								console.log(siteAdditionResponse);
+
+								// Show alert message after successful 200 OK or 201 Created response is issued
+								setConfig({
+									isSites: true,
+									method: siteAdditionResponseMethod,
+									status: siteAdditionResponseStatus,
+									isAlert: false,
+									isNotification: false
+								});
+
+								// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
+								if (siteAdditionResponseData !== null && Math.round(siteAdditionResponseStatus / 100) === 2) {
+									mutate(SitesApiEndpoint, null, {
+										optimisticData: sites?.data,
+										rollbackOnError: true,
+										revalidate: true
+									});
+
+									// Update current URL with query for the next step
+									replace({
+										pathname: AddNewSiteLink,
+										query: {
+											step: step + 1,
+											sid: siteAdditionResponseData?.id ?? null,
+											edit: false,
+											verified: false
+										}
 									});
 
 									// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
-									const siteAdditionResponseTimeout = setTimeout(() => {
-										if (siteAdditionResponseData !== null && Math.round(siteAdditionResponseStatus / 100) === 2) {
-											// Disable form after successful 200 OK or 201 Created response is issued
-											setDisableForm(true);
-
-											// Update current URL with query for the next step
-											replace({
-												pathname: AddNewSiteLink,
-												query: {
-													step: step + 1,
-													sid: siteAdditionResponseData?.id ?? null,
-													edit: false,
-													verified: false
-												}
-											});
-										} else {
-											// Disable form after unsuccessful 200 OK or 201 Created response is issued
-											setDisableForm(false);
-
-											// Disable submission and reset form as soon as 200 OK or 201 Created response was not issued
-											setSubmitting(false);
-										}
-									}, NotificationDisplayInterval);
-
-									return () => {
-										clearTimeout(siteAdditionResponseTimeout);
-									};
+									setDisableForm(!disableForm);
+								} else {
+									// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
+									setDisableForm(!disableForm);
 								}
-							} else {
-								// Disable form after unsuccessful 200 OK or 201 Created response is issued
-								setDisableForm(false);
-
-								// Disable submission and reset form as soon as 200 OK or 201 Created response was issued
-								setSubmitting(false);
 							}
-						})();
-					}, NotificationDisplayInterval);
-
-					return () => {
-						clearTimeout(siteValidationResponseTimeout);
-					};
+						} else {
+							// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
+							setDisableForm(!disableForm);
+						}
+					})();
 				} else {
 					// Re-enable form for editing
 					setDisableForm(!disableForm);
@@ -274,7 +270,11 @@ const UrlInformationStepForm = (props) => {
 								});
 
 								// Mutate current URL with query for the next step
-								mutate(customSiteIdApiEndpoint, { ...siteId, data: putUrlInformationStepFormResponseData }, false);
+								mutate(
+									customSiteIdApiEndpoint,
+									{ ...siteId, data: putUrlInformationStepFormResponseData },
+									{ optimisticData: siteId?.data, rollbackOnError: true, revalidate: true }
+								);
 
 								// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
 								const timeout = setTimeout(() => {
@@ -299,13 +299,10 @@ const UrlInformationStepForm = (props) => {
 
 											// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
 											setTimeout(() => {
-												setDisableForm(false);
+												setDisableForm(!disableForm);
 											}, FormSubmissionInterval);
 										}
 									} else {
-										// Disable submission as soon as 200 OK or 201 Created response was not issued
-										setSubmitting(false);
-
 										// Update current URL with query for the previous step
 										replace({
 											pathname: AddNewSiteLink,
@@ -318,9 +315,7 @@ const UrlInformationStepForm = (props) => {
 										});
 
 										// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
-										setTimeout(() => {
-											setDisableForm(false);
-										}, FormSubmissionInterval);
+										setDisableForm(false);
 									}
 								}, NotificationDisplayInterval);
 
@@ -329,13 +324,8 @@ const UrlInformationStepForm = (props) => {
 								};
 							}
 						} else {
-							// Disable submission and reset form as soon as 200 OK or 201 Created response was not issued
-							setSubmitting(false);
-
 							// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
-							setTimeout(() => {
-								setDisableForm(false);
-							}, FormSubmissionInterval);
+							setDisableForm(false);
 						}
 					}, NotificationDisplayInterval);
 
@@ -358,11 +348,11 @@ const UrlInformationStepForm = (props) => {
 										id="sitename"
 										type="text"
 										name="sitename"
-										disabled={isSubmitting || disableForm}
+										disabled={disableForm}
 										placeholder={formSiteNamePlaceholder}
 										className={classnames(
 											"block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
-											isSubmitting || disableForm ? "cursor-not-allowed bg-gray-300 opacity-50" : null,
+											disableForm ? "cursor-not-allowed bg-gray-300 opacity-50" : null,
 											errors.sitename ? "border-red-300" : "border-gray-300"
 										)}
 										aria-describedby="sitename"
@@ -397,7 +387,7 @@ const UrlInformationStepForm = (props) => {
 													"h-full rounded-md border-transparent bg-transparent py-0 pl-3 pr-7 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
 													edit && step === 1 && sid && !verified ? "cursor-not-allowed bg-gray-300 opacity-50" : null
 												)}
-												disabled={isSubmitting || disableForm || (edit && step === 1 && sid && !verified)}
+												disabled={disableForm || (edit && step === 1 && sid && !verified)}
 												onChange={handleChange}
 												onBlur={handleBlur}
 												value={edit && step === 1 && sid && !verified ? siteUrlProtocol : values.siteurlprotocol}
@@ -411,10 +401,10 @@ const UrlInformationStepForm = (props) => {
 											id="siteurl"
 											type="text"
 											name="siteurl"
-											disabled={isSubmitting || disableForm || (edit && step === 1 && sid && !verified)}
+											disabled={disableForm || (edit && step === 1 && sid && !verified)}
 											className={classnames(
 												"block w-full rounded-md border-gray-300 pl-24 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
-												(edit && step === 1 && sid && !verified) || isSubmitting || disableForm
+												(edit && step === 1 && sid && !verified) || disableForm
 													? "cursor-not-allowed bg-gray-300 text-gray-500 opacity-50"
 													: null,
 												errors.siteurl ? "border-red-300" : "border-gray-300"
@@ -465,15 +455,15 @@ const UrlInformationStepForm = (props) => {
 								{isComponentReady ? (
 									<button
 										type="submit"
-										disabled={isSubmitting || disableForm || !urlRegex.test(values.siteurl)}
+										disabled={disableForm}
 										className={classnames(
 											"relative mt-3 inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium leading-5 text-white sm:mt-0",
-											isSubmitting || disableForm || !urlRegex.test(values.siteurl)
+											disableForm
 												? "cursor-not-allowed bg-indigo-300 opacity-50"
 												: "hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 										)}
 									>
-										{isSubmitting || disableForm ? submitting : !edit ? proceedToStep2 : updateSiteDetail}
+										{disableForm ? submitting : !edit ? proceedToStep2 : updateSiteDetail}
 									</button>
 								) : (
 									<Skeleton

@@ -39,7 +39,7 @@ const LoginForm = () => {
 	const { passwordRef, isPasswordShown, setIsPasswordShown } = useShowPassword(false);
 
 	// Custom context
-	const { setConfig, isComponentReady } = useContext(SiteCrawlerAppContext);
+	const { setConfig, isComponentReady, user } = useContext(SiteCrawlerAppContext);
 
 	// Router
 	const { push } = useRouter();
@@ -95,7 +95,7 @@ const LoginForm = () => {
 				const loginResponseTimeout = setTimeout(() => {
 					if (loginResponseData && Math.round(loginResponseStatus / 200) === 1) {
 						// Mutate `login` endpoint after successful 200 OK or 201 Created response is issued
-						mutate(LoginApiEndpoint, { data: loginResponseData.key }, false);
+						mutate(LoginApiEndpoint, { data: loginResponseData.key }, { rollbackOnError: true, revalidate: true });
 
 						// Collect user data and send to Sentry
 						Sentry.configureScope((scope) =>

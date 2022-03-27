@@ -4,12 +4,9 @@ import { MemoizedSiteSettingsPageLayout } from "@components/layouts/pages/SiteSe
 import { SitesApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { DashboardSitesLink, LoginLink, ScanSlug } from "@constants/PageLinks";
 import { SSR_SITE_URL } from "@constants/ServerEnv";
-import { useUser } from "@hooks/useUser";
-import { SiteCrawlerAppContext } from "@pages/_app";
 import AppAxiosInstance from "@utils/axios";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
-import { useContext } from "react";
 import { SWRConfig } from "swr";
 
 // Pre-render `user` data with NextJS SSR. Redirect to a login page if current user is not allowed to access that page (403 Forbidden) or redirect to the sites dashboard page if the user is still currently logged in (200 OK).
@@ -75,34 +72,25 @@ export async function getServerSideProps({ req, query }) {
 	}
 }
 
-const SiteSettingsAuth = ({ siteName }) => {
+const SiteSettingsAuth = () => {
 	// Translations
 	const { t } = useTranslation("sites");
 	const sitesSettingsText = t("sitesSettings");
 
-	// Custom context
-	const { isComponentReady } = useContext(SiteCrawlerAppContext);
-
-	// SWR hooks
-	const { user } = useUser("/api/auth/user/");
-
-	// Custom variables
-	const sitesOverviewPageTitle = siteName + " | " + sitesSettingsText;
-
-	return isComponentReady && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+	return (
 		<MemoizedLayout>
-			<NextSeo title={sitesOverviewPageTitle} />
-			<MemoizedPageLayout pageTitle={sitesOverviewPageTitle}>
+			<NextSeo title={sitesSettingsText} />
+			<MemoizedPageLayout pageTitle={sitesSettingsText}>
 				<MemoizedSiteSettingsPageLayout />
 			</MemoizedPageLayout>
 		</MemoizedLayout>
-	) : null;
+	);
 };
 
-export default function SiteSettings({ siteName, fallback }) {
+export default function SiteSettings() {
 	return (
-		<SWRConfig value={{ fallback }}>
-			<SiteSettingsAuth siteName={siteName} />
+		<SWRConfig>
+			<SiteSettingsAuth />
 		</SWRConfig>
 	);
 }

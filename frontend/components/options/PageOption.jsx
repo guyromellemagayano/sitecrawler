@@ -5,7 +5,7 @@ import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import { RedirectInterval } from "@constants/GlobalValues";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DocumentTextIcon, ExternalLinkIcon, LinkIcon } from "@heroicons/react/outline";
-import { DownloadIcon, GlobeIcon } from "@heroicons/react/solid";
+import { CheckCircleIcon, DownloadIcon, GlobeIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useImages } from "@hooks/useImages";
 import { useLinks } from "@hooks/useLinks";
@@ -32,8 +32,16 @@ import "react-loading-skeleton/dist/skeleton.css";
  * @param {boolean} isLinks
  * @param {boolean} isPages
  * @param {boolean} isSites
+ * @param {boolean} isSiteSettings
  */
-const PageOption = ({ isOverview = false, isImages = false, isLinks = false, isPages = false, isSites = false }) => {
+const PageOption = ({
+	isOverview = false,
+	isImages = false,
+	isLinks = false,
+	isPages = false,
+	isSites = false,
+	isSiteSettings = false
+}) => {
 	const [isDownloading, setIsDownloading] = useState(false);
 
 	// Translations
@@ -53,6 +61,8 @@ const PageOption = ({ isOverview = false, isImages = false, isLinks = false, isP
 	const noAvailablePagesText = t("sites:noAvailablePages");
 	const noAvailableImagesText = t("sites:noAvailableImages");
 	const noAvailableLinksText = t("sites:noAvailableLinks");
+	const verifiedText = t("sites:verified");
+	const unverifiedText = t("sites:unverified");
 
 	// Router
 	const { asPath } = useRouter();
@@ -154,7 +164,7 @@ const PageOption = ({ isOverview = false, isImages = false, isLinks = false, isP
 
 	return (
 		<div className="flex-none px-4 sm:px-6 md:flex md:items-center md:justify-between md:px-0">
-			{!isSites ? (
+			{!isSites && !isSiteSettings ? (
 				<>
 					<MemoizedUpgradeErrorModal
 						ref={upgradeErrorModalRef}
@@ -179,7 +189,7 @@ const PageOption = ({ isOverview = false, isImages = false, isLinks = false, isP
 									{isComponentReady && siteId ? (
 										<>
 											<GlobeIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
-											<span className="text-sm font-semibold leading-6 text-gray-500">
+											<span className="text-sm font-semibold leading-5 text-gray-500">
 												<a
 													href={siteUrl}
 													target="_blank"
@@ -199,6 +209,24 @@ const PageOption = ({ isOverview = false, isImages = false, isLinks = false, isP
 									)}
 								</div>
 
+								{!isOverview ? (
+									<div className="flex items-center space-x-2 text-sm text-gray-500">
+										{isComponentReady && siteId ? (
+											<>
+												<CheckCircleIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
+												<span className="text-sm leading-5 text-gray-500">
+													{siteIdVerified ? verifiedText : unverifiedText}
+												</span>
+											</>
+										) : (
+											<>
+												<Skeleton duration={2} width={20} height={20} className="flex-shrink-0" />
+												<Skeleton duration={2} width={60} height={20} />
+											</>
+										)}
+									</div>
+								) : null}
+
 								<div className="flex items-center space-x-2 text-sm text-gray-500">
 									{isComponentReady && scanCount && scanResults?.length > 0 ? (
 										<>
@@ -207,7 +235,7 @@ const PageOption = ({ isOverview = false, isImages = false, isLinks = false, isP
 												className="h-4 w-4 flex-shrink-0 text-gray-400"
 												aria-hidden="true"
 											/>
-											<span className="text-sm leading-6 text-gray-500">
+											<span className="text-sm leading-5 text-gray-500">
 												{scanCount > 1 ? (
 													!disableLocalTime ? (
 														dayjs(previousScanFinishedAt).calendar(null, calendarStrings)
@@ -233,58 +261,60 @@ const PageOption = ({ isOverview = false, isImages = false, isLinks = false, isP
 							</>
 						) : null}
 
-						<div className="flex items-center space-x-2 text-sm text-gray-500">
-							{isComponentReady && isLinks && linksCount ? (
-								<>
-									<LinkIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
-									<span className="text-sm leading-6 text-gray-500">
-										{linksCount > 1
-											? linksCount + " " + handleConversionStringToLowercase(linksText)
-											: linksCount === 1
-											? linksCount + " " + linkText
-											: noAvailableLinksText}
-									</span>
-								</>
-							) : isComponentReady && isSites && sitesCount ? (
-								<>
-									<ExternalLinkIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
-									<span className="text-sm leading-6 text-gray-500">
-										{sitesCount > 1
-											? sitesCount + " " + handleConversionStringToLowercase(sitesText)
-											: sitesCount === 1
-											? sitesCount + " " + siteText
-											: noAvailableSitesText}
-									</span>
-								</>
-							) : isComponentReady && isPages && pagesCount ? (
-								<>
-									<DocumentTextIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
-									<span className="text-sm leading-6 text-gray-500">
-										{pagesCount > 1
-											? pagesCount + " " + handleConversionStringToLowercase(pagesText)
-											: pagesCount === 1
-											? pagesCount + " " + siteText
-											: noAvailablePagesText}
-									</span>
-								</>
-							) : isComponentReady && isImages && imagesCount ? (
-								<>
-									<DocumentTextIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
-									<span className="text-sm leading-6 text-gray-500">
-										{imagesCount > 1
-											? imagesCount + " " + handleConversionStringToLowercase(imagesText)
-											: imagesCount === 1
-											? imagesCount + " " + siteText
-											: noAvailableImagesText}
-									</span>
-								</>
-							) : isComponentReady && isOverview ? null : (
-								<>
-									<Skeleton duration={2} width={20} height={20} className="flex-shrink-0" />
-									<Skeleton duration={2} width={60} height={20} />
-								</>
-							)}
-						</div>
+						{isComponentReady && ((isLinks && linksCount) || (isSites && sitesCount) || (isImages && imagesCount)) ? (
+							<div className="flex items-center space-x-2 text-sm text-gray-500">
+								{isComponentReady && isLinks && linksCount ? (
+									<>
+										<LinkIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
+										<span className="text-sm leading-5 text-gray-500">
+											{linksCount > 1
+												? linksCount + " " + handleConversionStringToLowercase(linksText)
+												: linksCount === 1
+												? linksCount + " " + linkText
+												: noAvailableLinksText}
+										</span>
+									</>
+								) : isComponentReady && isSites && sitesCount ? (
+									<>
+										<ExternalLinkIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
+										<span className="text-sm leading-5 text-gray-500">
+											{sitesCount > 1
+												? sitesCount + " " + handleConversionStringToLowercase(sitesText)
+												: sitesCount === 1
+												? sitesCount + " " + siteText
+												: noAvailableSitesText}
+										</span>
+									</>
+								) : isComponentReady && isPages && pagesCount ? (
+									<>
+										<DocumentTextIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
+										<span className="text-sm leading-5 text-gray-500">
+											{pagesCount > 1
+												? pagesCount + " " + handleConversionStringToLowercase(pagesText)
+												: pagesCount === 1
+												? pagesCount + " " + siteText
+												: noAvailablePagesText}
+										</span>
+									</>
+								) : isComponentReady && isImages && imagesCount ? (
+									<>
+										<DocumentTextIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
+										<span className="text-sm leading-5 text-gray-500">
+											{imagesCount > 1
+												? imagesCount + " " + handleConversionStringToLowercase(imagesText)
+												: imagesCount === 1
+												? imagesCount + " " + siteText
+												: noAvailableImagesText}
+										</span>
+									</>
+								) : (isComponentReady && isOverview) || (isComponentReady && isSiteSettings) ? null : (
+									<>
+										<Skeleton duration={2} width={20} height={20} className="flex-shrink-0" />
+										<Skeleton duration={2} width={60} height={20} />
+									</>
+								)}
+							</div>
+						) : null}
 					</div>
 
 					{!isSites ? (
@@ -343,7 +373,7 @@ const PageOption = ({ isOverview = false, isImages = false, isLinks = false, isP
 								<Skeleton duration={2} width={150} height={40} />
 							)}
 
-							{!isSites && !isOverview ? (
+							{!isOverview && !isSiteSettings ? (
 								isComponentReady && (linksCount || sitesCount || pagesCount || imagesCount) ? (
 									<button
 										type="button"
@@ -388,6 +418,7 @@ PageOption.propTypes = {
 	isLinks: PropTypes.bool,
 	isOverview: PropTypes.bool,
 	isPages: PropTypes.bool,
+	isSiteSettings: PropTypes.bool,
 	isSites: PropTypes.bool
 };
 

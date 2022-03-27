@@ -117,7 +117,7 @@ const DataPagination = () => {
 		push(newPath);
 
 		// Mutate function here
-		mutate(scanApiEndpoint);
+		mutate(scanApiEndpoint, null, { rollbackOnError: true, revalidate: true });
 	};
 
 	// Custom navigation item renders

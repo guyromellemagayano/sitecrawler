@@ -1,10 +1,10 @@
-import { UserApiEndpoint } from "@constants/ApiEndpoints";
+import { SitesApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { NoInterval, OnErrorRetryCount, RevalidationInterval } from "@constants/GlobalValues";
 import { DashboardSitesLink, DashboardSlug, LoginLink } from "@constants/PageLinks";
 import { handleGetMethod } from "@helpers/handleHttpMethods";
 import * as Sentry from "@sentry/nextjs";
 import { useRouter } from "next/router";
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 const { createContext, useContext } = require("react");
 
 /**
@@ -17,6 +17,9 @@ const { createContext, useContext } = require("react");
 export const useMainSWRConfig = (endpoint = null, options = null) => {
 	// Router
 	const router = useRouter();
+
+	// SWR hook for global mutations
+	const { mutate } = useSWRConfig();
 
 	// Default options
 	const defaultOptions = {
@@ -36,6 +39,10 @@ export const useMainSWRConfig = (endpoint = null, options = null) => {
 							router.replace(DashboardSitesLink);
 						}
 					}
+				}
+			} else if (key === SitesApiEndpoint) {
+				if (data.status === 204 && data.data.detail?.length > 0) {
+					mutate(key, { optimisticData: data.data, rollbackOnError: true, revalidate: true });
 				}
 			} else return;
 		},

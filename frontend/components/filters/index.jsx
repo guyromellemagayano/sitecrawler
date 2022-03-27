@@ -144,7 +144,7 @@ const Filter = ({
 	} = FilterData();
 
 	// Custom context
-	const { isComponentReady } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady, scan } = useContext(SiteCrawlerAppContext);
 
 	// Router
 	const { query, asPath, push } = useRouter();
@@ -1823,7 +1823,7 @@ const Filter = ({
 		push(newPath);
 
 		// Mutate function here
-		mutate(scanApiEndpoint);
+		mutate(scanApiEndpoint, null, { rollbackOnError: true, revalidate: true });
 	};
 
 	// Handle filters on load

@@ -136,29 +136,39 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	const { stripePromise, errorStripePromise, validatingStripePromise } =
 		useStripePromise(customStripePromiseApiEndpoint);
 
+	// console.log("stripePromise", stripePromise, customStripePromiseApiEndpoint);
+
 	// `paymentMethods` SWR hook
 	const { paymentMethods, errorPaymentMethods, validatingPaymentMethods } = usePaymentMethods(
 		customPaymentMethodsApiEndpoint
 	);
+
+	// console.log("paymentMethods", paymentMethods, customPaymentMethodsApiEndpoint);
 
 	// `defaultPaymentMethod` SWR hook
 	const { defaultPaymentMethod, errorDefaultPaymentMethod, validatingDefaultPaymentMethod } = useDefaultPaymentMethod(
 		customDefaultPaymentMethodApiEndpoint
 	);
 
+	// console.log("defaultPaymentMethod", defaultPaymentMethod, customDefaultPaymentMethodApiEndpoint);
+
 	// `subscriptions` SWR hook
 	const { subscriptions, errorSubscriptions, validatingSubscriptions } =
 		useSubscriptions(customSubscriptionsApiEndpoint);
+
+	// console.log("subscriptions", subscriptions, customSubscriptionsApiEndpoint);
 
 	// `currentSubscription` SWR hook
 	const { currentSubscription, errorCurrentSubscription, validatingCurrentSubscription } = useCurrentSubscription(
 		customCurrentSubscriptionApiEndpoint
 	);
 
+	// console.log("currentSubscription", currentSubscription, useCurrentSubscription);
+
 	// `sites` SWR hook
 	const { sites, errorSites, validatingSites } = useSites(customSitesApiEndpoint);
 
-	console.log("sites", sites, customSitesApiEndpoint);
+	// console.log("sites", sites, customSitesApiEndpoint);
 
 	// Custom variables
 	const querySiteId = query?.siteId ? handleConversionStringToNumber(query.siteId) : null;
@@ -180,7 +190,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// `siteId` SWR hook
 	const { siteId, errorSiteId, validatingSiteId } = useSiteId(customSitesIdApiEndpoint);
 
-	console.log("siteId", siteId, customSitesIdApiEndpoint);
+	// console.log("siteId", siteId, customSitesIdApiEndpoint);
 
 	// Update `hasSiteLimitReached` state value
 	useEffect(() => {
@@ -219,7 +229,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 		validatingScan
 	} = useScan(customScanApiEndpoint);
 
-	console.log("scan", scan, customScanApiEndpoint, scanObjId);
+	// console.log("scan", scan, customScanApiEndpoint, scanObjId);
 
 	// Custom `stats` API endpoint state
 	useEffect(() => {
@@ -237,7 +247,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// `stats` SWR hook
 	const { stats, errorStats, validatingStats } = useStats(customStatsApiEndpoint);
 
-	console.log("stats", stats, customStatsApiEndpoint);
+	// console.log("stats", stats, customStatsApiEndpoint);
 
 	// Custom API endpoint states that rely on `siteId` and `scanObjId` values
 	useEffect(() => {
@@ -275,17 +285,17 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// `links` SWR hook
 	const { links, errorLinks, validatingLinks } = useLinks(customLinksApiEndpoint);
 
-	console.log("links", links, customLinksApiEndpoint);
+	// console.log("links", links, customLinksApiEndpoint);
 
 	// `pages` SWR hook
 	const { pages, errorPages, validatingPages } = usePages(customPagesApiEndpoint);
 
-	console.log("pages", pages, customPagesApiEndpoint);
+	// console.log("pages", pages, customPagesApiEndpoint);
 
 	// `images` SWR hook
 	const { images, errorImages, validatingImages } = useImages(customImagesApiEndpoint);
 
-	console.log("images", images, customImagesApiEndpoint);
+	// console.log("images", images, customImagesApiEndpoint);
 
 	// Custom `linkId` SWR hook
 	useEffect(() => {

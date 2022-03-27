@@ -26,7 +26,7 @@ export default function Logout() {
 
 			if (logoutResponseData && Math.round(logoutResponseStatus / 200) === 1) {
 				// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-				mutate(UserApiEndpoint);
+				mutate(UserApiEndpoint, null, { rollbackOnError: true, revalidate: true });
 
 				// Redirect to sites dashboard page after successful 200 OK response is established
 				setTimeout(() => {

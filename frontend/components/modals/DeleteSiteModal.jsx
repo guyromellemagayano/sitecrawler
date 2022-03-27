@@ -1,9 +1,11 @@
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
-import { ModalDisplayInterval, NotificationDisplayInterval } from "@constants/GlobalValues";
+import { NotificationDisplayInterval } from "@constants/GlobalValues";
 import { DashboardSitesLink } from "@constants/PageLinks";
 import { Dialog, Transition } from "@headlessui/react";
 import { handleDeleteMethod } from "@helpers/handleHttpMethods";
-import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/outline";
+import { XCircleIcon } from "@heroicons/react/outline";
+import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
+import { useSiteQueries } from "@hooks/useSiteQueries";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
@@ -20,7 +22,6 @@ import { useSWRConfig } from "swr";
  */
 const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref) => {
 	const [isLoading, setIsLoading] = useState(false);
-	const [isHidden, setIsHidden] = useState(false);
 
 	// Translations
 	const { t } = useTranslation();
@@ -39,13 +40,15 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 	const { mutate } = useSWRConfig();
 
 	// Custom hooks
+	const { linksPerPage } = useSiteQueries();
+	const { scanApiEndpoint } = useScanApiEndpoint(linksPerPage);
 	const deleteSiteRef = useRef(null);
 
 	// Custom contexts
-	const { state, setConfig } = useContext(SiteCrawlerAppContext);
+	const { state, setConfig, sites } = useContext(SiteCrawlerAppContext);
 
 	// Handle site deletion
-	const handleSiteDeletion = () => {
+	const handleSiteDeletion = (e) => {
 		setIsLoading(true);
 
 		(async () => {
@@ -63,25 +66,32 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 				isNotification: false
 			});
 
-			const siteDeleteResponseTimeout = setTimeout(() => {
-				if (siteDeleteResponseData !== null && Math.round(siteDeleteResponseStatus / 200) === 1) {
-					setIsHidden(true);
-
-					const timeout = setTimeout(() => {
+			if (deleteSiteRef?.current && deleteSiteRef?.current?.contains(e.target)) {
+				const siteDeleteResponseTimeout = setTimeout(() => {
+					if (siteDeleteResponseData !== null && Math.round(siteDeleteResponseStatus / 200) === 1) {
 						// Mutate "user" endpoint after successful 200 OK or 201 Created response is issued
-						mutate(SitesApiEndpoint);
+						mutate(scanApiEndpoint, null, { optimisticData: sites?.data, rollbackOnError: true, revalidate: true });
+						mutate(SitesApiEndpoint, null, {
+							optimisticData: sites?.data,
+							rollbackOnError: true,
+							revalidate: true
+						});
 
 						// Redirect to the sites dashboard page after successful 200 OK or 201 Created response is issued
 						push(DashboardSitesLink);
-					}, ModalDisplayInterval);
 
-					return () => {
-						clearTimeout(timeout);
-					};
-				} else {
-					setIsLoading(false);
-				}
-			}, NotificationDisplayInterval);
+						setIsLoading(false);
+						setShowModal(false);
+					} else {
+						setIsLoading(false);
+						setShowModal(false);
+					}
+				}, NotificationDisplayInterval);
+
+				return () => {
+					clearTimeout(siteDeleteResponseTimeout);
+				};
+			}
 		})();
 	};
 
@@ -127,36 +137,21 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 					>
 						<div className="inline-block transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6 sm:align-middle">
 							<div className="sm:flex sm:items-start">
-								<div
-									className={classnames(
-										"mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full sm:mx-0 sm:h-10 sm:w-10",
-										!isHidden ? "bg-red-100" : "bg-green-500"
-									)}
-								>
-									{!isHidden ? (
-										<XCircleIcon className="h-5 w-5 text-red-600" aria-hidden="true" />
-									) : (
-										<CheckCircleIcon className="h-5 w-5 text-green-600" aria-hidden="true" />
-									)}
+								<div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+									<XCircleIcon className="h-5 w-5 text-red-600" aria-hidden="true" />
 								</div>
 								<div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-									<Dialog.Title
-										as="h3"
-										className={classnames("text-lg font-medium leading-6 text-gray-900", isHidden ? "hidden" : "block")}
-									>
+									<Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
 										{deleteSiteHeadlineText}
 									</Dialog.Title>
 
 									<div className="mt-2">
-										<Dialog.Description
-											as="p"
-											className={classnames("mb-3 text-sm text-gray-500", isHidden ? "hidden" : "block")}
-										>
+										<Dialog.Description as="p" className="mb-3 text-sm text-gray-500">
 											{deleteSiteSubheadingText}
 										</Dialog.Description>
 
-										{state?.responses?.length > 0 ? (
-											<div className={classnames("block", !isHidden ? "my-5" : null)}>
+										{state?.isSites && state?.responses?.length > 0 ? (
+											<div className="my-5 block">
 												<div className="flex justify-center sm:justify-start">
 													{state.responses.map((value, key) => {
 														// Alert Messsages
@@ -182,14 +177,14 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 								</div>
 							</div>
 
-							<div className={classnames("mt-5 sm:mt-4 sm:flex-row-reverse", isHidden ? "hidden" : "sm:flex")}>
+							<div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
 								<button
 									ref={deleteSiteRef}
 									type="button"
 									disabled={isLoading}
 									aria-disabled={isLoading}
 									aria-hidden={isLoading}
-									onClick={isLoading ? () => {} : handleSiteDeletion}
+									onClick={isLoading ? () => {} : (e) => handleSiteDeletion(e)}
 									className={classnames(
 										"inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm sm:ml-3 sm:w-auto sm:text-sm",
 										isLoading
