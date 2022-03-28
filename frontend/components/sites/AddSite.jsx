@@ -2,13 +2,14 @@ import { MemoizedMobileSidebarButton } from "@components/buttons/MobileSidebarBu
 import { MemoizedNotAllowedFeatureModal } from "@components/modals/NotAllowedFeatureModal";
 import { MemoizedSiteLimitReachedModal } from "@components/modals/SiteLimitReachedModal";
 import { ResetLoadingStateTimeout } from "@constants/GlobalValues";
-import { AddNewSiteLink } from "@constants/PageLinks";
+import { AddNewSiteLink, DashboardSitesLink } from "@constants/PageLinks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import { PlusIcon, SearchIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
 import { useSiteQueries } from "@hooks/useSiteQueries";
+import { useSites } from "@hooks/useSites";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
@@ -32,7 +33,6 @@ const AddSite = ({ handleOpenSidebar }) => {
 	const { t } = useTranslation();
 	const addNewSite = t("sites:addNewSite");
 	const searchSites = t("sites:searchSites");
-	const searchNotAvailable = t("sites:searchNotAvailable");
 	const loaderMessage = t("common:loaderMessage");
 
 	// Router
@@ -42,7 +42,18 @@ const AddSite = ({ handleOpenSidebar }) => {
 	const { mutate } = useSWRConfig();
 
 	// Custom context
-	const { isComponentReady, user, sites, hasSiteLimitReached } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady, hasSiteLimitReached, querySiteId } = useContext(SiteCrawlerAppContext);
+
+	// Helper functions
+	const { searchKey, setSearchKey, linksPerPage, setPagePath } = useSiteQueries();
+	const { scanApiEndpoint } = useScanApiEndpoint(linksPerPage);
+
+	// SWR hooks
+	const { sites } = useSites(scanApiEndpoint);
+
+	// Page exclusions
+	const pageInclusions = ["links", "images", "pages", "sites"];
+	const page = pageInclusions.find((page) => asPath.includes(page));
 
 	// Custom hooks
 	const {
@@ -55,10 +66,6 @@ const AddSite = ({ handleOpenSidebar }) => {
 		isComponentVisible: isNotAllowedFeatureModalVisible,
 		setIsComponentVisible: setIsNotAllowedFeatureModalVisible
 	} = useComponentVisible(false);
-
-	// Helper functions
-	const { searchKey, setSearchKey, linksPerPage, setPagePath } = useSiteQueries();
-	const { scanApiEndpoint } = useScanApiEndpoint(linksPerPage);
 
 	// Custom hook that handles site search
 	const useHandleSiteSearch = (e) => {
@@ -84,9 +91,6 @@ const AddSite = ({ handleOpenSidebar }) => {
 
 		// Push new path
 		push(newPath);
-
-		// Mutate function here
-		mutate(scanApiEndpoint, null, { rollbackOnError: true, revalidate: true });
 	};
 
 	// Handle `onClick` event on <Link> element
@@ -128,7 +132,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 					<MemoizedMobileSidebarButton handleOpenSidebar={handleOpenSidebar} />
 
 					<div className="ml-4 flex w-full items-center lg:ml-0">
-						{isBrowser ? (
+						{isBrowser && page && asPath !== DashboardSitesLink + querySiteId + "/" ? (
 							<>
 								<label htmlFor="searchSites" className="sr-only">
 									{searchSites}
@@ -142,19 +146,15 @@ const AddSite = ({ handleOpenSidebar }) => {
 										)}
 									</div>
 									{isComponentReady ? (
-										sites?.data?.count > 0 ? (
-											<input
-												type="search"
-												name="search-sites"
-												id="searchSites"
-												className="block h-full w-full border-transparent py-2 pl-8 pr-3 text-gray-900  focus:border-transparent focus:placeholder-gray-400 focus:outline-none focus:ring-0 sm:text-sm"
-												placeholder={searchSites}
-												onKeyUp={useHandleSiteSearch}
-												defaultValue={searchKey}
-											/>
-										) : (
-											<p className="flex-1 pl-8 placeholder-gray-500 sm:text-sm">{searchNotAvailable}</p>
-										)
+										<input
+											type="search"
+											name="search-sites"
+											id="searchSites"
+											className="block h-full w-full border-transparent py-2 pl-8 pr-3 text-gray-900  focus:border-transparent focus:placeholder-gray-400 focus:outline-none focus:ring-0 sm:text-sm"
+											placeholder={searchSites}
+											onKeyUp={useHandleSiteSearch}
+											defaultValue={searchKey}
+										/>
 									) : (
 										<Skeleton duration={2} width={320} height={20} />
 									)}
