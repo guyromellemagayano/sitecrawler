@@ -1,3 +1,4 @@
+import { MemoizedSiteInformationSettingsForm } from "@components/forms/SiteInformationSettingsForm";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import { memo, useContext } from "react";
@@ -21,7 +22,7 @@ const SiteInformationSettings = () => {
 				{isComponentReady ? siteInformationSettingsTitleText : <Skeleton duration={2} width={175} height={24} />}
 			</h5>
 
-			{/* <MemoizedSiteInformationSettingsForm /> */}
+			<MemoizedSiteInformationSettingsForm />
 		</div>
 	);
 };
