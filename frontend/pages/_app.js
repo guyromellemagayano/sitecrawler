@@ -191,7 +191,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// `siteId` SWR hook
 	const { siteId, errorSiteId, validatingSiteId } = useSiteId(customSitesIdApiEndpoint);
 
-	// console.log("siteId", siteId, customSitesIdApiEndpoint);
+	console.log("siteId", siteId, customSitesIdApiEndpoint);
 
 	// Update `hasSiteLimitReached` state value
 	useEffect(() => {
@@ -213,7 +213,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			: setCustomScanApiEndpoint(null);
 
 		return { customScanApiEndpoint };
-	}, [siteId]);
+	}, [siteId, customSitesIdApiEndpoint]);
 
 	// `page` SWR hook
 	const { page, errorPage, validatingPage } = usePage(customScanApiEndpoint);
@@ -251,7 +251,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// `stats` SWR hook
 	const { stats, errorStats, validatingStats } = useStats(customStatsApiEndpoint);
 
-	console.log("stats", stats, customStatsApiEndpoint);
+	// console.log("stats", stats, customStatsApiEndpoint);
 
 	// Custom API endpoint states that rely on `siteId` and `scanObjId` values
 	useEffect(() => {
