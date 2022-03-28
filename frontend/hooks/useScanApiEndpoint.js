@@ -25,7 +25,7 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 	const { asPath, query } = useRouter();
 
 	// Custom context
-	const { customScanApiEndpoint, user } = useContext(SiteCrawlerAppContext);
+	const { customScanApiEndpoint, user, querySiteId } = useContext(SiteCrawlerAppContext);
 
 	// Custom variables
 	let scanApiEndpoint = "";
@@ -59,7 +59,9 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 				SiteImageSlug +
 				(scanApiEndpoint.includes("?") ? "&" : "?") +
 				`${perPageQuery + linksPerPage}`)
-		: asPath === DashboardSitesLink
+		: querySiteId && asPath.includes(DashboardSitesLink)
+		? (scanApiEndpoint += SitesApiEndpoint + querySiteId + "/")
+		: typeof window !== "undefined" && asPath === DashboardSitesLink + window.location.search
 		? (scanApiEndpoint +=
 				SitesApiEndpoint + (scanApiEndpoint.includes("?") ? "&" : "?") + `${perPageQuery + linksPerPage}`)
 		: null;
@@ -206,10 +208,13 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 		? scanApiEndpoint.includes("?")
 			? `&ordering=${query.ordering}`
 			: `?ordering=${query.ordering}`
-		: scanApiEndpoint.includes("?")
-		? `&ordering=${sortByNameAscending}`
-		: `?ordering=${sortByNameAscending}`;
+		: !asPath.includes(DashboardSitesLink + querySiteId + "/")
+		? scanApiEndpoint.includes("?")
+			? `&ordering=${sortByNameAscending}`
+			: `?ordering=${sortByNameAscending}`
+		: "";
 
+	queryString += orderingQuery;
 	queryString += verifiedQuery;
 	queryString += statusQuery;
 	queryString += statusNeqQuery;
@@ -233,7 +238,6 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 	queryString += missingAltsIsZeroQuery;
 	queryString += pageQuery;
 	queryString += searchQuery;
-	queryString += orderingQuery;
 
 	scanApiEndpoint += queryString;
 
@@ -241,7 +245,7 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 		filterQueryString = new URLSearchParams(window.location.search);
 	}
 
-	// console.log(scanApiEndpoint);
+	console.log(scanApiEndpoint);
 
 	return { scanApiEndpoint, queryString, filterQueryString };
 };
