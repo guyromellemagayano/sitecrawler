@@ -1,6 +1,5 @@
-import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
-import { useContext } from "react";
+import { DefaultlargePageSizeThreshold } from "./GlobalValues";
 
 export const LinksChartContents = () => {
 	const { t } = useTranslation("sites");
@@ -85,22 +84,17 @@ export const PagesChartContents = () => {
 	const pagesTlsNonOkText = t("pagesTlsNonOk");
 	const pagesSmallTlsOkText = t("pagesSmallTlsOk");
 
-	const { user } = useContext(SiteCrawlerAppContext);
-
-	// Custom variables
-	const largePageSizeThreshold = user?.data?.large_page_size_threshold ?? null;
-
 	const labelsArray = [];
 
 	const pagesBigLink = {
 		label: pagesBigText,
-		filter: `size_total_min=${largePageSizeThreshold}`,
+		filter: `size_total_min=${DefaultlargePageSizeThreshold}`,
 		color: "#ef4444"
 	};
 	const pagesTlsNonOkLink = { label: pagesTlsNonOkText, filter: "tls_total=false", color: "#f43f5e" };
 	const pagesSmallTlsOkLink = {
 		label: pagesSmallTlsOkText,
-		filter: `size_total_max=${largePageSizeThreshold}&tls_total=true`,
+		filter: `size_total_max=${DefaultlargePageSizeThreshold}&tls_total=true`,
 		color: "#22c55e"
 	};
 

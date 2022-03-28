@@ -2,7 +2,7 @@ import { DashboardSitesLink } from "@constants/PageLinks";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
-import { useContext, useMemo, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useComponentVisible } from "./useComponentVisible";
 
 /**
@@ -35,7 +35,7 @@ export const useSiteSelection = () => {
 	} = useComponentVisible(false);
 
 	// Handle site selection on load
-	useMemo(() => {
+	useEffect(() => {
 		(async () => {
 			if (querySiteId && sitesResults) {
 				const site = await sitesResults?.find((site) => site.id === querySiteId);
@@ -51,7 +51,7 @@ export const useSiteSelection = () => {
 		return { selectedSiteDetails };
 	}, [querySiteId, sitesResults, selectedSiteDetails]);
 
-	useMemo(() => {
+	useEffect(() => {
 		selectedSiteId ? prefetch(DashboardSitesLink + selectedSiteId + "/") : prefetch(DashboardSitesLink);
 	}, [selectedSiteId]);
 
