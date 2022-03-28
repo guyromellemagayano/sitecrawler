@@ -11,6 +11,7 @@
 	"dismiss": "Dismiss",
 	"emailAddress": "Email Address",
 	"firstName": "First Name",
+	"largePageThresholdSize": "Large Page Threshold Size",
 	"goBack": "Go Back",
 	"goBackHome": "Go back to Home Page",
 	"goBackLogin": "Go back to Login Page",
@@ -83,5 +84,6 @@
 	"next": "Next",
 	"previous": "Previous",
 	"results": "results",
-	"rowsPerPage": "Rows per page"
+	"rowsPerPage": "Rows per page",
+	"minLargePageThreshold": "Must be a number greater than or equal to 1048576"
 }

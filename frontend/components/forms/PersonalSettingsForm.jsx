@@ -32,11 +32,13 @@ const PersonalSettingsForm = () => {
 	const lastNameText = t("common:lastName");
 	const userNameText = t("common:userName");
 	const emailText = t("common:emailAddress");
+	const largePageThresholdSizeText = t("common:largePageThresholdSize");
 	const updateText = t("common:update");
 	const requiredField = t("common:requiredField");
 	const tooShort = t("common:tooShort");
 	const tooLong = t("common:tooLong");
 	const cancelText = t("common:cancel");
+	const minLargePageThresholdText = t("common:minLargePageThreshold");
 
 	// Custom context
 	const { isComponentReady, setConfig, user, state } = useContext(SiteCrawlerAppContext);
@@ -88,6 +90,9 @@ const PersonalSettingsForm = () => {
 				lastname: Yup.string()
 					.min(FormStringMinChars, tooShort)
 					.max(FormStringMaxChars, tooLong)
+					.required(requiredField),
+				largePageSizeThreshold: Yup.number()
+					.min(largePageSizeThreshold, minLargePageThresholdText)
 					.required(requiredField)
 			})}
 			onSubmit={async (values, { resetForm }) => {
@@ -99,7 +104,7 @@ const PersonalSettingsForm = () => {
 					last_name: values.lastname,
 					email: values.email,
 					settings: settings,
-					large_page_size_threshold: largePageSizeThreshold
+					large_page_size_threshold: values.largePageSizeThreshold
 				};
 
 				const personalSettingsResponse = await handlePatchMethod(UserApiEndpoint, body);
@@ -147,7 +152,7 @@ const PersonalSettingsForm = () => {
 							<label htmlFor="firstname" className="block text-sm font-medium leading-5 text-gray-700">
 								{isComponentReady ? firstNameText : <Skeleton duration={2} width={150} height={20} />}
 							</label>
-							<div className="my-1">
+							<div className="mt-1">
 								{isComponentReady ? (
 									<input
 										type="text"
@@ -178,7 +183,7 @@ const PersonalSettingsForm = () => {
 							<label htmlFor="lastname" className="block text-sm font-medium leading-5 text-gray-700">
 								{isComponentReady ? lastNameText : <Skeleton duration={2} width={150} height={20} />}
 							</label>
-							<div className="my-1">
+							<div className="mt-1">
 								{isComponentReady ? (
 									<input
 										type="text"
@@ -209,7 +214,7 @@ const PersonalSettingsForm = () => {
 							<label htmlFor="username" className="block text-sm font-medium leading-5 text-gray-700">
 								{isComponentReady ? userNameText : <Skeleton duration={2} width={150} height={20} />}
 							</label>
-							<div className="my-1">
+							<div className="mt-1">
 								{isComponentReady ? (
 									<input
 										type="text"
@@ -254,6 +259,37 @@ const PersonalSettingsForm = () => {
 								) : (
 									<Skeleton duration={2} height={38} />
 								)}
+							</div>
+						</div>
+
+						<div className="sm:col-span-1">
+							<label htmlFor="largePageSizeThreshold" className="block text-sm font-medium leading-5 text-gray-700">
+								{isComponentReady ? largePageThresholdSizeText : <Skeleton duration={2} width={150} height={20} />}
+							</label>
+							<div className="mt-1 rounded-md shadow-sm">
+								{isComponentReady ? (
+									<input
+										type="text"
+										id="largePageSizeThreshold"
+										value={values.largePageSizeThreshold}
+										name="largePageSizeThreshold"
+										disabled={isSubmitting || disableForm}
+										className={classnames(
+											"block w-full rounded-md focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+											(isSubmitting || disableForm) && "cursor-not-allowed bg-gray-300 opacity-50",
+											errors.largePageSizeThreshold ? "border-red-300" : "border-gray-300"
+										)}
+										aria-describedby="largePageSizeThreshold"
+										onChange={handleChange}
+										onBlur={handleBlur}
+									/>
+								) : (
+									<Skeleton duration={2} height={38} />
+								)}
+
+								{errors.largePageSizeThreshold ? (
+									<span className="mt-2 block text-xs leading-5 text-red-700">{errors.largePageSizeThreshold}</span>
+								) : null}
 							</div>
 						</div>
 
@@ -314,7 +350,8 @@ const PersonalSettingsForm = () => {
 																disableForm ||
 																values.firstname !== firstname ||
 																values.lastname !== lastname ||
-																values.username !== username
+																values.username !== username ||
+																values.largePageSizeThreshold !== largePageSizeThreshold
 															)
 														}
 														aria-disabled={
@@ -324,7 +361,8 @@ const PersonalSettingsForm = () => {
 																disableForm ||
 																values.firstname !== firstname ||
 																values.lastname !== lastname ||
-																values.username !== username
+																values.username !== username ||
+																values.largePageSizeThreshold !== largePageSizeThreshold
 															)
 														}
 														aria-hidden={
@@ -334,7 +372,8 @@ const PersonalSettingsForm = () => {
 																disableForm ||
 																values.firstname !== firstname ||
 																values.lastname !== lastname ||
-																values.username !== username
+																values.username !== username ||
+																values.largePageSizeThreshold !== largePageSizeThreshold
 															)
 														}
 														className={classnames(
@@ -344,7 +383,8 @@ const PersonalSettingsForm = () => {
 																!(disableForm,
 																values.firstname !== firstname ||
 																	values.lastname !== lastname ||
-																	values.username !== username)
+																	values.username !== username ||
+																	values.largePageSizeThreshold !== largePageSizeThreshold)
 																? "cursor-not-allowed opacity-50"
 																: "hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
 														)}
