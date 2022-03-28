@@ -74,7 +74,7 @@ const VerifyUrlStepForm = ({
 				name: siteIdName,
 				verification_id: siteIdVerificationId
 			}}
-			onSubmit={async (values, { setSubmitting }) => {
+			onSubmit={async (values) => {
 				setDisableSiteVerify(!disableSiteVerify);
 
 				const body = {
@@ -88,23 +88,19 @@ const VerifyUrlStepForm = ({
 				const verifyUrlStepStatus = verifyUrlStepResponse?.status ?? null;
 				const verifyUrlStepMethod = verifyUrlStepResponse?.config?.method ?? null;
 
-				if (verifyUrlStepData !== null && Math.round(verifyUrlStepStatus / 200) === 1) {
-					// Show alert message after successful 200 OK or 201 Created response is issued
-					setConfig({
-						isVerifyUrlStep: true,
-						method: verifyUrlStepMethod,
-						status: verifyUrlStepStatus,
-						isAlert: false,
-						isNotification: false,
-						isError: verifyUrlStepData?.verified ? false : true
-					});
+				// Show alert message after successful 200 OK or 201 Created response is issued
+				setConfig({
+					isVerifyUrlStep: true,
+					method: verifyUrlStepMethod,
+					status: verifyUrlStepStatus,
+					isAlert: false,
+					isNotification: false,
+					isError: verifyUrlStepData?.verified ? false : true
+				});
 
-					const verifyUrlStepResponseTimeout = setTimeout(() => {
+				const verifyUrlStepResponseTimeout = setTimeout(() => {
+					if (verifyUrlStepData !== null && Math.round(verifyUrlStepStatus / 200) === 1) {
 						if (verifyUrlStepData?.verified) {
-							// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
-							setSubmitting(false);
-							setDisableSiteVerify(!disableSiteVerify);
-
 							// Update router query
 							replace({
 								pathname: AddNewSiteLink,
@@ -112,34 +108,16 @@ const VerifyUrlStepForm = ({
 							});
 						} else {
 							// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
-							setSubmitting(false);
-							setDisableSiteVerify(!disableSiteVerify);
+							setDisableSiteVerify(disableSiteVerify);
 						}
-					}, NotificationDisplayInterval);
+					} else {
+						setDisableSiteVerify(disableSiteVerify);
+					}
+				}, [NotificationDisplayInterval]);
 
-					return () => {
-						clearTimeout(verifyUrlStepResponseTimeout);
-					};
-				} else {
-					// Show alert message after failed 200 OK or 201 Created response is issued
-					setConfig({
-						isVerifyUrlStep: true,
-						method: verifyUrlStepMethod,
-						status: verifyUrlStepMethod,
-						isAlert: false,
-						isNotification: false
-					});
-
-					// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
-					const timeout = setTimeout(() => {
-						setSubmitting(false);
-						setDisableSiteVerify(!disableSiteVerify);
-					}, NotificationDisplayInterval);
-
-					return () => {
-						clearTimeout(timeout);
-					};
-				}
+				return () => {
+					clearTimeout(verifyUrlStepResponseTimeout);
+				};
 			}}
 		>
 			{({ handleSubmit, isSubmitting, handleChange, values }) => (
@@ -234,25 +212,25 @@ const VerifyUrlStepForm = ({
 											<span className="inline-flex">
 												<button
 													type="submit"
-													disabled={isSubmitting || disableSiteVerify}
+													disabled={disableSiteVerify}
 													className={classnames(
 														"relative mt-3 mr-3 inline-flex w-full items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium leading-5 text-white sm:mt-0",
-														isSubmitting || disableSiteVerify
+														disableSiteVerify
 															? "cursor-not-allowed opacity-50"
 															: "hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 													)}
 												>
-													{isSubmitting || disableSiteVerify ? verifying : verifySiteNow}
+													{disableSiteVerify ? verifying : verifySiteNow}
 												</button>
 											</span>
 
 											<span className="inline-flex">
 												<Link href={DashboardSitesLink} passHref replace>
 													<a
-														disabled={isSubmitting || disableSiteVerify}
+														disabled={disableSiteVerify}
 														className={classnames(
 															"relative mt-3 mr-3 inline-flex w-full cursor-pointer items-center rounded-md border border-transparent bg-yellow-600 px-4 py-2 text-sm font-medium leading-5 text-white sm:mt-0",
-															isSubmitting || disableSiteVerify
+															disableSiteVerify
 																? "cursor-not-allowed opacity-50"
 																: "hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
 														)}
@@ -266,10 +244,10 @@ const VerifyUrlStepForm = ({
 										<div>
 											<span className="inline-flex">
 												<button
-													disabled={isSubmitting || disableSiteVerify}
+													disabled={disableSiteVerify}
 													className={classnames(
 														"relative mt-3 mr-3 inline-flex w-full cursor-pointer items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium leading-5 text-gray-700 sm:mt-0",
-														isSubmitting || disableSiteVerify
+														disableSiteVerify
 															? "cursor-not-allowed opacity-50"
 															: "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 													)}

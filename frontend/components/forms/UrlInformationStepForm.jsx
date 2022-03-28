@@ -178,8 +178,6 @@ const UrlInformationStepForm = (props) => {
 								const siteAdditionResponseStatus = siteAdditionResponse?.status ?? null;
 								const siteAdditionResponseMethod = siteAdditionResponse?.config?.method ?? null;
 
-								console.log(siteAdditionResponse);
-
 								// Show alert message after successful 200 OK or 201 Created response is issued
 								setConfig({
 									isSites: true,
