@@ -98,7 +98,14 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	);
 
 	// `user` SWR hook
-	const { user, errorUser, validatingUser } = useUser(customUserApiEndpoint);
+	const { user, errorUser, validatingUser } = useUser(customUserApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail && e?.data && Object.keys(e?.data)?.length > 0
+				? NoInterval
+				: RevalidationInterval
+	});
+
+	console.log("user", user, customUserApiEndpoint);
 
 	useEffect(() => {
 		// LogRocket setup
@@ -106,9 +113,11 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			LogRocket.init(process.env.LOGROCKET_APP_ID);
 			setupLogRocketReact(LogRocket);
 		}
+	}, []);
 
+	useEffect(() => {
 		// Custom API endpoint states that rely on `user` value
-		if (isComponentReady && user && Math.round(user.status / 100) === 2 && !user.data?.detail) {
+		if (user && Object.keys(user)?.length > 0 && Math.round(user.status / 100) === 2 && !user.data?.detail) {
 			setCustomSitesApiEndpoint(SitesApiEndpoint);
 			setCustomStripePromiseApiEndpoint(StripePromiseApiEndpoint);
 			setCustomPaymentMethodsApiEndpoint(PaymentMethodApiEndpoint);
@@ -132,13 +141,13 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			customSubscriptionsApiEndpoint,
 			customCurrentSubscriptionApiEndpoint
 		};
-	}, [isComponentReady, user]);
+	}, [user]);
 
 	// `stripePromise` SWR hook
 	const { stripePromise, errorStripePromise, validatingStripePromise } =
 		useStripePromise(customStripePromiseApiEndpoint);
 
-	// console.log("stripePromise", stripePromise, customStripePromiseApiEndpoint);
+	console.log("stripePromise", stripePromise, customStripePromiseApiEndpoint);
 
 	// `paymentMethods` SWR hook
 	const { paymentMethods, errorPaymentMethods, validatingPaymentMethods } = usePaymentMethods(
@@ -151,7 +160,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 		}
 	);
 
-	// console.log("paymentMethods", paymentMethods, customPaymentMethodsApiEndpoint);
+	console.log("paymentMethods", paymentMethods, customPaymentMethodsApiEndpoint);
 
 	// `defaultPaymentMethod` SWR hook
 	const { defaultPaymentMethod, errorDefaultPaymentMethod, validatingDefaultPaymentMethod } = useDefaultPaymentMethod(
@@ -164,7 +173,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 		}
 	);
 
-	// console.log("defaultPaymentMethod", defaultPaymentMethod, customDefaultPaymentMethodApiEndpoint);
+	console.log("defaultPaymentMethod", defaultPaymentMethod, customDefaultPaymentMethodApiEndpoint);
 
 	// `subscriptions` SWR hook
 	const { subscriptions, errorSubscriptions, validatingSubscriptions } = useSubscriptions(
@@ -177,7 +186,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 		}
 	);
 
-	// console.log("subscriptions", subscriptions, customSubscriptionsApiEndpoint);
+	console.log("subscriptions", subscriptions, customSubscriptionsApiEndpoint);
 
 	// `currentSubscription` SWR hook
 	const { currentSubscription, errorCurrentSubscription, validatingCurrentSubscription } = useCurrentSubscription(
@@ -190,7 +199,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 		}
 	);
 
-	// console.log("currentSubscription", currentSubscription, useCurrentSubscription);
+	console.log("currentSubscription", currentSubscription, useCurrentSubscription);
 
 	// `sites` SWR hook
 	const { sites, errorSites, validatingSites } = useSites(customSitesApiEndpoint, {
@@ -200,7 +209,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 				: RevalidationInterval
 	});
 
-	// console.log("sites", sites, customSitesApiEndpoint);
+	console.log("sites", sites, customSitesApiEndpoint);
 
 	// Custom variables
 	const querySiteId = query?.siteId ? handleConversionStringToNumber(query.siteId) : null;
@@ -262,7 +271,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 				: RevalidationInterval
 	});
 
-	// console.log("page", page, customScanApiEndpoint);
+	console.log("page", page, customScanApiEndpoint);
 
 	// `scan` SWR hook
 	const {
@@ -349,7 +358,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 				: RevalidationInterval
 	});
 
-	// console.log("links", links, customLinksApiEndpoint);
+	console.log("links", links, customLinksApiEndpoint);
 
 	// `pages` SWR hook
 	const { pages, errorPages, validatingPages } = usePages(customPagesApiEndpoint, {
@@ -359,7 +368,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 				: RevalidationInterval
 	});
 
-	// console.log("pages", pages, customPagesApiEndpoint);
+	console.log("pages", pages, customPagesApiEndpoint);
 
 	// `images` SWR hook
 	const { images, errorImages, validatingImages } = useImages(customImagesApiEndpoint, {
@@ -369,7 +378,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 				: RevalidationInterval
 	});
 
-	// console.log("images", images, customImagesApiEndpoint);
+	console.log("images", images, customImagesApiEndpoint);
 
 	// Custom `linkId` SWR hook
 	useEffect(() => {
@@ -393,7 +402,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 				: RevalidationInterval
 	});
 
-	// console.log("linkId", linkId);
+	console.log("linkId", linkId);
 
 	// Custom `pageId` SWR hook
 	useEffect(() => {
@@ -417,7 +426,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 				: RevalidationInterval
 	});
 
-	// console.log("pageId", pageId);
+	console.log("pageId", pageId);
 
 	// Custom `imageId` API endpoint
 	useEffect(() => {
@@ -441,7 +450,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 				: RevalidationInterval
 	});
 
-	// console.log("imageId", imageId);
+	console.log("imageId", imageId);
 
 	// Use the layout defined at the page level, if available
 	const getLayout = Component.getLayout || ((page) => page);
