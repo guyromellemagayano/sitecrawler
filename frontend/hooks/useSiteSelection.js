@@ -12,13 +12,14 @@ import { useComponentVisible } from "./useComponentVisible";
  */
 export const useSiteSelection = () => {
 	const [selectedSiteDetails, setSelectedSiteDetails] = useState(null);
+	const [selectedSiteId, setSelectedSiteId] = useState(null);
 
 	// Translations
 	const { t } = useTranslation();
 	const loaderMessage = t("common:loaderMessage");
 
 	// Router
-	const { push, asPath } = useRouter();
+	const { push, asPath, prefetch } = useRouter();
 
 	// Custom contexts
 	const { sites, querySiteId } = useContext(SiteCrawlerAppContext);
@@ -50,10 +51,16 @@ export const useSiteSelection = () => {
 		return { selectedSiteDetails };
 	}, [querySiteId, sitesResults, selectedSiteDetails]);
 
+	useMemo(() => {
+		selectedSiteId ? prefetch(DashboardSitesLink + selectedSiteId + "/") : prefetch(DashboardSitesLink);
+	}, [selectedSiteId]);
+
 	// Handle site selection on click
 	const handleSiteSelectOnClick = async (id) => {
 		const pageExclusions = ["settings", "add-new-site", "audit-logs"];
 		const page = pageExclusions.find((page) => asPath.includes(page));
+
+		id ? setSelectedSiteId(id) : setSelectedSiteId(null);
 
 		let fromSiteDetail = null;
 		let fromDashboard = null;
