@@ -8,7 +8,6 @@ import { SiteCrawlerAppContext } from "@pages/_app";
 import { classnames } from "@utils/classnames";
 import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
-import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
@@ -31,9 +30,6 @@ const SiteList = ({ data = null }) => {
 	// Translations
 	const { t } = useTranslation();
 	const notYetCrawledText = t("sites:notYetCrawled");
-
-	// Router
-	const { push } = useRouter();
 
 	// DayJS options
 	const calendar = require("dayjs/plugin/calendar");

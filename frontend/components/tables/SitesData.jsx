@@ -2,7 +2,7 @@ import { MemoizedDeleteSiteModal } from "@components/modals/DeleteSiteModal";
 import { MemoizedSiteVerifyModal } from "@components/modals/SiteVerifyModal";
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import { orderingByNameQuery, RevalidationInterval, sortByFinishedAtDescending } from "@constants/GlobalValues";
-import { ScanSlug } from "@constants/PageLinks";
+import { DashboardSitesLink, ScanSlug } from "@constants/PageLinks";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useScan } from "@hooks/useScan";
 import { useStats } from "@hooks/useStats";
@@ -11,6 +11,7 @@ import { classnames } from "@utils/classnames";
 import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { memo, useContext, useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
@@ -24,6 +25,9 @@ import "react-loading-skeleton/dist/skeleton.css";
 const SitesData = ({ site = null }) => {
 	const [customStatsApiEndpoint, setCustomStatsApiEndpoint] = useState(null);
 	const [customScanApiEndpoint, setCustomScanApiEndpoint] = useState(null);
+
+	// Router
+	const { prefetch } = useRouter();
 
 	// Site data props
 	const siteId = site?.id ?? null;
@@ -117,21 +121,14 @@ const SitesData = ({ site = null }) => {
 	const totalLinks = stats?.data?.num_links;
 	const totalPages = stats?.data?.num_pages;
 	const linkErrors = stats?.data?.num_non_ok_links;
-	const pageErrors =
-		stats?.data?.num_non_ok_scripts +
-		stats?.data?.num_non_ok_stylesheets +
-		stats?.data?.num_pages_without_title +
-		stats?.data?.num_pages_without_description +
-		stats?.data?.num_pages_without_h1_first +
-		stats?.data?.num_pages_without_h1_second +
-		stats?.data?.num_pages_without_h2_first +
-		stats?.data?.num_pages_without_h2_second +
-		stats?.data?.num_pages_tls_non_ok +
-		stats?.data?.num_pages_duplicated_title +
-		stats?.data?.num_pages_duplicated_description;
-	const imageErrors =
-		stats?.data?.num_non_ok_images + stats?.data?.num_images_with_missing_alts + stats?.data?.num_images_tls_non_ok;
+	const pageErrors = stats?.data?.num_pages_big + stats?.data?.num_pages_tls_non_ok;
+	const imageErrors = stats?.data?.num_non_ok_images;
 	const totalErrors = linkErrors + pageErrors + imageErrors;
+
+	useEffect(() => {
+		// Prefetch sites page for faster loading
+		prefetch(DashboardSitesLink + siteId + "/");
+	}, []);
 
 	return (
 		<tr ref={selectedSiteRef}>
