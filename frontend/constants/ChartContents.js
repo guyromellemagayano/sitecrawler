@@ -52,15 +52,19 @@ export const SeoChartContents = () => {
 	};
 	const pagesWithDuplicateTitleLink = {
 		label: pagesWithDuplicateTitleText,
-		filter: "has_duplicate_title=true",
+		filter: "has_duplicated_title=true",
 		color: "#991b1b"
 	};
 	const pagesWithDuplicateDescriptionLink = {
 		label: pagesWithDuplicateDescriptionText,
-		filter: "has_duplicate_description=true",
+		filter: "has_duplicated_description=true",
 		color: "#9f1239"
 	};
-	const pagesSeoOkLink = { label: pagesSeoOkText, filter: "tls_total=true", color: "#48bb78" };
+	const pagesSeoOkLink = {
+		label: pagesSeoOkText,
+		filter: "has_title=true&has_description=true&has_h1_first=true&has_h2_first=true",
+		color: "#48bb78"
+	};
 
 	labelsArray.push(pagesWithoutTitleLink);
 	labelsArray.push(pagesWithoutDescriptionLink);
