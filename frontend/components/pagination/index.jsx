@@ -44,7 +44,7 @@ const DataPagination = () => {
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
 	// SWR hooks
-	const { pageCount, pageResults } = usePage(scanApiEndpoint);
+	const { page } = usePage(scanApiEndpoint);
 
 	// Custom variables
 	const currentPage = query?.page ? parseInt(query.page) : 1;
@@ -52,6 +52,8 @@ const DataPagination = () => {
 	const linkNumbers = [];
 	const pageNumbers = [];
 	const linksPerPageOptions = [25, 50, 75, 100];
+	const pageResults = page?.data?.results ?? null;
+	const pageCount = page?.data?.count ?? null;
 
 	// Translations
 	const { t } = useTranslation();

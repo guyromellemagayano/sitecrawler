@@ -261,9 +261,9 @@ const PageOption = ({
 							</>
 						) : null}
 
-						{isComponentReady && ((isLinks && linksCount) || (isSites && sitesCount) || (isImages && imagesCount)) ? (
+						{isComponentReady ? (
 							<div className="flex items-center space-x-2 text-sm text-gray-500">
-								{isComponentReady && isLinks && linksCount ? (
+								{isComponentReady && isLinks ? (
 									<>
 										<LinkIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
 										<span className="text-sm leading-5 text-gray-500">
@@ -274,7 +274,7 @@ const PageOption = ({
 												: noAvailableLinksText}
 										</span>
 									</>
-								) : isComponentReady && isSites && sitesCount ? (
+								) : isComponentReady && isSites ? (
 									<>
 										<ExternalLinkIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
 										<span className="text-sm leading-5 text-gray-500">
@@ -285,7 +285,7 @@ const PageOption = ({
 												: noAvailableSitesText}
 										</span>
 									</>
-								) : isComponentReady && isPages && pagesCount ? (
+								) : isComponentReady && isPages ? (
 									<>
 										<DocumentTextIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
 										<span className="text-sm leading-5 text-gray-500">
@@ -296,7 +296,7 @@ const PageOption = ({
 												: noAvailablePagesText}
 										</span>
 									</>
-								) : isComponentReady && isImages && imagesCount ? (
+								) : isComponentReady && isImages ? (
 									<>
 										<DocumentTextIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
 										<span className="text-sm leading-5 text-gray-500">

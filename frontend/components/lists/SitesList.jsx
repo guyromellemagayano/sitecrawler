@@ -1,9 +1,7 @@
-import { SitesApiEndpoint } from "@constants/ApiEndpoints";
-import { MaxTotalSitesLimit, orderingByNameQuery, perPageQuery, sortByNameAscending } from "@constants/GlobalValues";
 import { useSiteSelection } from "@hooks/useSiteSelection";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
-import { memo, useEffect } from "react";
+import { memo } from "react";
 import Scrollbars from "react-custom-scrollbars-2";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useSWRConfig } from "swr";
@@ -36,16 +34,6 @@ const SitesList = ({ openDropdown = false, sites = null }) => {
 	// Custom variables
 	const sitesCount = sites?.data?.count ?? null;
 	const sitesResults = sites?.data?.results ?? null;
-
-	useEffect(() => {
-		if (openDropdown) {
-			mutate(
-				SitesApiEndpoint + `?${orderingByNameQuery + sortByNameAscending}&${perPageQuery + MaxTotalSitesLimit}`,
-				null,
-				{ optimisticData: sites?.data, rollbackOnError: true, revalidate: true }
-			);
-		}
-	}, [openDropdown]);
 
 	return sitesCount > 0 ? (
 		<ul
