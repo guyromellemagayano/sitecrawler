@@ -65,9 +65,6 @@ const DataSorting = ({ slug = null, labels = null }) => {
 		if (newPath.includes("?")) setPagePath(`${handleRemoveUrlParameter(newPath, "page")}&`);
 		else setPagePath(`${handleRemoveUrlParameter(newPath, "page")}?`);
 
-		// Mutate function here
-		mutate(scanApiEndpoint, null, { rollbackOnError: true, revalidate: true });
-
 		// Push new path
 		push(newPath);
 	};
