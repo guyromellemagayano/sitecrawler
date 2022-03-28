@@ -21,6 +21,7 @@ export const FormStringMaxChars = 150;
 export const FormStringMinChars = 1;
 export const FormUrlMaxChars = 2048;
 export const FormUrlNameMaxChars = 255;
+export const DefaultlargePageSizeThreshold = 1048576;
 export const FormSubmissionInterval = 1000;
 export const LgScreenBreakpoint = 1024;
 export const MutateInterval = 1500;
