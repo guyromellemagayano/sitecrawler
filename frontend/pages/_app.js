@@ -130,7 +130,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			customSubscriptionsApiEndpoint,
 			customCurrentSubscriptionApiEndpoint
 		};
-	}, [isComponentReady, user]);
+	}, []);
 
 	// `stripePromise` SWR hook
 	const { stripePromise, errorStripePromise, validatingStripePromise } =
@@ -185,7 +185,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			: setCustomSitesIdApiEndpoint(null);
 
 		return { customSitesIdApiEndpoint };
-	}, [sites, querySiteId, customSitesApiEndpoint]);
+	}, [sites, querySiteId]);
 
 	// `siteId` SWR hook
 	const { siteId, errorSiteId, validatingSiteId } = useSiteId(customSitesIdApiEndpoint);
@@ -212,7 +212,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			: setCustomScanApiEndpoint(null);
 
 		return { customScanApiEndpoint };
-	}, [siteId, customSitesIdApiEndpoint]);
+	}, [siteId]);
 
 	// `scan` SWR hook
 	const {
@@ -242,7 +242,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			: setCustomStatsApiEndpoint(null);
 
 		return { customStatsApiEndpoint };
-	}, [scan, customScanApiEndpoint, scanObjId]);
+	}, [scan, scanObjId]);
 
 	// `stats` SWR hook
 	const { stats, errorStats, validatingStats } = useStats(customStatsApiEndpoint);
@@ -280,7 +280,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			customPagesApiEndpoint,
 			customImagesApiEndpoint
 		};
-	}, [stats, user, customStatsApiEndpoint]);
+	}, [stats, user]);
 
 	// `links` SWR hook
 	const { links, errorLinks, validatingLinks } = useLinks(customLinksApiEndpoint);
@@ -306,7 +306,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			: setCustomLinksIdApiEndpoint(null);
 
 		return { customLinksIdApiEndpoint };
-	}, [links, queryLinkId, customLinksApiEndpoint]);
+	}, [links, queryLinkId]);
 
 	// `linkId` SWR hook
 	const { linkId, errorLinkId, validatingLinkId } = useLinkId(customLinksIdApiEndpoint);
@@ -322,7 +322,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			: setCustomPagesIdApiEndpoint(null);
 
 		return { customPagesIdApiEndpoint };
-	}, [pages, queryPageId, customPagesApiEndpoint]);
+	}, [pages, queryPageId]);
 
 	// `pageId` SWR hook
 	const { pageId, errorPageId, validatingPageId } = usePageId(customPagesIdApiEndpoint);
@@ -338,7 +338,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			: setCustomImagesIdApiEndpoint(null);
 
 		return { customImagesIdApiEndpoint };
-	}, [images, queryImageId, customImagesApiEndpoint]);
+	}, [images, queryImageId]);
 
 	// `imageId` SWR hook
 	const { imageId, errorImageId, validatingImageId } = useImageId(customImagesIdApiEndpoint);
