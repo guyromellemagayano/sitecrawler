@@ -9,6 +9,7 @@ import {
 	UserApiEndpoint
 } from "@constants/ApiEndpoints";
 import AppSeo from "@constants/AppSeo";
+import { NoInterval, RevalidationInterval } from "@constants/GlobalValues";
 import { DashboardSlug, ScanSlug, SiteImageSlug, SiteLinkSlug, SitePageSlug } from "@constants/PageLinks";
 import { isProd } from "@constants/ServerEnv";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -141,33 +142,63 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 
 	// `paymentMethods` SWR hook
 	const { paymentMethods, errorPaymentMethods, validatingPaymentMethods } = usePaymentMethods(
-		customPaymentMethodsApiEndpoint
+		customPaymentMethodsApiEndpoint,
+		{
+			refreshInterval: (e) =>
+				e && Math.round(e?.status / 100) === 2 && !e?.data?.detail && e?.data && Object.keys(e?.data)?.length > 0
+					? NoInterval
+					: RevalidationInterval
+		}
 	);
 
 	// console.log("paymentMethods", paymentMethods, customPaymentMethodsApiEndpoint);
 
 	// `defaultPaymentMethod` SWR hook
 	const { defaultPaymentMethod, errorDefaultPaymentMethod, validatingDefaultPaymentMethod } = useDefaultPaymentMethod(
-		customDefaultPaymentMethodApiEndpoint
+		customDefaultPaymentMethodApiEndpoint,
+		{
+			refreshInterval: (e) =>
+				e && Math.round(e?.status / 100) === 2 && !e?.data?.detail && e?.data && Object.keys(e?.data)?.length > 0
+					? NoInterval
+					: RevalidationInterval
+		}
 	);
 
 	// console.log("defaultPaymentMethod", defaultPaymentMethod, customDefaultPaymentMethodApiEndpoint);
 
 	// `subscriptions` SWR hook
-	const { subscriptions, errorSubscriptions, validatingSubscriptions } =
-		useSubscriptions(customSubscriptionsApiEndpoint);
+	const { subscriptions, errorSubscriptions, validatingSubscriptions } = useSubscriptions(
+		customSubscriptionsApiEndpoint,
+		{
+			refreshInterval: (e) =>
+				e && Math.round(e?.status / 100) === 2 && !e?.data?.detail && e?.data && Object.keys(e?.data)?.length > 0
+					? NoInterval
+					: RevalidationInterval
+		}
+	);
 
 	// console.log("subscriptions", subscriptions, customSubscriptionsApiEndpoint);
 
 	// `currentSubscription` SWR hook
 	const { currentSubscription, errorCurrentSubscription, validatingCurrentSubscription } = useCurrentSubscription(
-		customCurrentSubscriptionApiEndpoint
+		customCurrentSubscriptionApiEndpoint,
+		{
+			refreshInterval: (e) =>
+				e && Math.round(e?.status / 100) === 2 && !e?.data?.detail && e?.data && Object.keys(e?.data)?.length > 0
+					? NoInterval
+					: RevalidationInterval
+		}
 	);
 
 	// console.log("currentSubscription", currentSubscription, useCurrentSubscription);
 
 	// `sites` SWR hook
-	const { sites, errorSites, validatingSites } = useSites(customSitesApiEndpoint);
+	const { sites, errorSites, validatingSites } = useSites(customSitesApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail && e?.data && Object.keys(e?.data)?.length > 0
+				? NoInterval
+				: RevalidationInterval
+	});
 
 	// console.log("sites", sites, customSitesApiEndpoint);
 
@@ -177,11 +208,12 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	const queryPageId = query?.pageId ? handleConversionStringToNumber(query.pageId) : null;
 	const queryImageId = query?.imageId ? handleConversionStringToNumber(query.imageId) : null;
 
-	console.log(querySiteId);
-
 	// Custom `siteId` SWR hook
 	useEffect(() => {
-		const verifiedSiteId = sites?.data?.results?.find((site) => site.id === querySiteId) ?? null;
+		const verifiedSiteId =
+			sites && Object.keys(sites)?.length > 0
+				? sites?.data?.results?.find((site) => site.id === querySiteId) ?? null
+				: null;
 
 		verifiedSiteId && Object.keys(verifiedSiteId)?.length > 0 && customSitesApiEndpoint?.length > 0
 			? setCustomSitesIdApiEndpoint(customSitesApiEndpoint + querySiteId)
@@ -191,7 +223,12 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [sites, querySiteId, customSitesApiEndpoint]);
 
 	// `siteId` SWR hook
-	const { siteId, errorSiteId, validatingSiteId } = useSiteId(customSitesIdApiEndpoint);
+	const { siteId, errorSiteId, validatingSiteId } = useSiteId(customSitesIdApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail && e?.data && Object.keys(e?.data)?.length > 0
+				? NoInterval
+				: RevalidationInterval
+	});
 
 	console.log("siteId", siteId, customSitesIdApiEndpoint);
 
@@ -218,7 +255,12 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [siteId, customSitesIdApiEndpoint]);
 
 	// `page` SWR hook
-	const { page, errorPage, validatingPage } = usePage(customScanApiEndpoint);
+	const { page, errorPage, validatingPage } = usePage(customScanApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail && e?.data && Object.keys(e?.data)?.length > 0
+				? NoInterval
+				: RevalidationInterval
+	});
 
 	// console.log("page", page, customScanApiEndpoint);
 
@@ -235,13 +277,19 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 		scanObjId,
 		selectedSiteRef,
 		validatingScan
-	} = useScan(customScanApiEndpoint);
+	} = useScan(customScanApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail && e?.data && Object.keys(e?.data)?.length > 0
+				? NoInterval
+				: RevalidationInterval
+	});
 
 	console.log("scan", scan, customScanApiEndpoint, scanObjId);
 
 	// Custom `stats` API endpoint state
 	useEffect(() => {
-		const verifiedScanObjId = scan?.data?.results?.find((scan) => scan.id === scanObjId) ?? null;
+		const verifiedScanObjId =
+			scan && Object.keys(scan)?.length > 0 ? scan?.data?.results?.find((scan) => scan.id === scanObjId) ?? null : null;
 
 		verifiedScanObjId && Object.keys(verifiedScanObjId)?.length > 0 && customScanApiEndpoint?.length > 0
 			? setCustomStatsApiEndpoint(customScanApiEndpoint + scanObjId)
@@ -251,9 +299,14 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [scan, customScanApiEndpoint, scanObjId]);
 
 	// `stats` SWR hook
-	const { stats, errorStats, validatingStats } = useStats(customStatsApiEndpoint);
+	const { stats, errorStats, validatingStats } = useStats(customStatsApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail && e?.data && Object.keys(e?.data)?.length > 0
+				? NoInterval
+				: RevalidationInterval
+	});
 
-	// console.log("stats", stats, customStatsApiEndpoint);
+	console.log("stats", stats, customStatsApiEndpoint);
 
 	// Custom API endpoint states that rely on `siteId` and `scanObjId` values
 	useEffect(() => {
@@ -289,23 +342,41 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [stats, user, customStatsApiEndpoint]);
 
 	// `links` SWR hook
-	const { links, errorLinks, validatingLinks } = useLinks(customLinksApiEndpoint);
+	const { links, errorLinks, validatingLinks } = useLinks(customLinksApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail && e?.data && Object.keys(e?.data)?.length > 0
+				? NoInterval
+				: RevalidationInterval
+	});
 
 	// console.log("links", links, customLinksApiEndpoint);
 
 	// `pages` SWR hook
-	const { pages, errorPages, validatingPages } = usePages(customPagesApiEndpoint);
+	const { pages, errorPages, validatingPages } = usePages(customPagesApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail && e?.data && Object.keys(e?.data)?.length > 0
+				? NoInterval
+				: RevalidationInterval
+	});
 
 	// console.log("pages", pages, customPagesApiEndpoint);
 
 	// `images` SWR hook
-	const { images, errorImages, validatingImages } = useImages(customImagesApiEndpoint);
+	const { images, errorImages, validatingImages } = useImages(customImagesApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail && e?.data && Object.keys(e?.data)?.length > 0
+				? NoInterval
+				: RevalidationInterval
+	});
 
 	// console.log("images", images, customImagesApiEndpoint);
 
 	// Custom `linkId` SWR hook
 	useEffect(() => {
-		const verifiedLinkId = links?.data?.results?.find((link) => link.id === queryLinkId) ?? null;
+		const verifiedLinkId =
+			links && Object.keys(links)?.length > 0
+				? links?.data?.results?.find((link) => link.id === queryLinkId) ?? null
+				: null;
 
 		verifiedLinkId && Object.keys(verifiedLinkId)?.length > 0 && customLinksApiEndpoint?.length > 0
 			? setCustomLinksIdApiEndpoint(customLinksApiEndpoint + queryLinkId)
@@ -315,13 +386,21 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [links, queryLinkId, customLinksApiEndpoint]);
 
 	// `linkId` SWR hook
-	const { linkId, errorLinkId, validatingLinkId } = useLinkId(customLinksIdApiEndpoint);
+	const { linkId, errorLinkId, validatingLinkId } = useLinkId(customLinksIdApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail && e?.data && Object.keys(e?.data)?.length > 0
+				? NoInterval
+				: RevalidationInterval
+	});
 
 	// console.log("linkId", linkId);
 
 	// Custom `pageId` SWR hook
 	useEffect(() => {
-		const verifiedPageId = pages?.data?.results?.find((page) => page.id === queryPageId) ?? null;
+		const verifiedPageId =
+			pages && Object.keys(pages)?.length > 0
+				? pages?.data?.results?.find((page) => page.id === queryPageId) ?? null
+				: null;
 
 		verifiedPageId && Object.keys(verifiedPageId)?.length > 0 && customPagesApiEndpoint?.length > 0
 			? setCustomPagesIdApiEndpoint(customPagesApiEndpoint + queryPageId)
@@ -331,13 +410,21 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [pages, queryPageId, customPagesApiEndpoint]);
 
 	// `pageId` SWR hook
-	const { pageId, errorPageId, validatingPageId } = usePageId(customPagesIdApiEndpoint);
+	const { pageId, errorPageId, validatingPageId } = usePageId(customPagesIdApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail && e?.data && Object.keys(e?.data)?.length > 0
+				? NoInterval
+				: RevalidationInterval
+	});
 
 	// console.log("pageId", pageId);
 
 	// Custom `imageId` API endpoint
 	useEffect(() => {
-		const verifiedImageId = images?.data?.results?.find((image) => image.id === queryImageId) ?? null;
+		const verifiedImageId =
+			images && Object.keys(images)?.length > 0
+				? images?.data?.results?.find((image) => image.id === queryImageId) ?? null
+				: null;
 
 		verifiedImageId && Object.keys(verifiedImageId)?.length > 0 && customImagesApiEndpoint?.length > 0
 			? setCustomImagesIdApiEndpoint(customImagesApiEndpoint + queryImageId)
@@ -347,7 +434,12 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [images, queryImageId, customImagesApiEndpoint]);
 
 	// `imageId` SWR hook
-	const { imageId, errorImageId, validatingImageId } = useImageId(customImagesIdApiEndpoint);
+	const { imageId, errorImageId, validatingImageId } = useImageId(customImagesIdApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e?.status / 100) === 2 && !e?.data?.detail && e?.data && Object.keys(e?.data)?.length > 0
+				? NoInterval
+				: RevalidationInterval
+	});
 
 	// console.log("imageId", imageId);
 
