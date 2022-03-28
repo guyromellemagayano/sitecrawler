@@ -34,7 +34,7 @@ const SeoStats = () => {
 	const totalPagesWithoutTitle = stats?.data?.num_pages_without_title ?? 0;
 	const totalPagesWithoutDescription = stats?.data?.num_pages_without_description ?? 0;
 	const totalPagesWithoutH1First = stats?.data?.num_pages_without_h1_first ?? 0;
-	const totalPagesWithoutH1Second = stats?.data?.num_pages_without_h2_second ?? 0;
+	const totalPagesWithoutH1Second = stats?.data?.num_pages_without_h1_second ?? 0;
 	const totalPagesWithoutH2First = stats?.data?.num_pages_without_h2_first ?? 0;
 	const totalPagesWithoutH2Second = stats?.data?.num_pages_without_h2_second ?? 0;
 	const totalPagesDuplicatedTitle = stats?.data?.num_pages_duplicated_title ?? 0;

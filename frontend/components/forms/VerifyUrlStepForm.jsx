@@ -8,6 +8,7 @@ import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import PropTypes from "prop-types";
 import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -19,9 +20,17 @@ import "react-loading-skeleton/dist/skeleton.css";
  * @param {number} sid
  * @param {number} step
  * @param {boolean} verified
+ * @param {boolean} disableSiteVerify
  * @param {function} setDisableSiteVerify
  */
-const VerifyUrlStepForm = ({ siteData = null, sid = null, step = null, verified = false, setDisableSiteVerify }) => {
+const VerifyUrlStepForm = ({
+	siteData = null,
+	sid = null,
+	step = null,
+	verified = false,
+	setDisableSiteVerify,
+	disableSiteVerify = false
+}) => {
 	// Translations
 	const { t } = useTranslation("sites");
 	const goToSiteOverview = t("goToSiteOverview");
@@ -66,6 +75,8 @@ const VerifyUrlStepForm = ({ siteData = null, sid = null, step = null, verified 
 				verification_id: siteIdVerificationId
 			}}
 			onSubmit={async (values, { setSubmitting }) => {
+				setDisableSiteVerify(!disableSiteVerify);
+
 				const body = {
 					url: values.url,
 					name: values.name,
@@ -91,9 +102,8 @@ const VerifyUrlStepForm = ({ siteData = null, sid = null, step = null, verified 
 					const verifyUrlStepResponseTimeout = setTimeout(() => {
 						if (verifyUrlStepData?.verified) {
 							// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
-
 							setSubmitting(false);
-							setDisableSiteVerify(false);
+							setDisableSiteVerify(!disableSiteVerify);
 
 							// Update router query
 							replace({
@@ -102,9 +112,8 @@ const VerifyUrlStepForm = ({ siteData = null, sid = null, step = null, verified 
 							});
 						} else {
 							// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
-
 							setSubmitting(false);
-							setDisableSiteVerify(false);
+							setDisableSiteVerify(!disableSiteVerify);
 						}
 					}, NotificationDisplayInterval);
 
@@ -124,7 +133,7 @@ const VerifyUrlStepForm = ({ siteData = null, sid = null, step = null, verified 
 					// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
 					const timeout = setTimeout(() => {
 						setSubmitting(false);
-						setDisableSiteVerify(false);
+						setDisableSiteVerify(!disableSiteVerify);
 					}, NotificationDisplayInterval);
 
 					return () => {
@@ -225,25 +234,25 @@ const VerifyUrlStepForm = ({ siteData = null, sid = null, step = null, verified 
 											<span className="inline-flex">
 												<button
 													type="submit"
-													disabled={isSubmitting}
+													disabled={isSubmitting || disableSiteVerify}
 													className={classnames(
 														"relative mt-3 mr-3 inline-flex w-full items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium leading-5 text-white sm:mt-0",
-														isSubmitting
+														isSubmitting || disableSiteVerify
 															? "cursor-not-allowed opacity-50"
 															: "hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 													)}
 												>
-													{isSubmitting ? verifying : verifySiteNow}
+													{isSubmitting || disableSiteVerify ? verifying : verifySiteNow}
 												</button>
 											</span>
 
 											<span className="inline-flex">
 												<Link href={DashboardSitesLink} passHref replace>
 													<a
-														disabled={isSubmitting}
+														disabled={isSubmitting || disableSiteVerify}
 														className={classnames(
 															"relative mt-3 mr-3 inline-flex w-full cursor-pointer items-center rounded-md border border-transparent bg-yellow-600 px-4 py-2 text-sm font-medium leading-5 text-white sm:mt-0",
-															isSubmitting
+															isSubmitting || disableSiteVerify
 																? "cursor-not-allowed opacity-50"
 																: "hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
 														)}
@@ -257,10 +266,10 @@ const VerifyUrlStepForm = ({ siteData = null, sid = null, step = null, verified 
 										<div>
 											<span className="inline-flex">
 												<button
-													disabled={isSubmitting}
+													disabled={isSubmitting || disableSiteVerify}
 													className={classnames(
 														"relative mt-3 mr-3 inline-flex w-full cursor-pointer items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium leading-5 text-gray-700 sm:mt-0",
-														isSubmitting
+														isSubmitting || disableSiteVerify
 															? "cursor-not-allowed opacity-50"
 															: "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 													)}
@@ -297,6 +306,19 @@ const VerifyUrlStepForm = ({ siteData = null, sid = null, step = null, verified 
 			)}
 		</Formik>
 	);
+};
+
+VerifyUrlStepForm.propTypes = {
+	disableSiteVerify: PropTypes.bool,
+	setDisableSiteVerify: PropTypes.func,
+	sid: PropTypes.any,
+	siteData: PropTypes.shape({
+		name: PropTypes.string,
+		url: PropTypes.string,
+		verification_id: PropTypes.string
+	}),
+	step: PropTypes.number,
+	verified: PropTypes.bool
 };
 
 /**
