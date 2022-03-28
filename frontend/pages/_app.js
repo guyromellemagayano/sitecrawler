@@ -235,7 +235,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 		validatingScan
 	} = useScan(customScanApiEndpoint);
 
-	// console.log("scan", scan, customScanApiEndpoint, scanObjId);
+	console.log("scan", scan, customScanApiEndpoint, scanObjId);
 
 	// Custom `stats` API endpoint state
 	useEffect(() => {
@@ -251,7 +251,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// `stats` SWR hook
 	const { stats, errorStats, validatingStats } = useStats(customStatsApiEndpoint);
 
-	// console.log("stats", stats, customStatsApiEndpoint);
+	console.log("stats", stats, customStatsApiEndpoint);
 
 	// Custom API endpoint states that rely on `siteId` and `scanObjId` values
 	useEffect(() => {
