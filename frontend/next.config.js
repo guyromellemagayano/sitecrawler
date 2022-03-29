@@ -21,11 +21,8 @@ const NextConfig = {
 		LOGROCKET_APP_ID: "epic-design-labs/link-app"
 	},
 	compiler: {
-		styledComponents: true
-		// removeConsole: process.env.NODE_ENV === "production" ? true : false
-	},
-	experimental: {
-		outputStandalone: true
+		styledComponents: true,
+		removeConsole: process.env.NODE_ENV === "production" ? true : false
 	},
 	async redirects() {
 		return [
@@ -56,11 +53,7 @@ const NextConfig = {
 const SentryWebpackPluginOptions = {
 	include: ".",
 	ignore: ["node_modules"],
-	silent: true,
-	sentry: {
-		disableServerWebpackPlugin: true,
-		disableClientWebpackPlugin: true
-	}
+	silent: true
 };
 
 module.exports = withPlugins([

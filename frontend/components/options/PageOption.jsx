@@ -374,7 +374,7 @@ const PageOption = ({
 							)}
 
 							{!isOverview && !isSiteSettings ? (
-								isComponentReady && (linksCount || sitesCount || pagesCount || imagesCount) ? (
+								isComponentReady && (linksCount > 0 || sitesCount > 0 || pagesCount > 0 || imagesCount > 0) ? (
 									<button
 										type="button"
 										disabled={isDownloading}
@@ -391,7 +391,8 @@ const PageOption = ({
 											<span>{isDownloading ? downloadingText : csvDownloadText}</span>
 										</span>
 									</button>
-								) : (
+								) : isComponentReady &&
+								  (linksCount === 0 || sitesCount === 0 || pagesCount === 0 || imagesCount === 0) ? null : (
 									<Skeleton duration={2} width={150} height={40} className="ml-2" />
 								)
 							) : null}
