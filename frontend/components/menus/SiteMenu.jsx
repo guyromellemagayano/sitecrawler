@@ -10,7 +10,7 @@ import { classnames } from "@utils/classnames";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { memo, useContext } from "react";
+import { memo, useContext, useEffect, useState } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -19,12 +19,14 @@ import "react-loading-skeleton/dist/skeleton.css";
  * Custom function to render the `SiteMenu` component
  */
 const SiteMenu = () => {
+	const [siteQueries, setSiteQueries] = useState(null);
+
 	// Translations
 	const { t } = useTranslation("common");
 	const appLogo = t("appLogo");
 
 	// Router
-	const { asPath, query } = useRouter();
+	const { asPath, query, isReady } = useRouter();
 
 	// Custom context
 	const { isComponentReady, stats, scan, siteId, querySiteId, queryLinkId, queryPageId, queryImageId } =
@@ -38,6 +40,12 @@ const SiteMenu = () => {
 
 	// Sidebar menus
 	const { SiteSidebarMenus } = SidebarMenus();
+
+	useEffect(() => {
+		isReady ? setSiteQueries(window.location.search) : setSiteQueries(null);
+
+		return { siteQueries };
+	}, [isReady]);
 
 	return (
 		<Scrollbars autoHide renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />} universal>
@@ -72,8 +80,11 @@ const SiteMenu = () => {
 														passHref
 													>
 														<a
+															disabled={!isComponentReady}
+															aria-disabled={!isComponentReady}
+															aria-hidden={!isComponentReady}
 															className={classnames(
-																"group mt-1 flex items-center justify-between rounded-md px-3 py-2 text-sm font-medium leading-5",
+																"group mt-1 flex items-center justify-between rounded-md px-3 py-2 text-sm font-medium leading-5 cursor-pointer transition duration-150 ease-in-out hover:bg-gray-1100 hover:text-gray-100 focus:bg-gray-1100 focus:outline-none",
 																asPath ===
 																	DashboardSitesLink +
 																		querySiteId +
@@ -81,12 +92,10 @@ const SiteMenu = () => {
 																		(queryLinkId ? queryLinkId + "/" : "") +
 																		(queryPageId ? queryPageId + "/" : "") +
 																		(queryImageId ? queryImageId + "/" : "") +
-																		window.location.search
+																		siteQueries
 																	? "!cursor-default bg-gray-1100 text-gray-100"
 																	: "text-gray-400",
-																isComponentReady
-																	? "cursor-pointer transition duration-150 ease-in-out hover:bg-gray-1100 hover:text-gray-100 focus:bg-gray-1100 focus:outline-none"
-																	: "cursor-default"
+																!isComponentReady ? "cursor-default" : null
 															)}
 														>
 															<span className="flex items-center justify-start">
