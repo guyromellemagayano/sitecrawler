@@ -45,7 +45,7 @@ const SiteMenu = () => {
 		isReady ? setSiteQueries(window.location.search) : setSiteQueries(null);
 
 		return { siteQueries };
-	}, [isReady]);
+	}, [isReady, query]);
 
 	return (
 		<Scrollbars autoHide renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />} universal>
