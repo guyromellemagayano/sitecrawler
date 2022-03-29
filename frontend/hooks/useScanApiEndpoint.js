@@ -66,8 +66,6 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 				SitesApiEndpoint + (scanApiEndpoint.includes("?") ? "&" : "?") + `${perPageQuery + linksPerPage}`)
 		: null;
 
-	const typeString = query?.type ? (Array.isArray(query?.type) ? query.type.join("&type=") : query.type) : "";
-
 	// Sites
 	const verifiedQuery = query?.verified
 		? scanApiEndpoint.includes("?")
@@ -88,11 +86,16 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 			: `?status__neq=${query.status__neq}`
 		: "";
 
-	const typeQuery = typeString ? (scanApiEndpoint.includes("?") ? `&type=${typeString}` : `?type=${typeString}`) : "";
-	const typeNeqQuery = typeString
+	const typeQuery = query?.type
 		? scanApiEndpoint.includes("?")
-			? `&type__neq=${typeString}`
-			: `?type__neq=${typeString}`
+			? `&type=${query?.type}`
+			: `?type=${query?.type}`
+		: "";
+
+	const typeNeqQuery = query?.type__neq
+		? scanApiEndpoint.includes("?")
+			? `&type__neq=${query.type__neq}`
+			: `?type__neq=${query.type__neq}`
 		: "";
 
 	// Pages
@@ -187,10 +190,16 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 			: `?tls_status__neq=${query.tls_status__neq}`
 		: "";
 
-	const missingAltsIsZeroQuery = query?.missing_alts__iszero
+	const hasMissingAltsQuery = query?.missing_alts__gt
 		? scanApiEndpoint.includes("?")
-			? `&missing_alts__iszero=${query.missing_alts__iszero}`
-			: `?missing_alts__iszero=${query.missing_alts__iszero}`
+			? `&missing_alts__gt=${query.missing_alts__gt}`
+			: `?missing_alts__gt=${query.missing_alts__gt}`
+		: "";
+
+	const hasNoMissingAltsQuery = query?.missing_alts__lte
+		? scanApiEndpoint.includes("?")
+			? `&missing_alts__lte=${query.missing_alts__lte}`
+			: `?missing_alts__lte=${query.missing_alts__lte}`
 		: "";
 
 	// Pagination
@@ -235,7 +244,8 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 	queryString += sizeTotalMinQuery;
 	queryString += tlsStatusQuery;
 	queryString += tlsStatusNeqQuery;
-	queryString += missingAltsIsZeroQuery;
+	queryString += hasMissingAltsQuery;
+	queryString += hasNoMissingAltsQuery;
 	queryString += pageQuery;
 	queryString += searchQuery;
 

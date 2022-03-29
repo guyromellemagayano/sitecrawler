@@ -116,7 +116,7 @@ export const ImagesChartContents = () => {
 
 	const imagesWithIssuesLink = { label: imagesWithIssuesText, filter: "status__neq=OK", color: "#ef4444" };
 	const imagesTlsNonOkLink = { label: imagesTlsNonOkText, filter: "tls_status=ERROR", color: "#dc2626" };
-	const missingAltsLink = { label: missingAltsText, filter: "missing_alts__iszero=false", color: "#eab308" };
+	const missingAltsLink = { label: missingAltsText, filter: "missing_alts__gt=0", color: "#eab308" };
 	const noImageIssuesLink = { label: noImageIssuesText, filter: "status=OK", color: "#22c55e" };
 
 	labelsArray.push(imagesWithIssuesLink);

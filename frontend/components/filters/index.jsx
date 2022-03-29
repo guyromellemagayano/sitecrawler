@@ -636,11 +636,6 @@ const Filter = ({
 
 				newPath = handleRemoveUrlParameter(newPath, "type");
 				newPath = handleRemoveUrlParameter(newPath, "type__neq");
-				newPath = handleRemoveUrlParameter(newPath, "status");
-				newPath = handleRemoveUrlParameter(newPath, "status__neq");
-				newPath = handleRemoveUrlParameter(newPath, "tls_status");
-				newPath = handleRemoveUrlParameter(newPath, "tls_status__neq");
-				newPath = handleRemoveUrlParameter(newPath, "missing_alts__iszero");
 
 				if (newPath.includes("?")) newPath += `&type=PAGE`;
 				else newPath += `?type=PAGE`;
@@ -683,11 +678,6 @@ const Filter = ({
 
 				newPath = handleRemoveUrlParameter(newPath, "type");
 				newPath = handleRemoveUrlParameter(newPath, "type__neq");
-				newPath = handleRemoveUrlParameter(newPath, "status");
-				newPath = handleRemoveUrlParameter(newPath, "status__neq");
-				newPath = handleRemoveUrlParameter(newPath, "tls_status");
-				newPath = handleRemoveUrlParameter(newPath, "tls_status__neq");
-				newPath = handleRemoveUrlParameter(newPath, "missing_alts__iszero");
 
 				if (newPath.includes("?")) newPath += `&type__neq=PAGE`;
 				else newPath += `?type__neq=PAGE`;
@@ -729,6 +719,7 @@ const Filter = ({
 				setAllImagesFilter(false);
 
 				newPath = handleRemoveUrlParameter(newPath, "type");
+				newPath = handleRemoveUrlParameter(newPath, "type__neq");
 
 				if (newPath.includes("?")) newPath += `&type=EXTERNAL`;
 				else newPath += `?type=EXTERNAL`;
@@ -771,11 +762,6 @@ const Filter = ({
 
 				newPath = handleRemoveUrlParameter(newPath, "type");
 				newPath = handleRemoveUrlParameter(newPath, "type__neq");
-				newPath = handleRemoveUrlParameter(newPath, "status");
-				newPath = handleRemoveUrlParameter(newPath, "status__neq");
-				newPath = handleRemoveUrlParameter(newPath, "tls_status");
-				newPath = handleRemoveUrlParameter(newPath, "tls_status__neq");
-				newPath = handleRemoveUrlParameter(newPath, "missing_alts__iszero");
 
 				if (newPath.includes("?")) newPath += `&type__neq=EXTERNAL`;
 				else newPath += `?type__neq=EXTERNAL`;
@@ -817,6 +803,7 @@ const Filter = ({
 				setAllImagesFilter(false);
 
 				newPath = handleRemoveUrlParameter(newPath, "type");
+				newPath = handleRemoveUrlParameter(newPath, "type__neq");
 
 				if (newPath.includes("?")) newPath += `&type=NON_WEB`;
 				else newPath += `?type=NON_WEB`;
@@ -859,11 +846,6 @@ const Filter = ({
 
 				newPath = handleRemoveUrlParameter(newPath, "type");
 				newPath = handleRemoveUrlParameter(newPath, "type__neq");
-				newPath = handleRemoveUrlParameter(newPath, "status");
-				newPath = handleRemoveUrlParameter(newPath, "status__neq");
-				newPath = handleRemoveUrlParameter(newPath, "tls_status");
-				newPath = handleRemoveUrlParameter(newPath, "tls_status__neq");
-				newPath = handleRemoveUrlParameter(newPath, "missing_alts__iszero");
 
 				if (newPath.includes("?")) newPath += `&type__neq=NON_WEB`;
 				else newPath += `?type__neq=NON_WEB`;
@@ -905,6 +887,7 @@ const Filter = ({
 				setAllImagesFilter(false);
 
 				newPath = handleRemoveUrlParameter(newPath, "type");
+				newPath = handleRemoveUrlParameter(newPath, "type__neq");
 
 				if (newPath.includes("?")) newPath += `&type=OTHER`;
 				else newPath += `?type=OTHER`;
@@ -947,11 +930,6 @@ const Filter = ({
 
 				newPath = handleRemoveUrlParameter(newPath, "type");
 				newPath = handleRemoveUrlParameter(newPath, "type__neq");
-				newPath = handleRemoveUrlParameter(newPath, "status");
-				newPath = handleRemoveUrlParameter(newPath, "status__neq");
-				newPath = handleRemoveUrlParameter(newPath, "tls_status");
-				newPath = handleRemoveUrlParameter(newPath, "tls_status__neq");
-				newPath = handleRemoveUrlParameter(newPath, "missing_alts__iszero");
 
 				if (newPath.includes("?")) newPath += `&type__neq=OTHER`;
 				else newPath += `?type__neq=OTHER`;
@@ -993,6 +971,7 @@ const Filter = ({
 				setAllImagesFilter(false);
 
 				newPath = handleRemoveUrlParameter(newPath, "status");
+				newPath = handleRemoveUrlParameter(newPath, "status__neq");
 
 				if (newPath.includes("?")) newPath += `&status=OK`;
 				else newPath += `?status=OK`;
@@ -1033,6 +1012,7 @@ const Filter = ({
 				setMissingAltsImagesFilter(false);
 				setAllImagesFilter(false);
 
+				newPath = handleRemoveUrlParameter(newPath, "status");
 				newPath = handleRemoveUrlParameter(newPath, "status__neq");
 
 				if (newPath.includes("?")) newPath += `&status__neq=OK`;
@@ -1075,6 +1055,7 @@ const Filter = ({
 				setAllImagesFilter(false);
 
 				newPath = handleRemoveUrlParameter(newPath, "status");
+				newPath = handleRemoveUrlParameter(newPath, "status__neq");
 
 				if (newPath.includes("?")) newPath += `&status=TIMEOUT`;
 				else newPath += `?status=TIMEOUT`;
@@ -1115,6 +1096,7 @@ const Filter = ({
 				setMissingAltsImagesFilter(false);
 				setAllImagesFilter(false);
 
+				newPath = handleRemoveUrlParameter(newPath, "status");
 				newPath = handleRemoveUrlParameter(newPath, "status__neq");
 
 				if (newPath.includes("?")) newPath += `&status__neq=TIMEOUT`;
@@ -1157,6 +1139,7 @@ const Filter = ({
 				setAllImagesFilter(false);
 
 				newPath = handleRemoveUrlParameter(newPath, "status");
+				newPath = handleRemoveUrlParameter(newPath, "status__neq");
 
 				if (newPath.includes("?")) newPath += `&status=HTTP_ERROR`;
 				else newPath += `?status=HTTP_ERROR`;
@@ -1197,6 +1180,7 @@ const Filter = ({
 				setMissingAltsImagesFilter(false);
 				setAllImagesFilter(false);
 
+				newPath = handleRemoveUrlParameter(newPath, "status");
 				newPath = handleRemoveUrlParameter(newPath, "status__neq");
 
 				if (newPath.includes("?")) newPath += `&status__neq=HTTP_ERROR`;
@@ -1239,6 +1223,7 @@ const Filter = ({
 				setAllImagesFilter(false);
 
 				newPath = handleRemoveUrlParameter(newPath, "status");
+				newPath = handleRemoveUrlParameter(newPath, "status__neq");
 
 				if (newPath.includes("?")) newPath += `&status=OTHER_ERROR`;
 				else newPath += `?status=OTHER_ERROR`;
@@ -1279,6 +1264,7 @@ const Filter = ({
 				setMissingAltsImagesFilter(false);
 				setAllImagesFilter(false);
 
+				newPath = handleRemoveUrlParameter(newPath, "status");
 				newPath = handleRemoveUrlParameter(newPath, "status__neq");
 
 				if (newPath.includes("?")) newPath += `&status__neq=OTHER_ERROR`;
@@ -1321,6 +1307,7 @@ const Filter = ({
 				setAllImagesFilter(false);
 
 				newPath = handleRemoveUrlParameter(newPath, "status");
+				newPath = handleRemoveUrlParameter(newPath, "status__neq");
 
 				if (newPath.includes("?")) newPath += `&status=TOO_MANY_REDIRECTS`;
 				else newPath += `?status=TOO_MANY_REDIRECTS`;
@@ -1361,6 +1348,7 @@ const Filter = ({
 				setMissingAltsImagesFilter(false);
 				setAllImagesFilter(false);
 
+				newPath = handleRemoveUrlParameter(newPath, "status");
 				newPath = handleRemoveUrlParameter(newPath, "status__neq");
 
 				if (newPath.includes("?")) newPath += `&status__neq=TOO_MANY_REDIRECTS`;
@@ -1403,6 +1391,7 @@ const Filter = ({
 				setAllImagesFilter(false);
 
 				newPath = handleRemoveUrlParameter(newPath, "tls_status");
+				newPath = handleRemoveUrlParameter(newPath, "tls_status__neq");
 
 				if (newPath.includes("?")) newPath += `&tls_status=NONE`;
 				else newPath += `?tls_status=NONE`;
@@ -1443,6 +1432,7 @@ const Filter = ({
 				setMissingAltsImagesFilter(false);
 				setAllImagesFilter(false);
 
+				newPath = handleRemoveUrlParameter(newPath, "tls_status");
 				newPath = handleRemoveUrlParameter(newPath, "tls_status__neq");
 
 				if (newPath.includes("?")) newPath += `&tls_status__neq=NONE`;
@@ -1485,6 +1475,7 @@ const Filter = ({
 				setAllImagesFilter(false);
 
 				newPath = handleRemoveUrlParameter(newPath, "tls_status");
+				newPath = handleRemoveUrlParameter(newPath, "tls_status__neq");
 
 				if (newPath.includes("?")) newPath += `&tls_status=OK`;
 				else newPath += `?tls_status=OK`;
@@ -1525,6 +1516,7 @@ const Filter = ({
 				setMissingAltsImagesFilter(false);
 				setAllImagesFilter(false);
 
+				newPath = handleRemoveUrlParameter(newPath, "tls_status");
 				newPath = handleRemoveUrlParameter(newPath, "tls_status__neq");
 
 				if (newPath.includes("?")) newPath += `&tls_status__neq=OK`;
@@ -1567,6 +1559,7 @@ const Filter = ({
 				setAllImagesFilter(false);
 
 				newPath = handleRemoveUrlParameter(newPath, "tls_status");
+				newPath = handleRemoveUrlParameter(newPath, "tls_status__neq");
 
 				if (newPath.includes("?")) newPath += `&tls_status=ERROR`;
 				else newPath += `?tls_status=ERROR`;
@@ -1607,6 +1600,7 @@ const Filter = ({
 				setMissingAltsImagesFilter(false);
 				setAllImagesFilter(false);
 
+				newPath = handleRemoveUrlParameter(newPath, "tls_status");
 				newPath = handleRemoveUrlParameter(newPath, "tls_status__neq");
 
 				if (newPath.includes("?")) newPath += `&tls_status__neq=ERROR`;
@@ -1648,15 +1642,15 @@ const Filter = ({
 				setMissingAltsImagesFilter(false);
 				setAllImagesFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "missing_alts__iszero");
+				newPath = handleRemoveUrlParameter(newPath, "missing_alts__gt");
+				newPath = handleRemoveUrlParameter(newPath, "missing_alts__lte");
 
-				if (newPath.includes("?")) newPath += `&missing_alts__iszero=true`;
-				else newPath += `?missing_alts__iszero=true`;
+				if (newPath.includes("?")) newPath += `&missing_alts__lte=0`;
+				else newPath += `?missing_alts__lte=0`;
 			} else if (filterValue === "noMissingAltsImages" && !filterChecked) {
-				filterQueryString?.delete("missing_alts__iszero") ?? null;
+				filterQueryString?.delete("missing_alts__lte") ?? null;
 
-				if (newPath.includes("missing_alts__iszero"))
-					newPath = handleRemoveUrlParameter(newPath, "missing_alts__iszero");
+				if (newPath.includes("missing_alts__lte")) newPath = handleRemoveUrlParameter(newPath, "missing_alts__lte");
 
 				setNoMissingAltsImagesFilter(false);
 			}
@@ -1690,15 +1684,15 @@ const Filter = ({
 				setMissingAltsImagesFilter(true);
 				setAllImagesFilter(false);
 
-				newPath = handleRemoveUrlParameter(newPath, "missing_alts__iszero");
+				newPath = handleRemoveUrlParameter(newPath, "missing_alts__gt");
+				newPath = handleRemoveUrlParameter(newPath, "missing_alts__lte");
 
-				if (newPath.includes("?")) newPath += `&missing_alts__iszero=false`;
-				else newPath += `?missing_alts__iszero=false`;
+				if (newPath.includes("?")) newPath += `&missing_alts__gt=0`;
+				else newPath += `?missing_alts__gt=0`;
 			} else if (filterValue === "missingAltsImages" && !filterChecked) {
-				filterQueryString?.delete("missing_alts__iszero") ?? null;
+				filterQueryString?.delete("missing_alts__gt") ?? null;
 
-				if (newPath.includes("missing_alts__iszero"))
-					newPath = handleRemoveUrlParameter(newPath, "missing_alts__iszero");
+				if (newPath.includes("missing_alts__gt")) newPath = handleRemoveUrlParameter(newPath, "missing_alts__gt");
 
 				setMissingAltsImagesFilter(false);
 			}
@@ -1729,8 +1723,8 @@ const Filter = ({
 					filterValue !== "allExceptTlsStatusNoneImages" &&
 					filterValue !== "allExceptTlsStatusOkImages" &&
 					filterValue !== "allExceptTlsStatusErrorImages" &&
-					filterValue !== "noMissingAlts" &&
-					filterValue !== "missingAlts")
+					filterValue !== "noMissingAltsImages" &&
+					filterValue !== "missingAltsImages")
 			) {
 				setAllImagesFilter(true);
 				setExternalImagesFilter(false);
@@ -1766,7 +1760,8 @@ const Filter = ({
 				newPath = handleRemoveUrlParameter(newPath, "type__neq");
 				newPath = handleRemoveUrlParameter(newPath, "tls_status");
 				newPath = handleRemoveUrlParameter(newPath, "tls_status__neq");
-				newPath = handleRemoveUrlParameter(newPath, "missing_alts__iszero");
+				newPath = handleRemoveUrlParameter(newPath, "missing_alts__gt");
+				newPath = handleRemoveUrlParameter(newPath, "missing_alts__lte");
 			}
 		} else {
 			// Sites filter
@@ -1821,9 +1816,6 @@ const Filter = ({
 
 		// Push new path
 		push(newPath);
-
-		// Mutate function here
-		mutate(scanApiEndpoint, null, { rollbackOnError: true, revalidate: true });
 	};
 
 	// Handle filters on load
@@ -2163,13 +2155,13 @@ const Filter = ({
 					setAllExceptTlsStatusErrorImagesFilter(false);
 				}
 
-				if (filterQueryString.get("missing_alts__iszero") === "true") {
+				if (filterQueryString.get("missing_alts__lte")) {
 					setNoMissingAltsImagesFilter(true);
 				} else {
 					setNoMissingAltsImagesFilter(false);
 				}
 
-				if (filterQueryString.get("missing_alts__iszero") === "false") {
+				if (filterQueryString.get("missing_alts__gt")) {
 					setMissingAltsImagesFilter(true);
 				} else {
 					setMissingAltsImagesFilter(false);
@@ -2182,7 +2174,8 @@ const Filter = ({
 					!filterQueryString.has("status__neq") &&
 					!filterQueryString.has("tls_status") &&
 					!filterQueryString.has("tls_status__neq") &&
-					!filterQueryString.has("missing_alts__iszero")
+					!filterQueryString.has("missing_alts__gt") &&
+					!filterQueryString.has("missing_alts__lte")
 				) {
 					setAllImagesFilter(true);
 				} else {
