@@ -47,7 +47,7 @@
 		"@heroicons/react": "latest",
 		"@sentry/nextjs": "6.19.2",
 		"@stripe/react-stripe-js": "^1.7.0",
-		"@stripe/stripe-js": "^1.24.0",
+		"@stripe/stripe-js": "^1.26.0",
 		"@tailwindcss/aspect-ratio": "^0.4.0",
 		"@tailwindcss/forms": "^0.5.0",
 		"@tailwindcss/line-clamp": "^0.3.1",
