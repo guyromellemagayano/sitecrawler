@@ -27,7 +27,8 @@ const SiteMenu = () => {
 	const { asPath, query } = useRouter();
 
 	// Custom context
-	const { isComponentReady, stats, scan, siteId, querySiteId } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady, stats, scan, siteId, querySiteId, queryLinkId, queryPageId, queryImageId } =
+		useContext(SiteCrawlerAppContext);
 
 	// Custom variables
 	const scanCount = scan?.data?.count ?? 0;
@@ -73,8 +74,14 @@ const SiteMenu = () => {
 														<a
 															className={classnames(
 																"group mt-1 flex items-center justify-between rounded-md px-3 py-2 text-sm font-medium leading-5",
-																asPath === DashboardSitesLink + querySiteId + value2.url + window.location.search &&
-																	isComponentReady
+																asPath ===
+																	DashboardSitesLink +
+																		querySiteId +
+																		value2.url +
+																		(queryLinkId ? queryLinkId + "/" : "") +
+																		(queryPageId ? queryPageId + "/" : "") +
+																		(queryImageId ? queryImageId + "/" : "") +
+																		window.location.search
 																	? "!cursor-default bg-gray-1100 text-gray-100"
 																	: "text-gray-400",
 																isComponentReady
