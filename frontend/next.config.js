@@ -53,11 +53,7 @@ const NextConfig = {
 const SentryWebpackPluginOptions = {
 	include: ".",
 	ignore: ["node_modules"],
-	silent: true,
-	sentry: {
-		disableServerWebpackPlugin: true,
-		disableClientWebpackPlugin: true
-	}
+	silent: true
 };
 
 module.exports = withPlugins([
