@@ -255,7 +255,7 @@ export const useScanApiEndpoint = (linksPerPage = null) => {
 		filterQueryString = new URLSearchParams(window.location.search);
 	}
 
-	// console.log(scanApiEndpoint);
+	console.log(scanApiEndpoint);
 
 	return { scanApiEndpoint, queryString, filterQueryString };
 };
