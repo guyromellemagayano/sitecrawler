@@ -84,7 +84,7 @@ const SiteMenu = () => {
 															aria-disabled={!isComponentReady}
 															aria-hidden={!isComponentReady}
 															className={classnames(
-																"group mt-1 flex items-center justify-between rounded-md px-3 py-2 text-sm font-medium leading-5 cursor-pointer transition duration-150 ease-in-out hover:bg-gray-1100 hover:text-gray-100 focus:bg-gray-1100 focus:outline-none",
+																"group mt-1 flex cursor-pointer items-center justify-between rounded-md px-3 py-2 text-sm font-medium leading-5 transition duration-150 ease-in-out hover:bg-gray-1100 hover:text-gray-100 focus:bg-gray-1100 focus:outline-none",
 																asPath ===
 																	DashboardSitesLink +
 																		querySiteId +
@@ -93,7 +93,7 @@ const SiteMenu = () => {
 																		(queryPageId ? queryPageId + "/" : "") +
 																		(queryImageId ? queryImageId + "/" : "") +
 																		siteQueries
-																	? "!cursor-default bg-gray-1100 text-gray-100"
+																	? "bg-gray-1100 text-gray-100"
 																	: "text-gray-400",
 																!isComponentReady ? "cursor-default" : null
 															)}
