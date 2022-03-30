@@ -20,7 +20,9 @@ const SiteLinkDetailPageLayout = () => {
 	const { t } = useTranslation();
 	const noneText = t("common:none");
 	const linkInformationText = t("sites:linkDetail.linkInformation");
+	const resolvedIssuesText = t("sites:linkDetail.resolvedIssues");
 	const createdAtText = t("sites:linkDetail.createdAt");
+	const occurrencesText = t("sites:linkDetail.occurrences");
 	const typeText = t("sites:linkDetail.type");
 	const urlText = t("sites:linkDetail.url");
 	const statusText = t("sites:linkDetail.status");
@@ -110,6 +112,7 @@ const SiteLinkDetailPageLayout = () => {
 	const tlsCipherSuite = tls ? tls.cipher_suite : null;
 	const tlsVersion = tls ? tls.version : null;
 	const tlsErrors = tls ? tls.errors : null;
+	const occurrences = linkId?.data?.pages?.length ?? 0;
 	const pages = linkId?.data?.pages ?? null;
 
 	return (
@@ -311,7 +314,16 @@ const SiteLinkDetailPageLayout = () => {
 										</dd>
 									)}
 								</div>
+							</dl>
+						</div>
+					</div>
 
+					<div className="pb-12">
+						<div>
+							<h3 className="text-xl font-bold leading-6 text-gray-900">{resolvedIssuesText}</h3>
+						</div>
+						<div className="mt-5">
+							<dl className="sm:divide-y sm:divide-gray-200">
 								<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
 									<dt className="text-sm font-medium text-gray-500">{resolvedStatusText}</dt>
 									{isComponentReady && resolvedStatus ? (
@@ -523,6 +535,20 @@ const SiteLinkDetailPageLayout = () => {
 							</div>
 							<div className="mt-5">
 								<dl className="sm:divide-y sm:divide-gray-200">
+									<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
+										<dt className="text-sm font-medium text-gray-500">{occurrencesText}</dt>
+										{isComponentReady && occurrences ? (
+											<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{occurrences}</dd>
+										) : isComponentReady && !occurrences ? (
+											<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
+												<span className="text-gray-500">{noneText}</span>
+											</dd>
+										) : (
+											<dd className="mt-1 sm:col-span-2 sm:mt-0">
+												<Skeleton duration={2} width={120} />
+											</dd>
+										)}
+									</div>
 									<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
 										<dt className="text-sm font-medium text-gray-500">{urlText}</dt>
 										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">

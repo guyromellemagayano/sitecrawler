@@ -180,9 +180,11 @@
 	"unverified": "Unverified",
 	"linkDetail": {
 		"linkInformation": "Link Information",
+		"resolvedIssues": "Resolved Issues",
 		"tlsInformation": "TLS Information",
 		"pageLocations": "Page Locations",
 		"createdAt": "Created At",
+		"occurrences": "Occurrences",
 		"type": "Type",
 		"url": "Page URLs",
 		"status": "Status",
