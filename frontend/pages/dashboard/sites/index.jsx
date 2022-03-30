@@ -46,7 +46,7 @@ const SitesAuth = () => {
 	return (
 		<MemoizedLayout>
 			<NextSeo title={sitesDashboardText} />
-			<MemoizedPageLayout pageTitle={sitesDashboardText}>
+			<MemoizedPageLayout isSites pageTitle={sitesDashboardText}>
 				<MemoizedSitesDashboardPageLayout />
 			</MemoizedPageLayout>
 		</MemoizedLayout>

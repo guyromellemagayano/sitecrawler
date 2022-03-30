@@ -46,7 +46,7 @@ const ProfileSettingsAuth = () => {
 	return (
 		<MemoizedLayout>
 			<NextSeo title={profileSettingsText} />
-			<MemoizedPageLayout pageTitle={profileSettingsText}>
+			<MemoizedPageLayout isSettings pageTitle={profileSettingsText}>
 				<MemoizedProfileSettingsPageLayout />
 			</MemoizedPageLayout>
 		</MemoizedLayout>

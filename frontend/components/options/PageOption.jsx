@@ -3,6 +3,7 @@ import { MemoizedSiteVerifyErrorModal } from "@components/modals/SiteVerifyError
 import { MemoizedUpgradeErrorModal } from "@components/modals/UpgradeErrorModal";
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import { RedirectInterval } from "@constants/GlobalValues";
+import { ScanSlug, SiteImageSlug, SiteLinkSlug, SitePageSlug } from "@constants/PageLinks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DocumentTextIcon, ExternalLinkIcon, LinkIcon } from "@heroicons/react/outline";
 import { CheckCircleIcon, DownloadIcon, GlobeIcon } from "@heroicons/react/solid";
@@ -83,6 +84,9 @@ const PageOption = ({
 	const {
 		isComponentReady,
 		querySiteId,
+		queryLinkId,
+		queryPageId,
+		queryImageId,
 		user,
 		siteId,
 		scan,
@@ -152,9 +156,25 @@ const PageOption = ({
 		setIsDownloading(!isDownloading);
 
 		if (!isDownloading) {
-			const downloadLink = `/api/site/${querySiteId}/scan/${scanObjId}/${
-				isLinks ? "link" : isPages ? "page" : isImages ? "image" : null
-			}/?format=csv${queryString}`;
+			let downloadLink = "";
+
+			const pageSlug = isLinks ? SiteLinkSlug : isPages ? SitePageSlug : isImages ? SiteImageSlug : "/";
+			const querySlug = queryLinkId
+				? queryLinkId + "/"
+				: queryPageId
+				? queryPageId + "/"
+				: queryImageId
+				? queryImageId + "/"
+				: "";
+
+			downloadLink += SitesApiEndpoint;
+			downloadLink += querySiteId;
+			downloadLink += ScanSlug;
+			downloadLink += scanObjId;
+			downloadLink += pageSlug;
+			downloadLink += querySlug;
+			downloadLink += "?format=csv";
+			downloadLink += queryString;
 
 			window.location.assign(downloadLink);
 		}
@@ -163,7 +183,7 @@ const PageOption = ({
 	};
 
 	return (
-		<div className="flex-none px-4 sm:px-6 md:flex md:items-center md:justify-between md:px-0">
+		<div className="flex-none bg-white px-4 sm:px-6 md:flex md:items-center md:justify-between md:px-0 xl:sticky xl:top-0 xl:z-50 xl:pt-4">
 			{!isSites && !isSiteSettings ? (
 				<>
 					<MemoizedUpgradeErrorModal
@@ -263,7 +283,7 @@ const PageOption = ({
 
 						{isComponentReady ? (
 							<div className="flex items-center space-x-2 text-sm text-gray-500">
-								{isComponentReady && isLinks ? (
+								{isComponentReady && isLinks && !queryLinkId ? (
 									<>
 										<LinkIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
 										<span className="text-sm leading-5 text-gray-500">
@@ -285,7 +305,7 @@ const PageOption = ({
 												: noAvailableSitesText}
 										</span>
 									</>
-								) : isComponentReady && isPages ? (
+								) : isComponentReady && isPages && !queryPageId ? (
 									<>
 										<DocumentTextIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
 										<span className="text-sm leading-5 text-gray-500">
@@ -296,7 +316,7 @@ const PageOption = ({
 												: noAvailablePagesText}
 										</span>
 									</>
-								) : isComponentReady && isImages ? (
+								) : isComponentReady && isImages && !queryImageId ? (
 									<>
 										<DocumentTextIcon className="h-4 w-4 flex-shrink-0 text-gray-400" aria-hidden="true" />
 										<span className="text-sm leading-5 text-gray-500">
@@ -307,7 +327,9 @@ const PageOption = ({
 												: noAvailableImagesText}
 										</span>
 									</>
-								) : (isComponentReady && isOverview) || (isComponentReady && isSiteSettings) ? null : (
+								) : (isComponentReady && isOverview) || (isComponentReady && isSiteSettings) ? null : !isLinks ||
+								  !isPages ||
+								  !isImages ? null : (
 									<>
 										<Skeleton duration={2} width={20} height={20} className="flex-shrink-0" />
 										<Skeleton duration={2} width={60} height={20} />
@@ -381,7 +403,7 @@ const PageOption = ({
 										className={classnames(
 											"ml-2 inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm",
 											isDownloading
-												? "cursor-not-allowed opacity-50"
+												? "cursor-not-allowed bg-indigo-500 opacity-50"
 												: "bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 										)}
 										onClick={handleCsvDownload}
@@ -400,11 +422,11 @@ const PageOption = ({
 					) : null}
 				</div>
 
-				{isLinks ? (
+				{isLinks && !queryLinkId ? (
 					<MemoizedFilter isSitesLinksFilter />
-				) : isPages ? (
+				) : isPages && !queryPageId ? (
 					<MemoizedFilter isSitesPagesFilter />
-				) : isImages ? (
+				) : isImages && !queryImageId ? (
 					<MemoizedFilter isSitesImagesFilter />
 				) : isSites ? (
 					<MemoizedFilter isSitesFilter />

@@ -1,4 +1,5 @@
 import { MemoizedBadge } from "@components/badges";
+import { MemoizedSiteSuccessIcon } from "@components/icons/SiteSuccessIcon";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import dayjs from "dayjs";
@@ -23,17 +24,15 @@ const LinksData = ({ link = null }) => {
 	const linkHttpStatus = link?.http_status ?? null;
 	const linkTlsStatus = link?.tls_status ?? null;
 	const linkOccurrences = link?.occurences ?? null;
-	const linkResolvedStatus = link?.resolved_status ?? "";
-	const linkResolvedTls = link?.resolved_tls ?? "";
+	const linkResolvedStatus = link?.resolved_status ?? null;
+	const linkResolvedTls = link?.resolved_tls ?? null;
+	const linkResponseTime = link?.response_time ?? null;
 
 	// Translations
 	const { t } = useTranslation();
 	const markAsResolvedText = t("sites:markAsResolved");
 	const visitExternalSiteText = t("sites:visitExternalSite");
 	const goToSiteOverviewText = t("sites:goToSiteOverview");
-	const internalText = t("sites:internal");
-	const externalText = t("sites:external");
-	const otherText = t("sites:other");
 	const othersText = t("sites:others");
 	const nonWebText = t("sites:nonWeb");
 
@@ -144,20 +143,8 @@ const LinksData = ({ link = null }) => {
 					</div>
 				</div>
 			</td>
-			<td className="truncate-link whitespace-nowrap px-6 py-4 text-sm leading-5 text-gray-500">
-				{isComponentReady ? (
-					linkType === "PAGE" ? (
-						internalText
-					) : linkType === "EXTERNAL" ? (
-						externalText
-					) : linkType === "NON_WEB" ? (
-						nonWebText
-					) : (
-						otherText
-					)
-				) : (
-					<Skeleton duration={2} width={100} />
-				)}
+			<td className="truncate-link whitespace-nowrap px-6 py-4 text-sm leading-5 font-semibold text-gray-500">
+				{isComponentReady ? linkType : <Skeleton duration={2} width={100} />}
 			</td>
 			<td className="truncate-link whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady ? (
@@ -166,7 +153,7 @@ const LinksData = ({ link = null }) => {
 					) : linkStatus === "TIMEOUT" ? (
 						<MemoizedBadge text="TIMEOUT" isWarning />
 					) : linkStatus === "HTTP_ERROR" ? (
-						<MemoizedBadge text={`${linkHttpStatus} HTTP ERROR`} isDanger />
+						<MemoizedBadge text="HTTP ERROR" isDanger />
 					) : (
 						<MemoizedBadge text="OTHER ERROR" isDanger />
 					)
@@ -185,6 +172,15 @@ const LinksData = ({ link = null }) => {
 					) : (
 						<span className="text-gray-500">{linkHttpStatus}</span>
 					)
+				) : (
+					<Skeleton duration={2} width={45} />
+				)}
+			</td>
+			<td className="truncate-link whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
+				{isComponentReady ? (
+					linkResponseTime ? (
+						<span className="text-gray-500">{linkResponseTime + "ms"}</span>
+					) : null
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
@@ -223,20 +219,16 @@ const LinksData = ({ link = null }) => {
 				)}
 			</td>
 			<td className="truncate-link whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady ? (
-					linkResolvedStatus ? (
-						<span className="text-gray-500">{linkResolvedStatus}</span>
-					) : null
-				) : (
+				{isComponentReady && linkResolvedStatus ? (
+					<MemoizedSiteSuccessIcon />
+				) : isComponentReady && !linkResolvedStatus ? null : (
 					<Skeleton duration={2} width={75} />
 				)}
 			</td>
 			<td className="truncate-link whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
-				{isComponentReady ? (
-					linkResolvedTls ? (
-						<span className="text-gray-500">{linkResolvedTls}</span>
-					) : null
-				) : (
+				{isComponentReady && linkResolvedTls ? (
+					<MemoizedSiteSuccessIcon />
+				) : isComponentReady && !linkResolvedTls ? null : (
 					<Skeleton duration={2} width={75} />
 				)}
 			</td>
@@ -249,8 +241,8 @@ LinksData.propTypes = {
 		http_status: PropTypes.any,
 		id: PropTypes.number,
 		occurences: PropTypes.number,
-		resolved_status: PropTypes.string,
-		resolved_tls: PropTypes.string,
+		resolved_status: PropTypes.any,
+		resolved_tls: PropTypes.any,
 		status: PropTypes.string,
 		tls_status: PropTypes.any,
 		type: PropTypes.string,

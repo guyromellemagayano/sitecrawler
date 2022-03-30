@@ -114,7 +114,7 @@ const AddNewSiteAuth = () => {
 	return (
 		<MemoizedLayout>
 			<NextSeo title={addNewSiteText} />
-			<MemoizedPageLayout pageTitle={addNewSiteText}>
+			<MemoizedPageLayout isSites pageTitle={addNewSiteText}>
 				<MemoizedAddNewSitePageLayout
 					step={sanitizedStep}
 					sid={sanitizedSid}

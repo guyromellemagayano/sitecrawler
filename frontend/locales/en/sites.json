@@ -116,6 +116,7 @@
 	"urlType": "URL Type",
 	"status": "Status",
 	"httpStatus": "HTTP Status",
+	"responseTime": "Response Time",
 	"location": "Location",
 	"occurrences": "Occurrences",
 	"csvDownload": "CSV Download",
@@ -176,5 +177,41 @@
 	"pagesTlsNonOk": "Pages with Non-OK TLS",
 	"pagesSmallTlsOk": "Small Pages with OK TLS",
 	"verified": "Verified",
-	"unverified": "Unverified"
+	"unverified": "Unverified",
+	"linkDetail": {
+		"linkInformation": "Link Information",
+		"tlsInformation": "TLS Information",
+		"pageLocations": "Page Locations",
+		"createdAt": "Created At",
+		"type": "Type",
+		"url": "Page URLs",
+		"status": "Status",
+		"statusAdjusted": "Status (Adjusted)",
+		"httpStatus": "HTTP Status",
+		"responseTime": "Response Time",
+		"error": "Error",
+		"size": "Size",
+		"tlsStatus": "TLS Status",
+		"tlsStatusAdjusted": "TLS Status (Adjusted)",
+		"resolvedStatus": "Resolved Status",
+		"resolvedTls": "Resolved TLS",
+		"tlsNotBefore": "TLS Not Before",
+		"tlsNotAfter": "TLS Not After",
+		"tlsCommonName": "TLS Common Name",
+		"tlsOrganization": "TLS Organization",
+		"tlsDnsNames": "TLS DNS Names",
+		"tlsIssuerOrganization": "TLS Issuer Organization",
+		"tlsIssuerCommonName": "TLS Issuer Common Name",
+		"tlsCipherSuite": "TLS Cipher Suite",
+		"tlsVersion": "TLS Version",
+		"tlsErrors": "TLS Errors"
+	},
+	"pageInformation": {
+		"headline": "Page Information",
+		"subHeading": "Page details, SEO and TLS information"
+	},
+	"imageInformation": {
+		"headline": "Image Information",
+		"subHeading": "Image details, TLS information, and page locations"
+	}
 }
