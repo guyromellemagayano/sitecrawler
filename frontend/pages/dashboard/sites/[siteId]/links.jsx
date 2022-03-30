@@ -46,7 +46,6 @@ export async function getServerSideProps({ req, query }) {
 			scanData &&
 			Math.round(scanStatus / 100) === 2 &&
 			!scanData?.detail &&
-			(!siteData?.verified || siteData?.verified) &&
 			scanData?.count > 0
 		) {
 			return {

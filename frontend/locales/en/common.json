@@ -87,5 +87,6 @@
 	"rowsPerPage": "Rows per page",
 	"minLargePageThreshold": "Must be a number greater than or equal to 1048576",
 	"siteName": "Site Name",
-	"siteUrl": "Site URL"
+	"siteUrl": "Site URL",
+	"none": "None"
 }
