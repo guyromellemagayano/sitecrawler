@@ -211,12 +211,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 
 	// Custom `siteId` SWR hook
 	useEffect(() => {
-		const verifiedSiteId =
-			sites && Object.keys(sites)?.length > 0
-				? sites?.data?.results?.find((site) => site.id === querySiteId) ?? null
-				: null;
-
-		verifiedSiteId && Object.keys(verifiedSiteId)?.length > 0 && customSitesApiEndpoint?.length > 0
+		sites && Object.keys(sites)?.length > 0 && customSitesApiEndpoint?.length > 0 && querySiteId
 			? setCustomSitesIdApiEndpoint(customSitesApiEndpoint + querySiteId)
 			: setCustomSitesIdApiEndpoint(null);
 
@@ -289,10 +284,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 
 	// Custom `stats` API endpoint state
 	useEffect(() => {
-		const verifiedScanObjId =
-			scan && Object.keys(scan)?.length > 0 ? scan?.data?.results?.find((scan) => scan.id === scanObjId) ?? null : null;
-
-		verifiedScanObjId && Object.keys(verifiedScanObjId)?.length > 0 && customScanApiEndpoint?.length > 0
+		scan && Object.keys(scan)?.length > 0 && scanObjId && customScanApiEndpoint?.length > 0
 			? setCustomStatsApiEndpoint(customScanApiEndpoint + scanObjId)
 			: setCustomStatsApiEndpoint(null);
 
@@ -374,12 +366,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 
 	// Custom `linkId` SWR hook
 	useEffect(() => {
-		const verifiedLinkId =
-			links && Object.keys(links)?.length > 0
-				? links?.data?.results?.find((link) => link.id === queryLinkId) ?? null
-				: null;
-
-		verifiedLinkId && Object.keys(verifiedLinkId)?.length > 0 && customLinksApiEndpoint?.length > 0
+		links && Object.keys(links)?.length > 0 && customLinksApiEndpoint?.length > 0 && queryLinkId
 			? setCustomLinksIdApiEndpoint(customLinksApiEndpoint + queryLinkId)
 			: setCustomLinksIdApiEndpoint(null);
 
@@ -398,12 +385,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 
 	// Custom `pageId` SWR hook
 	useEffect(() => {
-		const verifiedPageId =
-			pages && Object.keys(pages)?.length > 0
-				? pages?.data?.results?.find((page) => page.id === queryPageId) ?? null
-				: null;
-
-		verifiedPageId && Object.keys(verifiedPageId)?.length > 0 && customPagesApiEndpoint?.length > 0
+		pages && Object.keys(pages)?.length > 0 && customPagesApiEndpoint?.length > 0 && queryPageId
 			? setCustomPagesIdApiEndpoint(customPagesApiEndpoint + queryPageId)
 			: setCustomPagesIdApiEndpoint(null);
 
@@ -422,12 +404,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 
 	// Custom `imageId` API endpoint
 	useEffect(() => {
-		const verifiedImageId =
-			images && Object.keys(images)?.length > 0
-				? images?.data?.results?.find((image) => image.id === queryImageId) ?? null
-				: null;
-
-		verifiedImageId && Object.keys(verifiedImageId)?.length > 0 && customImagesApiEndpoint?.length > 0
+		images && Object.keys(images)?.length > 0 && customImagesApiEndpoint?.length > 0 && queryImageId
 			? setCustomImagesIdApiEndpoint(customImagesApiEndpoint + queryImageId)
 			: setCustomImagesIdApiEndpoint(null);
 
