@@ -46,7 +46,7 @@ const HelpSupportAuth = () => {
 	return (
 		<MemoizedLayout>
 			<NextSeo title={helpSupportText} />
-			<MemoizedPageLayout pageTitle={helpSupportText}>
+			<MemoizedPageLayout isSettings pageTitle={helpSupportText}>
 				<MemoizedHelpSupportSettingsPageLayout />
 			</MemoizedPageLayout>
 		</MemoizedLayout>

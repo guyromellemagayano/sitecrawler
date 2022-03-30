@@ -46,7 +46,7 @@ const GlobalSettingsAuth = () => {
 	return (
 		<MemoizedLayout>
 			<NextSeo title={globalSettingsText} />
-			<MemoizedPageLayout pageTitle={globalSettingsText}>
+			<MemoizedPageLayout isSettings pageTitle={globalSettingsText}>
 				<MemoizedGlobaSettingsPageLayout />
 			</MemoizedPageLayout>
 		</MemoizedLayout>

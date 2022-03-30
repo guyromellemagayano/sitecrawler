@@ -46,7 +46,7 @@ const BillingSettingsAuth = () => {
 	return (
 		<MemoizedLayout>
 			<NextSeo title={billingSettings} />
-			<MemoizedPageLayout pageTitle={billingSettings}>
+			<MemoizedPageLayout isSettings pageTitle={billingSettings}>
 				<MemoizedBillingSettingsPageLayout />
 			</MemoizedPageLayout>
 		</MemoizedLayout>

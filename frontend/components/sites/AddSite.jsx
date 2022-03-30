@@ -2,7 +2,7 @@ import { MemoizedMobileSidebarButton } from "@components/buttons/MobileSidebarBu
 import { MemoizedNotAllowedFeatureModal } from "@components/modals/NotAllowedFeatureModal";
 import { MemoizedSiteLimitReachedModal } from "@components/modals/SiteLimitReachedModal";
 import { ResetLoadingStateTimeout } from "@constants/GlobalValues";
-import { AddNewSiteLink, DashboardSitesLink } from "@constants/PageLinks";
+import { AddNewSiteLink, DashboardSitesLink, SiteImagesSlug, SiteLinksSlug, SitePagesSlug } from "@constants/PageLinks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import { PlusIcon, SearchIcon } from "@heroicons/react/solid";
@@ -42,7 +42,8 @@ const AddSite = ({ handleOpenSidebar }) => {
 	const { mutate } = useSWRConfig();
 
 	// Custom context
-	const { isComponentReady, hasSiteLimitReached, querySiteId } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady, hasSiteLimitReached, querySiteId, queryLinkId, queryPageId, queryImageId } =
+		useContext(SiteCrawlerAppContext);
 
 	// Helper functions
 	const { searchKey, setSearchKey, linksPerPage, setPagePath } = useSiteQueries();
@@ -132,7 +133,12 @@ const AddSite = ({ handleOpenSidebar }) => {
 					<MemoizedMobileSidebarButton handleOpenSidebar={handleOpenSidebar} />
 
 					<div className="ml-4 flex w-full items-center lg:ml-0">
-						{isBrowser && page && asPath !== DashboardSitesLink + querySiteId + "/" ? (
+						{isBrowser &&
+						page &&
+						asPath !== DashboardSitesLink + querySiteId + "/" &&
+						!asPath.includes(DashboardSitesLink + querySiteId + SiteLinksSlug + queryLinkId + "/") &&
+						!asPath.includes(DashboardSitesLink + querySiteId + SitePagesSlug + queryPageId + "/") &&
+						!asPath.includes(DashboardSitesLink + querySiteId + SiteImagesSlug + queryImageId + "/") ? (
 							<>
 								<label htmlFor="searchSites" className="sr-only">
 									{searchSites}
