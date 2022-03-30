@@ -65,8 +65,6 @@ const SiteInformationSettingsForm = () => {
 		return { siteName, siteUrl, largePageSizeThreshold };
 	}, [siteId]);
 
-	console.log(largePageSizeThreshold);
-
 	return (
 		<Formik
 			enableReinitialize={true}
