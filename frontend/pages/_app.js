@@ -9,7 +9,7 @@ import {
 	UserApiEndpoint
 } from "@constants/ApiEndpoints";
 import AppSeo from "@constants/AppSeo";
-import { NoInterval, RevalidationInterval } from "@constants/GlobalValues";
+import { ComponentReadyInterval, NoInterval, RevalidationInterval } from "@constants/GlobalValues";
 import { DashboardSlug, ScanSlug, SiteImageSlug, SiteLinkSlug, SitePageSlug } from "@constants/PageLinks";
 import { isProd } from "@constants/ServerEnv";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -81,7 +81,9 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	const { state, setConfig } = useNotificationMessage();
 
 	useEffect(() => {
-		isReady ? setIsComponentReady(true) : setIsComponentReady(false);
+		isReady
+			? setTimeout(() => setIsComponentReady(true), ComponentReadyInterval)
+			: setTimeout(() => setIsComponentReady(false), ComponentReadyInterval);
 
 		return { isComponentReady, isUserForbidden };
 	}, [isReady]);
