@@ -52,7 +52,7 @@ export const useSiteSelection = () => {
 		}
 
 		return { selectedSiteDetails };
-	}, [querySiteId, sitesResults, selectedSiteDetails]);
+	}, [querySiteId]);
 
 	useEffect(() => {
 		selectedSiteId ? prefetch(DashboardSitesLink + selectedSiteId + "/") : prefetch(DashboardSitesLink);
