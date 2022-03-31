@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { DashboardSitesLink } from "@constants/PageLinks";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
@@ -55,7 +56,7 @@ export const useSiteSelection = () => {
 
 	useEffect(() => {
 		selectedSiteId ? prefetch(DashboardSitesLink + selectedSiteId + "/") : prefetch(DashboardSitesLink);
-	}, [selectedSiteId, prefetch]);
+	}, [selectedSiteId]);
 
 	// Handle site selection on click
 	const handleSiteSelectOnClick = async (id) => {
