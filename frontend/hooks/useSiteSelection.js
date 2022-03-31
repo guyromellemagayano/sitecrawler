@@ -36,20 +36,22 @@ export const useSiteSelection = () => {
 
 	// Handle site selection on load
 	useEffect(() => {
-		(async () => {
-			if (querySiteId && sitesResults) {
-				const site = await sitesResults?.find((site) => site.id === querySiteId);
+		if (querySiteId && sitesResults) {
+			const site = sitesResults
+				?.filter((site) => site.id === querySiteId)
+				?.map((site) => ({
+					...site,
+					url: `${DashboardSitesLink}/${site.id}/`
+				}))[0];
 
-				if (site && Object.keys(site)?.length > 0) {
-					setSelectedSiteDetails(site);
-				} else {
-					setSelectedSiteDetails(null);
-				}
+			if (site) {
+				setSelectedSiteDetails(site);
+				setSelectedSiteId(site.id);
 			}
-		})();
+		}
 
 		return { selectedSiteDetails };
-	}, [querySiteId, sitesResults]);
+	}, []);
 
 	useEffect(() => {
 		selectedSiteId ? prefetch(DashboardSitesLink + selectedSiteId + "/") : prefetch(DashboardSitesLink);
