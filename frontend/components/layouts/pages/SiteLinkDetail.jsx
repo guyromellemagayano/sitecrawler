@@ -19,9 +19,20 @@ const SiteLinkDetailPageLayout = () => {
 	// Translations
 	const { t } = useTranslation();
 	const noneText = t("common:none");
+	const resolvedIssuesText = t("sites:resolvedIssues");
+	const tlsInformationText = t("sites:tlsInformation");
+	const createdAtText = t("sites:createdAt");
+	const tlsNotBeforeText = t("sites:tls.tlsNotBefore");
+	const tlsNotAfterText = t("sites:tls.tlsNotAfter");
+	const tlsCommonNameText = t("sites:tls.tlsCommonName");
+	const tlsOrganizationText = t("sites:tls.tlsOrganization");
+	const tlsDnsNamesText = t("sites:tls.tlsDnsNames");
+	const tlsIssuerOrganizationText = t("sites:tls.tlsIssuerOrganization");
+	const tlsIssuerCommonNameText = t("sites:tls.tlsIssuerCommonName");
+	const tlsCipherSuiteText = t("sites:tls.tlsCipherSuite");
+	const tlsVersionText = t("sites:tls.tlsVersion");
+	const tlsErrorsText = t("sites:tls.tlsErrors");
 	const linkInformationText = t("sites:linkDetail.linkInformation");
-	const resolvedIssuesText = t("sites:linkDetail.resolvedIssues");
-	const createdAtText = t("sites:linkDetail.createdAt");
 	const occurrencesText = t("sites:linkDetail.occurrences");
 	const typeText = t("sites:linkDetail.type");
 	const urlText = t("sites:linkDetail.url");
@@ -35,17 +46,6 @@ const SiteLinkDetailPageLayout = () => {
 	const tlsStatusAdjustedText = t("sites:linkDetail.tlsStatusAdjusted");
 	const resolvedStatusText = t("sites:linkDetail.resolvedStatus");
 	const resolvedTlsText = t("sites:linkDetail.resolvedTls");
-	const tlsInformationText = t("sites:linkDetail.tlsInformation");
-	const tlsNotBeforeText = t("sites:linkDetail.tlsNotBefore");
-	const tlsNotAfterText = t("sites:linkDetail.tlsNotAfter");
-	const tlsCommonNameText = t("sites:linkDetail.tlsCommonName");
-	const tlsOrganizationText = t("sites:linkDetail.tlsOrganization");
-	const tlsDnsNamesText = t("sites:linkDetail.tlsDnsNames");
-	const tlsIssuerOrganizationText = t("sites:linkDetail.tlsIssuerOrganization");
-	const tlsIssuerCommonNameText = t("sites:linkDetail.tlsIssuerCommonName");
-	const tlsCipherSuiteText = t("sites:linkDetail.tlsCipherSuite");
-	const tlsVersionText = t("sites:linkDetail.tlsVersion");
-	const tlsErrorsText = t("sites:linkDetail.tlsErrors");
 	const pageLocationsText = t("sites:linkDetail.pageLocations");
 	const visitExternalSiteText = t("sites:visitExternalSite");
 	const goToSiteOverviewText = t("sites:goToSiteOverview");
@@ -361,197 +361,195 @@ const SiteLinkDetailPageLayout = () => {
 						</div>
 					</div>
 
-					{tls && Object.keys(tls)?.length > 0 ? (
-						<div className="pb-12">
-							<div>
-								<h3 className="text-xl font-bold leading-6 text-gray-900">{tlsInformationText}</h3>
-							</div>
-							<div className="mt-5">
-								<dl className="sm:divide-y sm:divide-gray-200">
-									<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-										<dt className="text-sm font-medium text-gray-500">{tlsNotBeforeText}</dt>
-										{isComponentReady && tlsNotBefore ? (
-											<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{tlsNotBefore}</dd>
-										) : isComponentReady && !tlsNotBefore ? (
-											<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
-												<span className="text-gray-500">{noneText}</span>
-											</dd>
-										) : (
-											<dd className="mt-1 sm:col-span-2 sm:mt-0">
-												<Skeleton duration={2} width={120} />
-											</dd>
-										)}
-									</div>
-
-									<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-										<dt className="text-sm font-medium text-gray-500">{tlsNotAfterText}</dt>
-										{isComponentReady && tlsNotAfter ? (
-											<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{tlsNotAfter}</dd>
-										) : isComponentReady && !tlsNotAfter ? (
-											<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
-												<span className="text-gray-500">{noneText}</span>
-											</dd>
-										) : (
-											<dd className="mt-1 sm:col-span-2 sm:mt-0">
-												<Skeleton duration={2} width={120} />
-											</dd>
-										)}
-									</div>
-
-									<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-										<dt className="text-sm font-medium text-gray-500">{tlsCommonNameText}</dt>
-										{isComponentReady && tlsCommonName ? (
-											<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{tlsCommonName}</dd>
-										) : isComponentReady && !tlsCommonName ? (
-											<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
-												<span className="text-gray-500">{noneText}</span>
-											</dd>
-										) : (
-											<dd className="mt-1 sm:col-span-2 sm:mt-0">
-												<Skeleton duration={2} width={120} />
-											</dd>
-										)}
-									</div>
-
-									<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-										<dt className="text-sm font-medium text-gray-500">{tlsOrganizationText}</dt>
-										{isComponentReady && tlsOrganization ? (
-											<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{tlsOrganization}</dd>
-										) : isComponentReady && !tlsOrganization ? (
-											<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
-												<span className="text-gray-500">{noneText}</span>
-											</dd>
-										) : (
-											<dd className="mt-1 sm:col-span-2 sm:mt-0">
-												<Skeleton duration={2} width={120} />
-											</dd>
-										)}
-									</div>
-
-									<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-										<dt className="text-sm font-medium text-gray-500">{tlsDnsNamesText}</dt>
-										{isComponentReady && tlsDnsNames?.length > 0 ? (
-											<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-												{tlsDnsNames.map((name) => (
-													<span key={name} className="my-2 block text-gray-900">
-														{name}
-													</span>
-												))}
-											</dd>
-										) : isComponentReady && !tlsDnsNames ? (
-											<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
-												<span className="text-gray-500">{noneText}</span>
-											</dd>
-										) : (
-											<dd className="mt-1 sm:col-span-2 sm:mt-0">
-												<Skeleton duration={2} width={120} />
-											</dd>
-										)}
-									</div>
-
-									<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-										<dt className="text-sm font-medium text-gray-500">{tlsIssuerOrganizationText}</dt>
-										{isComponentReady && tlsIssuerOrganization ? (
-											<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{tlsIssuerOrganization}</dd>
-										) : isComponentReady && !tlsIssuerOrganization ? (
-											<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
-												<span className="text-gray-500">{noneText}</span>
-											</dd>
-										) : (
-											<dd className="mt-1 sm:col-span-2 sm:mt-0">
-												<Skeleton duration={2} width={120} />
-											</dd>
-										)}
-									</div>
-
-									<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-										<dt className="text-sm font-medium text-gray-500">{tlsIssuerCommonNameText}</dt>
-										{isComponentReady && tlsIssuerCommonName ? (
-											<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{tlsIssuerCommonName}</dd>
-										) : isComponentReady && !tlsIssuerCommonName ? (
-											<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
-												<span className="text-gray-500">{noneText}</span>
-											</dd>
-										) : (
-											<dd className="mt-1 sm:col-span-2 sm:mt-0">
-												<Skeleton duration={2} width={120} />
-											</dd>
-										)}
-									</div>
-
-									<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-										<dt className="text-sm font-medium text-gray-500">{tlsCipherSuiteText}</dt>
-										{isComponentReady && tlsCipherSuite ? (
-											<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{tlsCipherSuite}</dd>
-										) : isComponentReady && !tlsCipherSuite ? (
-											<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
-												<span className="text-gray-500">{noneText}</span>
-											</dd>
-										) : (
-											<dd className="mt-1 sm:col-span-2 sm:mt-0">
-												<Skeleton duration={2} width={120} />
-											</dd>
-										)}
-									</div>
-
-									<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-										<dt className="text-sm font-medium text-gray-500">{tlsVersionText}</dt>
-										{isComponentReady && tlsVersion ? (
-											<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{tlsVersion}</dd>
-										) : isComponentReady && !tlsVersion ? (
-											<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
-												<span className="text-gray-500">{noneText}</span>
-											</dd>
-										) : (
-											<dd className="mt-1 sm:col-span-2 sm:mt-0">
-												<Skeleton duration={2} width={120} />
-											</dd>
-										)}
-									</div>
-
-									<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-										<dt className="text-sm font-medium text-gray-500">{tlsErrorsText}</dt>
-										{isComponentReady && tlsErrors ? (
-											<dd className="mt-1 text-sm font-semibold text-red-900 sm:col-span-2 sm:mt-0">{tlsErrors}</dd>
-										) : isComponentReady && !tlsErrors ? (
-											<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
-												<span className="text-gray-500">{noneText}</span>
-											</dd>
-										) : (
-											<dd className="mt-1 sm:col-span-2 sm:mt-0">
-												<Skeleton duration={2} width={120} />
-											</dd>
-										)}
-									</div>
-								</dl>
-							</div>
+					<div className="pb-12">
+						<div>
+							<h3 className="text-xl font-bold leading-6 text-gray-900">{tlsInformationText}</h3>
 						</div>
-					) : null}
+						<div className="mt-5">
+							<dl className="sm:divide-y sm:divide-gray-200">
+								<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
+									<dt className="text-sm font-medium text-gray-500">{tlsNotBeforeText}</dt>
+									{isComponentReady && tlsNotBefore ? (
+										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{tlsNotBefore}</dd>
+									) : isComponentReady && !tlsNotBefore ? (
+										<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
+											<span className="text-gray-500">{noneText}</span>
+										</dd>
+									) : (
+										<dd className="mt-1 sm:col-span-2 sm:mt-0">
+											<Skeleton duration={2} width={120} />
+										</dd>
+									)}
+								</div>
 
-					{pages && pages?.length > 0 ? (
-						<div className="pb-12">
-							<div>
-								<h3 className="text-xl font-bold leading-6 text-gray-900">{pageLocationsText}</h3>
-							</div>
-							<div className="mt-5">
-								<dl className="sm:divide-y sm:divide-gray-200">
-									<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-										<dt className="text-sm font-medium text-gray-500">{occurrencesText}</dt>
-										{isComponentReady && occurrences ? (
-											<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{occurrences}</dd>
-										) : isComponentReady && !occurrences ? (
-											<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
-												<span className="text-gray-500">{noneText}</span>
-											</dd>
-										) : (
-											<dd className="mt-1 sm:col-span-2 sm:mt-0">
-												<Skeleton duration={2} width={120} />
-											</dd>
-										)}
-									</div>
-									<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-										<dt className="text-sm font-medium text-gray-500">{urlText}</dt>
+								<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
+									<dt className="text-sm font-medium text-gray-500">{tlsNotAfterText}</dt>
+									{isComponentReady && tlsNotAfter ? (
+										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{tlsNotAfter}</dd>
+									) : isComponentReady && !tlsNotAfter ? (
+										<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
+											<span className="text-gray-500">{noneText}</span>
+										</dd>
+									) : (
+										<dd className="mt-1 sm:col-span-2 sm:mt-0">
+											<Skeleton duration={2} width={120} />
+										</dd>
+									)}
+								</div>
+
+								<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
+									<dt className="text-sm font-medium text-gray-500">{tlsCommonNameText}</dt>
+									{isComponentReady && tlsCommonName ? (
+										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{tlsCommonName}</dd>
+									) : isComponentReady && !tlsCommonName ? (
+										<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
+											<span className="text-gray-500">{noneText}</span>
+										</dd>
+									) : (
+										<dd className="mt-1 sm:col-span-2 sm:mt-0">
+											<Skeleton duration={2} width={120} />
+										</dd>
+									)}
+								</div>
+
+								<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
+									<dt className="text-sm font-medium text-gray-500">{tlsOrganizationText}</dt>
+									{isComponentReady && tlsOrganization ? (
+										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{tlsOrganization}</dd>
+									) : isComponentReady && !tlsOrganization ? (
+										<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
+											<span className="text-gray-500">{noneText}</span>
+										</dd>
+									) : (
+										<dd className="mt-1 sm:col-span-2 sm:mt-0">
+											<Skeleton duration={2} width={120} />
+										</dd>
+									)}
+								</div>
+
+								<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
+									<dt className="text-sm font-medium text-gray-500">{tlsDnsNamesText}</dt>
+									{isComponentReady && tlsDnsNames?.length > 0 ? (
 										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+											{tlsDnsNames.map((name) => (
+												<span key={name} className="my-2 block text-gray-900">
+													{name}
+												</span>
+											))}
+										</dd>
+									) : isComponentReady && !tlsDnsNames ? (
+										<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
+											<span className="text-gray-500">{noneText}</span>
+										</dd>
+									) : (
+										<dd className="mt-1 sm:col-span-2 sm:mt-0">
+											<Skeleton duration={2} width={120} />
+										</dd>
+									)}
+								</div>
+
+								<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
+									<dt className="text-sm font-medium text-gray-500">{tlsIssuerOrganizationText}</dt>
+									{isComponentReady && tlsIssuerOrganization ? (
+										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{tlsIssuerOrganization}</dd>
+									) : isComponentReady && !tlsIssuerOrganization ? (
+										<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
+											<span className="text-gray-500">{noneText}</span>
+										</dd>
+									) : (
+										<dd className="mt-1 sm:col-span-2 sm:mt-0">
+											<Skeleton duration={2} width={120} />
+										</dd>
+									)}
+								</div>
+
+								<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
+									<dt className="text-sm font-medium text-gray-500">{tlsIssuerCommonNameText}</dt>
+									{isComponentReady && tlsIssuerCommonName ? (
+										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{tlsIssuerCommonName}</dd>
+									) : isComponentReady && !tlsIssuerCommonName ? (
+										<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
+											<span className="text-gray-500">{noneText}</span>
+										</dd>
+									) : (
+										<dd className="mt-1 sm:col-span-2 sm:mt-0">
+											<Skeleton duration={2} width={120} />
+										</dd>
+									)}
+								</div>
+
+								<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
+									<dt className="text-sm font-medium text-gray-500">{tlsCipherSuiteText}</dt>
+									{isComponentReady && tlsCipherSuite ? (
+										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{tlsCipherSuite}</dd>
+									) : isComponentReady && !tlsCipherSuite ? (
+										<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
+											<span className="text-gray-500">{noneText}</span>
+										</dd>
+									) : (
+										<dd className="mt-1 sm:col-span-2 sm:mt-0">
+											<Skeleton duration={2} width={120} />
+										</dd>
+									)}
+								</div>
+
+								<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
+									<dt className="text-sm font-medium text-gray-500">{tlsVersionText}</dt>
+									{isComponentReady && tlsVersion ? (
+										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{tlsVersion}</dd>
+									) : isComponentReady && !tlsVersion ? (
+										<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
+											<span className="text-gray-500">{noneText}</span>
+										</dd>
+									) : (
+										<dd className="mt-1 sm:col-span-2 sm:mt-0">
+											<Skeleton duration={2} width={120} />
+										</dd>
+									)}
+								</div>
+
+								<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
+									<dt className="text-sm font-medium text-gray-500">{tlsErrorsText}</dt>
+									{isComponentReady && tlsErrors ? (
+										<dd className="mt-1 text-sm font-semibold text-red-900 sm:col-span-2 sm:mt-0">{tlsErrors}</dd>
+									) : isComponentReady && !tlsErrors ? (
+										<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
+											<span className="text-gray-500">{noneText}</span>
+										</dd>
+									) : (
+										<dd className="mt-1 sm:col-span-2 sm:mt-0">
+											<Skeleton duration={2} width={120} />
+										</dd>
+									)}
+								</div>
+							</dl>
+						</div>
+					</div>
+
+					<div className="pb-12">
+						<div>
+							<h3 className="text-xl font-bold leading-6 text-gray-900">{pageLocationsText}</h3>
+						</div>
+						<div className="mt-5">
+							<dl className="sm:divide-y sm:divide-gray-200">
+								<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
+									<dt className="text-sm font-medium text-gray-500">{occurrencesText}</dt>
+									{isComponentReady && occurrences ? (
+										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{occurrences}</dd>
+									) : isComponentReady && !occurrences ? (
+										<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
+											<span className="text-gray-500">{noneText}</span>
+										</dd>
+									) : (
+										<dd className="mt-1 sm:col-span-2 sm:mt-0">
+											<Skeleton duration={2} width={120} />
+										</dd>
+									)}
+								</div>
+								<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
+									<dt className="text-sm font-medium text-gray-500">{urlText}</dt>
+									<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+										{pages && pages?.length > 0 ? (
 											<ul className="divide-y divide-gray-200 rounded-md border border-gray-200">
 												{pages.map((page) => (
 													<li key={page.id} className="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
@@ -580,12 +578,14 @@ const SiteLinkDetailPageLayout = () => {
 													</li>
 												))}
 											</ul>
-										</dd>
-									</div>
-								</dl>
-							</div>
+										) : (
+											<span className="text-gray-500">{noneText}</span>
+										)}
+									</dd>
+								</div>
+							</dl>
 						</div>
-					) : null}
+					</div>
 				</div>
 			</div>
 		</>
