@@ -1,5 +1,4 @@
 import { SITE_URL } from "@constants/ServerEnv";
-import * as Sentry from "@sentry/nextjs";
 import axios from "axios";
 import Cookies from "js-cookie";
 
@@ -22,24 +21,7 @@ AppAxiosInstance.interceptors.request.use(
 
 AppAxiosInstance.interceptors.response.use(
 	(res) => res,
-	(err) => {
-		if (err.response) {
-			// Capture `response` errors and send to Sentry
-			Sentry.captureException(err.response);
-
-			return err.response;
-		} else if (err.request) {
-			// Capture `request` errors and send to Sentry
-			Sentry.captureException(err.request);
-
-			return err.request;
-		} else {
-			// Capture other errors and send to Sentry
-			Sentry.captureException(err);
-
-			return Promise.reject(err);
-		}
-	}
+	(err) => Promise.reject(err)
 );
 
 export default AppAxiosInstance;
