@@ -51,11 +51,11 @@ export const useSiteSelection = () => {
 		}
 
 		return { selectedSiteDetails };
-	}, []);
+	}, [querySiteId, sitesResults, selectedSiteDetails]);
 
 	useEffect(() => {
 		selectedSiteId ? prefetch(DashboardSitesLink + selectedSiteId + "/") : prefetch(DashboardSitesLink);
-	}, [selectedSiteId]);
+	}, [selectedSiteId, prefetch]);
 
 	// Handle site selection on click
 	const handleSiteSelectOnClick = async (id) => {
