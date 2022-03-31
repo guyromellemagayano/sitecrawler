@@ -132,7 +132,7 @@ const SiteLinkDetailPageLayout = () => {
 									{isComponentReady && createdAt ? (
 										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{createdAt}</dd>
 									) : isComponentReady && !createdAt ? (
-										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+										<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
 											<span className="text-gray-500">{noneText}</span>
 										</dd>
 									) : (
@@ -145,9 +145,9 @@ const SiteLinkDetailPageLayout = () => {
 								<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
 									<dt className="text-sm font-medium text-gray-500">{typeText}</dt>
 									{isComponentReady && type ? (
-										<dd className="mt-1 text-sm font-semibold text-gray-900 sm:col-span-2 sm:mt-0">{type}</dd>
+										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{type}</dd>
 									) : isComponentReady && !type ? (
-										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+										<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
 											<span className="text-gray-500">{noneText}</span>
 										</dd>
 									) : (
@@ -172,7 +172,7 @@ const SiteLinkDetailPageLayout = () => {
 											)}
 										</dd>
 									) : isComponentReady && !status ? (
-										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+										<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
 											<span className="text-gray-500">{noneText}</span>
 										</dd>
 									) : (
@@ -212,7 +212,7 @@ const SiteLinkDetailPageLayout = () => {
 								<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
 									<dt className="text-sm font-medium text-gray-500">{httpStatusText}</dt>
 									{isComponentReady && httpStatus ? (
-										<dd className="mt-1 text-sm font-semibold text-gray-900 sm:col-span-2 sm:mt-0">
+										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
 											{Math.round(httpStatus / 100) === 2 ? (
 												<span className="text-green-500">{httpStatus}</span>
 											) : Math.round(httpStatus / 100) === 4 || Math.round(httpStatus / 100) === 5 ? (
@@ -224,7 +224,7 @@ const SiteLinkDetailPageLayout = () => {
 											)}
 										</dd>
 									) : isComponentReady && !httpStatus ? (
-										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+										<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
 											<span className="text-gray-500">{noneText}</span>
 										</dd>
 									) : (
@@ -239,7 +239,7 @@ const SiteLinkDetailPageLayout = () => {
 									{isComponentReady && responseTime ? (
 										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{responseTime + "ms"}</dd>
 									) : isComponentReady && !responseTime ? (
-										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+										<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
 											<span className="text-gray-500">{noneText}</span>
 										</dd>
 									) : (
@@ -253,7 +253,7 @@ const SiteLinkDetailPageLayout = () => {
 									<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
 										<dt className="text-sm font-medium text-gray-500">{errorText}</dt>
 										{isComponentReady && error ? (
-											<dd className="mt-1 text-sm font-semibold text-red-500 sm:col-span-2 sm:mt-0">{error}</dd>
+											<dd className="mt-1 text-sm text-red-500 sm:col-span-2 sm:mt-0">{error}</dd>
 										) : isComponentReady && !error ? (
 											<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
 												<span className="text-gray-500">{noneText}</span>
@@ -271,7 +271,7 @@ const SiteLinkDetailPageLayout = () => {
 									{isComponentReady && size ? (
 										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{convertedSize}</dd>
 									) : isComponentReady && !size ? (
-										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+										<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
 											<span className="text-gray-500">{noneText}</span>
 										</dd>
 									) : (
@@ -288,7 +288,7 @@ const SiteLinkDetailPageLayout = () => {
 											<MemoizedSiteSuccessIcon />
 										</dd>
 									) : isComponentReady && !tlsStatus ? (
-										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+										<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
 											<span className="text-gray-500">{noneText}</span>
 										</dd>
 									) : (
@@ -305,50 +305,7 @@ const SiteLinkDetailPageLayout = () => {
 											<MemoizedSiteSuccessIcon />
 										</dd>
 									) : isComponentReady && !tlsStatusAdjusted ? (
-										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-											<span className="text-gray-500">{noneText}</span>
-										</dd>
-									) : (
-										<dd className="mt-1 sm:col-span-2 sm:mt-0">
-											<Skeleton duration={2} width={120} />
-										</dd>
-									)}
-								</div>
-							</dl>
-						</div>
-					</div>
-
-					<div className="pb-12">
-						<div>
-							<h3 className="text-xl font-bold leading-6 text-gray-900">{resolvedIssuesText}</h3>
-						</div>
-						<div className="mt-5">
-							<dl className="sm:divide-y sm:divide-gray-200">
-								<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-									<dt className="text-sm font-medium text-gray-500">{resolvedStatusText}</dt>
-									{isComponentReady && resolvedStatus ? (
-										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-											<MemoizedSiteSuccessIcon />
-										</dd>
-									) : isComponentReady && !resolvedStatus ? (
-										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-											<span className="text-gray-500">{noneText}</span>
-										</dd>
-									) : (
-										<dd className="mt-1 sm:col-span-2 sm:mt-0">
-											<Skeleton duration={2} width={120} />
-										</dd>
-									)}
-								</div>
-
-								<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-									<dt className="text-sm font-medium text-gray-500">{resolvedTlsText}</dt>
-									{isComponentReady && resolvedTls ? (
-										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-											<MemoizedSiteSuccessIcon />
-										</dd>
-									) : isComponentReady && !resolvedTls ? (
-										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+										<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
 											<span className="text-gray-500">{noneText}</span>
 										</dd>
 									) : (
@@ -511,8 +468,51 @@ const SiteLinkDetailPageLayout = () => {
 								<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
 									<dt className="text-sm font-medium text-gray-500">{tlsErrorsText}</dt>
 									{isComponentReady && tlsErrors ? (
-										<dd className="mt-1 text-sm font-semibold text-red-900 sm:col-span-2 sm:mt-0">{tlsErrors}</dd>
+										<dd className="mt-1 text-sm text-red-900 sm:col-span-2 sm:mt-0">{tlsErrors}</dd>
 									) : isComponentReady && !tlsErrors ? (
+										<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
+											<span className="text-gray-500">{noneText}</span>
+										</dd>
+									) : (
+										<dd className="mt-1 sm:col-span-2 sm:mt-0">
+											<Skeleton duration={2} width={120} />
+										</dd>
+									)}
+								</div>
+							</dl>
+						</div>
+					</div>
+
+					<div className="pb-12">
+						<div>
+							<h3 className="text-xl font-bold leading-6 text-gray-900">{resolvedIssuesText}</h3>
+						</div>
+						<div className="mt-5">
+							<dl className="sm:divide-y sm:divide-gray-200">
+								<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
+									<dt className="text-sm font-medium text-gray-500">{resolvedStatusText}</dt>
+									{isComponentReady && resolvedStatus ? (
+										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+											<MemoizedSiteSuccessIcon />
+										</dd>
+									) : isComponentReady && !resolvedStatus ? (
+										<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
+											<span className="text-gray-500">{noneText}</span>
+										</dd>
+									) : (
+										<dd className="mt-1 sm:col-span-2 sm:mt-0">
+											<Skeleton duration={2} width={120} />
+										</dd>
+									)}
+								</div>
+
+								<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
+									<dt className="text-sm font-medium text-gray-500">{resolvedTlsText}</dt>
+									{isComponentReady && resolvedTls ? (
+										<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+											<MemoizedSiteSuccessIcon />
+										</dd>
+									) : isComponentReady && !resolvedTls ? (
 										<dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
 											<span className="text-gray-500">{noneText}</span>
 										</dd>

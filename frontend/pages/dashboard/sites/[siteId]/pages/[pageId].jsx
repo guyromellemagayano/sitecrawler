@@ -1,16 +1,11 @@
 import { MemoizedLayout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
-import { MemoizedComingSoonPageLayout } from "@components/layouts/pages/ComingSoon";
-import { MemoizedLoader } from "@components/loaders";
+import { MemoizedSitePageDetailPageLayout } from "@components/layouts/pages/SitePageDetail";
 import { SitesApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
-import { DashboardSitesLink, LoginLink } from "@constants/PageLinks";
+import { DashboardSitesLink, LoginLink, ScanSlug, SitePageSlug, SitePagesSlug } from "@constants/PageLinks";
 import { SSR_SITE_URL } from "@constants/ServerEnv";
-import { useUser } from "@hooks/useUser";
-import { SiteCrawlerAppContext } from "@pages/_app";
 import AppAxiosInstance from "@utils/axios";
 import { NextSeo } from "next-seo";
-import useTranslation from "next-translate/useTranslation";
-import { useContext } from "react";
 import { SWRConfig } from "swr";
 
 // Pre-render `user` data with NextJS SSR. Redirect to a login page if current user is not allowed to access that page (403 Forbidden) or redirect to the sites dashboard page if the user is still currently logged in (200 OK).
@@ -30,29 +25,60 @@ export async function getServerSideProps({ req, query }) {
 			cookie: req.headers.cookie ?? null
 		}
 	});
-	const sitesData = siteResponse?.data ?? null;
+	const siteData = siteResponse?.data ?? null;
 	const siteStatus = siteResponse?.status ?? null;
 
-	if (
-		userData !== null &&
-		!userData?.detail &&
-		Object.keys(userData)?.length > 0 &&
-		Math.round(userStatus / 200) === 1
-	) {
-		if (
-			sitesData !== null &&
-			!sitesData?.detail &&
-			Object.keys(sitesData)?.length > 0 &&
-			Math.round(siteStatus / 200) === 1
-		) {
-			return {
-				props: {
-					siteName: sitesData.name,
-					fallback: {
-						"/api/auth/user/": userData
+	// Scan
+	const scanResponse = await AppAxiosInstance.get(`${SSR_SITE_URL + SitesApiEndpoint + query.siteId + ScanSlug}`, {
+		headers: {
+			cookie: req.headers.cookie ?? null
+		}
+	});
+	const scanData = scanResponse?.data ?? null;
+	const scanStatus = scanResponse?.status ?? null;
+
+	// Handle `scanObjId` search
+	const scanObjId = scanData?.results[0]?.id ?? null;
+
+	// Pages
+	const pageResponse = await AppAxiosInstance.get(
+		`${SSR_SITE_URL + SitesApiEndpoint + query.siteId + ScanSlug + scanObjId + SitePageSlug + query.pageId + "/"}`,
+		{
+			headers: {
+				cookie: req.headers.cookie ?? null
+			}
+		}
+	);
+	const pageData = pageResponse?.data ?? null;
+	const pageStatus = pageResponse?.status ?? null;
+
+	if (userData && Math.round(userStatus / 100) === 2 && !userData?.detail) {
+		if (siteData && Object.keys(siteData)?.length > 0 && Math.round(siteStatus / 100) === 2 && !siteData?.detail) {
+			if (
+				scanData &&
+				Object.keys(scanData)?.length > 0 &&
+				Math.round(scanStatus / 100) === 2 &&
+				!scanData?.detail &&
+				scanData?.count > 0 &&
+				pageData &&
+				Object.keys(pageData)?.length > 0 &&
+				Math.round(pageStatus / 100) === 2 &&
+				!pageData?.detail
+			) {
+				return {
+					props: {
+						siteName: siteData.name,
+						pageUrl: pageData.url
 					}
-				}
-			};
+				};
+			} else {
+				return {
+					redirect: {
+						destination: DashboardSitesLink + query.siteId + SitePagesSlug,
+						permanent: false
+					}
+				};
+			}
 		} else {
 			return {
 				redirect: {
@@ -71,36 +97,24 @@ export async function getServerSideProps({ req, query }) {
 	}
 }
 
-const SitePageDetailAuth = ({ siteName }) => {
-	// Translations
-	const { t } = useTranslation("sites");
-	const sitesLinksText = t("sitesLinks");
-
-	// Custom context
-	const { isComponentReady } = useContext(SiteCrawlerAppContext);
-
-	// SWR hooks
-	const { user } = useUser("/api/auth/user/");
-
+const SitePageDetailAuth = ({ siteName, pageUrl }) => {
 	// Custom variables
-	const sitesLinksPageTitle = sitesLinksText + " - " + siteName;
+	const sitesPagesPageTitle = pageUrl + " - " + siteName;
 
-	return isComponentReady && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+	return (
 		<MemoizedLayout>
-			<NextSeo title={sitesLinksPageTitle} />
-			<MemoizedPageLayout pageTitle={sitesLinksText}>
-				<MemoizedComingSoonPageLayout />
+			<NextSeo title={sitesPagesPageTitle} />
+			<MemoizedPageLayout pageTitle={pageUrl}>
+				<MemoizedSitePageDetailPageLayout />
 			</MemoizedPageLayout>
 		</MemoizedLayout>
-	) : (
-		<MemoizedLoader />
 	);
 };
 
-export default function SitePageDetail({ siteName, fallback }) {
+export default function SitePageDetail({ siteName, pageUrl }) {
 	return (
-		<SWRConfig value={{ fallback }}>
-			<SitePageDetailAuth siteName={siteName} />
+		<SWRConfig>
+			<SitePageDetailAuth siteName={siteName} pageUrl={pageUrl} />
 		</SWRConfig>
 	);
 }

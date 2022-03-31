@@ -2,7 +2,7 @@ import { MemoizedLayout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
 import { MemoizedSiteLinkDetailPageLayout } from "@components/layouts/pages/SiteLinkDetail";
 import { SitesApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
-import { DashboardSitesLink, LoginLink, ScanSlug, SiteLinkSlug } from "@constants/PageLinks";
+import { DashboardSitesLink, LoginLink, ScanSlug, SiteLinkSlug, SiteLinksSlug } from "@constants/PageLinks";
 import { SSR_SITE_URL } from "@constants/ServerEnv";
 import AppAxiosInstance from "@utils/axios";
 import { NextSeo } from "next-seo";
@@ -53,27 +53,32 @@ export async function getServerSideProps({ req, query }) {
 	const linkStatus = linkResponse?.status ?? null;
 
 	if (userData && Math.round(userStatus / 100) === 2 && !userData?.detail) {
-		if (
-			siteData &&
-			Object.keys(siteData)?.length > 0 &&
-			Math.round(siteStatus / 100) === 2 &&
-			!siteData?.detail &&
-			scanData &&
-			Object.keys(scanData)?.length > 0 &&
-			Math.round(scanStatus / 100) === 2 &&
-			!scanData?.detail &&
-			scanData?.count > 0 &&
-			linkData &&
-			Object.keys(linkData)?.length > 0 &&
-			Math.round(linkStatus / 100) === 2 &&
-			!linkData?.detail
-		) {
-			return {
-				props: {
-					siteName: siteData.name,
-					linkUrl: linkData.url
-				}
-			};
+		if (siteData && Object.keys(siteData)?.length > 0 && Math.round(siteStatus / 100) === 2 && !siteData?.detail) {
+			if (
+				scanData &&
+				Object.keys(scanData)?.length > 0 &&
+				Math.round(scanStatus / 100) === 2 &&
+				!scanData?.detail &&
+				scanData?.count > 0 &&
+				linkData &&
+				Object.keys(linkData)?.length > 0 &&
+				Math.round(linkStatus / 100) === 2 &&
+				!linkData?.detail
+			) {
+				return {
+					props: {
+						siteName: siteData.name,
+						linkUrl: linkData.url
+					}
+				};
+			} else {
+				return {
+					redirect: {
+						destination: DashboardSitesLink + query.siteId + SiteLinksSlug,
+						permanent: false
+					}
+				};
+			}
 		} else {
 			return {
 				redirect: {
