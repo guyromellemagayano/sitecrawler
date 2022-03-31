@@ -272,8 +272,25 @@
 		"resolvedDuplicateTitle": "Resolved Duplicate Title",
 		"resolvedDuplicateDescription": "Resolved Duplicate Description"
 	},
-	"imageInformation": {
-		"headline": "Image Information",
-		"subHeading": "Image details, TLS information, and page locations"
+	"imageDetail": {
+		"imageInformation": "Image Information",
+		"pageLocations": "Page Locations",
+		"occurrences": "Occurrences",
+		"type": "Type",
+		"url": "Page URLs",
+		"status": "Status",
+		"statusAdjusted": "Status (Adjusted)",
+		"httpStatus": "HTTP Status",
+		"responseTime": "Response Time",
+		"error": "Error",
+		"size": "Size",
+		"tlsStatus": "TLS Status",
+		"tlsStatusAdjusted": "TLS Status (Adjusted)",
+		"resolvedStatus": "Resolved Status",
+		"resolvedTls": "Resolved TLS",
+		"missingAlts": "Missing Alts",
+		"missingAltsAdjusted": "Missing Alts (Adjusted)",
+		"resolvedMissingAlts": "Resolved Missing Alts",
+		"altText": "Alt Text"
 	}
 }
