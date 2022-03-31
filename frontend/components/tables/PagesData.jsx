@@ -1,13 +1,15 @@
 import { MemoizedSiteDanagerIcon } from "@components/icons/SiteDangerIcon";
 import { MemoizedSiteSuccessIcon } from "@components/icons/SiteSuccessIcon";
+import { DashboardSitesLink, SitePagesSlug } from "@constants/PageLinks";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import bytes from "bytes";
 import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import { memo, useContext } from "react";
+import { memo, useContext, useEffect } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
@@ -54,6 +56,9 @@ const PagesData = ({ page = null }) => {
 	const pageResolvedDuplicateTitle = page?.resolved_duplicate_title ?? null;
 	const pageResolvedDuplicateDescription = page?.resolved_duplicate_description ?? null;
 
+	// Router
+	const { prefetch } = useRouter();
+
 	// Translations
 	const { t } = useTranslation();
 	const markAsResolvedText = t("sites:markAsResolved");
@@ -94,6 +99,11 @@ const PagesData = ({ page = null }) => {
 		sameDay: "[Today], dddd [at] hh:mm:ss A",
 		sameElse: "MMMM DD, YYYY [at] hh:mm:ss A"
 	};
+
+	useEffect(() => {
+		// Prefetch pages page for faster loading
+		prefetch(DashboardSitesLink + querySiteId + SitePagesSlug + pageId);
+	}, []);
 
 	return (
 		<tr>

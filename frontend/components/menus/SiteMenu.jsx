@@ -20,13 +20,14 @@ import "react-loading-skeleton/dist/skeleton.css";
  */
 const SiteMenu = () => {
 	const [siteQueries, setSiteQueries] = useState(null);
+	const [menus, setMenus] = useState([]);
 
 	// Translations
 	const { t } = useTranslation("common");
 	const appLogo = t("appLogo");
 
 	// Router
-	const { asPath, query, isReady } = useRouter();
+	const { asPath, query, isReady, prefetch } = useRouter();
 
 	// Custom context
 	const { isComponentReady, stats, scan, siteId, querySiteId, queryLinkId, queryPageId, queryImageId } =
@@ -47,6 +48,18 @@ const SiteMenu = () => {
 		return { siteQueries };
 	}, [isReady, query]);
 
+	useEffect(() => {
+		let links = [];
+
+		const linksMenu = SiteSidebarMenus.filter((e) =>
+			asPath?.includes(DashboardSitesLink + querySiteId) ? e.slug !== "navigation" && e.slug !== "site-selection" : true
+		).map((value) => {
+			value.links.map((link) => links.push(link));
+		});
+
+		links.map((value) => prefetch(value.url));
+	}, []);
+
 	return (
 		<Scrollbars autoHide renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />} universal>
 			<div className="flex h-full flex-col py-4 lg:py-8">
@@ -60,9 +73,9 @@ const SiteMenu = () => {
 
 				<div className="flex flex-1 flex-col overflow-y-auto">
 					<nav className="flex-1 px-4">
-						{SiteSidebarMenus.filter((e) => {
-							return !asPath?.includes(DashboardSitesLink + querySiteId) ? e.slug !== "navigation" : true;
-						}).map((value, index) => {
+						{SiteSidebarMenus.filter((e) =>
+							!asPath?.includes(DashboardSitesLink + querySiteId) ? e.slug !== "navigation" : true
+						).map((value, index) => {
 							return (
 								<div key={index} className="mb-4">
 									<h3 className="mt-8 inline-block text-xs font-semibold uppercase leading-4 tracking-wider text-gray-200">
