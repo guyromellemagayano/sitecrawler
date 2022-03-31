@@ -17,7 +17,12 @@
 		"next/core-web-vitals",
 		"prettier"
 	],
-	"plugins": ["prettier", "import", "react", "react-hooks", "jsx-a11y"],
+	"plugins": [
+		"prettier",
+		"import",
+		"react",
+		"jsx-a11y"
+	],
 	"parserOptions": {
 		"ecmaVersion": 6,
 		"sourceType": "module",
@@ -35,7 +40,6 @@
 		"react/display-name": "off",
 		"react/no-prototype-builtins": "off",
 		"no-unused-vars": "off",
-		"react-hooks/exhaustive-deps": "off",
 		"jsx-a11y/anchor-is-valid": "off",
 		"jsx-a11y/no-autofocus": "off",
 		"import/no-unresolved": "off",
@@ -48,10 +52,16 @@
 		"import/resolver": {
 			"jsconfig": {
 				"config": "jsconfig.json",
-				"extensions": [".js", ".jsx"]
+				"extensions": [
+					".js",
+					".jsx"
+				]
 			},
 			"node": {
-				"extensions": [".js", ".jsx"]
+				"extensions": [
+					".js",
+					".jsx"
+				]
 			}
 		}
 	}
