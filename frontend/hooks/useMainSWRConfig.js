@@ -45,14 +45,22 @@ export const useMainSWRConfig = (endpoint = null, options = null) => {
 			} else return;
 		},
 		onError: (err, key) => {
-			// Capture unknown errors and send to Sentry
-			Sentry.captureException(err);
+			if (err.response) {
+				// Capture `response` errors and send to Sentry
+				Sentry.captureException(err.response);
+			} else if (err.request) {
+				// Capture `request` errors and send to Sentry
+				Sentry.captureException(err.request);
+			} else {
+				// Capture other errors and send to Sentry
+				Sentry.captureException(err);
+			}
 
-			return err;
+			return Promise.reject(err);
 		},
 		onErrorRetry: (err, key, config, revalidate, { retryCount }) => {
 			// Never retry on 404.
-			if (err.status === 404) return;
+			if (err.status === 404 || err.status === 403) return;
 
 			// Never retry for a specific key.
 			if (key === UserApiEndpoint) return;
