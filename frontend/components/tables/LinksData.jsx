@@ -1,12 +1,14 @@
 import { MemoizedBadge } from "@components/badges";
 import { MemoizedSiteSuccessIcon } from "@components/icons/SiteSuccessIcon";
+import { DashboardSitesLink, SiteLinksSlug } from "@constants/PageLinks";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import { memo, useContext } from "react";
+import { memo, useContext, useEffect } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
@@ -27,6 +29,9 @@ const LinksData = ({ link = null }) => {
 	const linkResolvedStatus = link?.resolved_status ?? null;
 	const linkResolvedTls = link?.resolved_tls ?? null;
 	const linkResponseTime = link?.response_time ?? null;
+
+	// Router
+	const { prefetch } = useRouter();
 
 	// Translations
 	const { t } = useTranslation();
@@ -70,6 +75,11 @@ const LinksData = ({ link = null }) => {
 		sameDay: "[Today], dddd [at] hh:mm:ss A",
 		sameElse: "MMMM DD, YYYY [at] hh:mm:ss A"
 	};
+
+	useEffect(() => {
+		// Prefetch links page for faster loading
+		prefetch(DashboardSitesLink + querySiteId + SiteLinksSlug + linkId);
+	}, []);
 
 	return (
 		<tr>
@@ -143,7 +153,7 @@ const LinksData = ({ link = null }) => {
 					</div>
 				</div>
 			</td>
-			<td className="truncate-link whitespace-nowrap px-6 py-4 text-sm leading-5 font-semibold text-gray-500">
+			<td className="truncate-link whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
 				{isComponentReady ? linkType : <Skeleton duration={2} width={100} />}
 			</td>
 			<td className="truncate-link whitespace-nowrap px-6 py-4 text-sm font-semibold leading-5 text-gray-500">
