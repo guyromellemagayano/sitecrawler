@@ -109,7 +109,6 @@ const PageOption = ({
 	const { images } = useImages(scanApiEndpoint);
 
 	// Custom variables
-
 	const disableLocalTime = user?.data?.settings?.disableLocalTime ?? false;
 	const permissions = user?.data?.permissions ?? null;
 	const siteIdVerified = siteId?.data?.verified ?? null;

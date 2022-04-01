@@ -10,7 +10,7 @@ import {
 } from "@constants/ApiEndpoints";
 import AppSeo from "@constants/AppSeo";
 import { ComponentReadyInterval, NoInterval, RevalidationInterval } from "@constants/GlobalValues";
-import { DashboardSlug, ScanSlug, SiteImageSlug, SiteLinkSlug, SitePageSlug } from "@constants/PageLinks";
+import { DashboardSlug, ScanSlug, SiteImageSlug, SiteLinkSlug, SitePageSlug, UptimeSlug } from "@constants/PageLinks";
 import { isProd } from "@constants/ServerEnv";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
@@ -23,7 +23,6 @@ import { useImages } from "@hooks/useImages";
 import { useLinkId } from "@hooks/useLinkId";
 import { useLinks } from "@hooks/useLinks";
 import { useNotificationMessage } from "@hooks/useNotificationMessage";
-import { usePage } from "@hooks/usePage";
 import { usePageId } from "@hooks/usePageId";
 import { usePages } from "@hooks/usePages";
 import { usePaymentMethods } from "@hooks/usePaymentMethods";
@@ -33,6 +32,7 @@ import { useSites } from "@hooks/useSites";
 import { useStats } from "@hooks/useStats";
 import { useStripePromise } from "@hooks/useStripePromise";
 import { useSubscriptions } from "@hooks/useSubscriptions";
+import { useUptime } from "@hooks/useUptime";
 import { useUser } from "@hooks/useUser";
 import "@styles/tailwind.css";
 import { handleConversionStringToNumber } from "@utils/convertCase";
@@ -64,6 +64,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	const [customSubscriptionsApiEndpoint, setCustomSubscriptionsApiEndpoint] = useState(null);
 	const [customCurrentSubscriptionApiEndpoint, setCustomCurrentSubscriptionApiEndpoint] = useState(null);
 	const [customSitesIdApiEndpoint, setCustomSitesIdApiEndpoint] = useState(null);
+	const [customUptimeApiEndpoint, setCustomUptimeApiEndpoint] = useState(null);
 	const [customScanApiEndpoint, setCustomScanApiEndpoint] = useState(null);
 	const [customLinksApiEndpoint, setCustomLinksApiEndpoint] = useState(null);
 	const [customLinksIdApiEndpoint, setCustomLinksIdApiEndpoint] = useState(null);
@@ -241,24 +242,30 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 		return { hasSiteLimitReached };
 	}, [sites, user]);
 
-	// Custom `scan` SWR hook
+	// Custom `scan` and `uptime` SWR hooks
 	useEffect(() => {
 		siteId && Object.keys(siteId)?.length > 0 && customSitesIdApiEndpoint?.length > 0
-			? setCustomScanApiEndpoint(customSitesIdApiEndpoint + ScanSlug)
-			: setCustomScanApiEndpoint(null);
+			? (() => {
+					setCustomUptimeApiEndpoint(customSitesIdApiEndpoint + UptimeSlug);
+					setCustomScanApiEndpoint(customSitesIdApiEndpoint + ScanSlug);
+			  })()
+			: (() => {
+					setCustomUptimeApiEndpoint(null);
+					setCustomScanApiEndpoint(null);
+			  })();
 
-		return { customScanApiEndpoint };
+		return { customUptimeApiEndpoint, customScanApiEndpoint };
 	}, [siteId, customSitesIdApiEndpoint]);
 
-	// `page` SWR hook
-	const { page, errorPage, validatingPage } = usePage(customScanApiEndpoint, {
+	// `uptime` SWR hook
+	const { uptime, errorUptime, validatingUptime } = useUptime(customUptimeApiEndpoint, {
 		refreshInterval: (e) =>
 			e && Math.round(e?.status / 100) === 2 && e?.data && Object.keys(e?.data)?.length > 0 && !e?.data?.detail
 				? NoInterval
 				: RevalidationInterval
 	});
 
-	// console.log("page", page, customScanApiEndpoint);
+	// console.log("uptime", uptime, customUptimeApiEndpoint);
 
 	// `scan` SWR hook
 	const {
@@ -438,7 +445,6 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 				errorImages,
 				errorLinkId,
 				errorLinks,
-				errorPage,
 				errorPageId,
 				errorPages,
 				errorPaymentMethods,
@@ -448,6 +454,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 				errorStats,
 				errorStripePromise,
 				errorSubscriptions,
+				errorUptime,
 				errorUser,
 				handleCrawl,
 				hasSiteLimitReached,
@@ -460,7 +467,6 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 				isUserReady,
 				linkId,
 				links,
-				page,
 				pageId,
 				pages,
 				paymentMethods,
@@ -479,6 +485,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 				stats,
 				stripePromise,
 				subscriptions,
+				uptime,
 				user,
 				validatingCurrentSubscription,
 				validatingDefaultPaymentMethod,
@@ -486,7 +493,6 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 				validatingImages,
 				validatingLinkId,
 				validatingLinks,
-				validatingPage,
 				validatingPageId,
 				validatingPages,
 				validatingPaymentMethods,
@@ -496,6 +502,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 				validatingStats,
 				validatingStripePromise,
 				validatingSubscriptions,
+				validatingUptime,
 				validatingUser
 			}}
 		>

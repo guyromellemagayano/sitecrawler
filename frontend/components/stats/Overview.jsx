@@ -25,7 +25,6 @@ const OverviewStats = () => {
 		useContext(SiteCrawlerAppContext);
 
 	// Custom variables
-	const disableLocalTime = user?.data?.settings?.disableLocalTime ?? false;
 	const permissions = user?.data?.permissions ?? null;
 	const siteVerified = siteId?.data?.verified ?? null;
 	const siteValid = stats?.data?.num_pages_tls_non_ok ?? null;

@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 // Dynamic
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });

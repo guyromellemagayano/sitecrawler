@@ -8,9 +8,10 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 // Dynamic
-const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false, loading: () => <MemoizedImagesStatsSkeleton /> });
 
 /**
  * Custom function to render the `ImagesStats` component
@@ -154,11 +155,7 @@ const ImagesStats = () => {
 				</div>
 			</div>
 			<div className="mx-auto flex max-w-sm justify-center">
-				{isComponentReady ? (
-					<Chart options={chartOptions} series={chartSeries} type="donut" width={600} height={720} />
-				) : (
-					<MemoizedImagesStatsSkeleton />
-				)}
+				<Chart options={chartOptions} series={chartSeries} type="donut" width={600} height={720} />
 			</div>
 		</div>
 	);
