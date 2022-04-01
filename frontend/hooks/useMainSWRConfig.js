@@ -45,21 +45,17 @@ export const useMainSWRConfig = (endpoint = null, options = null) => {
 			} else return;
 		},
 		onError: (err, key) => {
-			if (err.response) {
-				// Capture `response` errors and send to Sentry
-				Sentry.captureException(err.response);
-			} else if (err.request) {
-				// Capture `request` errors and send to Sentry
-				Sentry.captureException(err.request);
-			} else {
+			if (err.status !== 403) {
 				// Capture other errors and send to Sentry
 				Sentry.captureException(err);
+
+				return;
 			}
 
 			return Promise.reject(err);
 		},
 		onErrorRetry: (err, key, config, revalidate, { retryCount }) => {
-			// Never retry on 404.
+			// Never retry on 404/403.
 			if (err.status === 404 || err.status === 403) return;
 
 			// Never retry for a specific key.
@@ -68,10 +64,7 @@ export const useMainSWRConfig = (endpoint = null, options = null) => {
 			// Only retry up to 5 times.
 			if (retryCount >= OnErrorRetryCount) return;
 
-			// Capture unknown errors and send to Sentry
-			Sentry.captureException(err);
-
-			// Retry after 5 seconds.
+			// Retry after 1.5 seconds.
 			setTimeout(() => revalidate({ retryCount }), RevalidationInterval);
 		}
 	};
