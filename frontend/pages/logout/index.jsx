@@ -36,7 +36,7 @@ export default function Logout() {
 		})();
 
 		return;
-	}, []);
+	}, [mutate, push]);
 
 	// Translations
 	const { t } = useTranslation("logout");

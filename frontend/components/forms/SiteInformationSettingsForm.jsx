@@ -63,7 +63,7 @@ const SiteInformationSettingsForm = () => {
 		}
 
 		return { siteName, siteUrl, largePageSizeThreshold };
-	}, [siteId]);
+	}, [largePageSizeThreshold, siteId, siteName, siteUrl]);
 
 	return (
 		<Formik

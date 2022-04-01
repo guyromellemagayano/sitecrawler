@@ -60,7 +60,7 @@ const VerifyUrlStep = (props) => {
 		siteId ? setSiteData(siteId?.data) : setSiteData(null);
 
 		return { siteData };
-	}, [siteId]);
+	}, [siteData, siteId]);
 
 	// Handle site data
 	useMemo(() => {

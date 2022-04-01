@@ -85,7 +85,15 @@ const CardInformationForm = () => {
 		disableForm ? setCurrentPaymentMethod(selectedCurrentPaymentMethod) : null;
 
 		return { currentPaymentMethod };
-	}, [disableForm, defaultPaymentMethodData, paymentMethods]);
+	}, [
+		disableForm,
+		defaultPaymentMethodData,
+		paymentMethods,
+		paymentMethodsData,
+		loadingCardInformationText,
+		currentPaymentMethod,
+		noCurrentCardRegisteredText
+	]);
 
 	// Handle form events
 	const handleFormEvents = (e) => {

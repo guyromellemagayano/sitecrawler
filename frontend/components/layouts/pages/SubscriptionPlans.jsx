@@ -86,7 +86,7 @@ const SubscriptionPlansPageLayout = () => {
 					?.filter((sub) => sub.id === currentSubscription.data.id)
 					?.map((val) => setIntervalCount(val.price.recurring.interval_count)) ?? null
 			: null;
-	}, [currentSubscription]);
+	}, [currentSubscription, currentSubscriptionId, subscriptionsResults]);
 
 	// Handle `togglePaymentPeriod` state
 	useEffect(() => (intervalCount > 1 ? setTogglePaymentPeriod(true) : setTogglePaymentPeriod(false)), [intervalCount]);

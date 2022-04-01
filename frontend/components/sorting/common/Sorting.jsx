@@ -22,19 +22,19 @@ const Sorting = ({ sortOrder = null, setSortOrder, tableContent = null, ordering
 	const sortAscRef = useRef(null);
 	const sortDescRef = useRef(null);
 
-	let resultSlug = "";
-	let orderItem = "";
+	let resultSlug = useRef(null);
+	let orderItem = useRef(null);
 
 	// Handle sort and ordering
 	useEffect(() => {
 		if (ordering !== null) {
-			resultSlug = handleSlugFromSortKey(tableContent, ordering.replace("-", ""));
-			orderItem = handleConversionStringToCamelCase(resultSlug);
+			resultSlug.current = handleSlugFromSortKey(tableContent, ordering.replace("-", ""));
+			orderItem.current = handleConversionStringToCamelCase(resultSlug);
 
 			if (ordering.includes("-")) setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
 			else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
 		}
-	}, [ordering]);
+	}, [ordering, setSortOrder, tableContent]);
 
 	// Handle ascending and descending onClick states
 	useEffect(() => {
@@ -52,7 +52,7 @@ const Sorting = ({ sortOrder = null, setSortOrder, tableContent = null, ordering
 				setIsAscClicked(false);
 			}
 		}
-	}, [ordering]);
+	}, [ordering, resultSlug, slug]);
 
 	// Handle click event
 	const handleClickEvent = async (e) => {

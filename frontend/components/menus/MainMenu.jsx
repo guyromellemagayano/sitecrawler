@@ -26,7 +26,7 @@ const MainMenu = () => {
 		} else {
 			setSelectedMenu(<MemoizedPrimaryMenu />);
 		}
-	}, [asPath]);
+	}, [asPath, siteId]);
 
 	return selectedMenu;
 };

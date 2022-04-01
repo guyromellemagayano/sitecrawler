@@ -16,7 +16,7 @@ const DescSorting = ({ handleClickEvent, isDescClicked, setIsDescClicked }, ref)
 		return () => {
 			document.removeEventListener("click", handleClickEvent, true);
 		};
-	}, [isDescClicked]);
+	}, [handleClickEvent, isDescClicked]);
 
 	return (
 		<button ref={ref} className="focus:outline-none" onClick={(e) => setIsDescClicked(!isDescClicked)}>

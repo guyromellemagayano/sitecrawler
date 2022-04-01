@@ -60,7 +60,7 @@ const Breadcrumbs = ({
 		isReady ? setSiteQueries(window.location.search) : setSiteQueries(null);
 
 		return { siteQueries };
-	}, [isReady]);
+	}, [isReady, siteQueries]);
 
 	return (
 		<nav className="w-full flex-none border-b border-gray-200 pt-4 pb-8" aria-label="Breadcrumb">

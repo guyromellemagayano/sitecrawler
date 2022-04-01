@@ -127,7 +127,7 @@ export const useScan = (endpoint = null, options = null) => {
 		setScanObjId(currentScanObjId);
 
 		return { isCrawlStarted, isCrawlFinished, scanObjId };
-	});
+	}, [isCrawlFinished, isCrawlStarted, scan, scanObjId]);
 
 	useEffect(() => {
 		handleScanWatching();
@@ -145,7 +145,7 @@ export const useScan = (endpoint = null, options = null) => {
 			  })();
 
 		return { isCrawlStarted, isCrawlFinished };
-	}, [currentScan, previousScan]);
+	}, [currentScan, isCrawlFinished, isCrawlStarted, previousScan]);
 
 	return {
 		errorScan,

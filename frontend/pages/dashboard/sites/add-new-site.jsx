@@ -109,7 +109,7 @@ const AddNewSiteAuth = () => {
 	// Disallow the user to access the page if the `sid` query value is already verified
 	useEffect(() => {
 		sanitizedSid && sanitizedStep === 1 && sanitizedVerified && !sanitizedEdit ? push(addNewSitePage) : null;
-	}, [query]);
+	}, [addNewSitePage, push, query, sanitizedEdit, sanitizedSid, sanitizedStep, sanitizedVerified]);
 
 	return (
 		<MemoizedLayout>
