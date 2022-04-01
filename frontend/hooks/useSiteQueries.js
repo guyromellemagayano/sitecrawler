@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { MinSitesPerPage } from "@constants/GlobalValues";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import { useRouter } from "next/router";
@@ -23,7 +24,7 @@ export const useSiteQueries = () => {
 
 		query?.search ? setSearchKey(query.search) : null;
 		query?.per_page ? setLinksPerPage(parseInt(query.per_page)) : null;
-	}, [asPath, query]);
+	}, [query]);
 
 	return { linksPerPage, setLinksPerPage, pagePath, setPagePath, searchKey, setSearchKey };
 };

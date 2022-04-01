@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { handlePostMethod } from "@helpers/handleHttpMethods";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -127,7 +128,7 @@ export const useScan = (endpoint = null, options = null) => {
 		setScanObjId(currentScanObjId);
 
 		return { isCrawlStarted, isCrawlFinished, scanObjId };
-	}, [isCrawlFinished, isCrawlStarted, scan, scanObjId]);
+	});
 
 	useEffect(() => {
 		handleScanWatching();
@@ -145,7 +146,7 @@ export const useScan = (endpoint = null, options = null) => {
 			  })();
 
 		return { isCrawlStarted, isCrawlFinished };
-	}, [currentScan, isCrawlFinished, isCrawlStarted, previousScan]);
+	}, [currentScan, previousScan]);
 
 	return {
 		errorScan,

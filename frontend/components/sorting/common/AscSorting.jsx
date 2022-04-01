@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { ChevronUpIcon } from "@heroicons/react/solid";
 import { classnames } from "@utils/classnames";
 import { forwardRef, memo, useEffect } from "react";
@@ -16,7 +17,7 @@ const AscSorting = ({ handleClickEvent, isAscClicked, setIsAscClicked }, ref) =>
 		return () => {
 			document.removeEventListener("click", handleClickEvent, true);
 		};
-	}, [handleClickEvent, isAscClicked]);
+	}, [isAscClicked]);
 
 	return (
 		<button ref={ref} className="focus:outline-none" onClick={(e) => setIsAscClicked(!isAscClicked)}>

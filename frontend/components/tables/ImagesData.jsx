@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { MemoizedBadge } from "@components/badges";
 import { MemoizedSiteDanagerIcon } from "@components/icons/SiteDangerIcon";
 import { MemoizedSiteSuccessIcon } from "@components/icons/SiteSuccessIcon";
@@ -86,7 +87,7 @@ const ImagesData = ({ image = null }) => {
 	useEffect(() => {
 		// Prefetch images page for faster loading
 		prefetch(DashboardSitesLink + querySiteId + SiteImagesSlug + imageId);
-	}, [imageId, prefetch, querySiteId]);
+	}, []);
 
 	return (
 		<tr>

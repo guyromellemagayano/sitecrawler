@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { MemoizedAlert } from "@components/alerts";
 import { MemoizedNotification } from "@components/notifications";
 import { MemoizedAddSite } from "@components/sites/AddSite";
@@ -108,7 +109,7 @@ export const StaticLayout = ({ children }) => {
 	useEffect(() => {
 		// Prefetch sites page for faster loading
 		prefetch(DashboardSitesLink);
-	}, [prefetch]);
+	}, []);
 
 	return (
 		<>

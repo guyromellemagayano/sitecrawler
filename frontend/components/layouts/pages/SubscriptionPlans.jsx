@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { MemoizedChangeToBasicModal } from "@components/modals/ChangeToBasicModal";
 import { MemoizedNewActivePlanModal } from "@components/modals/NewActivePlanModal";
 import { MemoizedPaymentMethodModal } from "@components/modals/PaymentMethodModal";
@@ -86,7 +87,7 @@ const SubscriptionPlansPageLayout = () => {
 					?.filter((sub) => sub.id === currentSubscription.data.id)
 					?.map((val) => setIntervalCount(val.price.recurring.interval_count)) ?? null
 			: null;
-	}, [currentSubscription, currentSubscriptionId, subscriptionsResults]);
+	}, [currentSubscription]);
 
 	// Handle `togglePaymentPeriod` state
 	useEffect(() => (intervalCount > 1 ? setTogglePaymentPeriod(true) : setTogglePaymentPeriod(false)), [intervalCount]);

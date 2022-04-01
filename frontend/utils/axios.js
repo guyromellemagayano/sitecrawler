@@ -21,7 +21,7 @@ AppAxiosInstance.interceptors.request.use(
 
 AppAxiosInstance.interceptors.response.use(
 	(res) => res,
-	(err) => err
+	(err) => (err.response ? err.response : err.request ? err.request : Promise.reject(err))
 );
 
 export default AppAxiosInstance;

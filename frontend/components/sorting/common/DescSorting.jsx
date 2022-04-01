@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { ChevronDownIcon } from "@heroicons/react/solid";
 import { classnames } from "@utils/classnames";
 import { forwardRef, memo, useEffect } from "react";
@@ -16,7 +17,7 @@ const DescSorting = ({ handleClickEvent, isDescClicked, setIsDescClicked }, ref)
 		return () => {
 			document.removeEventListener("click", handleClickEvent, true);
 		};
-	}, [handleClickEvent, isDescClicked]);
+	}, [isDescClicked]);
 
 	return (
 		<button ref={ref} className="focus:outline-none" onClick={(e) => setIsDescClicked(!isDescClicked)}>
