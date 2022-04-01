@@ -79,7 +79,7 @@ const LinksData = ({ link = null }) => {
 	useEffect(() => {
 		// Prefetch links page for faster loading
 		prefetch(DashboardSitesLink + querySiteId + SiteLinksSlug + linkId);
-	}, []);
+	}, [linkId, prefetch, querySiteId]);
 
 	return (
 		<tr>

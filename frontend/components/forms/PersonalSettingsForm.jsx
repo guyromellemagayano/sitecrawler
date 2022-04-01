@@ -65,7 +65,7 @@ const PersonalSettingsForm = () => {
 		}
 
 		return { firstname, lastname, username, email, settings, largePageSizeThreshold };
-	}, [user]);
+	}, [email, firstname, largePageSizeThreshold, lastname, settings, user, username]);
 
 	return (
 		<Formik

@@ -11,7 +11,7 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
 // Dynamic
-const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false, loading: () => <MemoizedSeoStatsSkeleton /> });
 
 /**
  * Custom function to render the `SeoStats` component

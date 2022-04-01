@@ -12,9 +12,7 @@ import { useContext } from "react";
 import { SWRConfig } from "swr";
 
 // Pre-render `user` data with NextJS SSR. Redirect to a login page if current user is not allowed to access that page (403 Forbidden) or redirect to the sites dashboard page if the user is still currently logged in (200 OK).
-export async function getServerSideProps({ req, res }) {
-	res.setHeader("Cache-Control", "public, s-maxage=10, stale-while-revalidate=59");
-
+export async function getServerSideProps({ req }) {
 	const userResponse = await AppAxiosInstance.get(`${SSR_SITE_URL + UserApiEndpoint}`, {
 		headers: {
 			cookie: req.headers.cookie ?? null

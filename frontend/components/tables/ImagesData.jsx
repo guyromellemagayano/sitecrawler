@@ -86,7 +86,7 @@ const ImagesData = ({ image = null }) => {
 	useEffect(() => {
 		// Prefetch images page for faster loading
 		prefetch(DashboardSitesLink + querySiteId + SiteImagesSlug + imageId);
-	}, []);
+	}, [imageId, prefetch, querySiteId]);
 
 	return (
 		<tr>

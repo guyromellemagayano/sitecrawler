@@ -119,7 +119,21 @@ const ConfirmEmailPageLayout = () => {
 			]);
 			setFailure(true);
 		}
-	}, [asPath, query]);
+	}, [
+		confirmEmailPost201CreatedSuccessResponse,
+		confirmEmailPost400BadRequestErrorResponse,
+		confirmEmailPost401UnauthorizedErrorResponse,
+		confirmEmailPost403ForbiddenErrorResponse,
+		confirmEmailPost404NotFoundErrorResponse,
+		confirmEmailPost429TooManyRequestsErrorResponse,
+		confirmEmailPost500InternalServerErrorResponse,
+		confirmEmailPost502BadGatewayErrorResponse,
+		confirmEmailPost503ServiceUnavailableErrorResponse,
+		confirmEmailPost504GatewayTimeoutErrorResponse,
+		fallbackUnknownResponse,
+		mutate,
+		query?.id
+	]);
 
 	useEffect(() => {
 		let isMounted = true;

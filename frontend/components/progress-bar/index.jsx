@@ -1,7 +1,7 @@
 import { useNProgress } from "@tanem/react-nprogress";
 import { classnames } from "@utils/classnames";
 import { useRouter } from "next/router";
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import styledComponents, { css } from "styled-components";
 
 const ProgressBarAnimationStyled = styledComponents.div`
@@ -19,7 +19,7 @@ const ProgressBar = () => {
 		isRouteChanging: false
 	});
 
-	let activeRequests = 0;
+	let activeRequests = useRef(0);
 
 	// Router
 	const router = useRouter();
@@ -33,7 +33,7 @@ const ProgressBar = () => {
 		};
 
 		const handleRouteChangeEnd = () => {
-			if (activeRequests > 0) {
+			if (activeRequests.current > 0) {
 				return;
 			}
 
@@ -50,11 +50,11 @@ const ProgressBar = () => {
 		const originalFetch = window.fetch;
 
 		window.fetch = async function (...args) {
-			if (activeRequests === 0) {
+			if (activeRequests.current === 0) {
 				handleRouteChangeStart();
 			}
 
-			activeRequests++;
+			activeRequests.current++;
 
 			try {
 				const response = await originalFetch(...args);
@@ -62,8 +62,8 @@ const ProgressBar = () => {
 			} catch (error) {
 				return Promise.reject(error);
 			} finally {
-				activeRequests -= 1;
-				if (activeRequests === 0) {
+				activeRequests.current -= 1;
+				if (activeRequests.current === 0) {
 					handleRouteChangeEnd();
 				}
 			}

@@ -46,7 +46,7 @@ const SiteMenu = () => {
 		isReady ? setSiteQueries(window.location.search) : setSiteQueries(null);
 
 		return { siteQueries };
-	}, [isReady, query]);
+	}, [isReady, query, siteQueries]);
 
 	useEffect(() => {
 		let links = [];
@@ -58,7 +58,7 @@ const SiteMenu = () => {
 		});
 
 		links.map((value) => prefetch(value.url));
-	}, []);
+	}, [SiteSidebarMenus, asPath, prefetch, querySiteId]);
 
 	return (
 		<Scrollbars autoHide renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />} universal>

@@ -23,7 +23,7 @@ export const useSiteQueries = () => {
 
 		query?.search ? setSearchKey(query.search) : null;
 		query?.per_page ? setLinksPerPage(parseInt(query.per_page)) : null;
-	}, [query]);
+	}, [asPath, query]);
 
 	return { linksPerPage, setLinksPerPage, pagePath, setPagePath, searchKey, setSearchKey };
 };

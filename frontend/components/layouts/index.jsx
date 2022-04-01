@@ -108,7 +108,7 @@ export const StaticLayout = ({ children }) => {
 	useEffect(() => {
 		// Prefetch sites page for faster loading
 		prefetch(DashboardSitesLink);
-	}, []);
+	}, [prefetch]);
 
 	return (
 		<>

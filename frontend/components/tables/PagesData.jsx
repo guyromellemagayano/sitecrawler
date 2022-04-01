@@ -103,7 +103,7 @@ const PagesData = ({ page = null }) => {
 	useEffect(() => {
 		// Prefetch pages page for faster loading
 		prefetch(DashboardSitesLink + querySiteId + SitePagesSlug + pageId);
-	}, []);
+	}, [pageId, prefetch, querySiteId]);
 
 	return (
 		<tr>

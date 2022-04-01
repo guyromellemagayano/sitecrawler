@@ -111,7 +111,16 @@ const PaymentMethodModal = (
 		disableForm ? setCurrentPaymentMethod(selectedCurrentPaymentMethod) : null;
 
 		return { currentPaymentMethod };
-	}, [disableForm, defaultPaymentMethodData, paymentMethods]);
+	}, [
+		disableForm,
+		defaultPaymentMethodData,
+		paymentMethods,
+		paymentMethodsData,
+		loadingCardInformationText,
+		setCurrentPaymentMethod,
+		currentPaymentMethod,
+		noCurrentCardRegisteredText
+	]);
 
 	// Handle form events
 	const handleFormEvents = (e) => {

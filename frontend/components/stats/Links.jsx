@@ -153,7 +153,11 @@ const LinksStats = () => {
 				</div>
 			</div>
 			<div className="mx-auto flex max-w-sm justify-center">
-				<Chart options={chartOptions} series={chartSeries} type="donut" width={600} height={720} />
+				{isComponentReady ? (
+					<Chart options={chartOptions} series={chartSeries} type="donut" width={600} height={720} />
+				) : (
+					<MemoizedLinksStatsSkeleton />
+				)}
 			</div>
 		</div>
 	);
