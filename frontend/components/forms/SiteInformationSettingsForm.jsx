@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import {
 	DefaultlargePageSizeThreshold,
@@ -63,7 +64,7 @@ const SiteInformationSettingsForm = () => {
 		}
 
 		return { siteName, siteUrl, largePageSizeThreshold };
-	}, [largePageSizeThreshold, siteId, siteName, siteUrl]);
+	}, [siteId]);
 
 	return (
 		<Formik

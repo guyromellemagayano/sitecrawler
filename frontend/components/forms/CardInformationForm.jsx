@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { DefaultPaymentMethodApiEndpoint, PaymentMethodApiEndpoint } from "@constants/ApiEndpoints";
 import { NotificationDisplayInterval } from "@constants/GlobalValues";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
@@ -85,15 +86,7 @@ const CardInformationForm = () => {
 		disableForm ? setCurrentPaymentMethod(selectedCurrentPaymentMethod) : null;
 
 		return { currentPaymentMethod };
-	}, [
-		disableForm,
-		defaultPaymentMethodData,
-		paymentMethods,
-		paymentMethodsData,
-		loadingCardInformationText,
-		currentPaymentMethod,
-		noCurrentCardRegisteredText
-	]);
+	}, [disableForm, defaultPaymentMethodData, paymentMethods]);
 
 	// Handle form events
 	const handleFormEvents = (e) => {

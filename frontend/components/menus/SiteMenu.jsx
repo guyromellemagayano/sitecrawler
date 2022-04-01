@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { MemoizedSiteSelect } from "@components/select/SiteSelect";
 import { SiteLogoWhite } from "@components/svgs/SiteLogo";
 import { AuthAppLogo } from "@constants/GlobalValues";
@@ -46,7 +47,7 @@ const SiteMenu = () => {
 		isReady ? setSiteQueries(window.location.search) : setSiteQueries(null);
 
 		return { siteQueries };
-	}, [isReady, query, siteQueries]);
+	}, [isReady, query]);
 
 	useEffect(() => {
 		let links = [];
@@ -58,7 +59,7 @@ const SiteMenu = () => {
 		});
 
 		links.map((value) => prefetch(value.url));
-	}, [SiteSidebarMenus, asPath, prefetch, querySiteId]);
+	}, []);
 
 	return (
 		<Scrollbars autoHide renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />} universal>

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { DashboardSettingsSlug, DashboardSitesLink } from "@constants/PageLinks";
 import { useRouter } from "next/router";
 import { memo, useEffect, useState } from "react";
@@ -26,7 +27,7 @@ const MainMenu = () => {
 		} else {
 			setSelectedMenu(<MemoizedPrimaryMenu />);
 		}
-	}, [asPath, siteId]);
+	}, [asPath]);
 
 	return selectedMenu;
 };

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { handleSlugFromSortKey } from "@helpers/handleSlugFromSortKey";
 import { handleConversionStringToCamelCase } from "@utils/convertCase";
 import PropTypes from "prop-types";
@@ -21,9 +22,8 @@ const Sorting = ({ sortOrder = null, setSortOrder, tableContent = null, ordering
 
 	const sortAscRef = useRef(null);
 	const sortDescRef = useRef(null);
-
-	let resultSlug = useRef(null);
-	let orderItem = useRef(null);
+	const resultSlug = useRef(null);
+	const orderItem = useRef(null);
 
 	// Handle sort and ordering
 	useEffect(() => {
@@ -34,7 +34,7 @@ const Sorting = ({ sortOrder = null, setSortOrder, tableContent = null, ordering
 			if (ordering.includes("-")) setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
 			else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
 		}
-	}, [ordering, setSortOrder, tableContent]);
+	}, [ordering]);
 
 	// Handle ascending and descending onClick states
 	useEffect(() => {
@@ -52,7 +52,7 @@ const Sorting = ({ sortOrder = null, setSortOrder, tableContent = null, ordering
 				setIsAscClicked(false);
 			}
 		}
-	}, [ordering, resultSlug, slug]);
+	}, [ordering]);
 
 	// Handle click event
 	const handleClickEvent = async (e) => {

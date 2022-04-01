@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { MemoizedDeleteSiteModal } from "@components/modals/DeleteSiteModal";
 import { MemoizedSiteVerifyModal } from "@components/modals/SiteVerifyModal";
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
@@ -59,7 +60,7 @@ const SitesData = ({ site = null }) => {
 		siteId ? setCustomScanApiEndpoint(SitesApiEndpoint + siteId + ScanSlug) : setCustomScanApiEndpoint(null);
 
 		return { customScanApiEndpoint };
-	}, [customScanApiEndpoint, siteId]);
+	}, [siteId]);
 
 	// SWR hooks
 	const { scan, previousScan, isCrawlStarted, isCrawlFinished, handleCrawl, selectedSiteRef } = useScan(
@@ -76,7 +77,7 @@ const SitesData = ({ site = null }) => {
 			: setCustomStatsApiEndpoint(null);
 
 		return { customStatsApiEndpoint };
-	}, [customScanApiEndpoint, customStatsApiEndpoint, siteLastFinishedScanId]);
+	}, [customScanApiEndpoint, siteLastFinishedScanId]);
 
 	// `stats` SWR hook
 	const { stats } = useStats(customStatsApiEndpoint, {
@@ -128,7 +129,7 @@ const SitesData = ({ site = null }) => {
 	useEffect(() => {
 		// Prefetch sites page for faster loading
 		prefetch(DashboardSitesLink + siteId + "/");
-	}, [prefetch, siteId]);
+	}, []);
 
 	return (
 		<tr ref={selectedSiteRef}>

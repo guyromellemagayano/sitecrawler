@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { UserApiEndpoint } from "@constants/ApiEndpoints";
 import { FormStringMaxChars, FormStringMinChars, NotificationDisplayInterval } from "@constants/GlobalValues";
 import { handlePatchMethod } from "@helpers/handleHttpMethods";
@@ -65,7 +66,7 @@ const PersonalSettingsForm = () => {
 		}
 
 		return { firstname, lastname, username, email, settings, largePageSizeThreshold };
-	}, [email, firstname, largePageSizeThreshold, lastname, settings, user, username]);
+	}, [user]);
 
 	return (
 		<Formik

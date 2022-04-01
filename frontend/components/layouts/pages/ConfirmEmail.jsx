@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { MemoizedLogoLabel } from "@components/labels/LogoLabel";
 import { ConfirmEmailApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { LoginLink } from "@constants/PageLinks";
@@ -119,21 +120,7 @@ const ConfirmEmailPageLayout = () => {
 			]);
 			setFailure(true);
 		}
-	}, [
-		confirmEmailPost201CreatedSuccessResponse,
-		confirmEmailPost400BadRequestErrorResponse,
-		confirmEmailPost401UnauthorizedErrorResponse,
-		confirmEmailPost403ForbiddenErrorResponse,
-		confirmEmailPost404NotFoundErrorResponse,
-		confirmEmailPost429TooManyRequestsErrorResponse,
-		confirmEmailPost500InternalServerErrorResponse,
-		confirmEmailPost502BadGatewayErrorResponse,
-		confirmEmailPost503ServiceUnavailableErrorResponse,
-		confirmEmailPost504GatewayTimeoutErrorResponse,
-		fallbackUnknownResponse,
-		mutate,
-		query?.id
-	]);
+	}, [asPath, query]);
 
 	useEffect(() => {
 		let isMounted = true;

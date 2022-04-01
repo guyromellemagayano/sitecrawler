@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
 	AddNewSiteSlug,
 	DashboardSettingsSlug,
@@ -60,7 +61,7 @@ const Breadcrumbs = ({
 		isReady ? setSiteQueries(window.location.search) : setSiteQueries(null);
 
 		return { siteQueries };
-	}, [isReady, siteQueries]);
+	}, [isReady]);
 
 	return (
 		<nav className="w-full flex-none border-b border-gray-200 pt-4 pb-8" aria-label="Breadcrumb">

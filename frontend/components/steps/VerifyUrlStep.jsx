@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { MemoizedVerifyUrlStepForm } from "@components/forms/VerifyUrlStepForm";
 import { MemoizedShowHelpModal } from "@components/modals/ShowHelpModal";
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
@@ -60,7 +61,7 @@ const VerifyUrlStep = (props) => {
 		siteId ? setSiteData(siteId?.data) : setSiteData(null);
 
 		return { siteData };
-	}, [siteData, siteId]);
+	}, [siteId]);
 
 	// Handle site data
 	useMemo(() => {
