@@ -7,5 +7,5 @@ const SentryEnv = process.env.SENTRY_ENVIRONMENT;
 Sentry.init({
 	environment: SentryEnv,
 	tracesSampleRate: 1.0,
-	dsn: SentryDsn || "https://3ab17e668d564c0fa8c1e0614c517bd1@o432365.ingest.sentry.io/6037440"
+	dsn: SentryDsn
 });
