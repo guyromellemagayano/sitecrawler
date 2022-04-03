@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { MemoizedProgressBar } from "@components/progress-bar";
 import {
 	CurrentSubscriptionApiEndpoint,
@@ -10,7 +11,15 @@ import {
 } from "@constants/ApiEndpoints";
 import AppSeo from "@constants/AppSeo";
 import { ComponentReadyInterval, NoInterval, RevalidationInterval } from "@constants/GlobalValues";
-import { DashboardSlug, ScanSlug, SiteImageSlug, SiteLinkSlug, SitePageSlug, UptimeSlug } from "@constants/PageLinks";
+import {
+	DashboardSlug,
+	ScanSlug,
+	SiteImageSlug,
+	SiteLinkSlug,
+	SitePageSlug,
+	SummarySlug,
+	UptimeSlug
+} from "@constants/PageLinks";
 import { isProd } from "@constants/ServerEnv";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
@@ -33,6 +42,7 @@ import { useStats } from "@hooks/useStats";
 import { useStripePromise } from "@hooks/useStripePromise";
 import { useSubscriptions } from "@hooks/useSubscriptions";
 import { useUptime } from "@hooks/useUptime";
+import { useUptimeSummary } from "@hooks/useUptimeSummary";
 import { useUser } from "@hooks/useUser";
 import "@styles/tailwind.css";
 import { handleConversionStringToNumber } from "@utils/convertCase";
@@ -65,6 +75,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	const [customCurrentSubscriptionApiEndpoint, setCustomCurrentSubscriptionApiEndpoint] = useState(null);
 	const [customSitesIdApiEndpoint, setCustomSitesIdApiEndpoint] = useState(null);
 	const [customUptimeApiEndpoint, setCustomUptimeApiEndpoint] = useState(null);
+	const [customUptimeSummaryApiEndpoint, setCustomUptimeSummaryApiEndpoint] = useState(null);
 	const [customScanApiEndpoint, setCustomScanApiEndpoint] = useState(null);
 	const [customLinksApiEndpoint, setCustomLinksApiEndpoint] = useState(null);
 	const [customLinksIdApiEndpoint, setCustomLinksIdApiEndpoint] = useState(null);
@@ -87,7 +98,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			: setTimeout(() => setIsComponentReady(false), ComponentReadyInterval);
 
 		return { isComponentReady, isUserForbidden };
-	}, [isComponentReady, isReady, isUserForbidden]);
+	}, [isReady]);
 
 	useEffect(() => {
 		// LogRocket setup
@@ -124,15 +135,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			customSubscriptionsApiEndpoint,
 			customCurrentSubscriptionApiEndpoint
 		};
-	}, [
-		asPath,
-		customCurrentSubscriptionApiEndpoint,
-		customDefaultPaymentMethodApiEndpoint,
-		customPaymentMethodsApiEndpoint,
-		customSitesApiEndpoint,
-		customStripePromiseApiEndpoint,
-		customSubscriptionsApiEndpoint
-	]);
+	}, [asPath]);
 
 	// `user` SWR hook
 	const { user, errorUser, validatingUser } = useUser(customUserApiEndpoint, {
@@ -225,7 +228,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			: setCustomSitesIdApiEndpoint(null);
 
 		return { customSitesIdApiEndpoint };
-	}, [sites, querySiteId, customSitesApiEndpoint, customSitesIdApiEndpoint]);
+	}, [sites, querySiteId, customSitesApiEndpoint]);
 
 	// `siteId` SWR hook
 	const { siteId, errorSiteId, validatingSiteId } = useSiteId(customSitesIdApiEndpoint, {
@@ -248,7 +251,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 		}
 
 		return { hasSiteLimitReached };
-	}, [hasSiteLimitReached, sites, user]);
+	}, [sites, user]);
 
 	// Custom `scan` and `uptime` SWR hooks
 	useEffect(() => {
@@ -263,7 +266,16 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			  })();
 
 		return { customUptimeApiEndpoint, customScanApiEndpoint };
-	}, [siteId, customSitesIdApiEndpoint, customUptimeApiEndpoint, customScanApiEndpoint]);
+	}, [siteId, customSitesIdApiEndpoint]);
+
+	// Custom `scan` and `uptime` SWR hooks
+	useEffect(() => {
+		customUptimeApiEndpoint?.length > 0
+			? setCustomUptimeSummaryApiEndpoint(customUptimeApiEndpoint + SummarySlug)
+			: setCustomUptimeSummaryApiEndpoint(null);
+
+		return { customUptimeSummaryApiEndpoint };
+	}, [customUptimeApiEndpoint]);
 
 	// `uptime` SWR hook
 	const { uptime, errorUptime, validatingUptime } = useUptime(customUptimeApiEndpoint, {
@@ -274,6 +286,19 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	});
 
 	// console.log("uptime", uptime, customUptimeApiEndpoint);
+
+	// `uptime summary` SWR hook
+	const { uptimeSummary, errorUptimeSummary, validatingUptimeSummary } = useUptimeSummary(
+		customUptimeSummaryApiEndpoint,
+		{
+			refreshInterval: (e) =>
+				e && Math.round(e?.status / 100) === 2 && e?.data && Object.keys(e?.data)?.length > 0 && !e?.data?.detail
+					? NoInterval
+					: RevalidationInterval
+		}
+	);
+
+	// console.log("uptime summary", uptimeSummary, customUptimeSummaryApiEndpoint);
 
 	// `scan` SWR hook
 	const {
@@ -304,7 +329,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			: setCustomStatsApiEndpoint(null);
 
 		return { customStatsApiEndpoint };
-	}, [scan, customScanApiEndpoint, scanObjId, customStatsApiEndpoint]);
+	}, [scan, customScanApiEndpoint, scanObjId]);
 
 	// `stats` SWR hook
 	const { stats, errorStats, validatingStats } = useStats(customStatsApiEndpoint, {
@@ -347,7 +372,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			customPagesApiEndpoint,
 			customImagesApiEndpoint
 		};
-	}, [stats, user, customStatsApiEndpoint, customLinksApiEndpoint, customPagesApiEndpoint, customImagesApiEndpoint]);
+	}, [stats, user, customStatsApiEndpoint]);
 
 	// `links` SWR hook
 	const { links, errorLinks, validatingLinks } = useLinks(customLinksApiEndpoint, {
@@ -386,7 +411,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			: setCustomLinksIdApiEndpoint(null);
 
 		return { customLinksIdApiEndpoint };
-	}, [links, queryLinkId, customLinksApiEndpoint, customLinksIdApiEndpoint]);
+	}, [links, queryLinkId, customLinksApiEndpoint]);
 
 	// `linkId` SWR hook
 	const { linkId, errorLinkId, validatingLinkId } = useLinkId(customLinksIdApiEndpoint, {
@@ -405,7 +430,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			: setCustomPagesIdApiEndpoint(null);
 
 		return { customPagesIdApiEndpoint };
-	}, [pages, queryPageId, customPagesApiEndpoint, customPagesIdApiEndpoint]);
+	}, [pages, queryPageId, customPagesApiEndpoint]);
 
 	// `pageId` SWR hook
 	const { pageId, errorPageId, validatingPageId } = usePageId(customPagesIdApiEndpoint, {
@@ -424,7 +449,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			: setCustomImagesIdApiEndpoint(null);
 
 		return { customImagesIdApiEndpoint };
-	}, [images, queryImageId, customImagesApiEndpoint, customImagesIdApiEndpoint]);
+	}, [images, queryImageId, customImagesApiEndpoint]);
 
 	// `imageId` SWR hook
 	const { imageId, errorImageId, validatingImageId } = useImageId(customImagesIdApiEndpoint, {
@@ -463,6 +488,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 				errorStripePromise,
 				errorSubscriptions,
 				errorUptime,
+				errorUptimeSummary,
 				errorUser,
 				handleCrawl,
 				hasSiteLimitReached,
@@ -494,6 +520,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 				stripePromise,
 				subscriptions,
 				uptime,
+				uptimeSummary,
 				user,
 				validatingCurrentSubscription,
 				validatingDefaultPaymentMethod,
@@ -511,6 +538,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 				validatingStripePromise,
 				validatingSubscriptions,
 				validatingUptime,
+				validatingUptimeSummary,
 				validatingUser
 			}}
 		>
