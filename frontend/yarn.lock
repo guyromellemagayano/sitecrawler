@@ -519,10 +519,10 @@
     lodash.isplainobject "^4.0.6"
     lodash.merge "^4.6.2"
 
-"@tanem/react-nprogress@^4.0.12":
-  version "4.0.12"
-  resolved "https://registry.yarnpkg.com/@tanem/react-nprogress/-/react-nprogress-4.0.12.tgz#0d1319691613291691f24abfdb5a05975e65776a"
-  integrity sha512-a3kjiYWPWpe9flbbYY/M8S7uxGtezerFl9ct8BBFYszXdDFHZBYF7a8cWC/aSF5ssD3ElKqHeyMi1bZlW3HhTw==
+"@tanem/react-nprogress@^4.0.13":
+  version "4.0.13"
+  resolved "https://registry.yarnpkg.com/@tanem/react-nprogress/-/react-nprogress-4.0.13.tgz#4621dc33f4549648b0eac9d22bda3f6fe373f088"
+  integrity sha512-ItmjT1m2S0QfEwl1827uLYMXVAAelkc0MqUublobqpubKMIwYWbkCrR0BiJ5yefTRBj26fG6MKwhFTkT5tFjBQ==
   dependencies:
     "@babel/runtime" "^7.17.8"
     hoist-non-react-statics "^3.3.2"
@@ -694,10 +694,10 @@ anymatch@~3.1.2:
     normalize-path "^3.0.0"
     picomatch "^2.0.4"
 
-apexcharts@3.34.0:
-  version "3.34.0"
-  resolved "https://registry.yarnpkg.com/apexcharts/-/apexcharts-3.34.0.tgz#7c70f232a2dbd878b55e5d4a517aa0499adaba58"
-  integrity sha512-0HMwkTRm4lwuM4TZ+BjFynXuIRQnCG8E36k2r0JoxEfh61rY6OmRa6iFHlTQiyILpemPyTHxuPvK4wkR8RKc9A==
+apexcharts@3.35.0:
+  version "3.35.0"
+  resolved "https://registry.yarnpkg.com/apexcharts/-/apexcharts-3.35.0.tgz#5571f4852747359b7ef76662998f3d6a8ffe923a"
+  integrity sha512-oipJRkaxt8DPGRmn1kur6aPzML1JSpf2M3ecu+gyw+8xiNmT2C0p1uuuqPZrk+Lr2hmDxzNBPR7TvxwRl3ozgw==
   dependencies:
     svg.draggable.js "^2.2.2"
     svg.easing.js "^2.0.0"
