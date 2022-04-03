@@ -52,7 +52,7 @@
 		"@tailwindcss/forms": "^0.5.0",
 		"@tailwindcss/line-clamp": "^0.3.1",
 		"@tailwindcss/typography": "^0.5.2",
-		"@tanem/react-nprogress": "^4.0.12",
+		"@tanem/react-nprogress": "^4.0.13",
 		"@types/react": "^17.0.43",
 		"apexcharts": "3.35.0",
 		"axios": "^0.26.1",
