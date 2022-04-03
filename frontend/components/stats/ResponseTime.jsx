@@ -34,13 +34,6 @@ const ResponseTimeStats = () => {
 	dayjs.extend(utc);
 	dayjs.extend(timezone);
 
-	const calendarStrings = {
-		lastDay: "[Yesterday], dddd [at] hh:mm:ss A",
-		lastWeek: "MMMM DD, YYYY [at] hh:mm:ss A",
-		sameDay: "[Today], dddd [at] hh:mm:ss A",
-		sameElse: "MMMM DD, YYYY [at] hh:mm:ss A"
-	};
-
 	// Custom variables
 	let uptimeResponseTime = [];
 	let uptimeHttpStatus = [];
@@ -50,12 +43,14 @@ const ResponseTimeStats = () => {
 
 	const disableLocalTime = user?.data?.settings?.disableLocalTime ?? false;
 	const uptimeData = uptime?.data ?? null;
+	const uptimeFirstEntry = uptimeData?.[0]?.created_at ?? null;
+	const uptimeLastEntry = uptimeData?.[uptimeData?.length - 1]?.created_at ?? null;
 
 	uptimeData?.map((item) => {
 		const createdAtTimestamp = item.created_at;
 		const createdAt = !disableLocalTime
-			? dayjs(createdAtTimestamp).calendar(null, calendarStrings)
-			: dayjs.utc(createdAtTimestamp).calendar(null, calendarStrings);
+			? dayjs(createdAtTimestamp).calendar(null, "MMMM DD, YYYY [at] hh:mm:ss A")
+			: dayjs.utc(createdAtTimestamp).calendar(null, "MMMM DD, YYYY [at] hh:mm:ss A");
 
 		uptimeResponseTime.push(item.response_time);
 		uptimeHttpStatus.push(item.http_status);
@@ -73,39 +68,30 @@ const ResponseTimeStats = () => {
 
 	const primaryChartOptions = {
 		chart: {
-			id: "uptimeResponseTime",
-			type: "area",
-			zoom: {
-				enabled: false
+			id: "primaryChart",
+			type: "line",
+			height: 500,
+			toolbar: {
+				autoSelected: "pan",
+				show: false
 			}
+		},
+		stroke: {
+			curve: "smooth",
+			colors: ["#16a34a"],
+			width: 5
 		},
 		dataLabels: {
 			enabled: false
 		},
-		fill: {
-			type: "solid",
-			colors: "#10b981"
-		},
-		stroke: {
-			show: true,
-			curve: "smooth",
-			colors: ["#059669"]
-		},
 		markers: {
 			size: 5,
-			colors: "#10b981"
-		},
-		grid: {
-			row: {
-				colors: ["#f3f3f3", "transparent"],
-				opacity: 0.35
+			colors: "#15803d",
+			hover: {
+				size: 6
 			}
 		},
 		xaxis: {
-			title: {
-				text: responseTimeText,
-				offsetY: 10
-			},
 			categories: uptimeCreatedAt,
 			labels: {
 				show: true,
@@ -116,37 +102,63 @@ const ResponseTimeStats = () => {
 			}
 		},
 		yaxis: {
-			title: {
-				text: responseTimeText,
-				offsetX: -20
-			},
-			categories: uptimeResponseTime,
-			labels: {
-				show: true,
-				minWidth: 25,
-				maxHeight: 50
-			}
+			tickAmount: 10
 		}
 	};
 
-	const secondaryChartOptions = {};
+	const secondaryChartOptions = {
+		chart: {
+			id: "secondaryChart",
+			type: "area",
+			height: 300,
+			brush: {
+				target: "primaryChart",
+				enabled: true
+			},
+			selection: {
+				enabled: true,
+				xaxis: {
+					min: uptimeFirstEntry,
+					max: uptimeLastEntry
+				}
+			}
+		},
+		colors: ["#546E7A"],
+		xaxis: {
+			categories: uptimeCreatedAt,
+			labels: {
+				show: true,
+				rotate: -90,
+				offsetX: 10,
+				minWidth: 250,
+				maxHeight: 250
+			}
+		},
+		fill: {
+			type: "solid",
+			colors: ["#22c55e"]
+		},
+		yaxis: {
+			tickAmount: 5
+		},
+		stroke: {
+			show: false
+		}
+	};
 
 	return (
 		<div className="h-full overflow-hidden rounded-lg border">
 			<div className="flex justify-between py-8 px-5">
 				<div className="flex items-center">
 					<h2 className="text-lg font-bold leading-7 text-gray-900">
-						{isComponentReady ? (
-							uptimeText + " " + `(${responseTimeText})`
-						) : (
-							<Skeleton duration={2} width={100} height={15} />
-						)}
+						{isComponentReady ? responseTimeText : <Skeleton duration={2} width={100} height={15} />}
 					</h2>
 				</div>
 			</div>
 			<div className="mx-auto flex justify-center px-5">
 				<div className="mt-4 mb-8 flow-root w-full">
-					<Chart options={primaryChartOptions} series={chartSeries} type="area" height={800} />
+					<Chart options={primaryChartOptions} series={chartSeries} type="line" height={500} />
+					<Chart options={secondaryChartOptions} series={chartSeries} type="area" height={300} />
 				</div>
 			</div>
 		</div>

@@ -1,14 +1,15 @@
 import { MemoizedPageOption } from "@components/options/PageOption";
+import { MemoizedCurrentStatusStats } from "@components/stats/CurrentStatus";
 import { MemoizedImagesStats } from "@components/stats/Images";
 import { MemoizedInformationStats } from "@components/stats/Information";
 import { MemoizedIssuesStats } from "@components/stats/Issues";
 import { MemoizedLinksStats } from "@components/stats/Links";
 import { MemoizedOverviewStats } from "@components/stats/Overview";
 import { MemoizedPagesStats } from "@components/stats/Pages";
-// import { MemoizedResponseTimeStats } from "@components/stats/ResponseTime";
+import { MemoizedResponseTimeStats } from "@components/stats/ResponseTime";
 import { MemoizedSeoStats } from "@components/stats/Seo";
+import { MemoizedUptimeStats } from "@components/stats/Uptime";
 import { memo } from "react";
-import { MemoizedComingSoonPageLayout } from "./ComingSoon";
 
 /**
  * Custom function to render the `SiteOverviewPageLayout` component
@@ -46,23 +47,17 @@ const SiteOverviewPageLayout = () => {
 						</div>
 					</div>
 
-					<div className="mb-8 grid grid-flow-row grid-cols-1 gap-8 md:grid-cols-4">
+					<div className="mb-8 grid grid-flow-col grid-cols-4 gap-8">
 						<div>
-							<MemoizedComingSoonPageLayout />
+							<MemoizedCurrentStatusStats />
 						</div>
 						<div>
-							<MemoizedComingSoonPageLayout />
+							<MemoizedUptimeStats />
 						</div>
-						<div>
-							<MemoizedComingSoonPageLayout />
-						</div>
-					</div>
-
-					{/* <div className="mb-8 grid grid-flow-row grid-cols-1 gap-8 md:grid-cols-4">
-						<div className="md:col-span-4">
+						<div className="col-span-3 row-span-2">
 							<MemoizedResponseTimeStats />
 						</div>
-					</div> */}
+					</div>
 				</div>
 			</div>
 		</>

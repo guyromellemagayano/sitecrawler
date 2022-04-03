@@ -9,9 +9,14 @@ import "react-loading-skeleton/dist/skeleton.css";
 const UptimeResponseTimeStatsSkeleton = () => {
 	const skeletonLimit = 1;
 	const skeletonEntry = (
-		<div className="flex h-[600px] w-full flex-col items-center">
-			<div className="my-6">
-				<Skeleton duration={2} width={1350} height={550} />
+		<div className="mx-auto flex justify-center px-5">
+			<div className="mt-4 mb-8 flow-root w-full">
+				{[...Array(2)].map((value, key) => (
+					<span key={key}>
+						<Skeleton height={500} />
+						<Skeleton height={300} />
+					</span>
+				))}
 			</div>
 		</div>
 	);
