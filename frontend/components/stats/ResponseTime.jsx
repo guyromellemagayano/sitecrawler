@@ -45,6 +45,8 @@ const ResponseTimeStats = () => {
 	const uptimeData = uptime?.data ?? null;
 	const uptimeFirstEntry = uptimeData?.[0]?.created_at ?? null;
 	const uptimeLastEntry = uptimeData?.[uptimeData?.length - 1]?.created_at ?? null;
+	const uptimeDataLength = uptimeResponseTime?.length ?? null;
+	const initialUptimeTickAmount = 10;
 
 	uptimeData?.map((item) => {
 		const createdAtTimestamp = item.created_at;
@@ -100,7 +102,13 @@ const ResponseTimeStats = () => {
 				minWidth: 250,
 				maxHeight: 250
 			},
-			tickAmount: 3
+			tickAmount: () => {
+				for (let i = 10; i <= uptimeDataLength; i * 10) {
+					let uptimeTickAmount = 0;
+
+					return (uptimeTickAmount += initialUptimeTickAmount);
+				}
+			}
 		},
 		yaxis: {
 			tickAmount: 3
@@ -141,7 +149,13 @@ const ResponseTimeStats = () => {
 			colors: ["#22c55e"]
 		},
 		yaxis: {
-			tickAmount: 3
+			tickAmount: () => {
+				for (let i = 10; i <= uptimeDataLength; i * 10) {
+					let uptimeTickAmount = 0;
+
+					return (uptimeTickAmount += initialUptimeTickAmount);
+				}
+			}
 		},
 		stroke: {
 			show: false
