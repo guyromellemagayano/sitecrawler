@@ -99,10 +99,11 @@ const ResponseTimeStats = () => {
 				offsetX: 10,
 				minWidth: 250,
 				maxHeight: 250
-			}
+			},
+			tickAmount: 3
 		},
 		yaxis: {
-			tickAmount: 10
+			tickAmount: 3
 		}
 	};
 
@@ -132,14 +133,15 @@ const ResponseTimeStats = () => {
 				offsetX: 10,
 				minWidth: 250,
 				maxHeight: 250
-			}
+			},
+			tickAmount: 3
 		},
 		fill: {
 			type: "solid",
 			colors: ["#22c55e"]
 		},
 		yaxis: {
-			tickAmount: 5
+			tickAmount: 3
 		},
 		stroke: {
 			show: false
