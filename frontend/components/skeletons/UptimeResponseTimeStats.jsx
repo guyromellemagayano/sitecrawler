@@ -11,10 +11,9 @@ const UptimeResponseTimeStatsSkeleton = () => {
 	const skeletonEntry = (
 		<div className="mx-auto flex justify-center px-5">
 			<div className="mt-4 mb-8 flow-root w-full">
-				{[...Array(2)].map((value, key) => (
+				{[...Array(1)].map((value, key) => (
 					<span key={key}>
-						<Skeleton height={500} />
-						<Skeleton height={300} />
+						<Skeleton height={800} />
 					</span>
 				))}
 			</div>

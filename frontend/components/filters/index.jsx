@@ -10,7 +10,6 @@ import { useRouter } from "next/router";
 import { memo, useContext, useEffect } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { useSWRConfig } from "swr";
 
 /**
  * Custom function to render the `Filter` component
@@ -149,9 +148,6 @@ const Filter = ({
 
 	// Router
 	const { query, asPath, push } = useRouter();
-
-	// SWR hook for global mutations
-	const { mutate } = useSWRConfig();
 
 	// Custom variables
 	let filterType = isSitesFilter

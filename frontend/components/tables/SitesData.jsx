@@ -2,7 +2,7 @@
 import { MemoizedDeleteSiteModal } from "@components/modals/DeleteSiteModal";
 import { MemoizedSiteVerifyModal } from "@components/modals/SiteVerifyModal";
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
-import { orderingByNameQuery, RevalidationInterval, sortByFinishedAtDescending } from "@constants/GlobalValues";
+import { RevalidationInterval } from "@constants/GlobalValues";
 import { DashboardSitesLink, ScanSlug } from "@constants/PageLinks";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useScan } from "@hooks/useScan";
@@ -47,9 +47,9 @@ const SitesData = ({ site = null }) => {
 	const deleteText = t("sites:delete");
 	const crawlSiteText = t("sites:crawlSite");
 	const siteCrawlingInProcessText = t("sites:siteCrawlingInProcess");
+	const crawlingText = t("sites:crawling");
 
 	// Custom variables
-	let customScanApiEndpointQuery = "?" + orderingByNameQuery + sortByFinishedAtDescending;
 	let handleCrawlEndpoint = SitesApiEndpoint + siteId;
 
 	// Custom context
@@ -63,7 +63,7 @@ const SitesData = ({ site = null }) => {
 	}, [siteId]);
 
 	// SWR hooks
-	const { scan, previousScan, isCrawlStarted, isCrawlFinished, handleCrawl, selectedSiteRef } = useScan(
+	const { scan, previousScan, isCrawlStarted, isCrawlFinished, handleCrawl, selectedSiteRef, isProcessing } = useScan(
 		customScanApiEndpoint,
 		{
 			refreshInterval: RevalidationInterval
@@ -222,7 +222,7 @@ const SitesData = ({ site = null }) => {
 												className="ml-3 flex cursor-pointer items-center justify-start text-sm font-semibold leading-6 text-green-600 transition duration-150 ease-in-out hover:text-green-500 focus:outline-none"
 												onClick={(e) => handleCrawl(e, handleCrawlEndpoint)}
 											>
-												{crawlSiteText}
+												{isProcessing ? crawlingText : crawlSiteText}
 											</button>
 										) : null}
 

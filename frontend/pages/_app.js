@@ -471,6 +471,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 				currentSubscription,
 				customScanApiEndpoint,
 				customSitesIdApiEndpoint,
+				customUptimeApiEndpoint,
 				defaultPaymentMethod,
 				errorCurrentSubscription,
 				errorDefaultPaymentMethod,

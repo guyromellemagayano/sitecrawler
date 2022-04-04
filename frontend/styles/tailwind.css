@@ -104,6 +104,28 @@ tr div {
 	@apply mr-3;
 }
 
+.response-time-tooltip {
+	@apply divide-y divide-gray-200 overflow-hidden rounded-lg bg-white shadow;
+}
+
+.response-time-tooltip-title {
+	@apply px-2 py-3 sm:px-4;
+}
+
+.response-time-tooltip-text {
+	@apply px-2 py-3 sm:p-4;
+}
+
+.response-time-tooltip-title-left,
+.response-time-tooltip-text-left {
+	@apply text-sm font-medium text-gray-500 flex flex-col;
+}
+
+.response-time-tooltip-title-left-value,
+.response-time-tooltip-text-left-value {
+	@apply text-xs font-medium text-gray-900;
+}
+
 .rc-pagination {
 	@apply m-0 flex items-center justify-between p-0 text-sm font-normal leading-5 text-gray-500;
 }
