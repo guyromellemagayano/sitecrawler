@@ -29,6 +29,7 @@ const ResponseTimeStats = () => {
 	const minuteText = t("sites:minute");
 	const hourText = t("sites:hour");
 	const dayText = t("sites:day");
+	const httpStatusText = t("sites:httpStatus");
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
@@ -69,7 +70,8 @@ const ResponseTimeStats = () => {
 	};
 
 	// Custom variables
-	const uptimeDataArray = new Array();
+	const responseTimeDataArray = new Array();
+	const httpStatusDataArray = new Array();
 	const disableLocalTime = user?.data?.settings?.disableLocalTime ?? false;
 	const uptimeData = uptime?.data ?? null;
 	const uptimeDataLength = uptimeData?.length ?? null;
@@ -86,23 +88,24 @@ const ResponseTimeStats = () => {
 			const responseTime = item?.response_time ?? null;
 			const error = item?.error ?? null;
 
-			uptimeDataArray.push([createdAt, responseTime]);
+			responseTimeDataArray.push([createdAt, responseTime]);
+			httpStatusDataArray.push([createdAt, httpStatus]);
 
-			return { uptimeDataArray };
+			return { responseTimeDataArray };
 		});
 
-	const chartSeries = [
+	const responseTimeChartSeries = [
 		{
 			name: responseTimeText,
-			data: uptimeDataArray
+			data: responseTimeDataArray
 		}
 	];
 
-	const chartOptions = {
+	const responseTimeChartOptions = {
 		chart: {
 			id: "primaryChart",
 			type: "area",
-			height: 640,
+			height: 320,
 			zoom: {
 				autoScaleYaxis: true
 			}
@@ -127,7 +130,7 @@ const ResponseTimeStats = () => {
 				text: createdAtText
 			},
 			type: "datetime",
-			categories: uptimeDataArray?.map((item) => item[0]) ?? [],
+			categories: responseTimeDataArray?.map((item) => item[0]) ?? [],
 			min: new Date(uptimeFirstEntry).getTime(),
 			max: uptimeLastEntry,
 			labels: {
@@ -147,7 +150,7 @@ const ResponseTimeStats = () => {
 			title: {
 				text: responseTimeText
 			},
-			tickAmount: 20,
+			tickAmount: 10,
 			labels: {
 				show: true
 			}
@@ -165,6 +168,90 @@ const ResponseTimeStats = () => {
 					'<div class="response-time-tooltip-text">' +
 					'<span class="response-time-tooltip-title-left">' +
 					responseTimeText +
+					': </span><span class="response-time-tooltip-title-left-value">' +
+					w.config.series[seriesIndex].data[dataPointIndex][1] +
+					"</span></div>" +
+					"</div>" +
+					"</div>"
+				);
+			}
+		}
+	};
+
+	const httpStatusChartSeries = [
+		{
+			name: httpStatusText,
+			data: httpStatusDataArray
+		}
+	];
+
+	const httpStatusChartOptions = {
+		chart: {
+			id: "primaryChart",
+			type: "line",
+			height: 320,
+			zoom: {
+				autoScaleYaxis: true
+			}
+		},
+		stroke: {
+			curve: "smooth",
+			colors: ["#3b82f6"],
+			width: 5
+		},
+		dataLabels: {
+			enabled: false
+		},
+		markers: {
+			size: 5,
+			colors: "#1d4ed8",
+			hover: {
+				size: 6
+			}
+		},
+		xaxis: {
+			title: {
+				text: createdAtText
+			},
+			type: "datetime",
+			categories: responseTimeDataArray?.map((item) => item[0]) ?? [],
+			min: new Date(uptimeFirstEntry).getTime(),
+			max: uptimeLastEntry,
+			labels: {
+				show: true,
+				rotate: 0,
+				offsetX: 20,
+				dateTimeUTC: disableLocalTime ? true : false,
+				format: "MMM dd, yyyy - hh:mm:ss"
+			},
+			tickAmount: 4
+		},
+		fill: {
+			type: "solid",
+			colors: ["#3b82f6"]
+		},
+		yaxis: {
+			title: {
+				text: httpStatusText
+			},
+			tickAmount: 10,
+			labels: {
+				show: true
+			}
+		},
+		tooltip: {
+			custom: function ({ seriesIndex, dataPointIndex, w }) {
+				return (
+					'<div class="response-time-tooltip">' +
+					'<div class="response-time-tooltip-title">' +
+					'<span class="response-time-tooltip-title-left">' +
+					createdAtText +
+					': </span><span class="response-time-tooltip-title-left-value">' +
+					dayjs(w.config.series[seriesIndex].data[dataPointIndex][0]).calendar(null, calendarStrings) +
+					"</span></div>" +
+					'<div class="response-time-tooltip-text">' +
+					'<span class="response-time-tooltip-title-left">' +
+					httpStatusText +
 					': </span><span class="response-time-tooltip-title-left-value">' +
 					w.config.series[seriesIndex].data[dataPointIndex][1] +
 					"</span></div>" +
@@ -217,7 +304,7 @@ const ResponseTimeStats = () => {
 					<div className="inline-flex space-x-3">
 						<button
 							onClick={(e) => handleUpdateTimeStep(e, "one_minute")}
-							className="text-sm font-medium leading-5 text-gray-500 hover:underline"
+							className="text-gray-320 text-sm font-medium leading-5 hover:underline"
 						>
 							{minuteText}
 						</button>
@@ -226,7 +313,7 @@ const ResponseTimeStats = () => {
 						</span>
 						<button
 							onClick={(e) => handleUpdateTimeStep(e, "one_hour")}
-							className="text-sm font-medium leading-5 text-gray-500 hover:underline"
+							className="text-gray-320 text-sm font-medium leading-5 hover:underline"
 						>
 							{hourText}
 						</button>
@@ -235,7 +322,7 @@ const ResponseTimeStats = () => {
 						</span>
 						<button
 							onClick={(e) => handleUpdateTimeStep(e, "one_day")}
-							className="text-sm font-medium leading-5 text-gray-500 hover:underline"
+							className="text-gray-320 text-sm font-medium leading-5 hover:underline"
 						>
 							{dayText}
 						</button>
@@ -250,7 +337,20 @@ const ResponseTimeStats = () => {
 			</div>
 			<div className="mx-auto flex justify-center px-5">
 				<div className="mt-4 mb-8 flow-root w-full">
-					<Chart options={chartOptions} series={chartSeries} type="area" height={640} />
+					<Chart options={responseTimeChartOptions} series={responseTimeChartSeries} type="area" height={320} />
+				</div>
+			</div>
+
+			<div className="flex justify-between border-t py-8 px-5">
+				<div className="flex items-center">
+					<h2 className="text-lg font-bold leading-7 text-gray-900">
+						{isComponentReady ? httpStatusText : <Skeleton duration={2} width={100} height={15} />}
+					</h2>
+				</div>
+			</div>
+			<div className="mx-auto flex justify-center px-5">
+				<div className="mt-4 mb-8 flow-root w-full">
+					<Chart options={httpStatusChartOptions} series={httpStatusChartSeries} type="area" height={320} />
 				</div>
 			</div>
 		</div>
