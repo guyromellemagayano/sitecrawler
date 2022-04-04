@@ -123,11 +123,6 @@ class ImageFilter(LinkFilter):
         label="Missing alts is less than or equal to (doesn't work for 0)",
         lookup_expr="lte",
     )
-    missing_alts__iszero = filters.BooleanFilter(
-        field_name="missing_alts_adjusted",
-        label="Missing alts is zero",
-        lookup_expr="isnull",
-    )
 
     class Meta(LinkFilter.Meta):
         pass
