@@ -37,7 +37,7 @@ const ResponseTimeStats = () => {
 	// Custom context
 	const { isComponentReady, querySiteId, user, customUptimeApiEndpoint } = useContext(SiteCrawlerAppContext);
 
-	let queryString = "";
+	let queryString = "?created_at__gte=&created_at__lte=&time_step=day";
 
 	// Custom states
 	const [updatedUptimeApiEndpoint, setUpdatedUptimeApiEndpoint] = useState(null);
@@ -262,35 +262,6 @@ const ResponseTimeStats = () => {
 		}
 	};
 
-	const handleUpdateTimeStep = (e, val) => {
-		queryString = "";
-
-		if (e.target && val) {
-			switch (val) {
-				case "one_minute":
-					queryString += `?created_at__gte=&created_at__lte=&time_step=minute`;
-					break;
-				case "one_hour":
-					queryString += `?created_at__gte=&created_at__lte=&time_step=hour`;
-					break;
-				case "one_day":
-					queryString += `?created_at__gte=&created_at__lte=&time_step=day`;
-					break;
-				default:
-					break;
-			}
-		}
-
-		setUpdatedUptimeApiEndpoint(`${customUptimeApiEndpoint + queryString}`);
-
-		// Mutate "uptime" endpoint after successful 200 OK or 201 Created response is issued
-		mutate(updatedUptimeApiEndpoint, null, {
-			optimisticData: uptime?.data,
-			rollbackOnError: true,
-			revalidate: true
-		});
-	};
-
 	return (
 		<div className="h-full overflow-hidden rounded-lg border">
 			<div className="flex justify-between py-8 px-5">
@@ -299,41 +270,6 @@ const ResponseTimeStats = () => {
 						{isComponentReady ? responseTimeText : <Skeleton duration={2} width={100} height={15} />}
 					</h2>
 				</div>
-
-				{isComponentReady ? (
-					<div className="inline-flex space-x-3">
-						<button
-							onClick={(e) => handleUpdateTimeStep(e, "one_minute")}
-							className="text-gray-320 text-sm font-medium leading-5 hover:underline"
-						>
-							{minuteText}
-						</button>
-						<span className="text-gray-300" aria-hidden="true">
-							|
-						</span>
-						<button
-							onClick={(e) => handleUpdateTimeStep(e, "one_hour")}
-							className="text-gray-320 text-sm font-medium leading-5 hover:underline"
-						>
-							{hourText}
-						</button>
-						<span className="text-gray-300" aria-hidden="true">
-							|
-						</span>
-						<button
-							onClick={(e) => handleUpdateTimeStep(e, "one_day")}
-							className="text-gray-320 text-sm font-medium leading-5 hover:underline"
-						>
-							{dayText}
-						</button>
-					</div>
-				) : (
-					<div className="inline-flex space-x-3">
-						<Skeleton duration={2} width={75} height={15} />
-						<Skeleton duration={2} width={75} height={15} />
-						<Skeleton duration={2} width={75} height={15} />
-					</div>
-				)}
 			</div>
 			<div className="mx-auto flex justify-center px-5">
 				<div className="mt-4 mb-8 flow-root w-full">
