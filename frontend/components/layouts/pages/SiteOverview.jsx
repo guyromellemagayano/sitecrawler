@@ -48,12 +48,8 @@ const SiteOverviewPageLayout = () => {
 					</div>
 
 					<div className="mb-8 grid grid-flow-col grid-cols-4 gap-8">
-						<div>
-							<MemoizedCurrentStatusStats />
-						</div>
-						<div>
-							<MemoizedUptimeStats />
-						</div>
+						<MemoizedCurrentStatusStats />
+						<MemoizedUptimeStats />
 						<div className="col-span-3 row-span-2">
 							<MemoizedResponseTimeStats />
 						</div>
