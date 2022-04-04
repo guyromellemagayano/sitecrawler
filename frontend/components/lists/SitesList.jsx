@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 import { memo } from "react";
 import Scrollbars from "react-custom-scrollbars-2";
 import "react-loading-skeleton/dist/skeleton.css";
-import { useSWRConfig } from "swr";
 import { MemoizedSiteList } from "./SiteList";
 
 /**
@@ -27,9 +26,6 @@ const SitesList = ({ openDropdown = false, sites = null }) => {
 		selectedSite,
 		selectedSiteDetails
 	} = useSiteSelection();
-
-	// SWR hook for global mutations
-	const { mutate } = useSWRConfig();
 
 	// Custom variables
 	const sitesCount = sites?.data?.count ?? null;
