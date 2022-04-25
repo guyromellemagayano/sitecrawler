@@ -14,8 +14,7 @@ const SiteSelect = () => {
 	const { isComponentReady, sites } = useContext(SiteCrawlerAppContext);
 
 	// Custom hooks
-	const { siteSelectRef, isSiteSelectComponentVisible, setIsSiteSelectComponentVisible, selectedSiteDetails } =
-		useSiteSelection();
+	const { siteSelectRef, isSiteSelectComponentVisible, setIsSiteSelectComponentVisible } = useSiteSelection();
 
 	return (
 		<div className="relative space-y-1">
