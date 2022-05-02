@@ -19,13 +19,8 @@ const SitesList = ({ openDropdown = false, sites = null }) => {
 	const loaderMessage = t("common:loaderMessage");
 
 	// Custom hooks
-	const {
-		siteSelectRef,
-		isSiteSelectComponentVisible,
-		setIsSiteSelectComponentVisible,
-		selectedSite,
-		selectedSiteDetails
-	} = useSiteSelection();
+	const { siteSelectRef, isSiteSelectComponentVisible, setIsSiteSelectComponentVisible, selectedSite } =
+		useSiteSelection();
 
 	// Custom variables
 	const sitesCount = sites?.data?.count ?? null;

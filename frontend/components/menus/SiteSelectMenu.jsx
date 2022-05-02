@@ -42,13 +42,15 @@ const SiteSelectMenu = ({ handleOpenDropdown }) => {
 					{selectedSiteDetails ? (
 						<div className="flex items-center space-x-3">
 							<span
-								aria-label={selectedSiteDetails.verified ? (currentScan ? recrawlingInProcess : verified) : notVerified}
+								aria-label={
+									selectedSiteDetails?.verified ? (currentScan ? recrawlingInProcess : verified) : notVerified
+								}
 								className={classnames(
 									"inline-block h-2 w-2 flex-shrink-0 rounded-full",
-									selectedSiteDetails.verified ? (currentScan ? "bg-yellow-400" : "bg-green-400") : "bg-red-400"
+									selectedSiteDetails?.verified ? (currentScan ? "bg-yellow-400" : "bg-green-400") : "bg-red-400"
 								)}
 							></span>
-							<span className="block truncate font-medium text-gray-500">{selectedSiteDetails.name}</span>
+							<span className="block truncate font-medium text-gray-500">{selectedSiteDetails?.name}</span>
 						</div>
 					) : (
 						labelsArray[0].label
