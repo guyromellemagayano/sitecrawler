@@ -96,10 +96,10 @@
     core-js-pure "^3.20.2"
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.10.1", "@babel/runtime@^7.10.2", "@babel/runtime@^7.15.4", "@babel/runtime@^7.16.3", "@babel/runtime@^7.17.8":
-  version "7.17.8"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.17.8.tgz#3e56e4aff81befa55ac3ac6a0967349fd1c5bca2"
-  integrity sha512-dQpEpK0O9o6lj6oPu0gRDbbnk+4LeHlNcBpspf6Olzt3GIX4P1lWF1gS+pHLDFlaJvbR6q7jCfQ08zA4QJBnmA==
+"@babel/runtime@^7.10.1", "@babel/runtime@^7.10.2", "@babel/runtime@^7.15.4", "@babel/runtime@^7.16.3", "@babel/runtime@^7.17.9":
+  version "7.17.9"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.17.9.tgz#d19fbf802d01a8cb6cf053a64e472d42c434ba72"
+  integrity sha512-lSiBBvodq29uShpWGNbgFdKYNiFDo5/HIYsaCEY9ff4sb10x9jizo2+pRrSyF4jKZCXqgzuqBOQKbUm90gQwJg==
   dependencies:
     regenerator-runtime "^0.13.4"
 
@@ -519,14 +519,13 @@
     lodash.isplainobject "^4.0.6"
     lodash.merge "^4.6.2"
 
-"@tanem/react-nprogress@^4.0.13":
-  version "4.0.13"
-  resolved "https://registry.yarnpkg.com/@tanem/react-nprogress/-/react-nprogress-4.0.13.tgz#4621dc33f4549648b0eac9d22bda3f6fe373f088"
-  integrity sha512-ItmjT1m2S0QfEwl1827uLYMXVAAelkc0MqUublobqpubKMIwYWbkCrR0BiJ5yefTRBj26fG6MKwhFTkT5tFjBQ==
+"@tanem/react-nprogress@^5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@tanem/react-nprogress/-/react-nprogress-5.0.0.tgz#5da9b9f5719f40192dea7d7157fe5fa0da64061e"
+  integrity sha512-ReHCykV4pRIiXsPvbIwZ7Qrxx+940W5AdPsrXeFJlxBWUa9HEMtjXxwwvCoFbnlDF1ZziNvriAvgD/rneM9v3g==
   dependencies:
-    "@babel/runtime" "^7.17.8"
+    "@babel/runtime" "^7.17.9"
     hoist-non-react-statics "^3.3.2"
-    prop-types "^15.8.1"
 
 "@types/json5@^0.0.29":
   version "0.0.29"
