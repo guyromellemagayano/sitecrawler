@@ -7,7 +7,7 @@ import { classnames } from "@utils/classnames";
 import PropTypes from "prop-types";
 import { memo, useContext } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
-import { MemoizedSidebarLayout } from "./components/Sidebar";
+import { MemoizedSidebarLayout } from "./Sidebar";
 
 /**
  * Custom function to render the `DashboardLayout` component
