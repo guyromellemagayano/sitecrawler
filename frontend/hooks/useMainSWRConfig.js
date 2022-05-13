@@ -5,7 +5,6 @@ import { handleGetMethod } from "@helpers/handleHttpMethods";
 import * as Sentry from "@sentry/nextjs";
 import { useRouter } from "next/router";
 import useSWR, { useSWRConfig } from "swr";
-const { createContext, useContext } = require("react");
 
 /**
  * Main SWR React hook that will handle all the data fetching, error reporting, and revalidating when `onErrorRetry` is triggered within the app
