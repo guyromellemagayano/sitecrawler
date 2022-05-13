@@ -249,7 +249,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [asPath, state.isComponentReady]);
 
 	// `user` SWR hook
-	const { user, validatingUser } = useUser(state.customUserApiEndpoint, {
+	const { user } = useUser(state.customUserApiEndpoint, {
 		refreshInterval: (e) =>
 			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
 				? NoInterval
@@ -257,7 +257,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	});
 
 	// `stripePromise` SWR hook
-	const { stripePromise, validatingStripePromise } = useStripePromise(state.customStripePromiseApiEndpoint, {
+	const { stripePromise } = useStripePromise(state.customStripePromiseApiEndpoint, {
 		refreshInterval: (e) =>
 			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
 				? NoInterval
@@ -265,7 +265,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	});
 
 	// `paymentMethods` SWR hook
-	const { paymentMethods, validatingPaymentMethods } = usePaymentMethods(state.customPaymentMethodsApiEndpoint, {
+	const { paymentMethods } = usePaymentMethods(state.customPaymentMethodsApiEndpoint, {
 		refreshInterval: (e) =>
 			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
 				? NoInterval
@@ -273,18 +273,15 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	});
 
 	// `defaultPaymentMethod` SWR hook
-	const { defaultPaymentMethod, validatingDefaultPaymentMethod } = useDefaultPaymentMethod(
-		state.customDefaultPaymentMethodApiEndpoint,
-		{
-			refreshInterval: (e) =>
-				e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data)?.length > 0 && !e.data?.detail
-					? NoInterval
-					: RevalidationInterval
-		}
-	);
+	const { defaultPaymentMethod } = useDefaultPaymentMethod(state.customDefaultPaymentMethodApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data)?.length > 0 && !e.data?.detail
+				? NoInterval
+				: RevalidationInterval
+	});
 
 	// `subscriptions` SWR hook
-	const { subscriptions, validatingSubscriptions } = useSubscriptions(state.customSubscriptionsApiEndpoint, {
+	const { subscriptions } = useSubscriptions(state.customSubscriptionsApiEndpoint, {
 		refreshInterval: (e) =>
 			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
 				? NoInterval
@@ -292,18 +289,15 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	});
 
 	// `currentSubscription` SWR hook
-	const { currentSubscription, validatingCurrentSubscription } = useCurrentSubscription(
-		state.customCurrentSubscriptionApiEndpoint,
-		{
-			refreshInterval: (e) =>
-				e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
-					? NoInterval
-					: RevalidationInterval
-		}
-	);
+	const { currentSubscription } = useCurrentSubscription(state.customCurrentSubscriptionApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
+				? NoInterval
+				: RevalidationInterval
+	});
 
 	// `sites` SWR hook
-	const { sites, validatingSites } = useSites(state.customSitesApiEndpoint, {
+	const { sites } = useSites(state.customSitesApiEndpoint, {
 		refreshInterval: (e) =>
 			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
 				? NoInterval
@@ -326,7 +320,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [sites, querySiteId, state.customSitesApiEndpoint]);
 
 	// `siteId` SWR hook
-	const { siteId, validatingSiteId } = useSiteId(state.customSitesIdApiEndpoint, {
+	const { siteId } = useSiteId(state.customSitesIdApiEndpoint, {
 		refreshInterval: (e) =>
 			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
 				? NoInterval
@@ -381,7 +375,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [state.customUptimeApiEndpoint]);
 
 	// `uptime` SWR hook
-	const { uptime, validatingUptime } = useUptime(state.customUptimeApiEndpoint, {
+	const { uptime } = useUptime(state.customUptimeApiEndpoint, {
 		refreshInterval: (e) =>
 			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
 				? NoInterval
@@ -389,7 +383,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	});
 
 	// `uptime summary` SWR hook
-	const { uptimeSummary, validatingUptimeSummary } = useUptimeSummary(state.customUptimeSummaryApiEndpoint, {
+	const { uptimeSummary } = useUptimeSummary(state.customUptimeSummaryApiEndpoint, {
 		refreshInterval: (e) =>
 			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
 				? NoInterval
@@ -425,7 +419,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [scan, state.customScanApiEndpoint, scanObjId]);
 
 	// `stats` SWR hook
-	const { stats, validatingStats } = useStats(state.customStatsApiEndpoint, {
+	const { stats } = useStats(state.customStatsApiEndpoint, {
 		refreshInterval: (e) =>
 			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
 				? NoInterval
@@ -467,7 +461,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [stats, user, state.customStatsApiEndpoint]);
 
 	// `links` SWR hook
-	const { links, validatingLinks } = useLinks(state.customLinksApiEndpoint, {
+	const { links } = useLinks(state.customLinksApiEndpoint, {
 		refreshInterval: (e) =>
 			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
 				? NoInterval
@@ -475,7 +469,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	});
 
 	// `pages` SWR hook
-	const { pages, validatingPages } = usePages(state.customPagesApiEndpoint, {
+	const { pages } = usePages(state.customPagesApiEndpoint, {
 		refreshInterval: (e) =>
 			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
 				? NoInterval
@@ -483,7 +477,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	});
 
 	// `images` SWR hook
-	const { images, validatingImages } = useImages(state.customImagesApiEndpoint, {
+	const { images } = useImages(state.customImagesApiEndpoint, {
 		refreshInterval: (e) =>
 			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data)?.length > 0 && !e.data?.detail
 				? NoInterval
@@ -506,7 +500,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [links, queryLinkId, state.customLinksApiEndpoint]);
 
 	// `linkId` SWR hook
-	const { linkId, validatingLinkId } = useLinkId(state.customLinksIdApiEndpoint, {
+	const { linkId } = useLinkId(state.customLinksIdApiEndpoint, {
 		refreshInterval: (e) =>
 			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
 				? NoInterval
@@ -529,7 +523,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [pages, queryPageId, state.customPagesApiEndpoint]);
 
 	// `pageId` SWR hook
-	const { pageId, validatingPageId } = usePageId(state.customPagesIdApiEndpoint, {
+	const { pageId } = usePageId(state.customPagesIdApiEndpoint, {
 		refreshInterval: (e) =>
 			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
 				? NoInterval
@@ -552,7 +546,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [images, queryImageId, state.customImagesApiEndpoint]);
 
 	// `imageId` SWR hook
-	const { imageId, validatingImageId } = useImageId(state.customImagesIdApiEndpoint, {
+	const { imageId } = useImageId(state.customImagesIdApiEndpoint, {
 		refreshInterval: (e) =>
 			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
 				? NoInterval
@@ -597,25 +591,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 				subscriptions,
 				uptime,
 				uptimeSummary,
-				user,
-				validatingCurrentSubscription,
-				validatingDefaultPaymentMethod,
-				validatingImageId,
-				validatingImages,
-				validatingLinkId,
-				validatingLinks,
-				validatingPageId,
-				validatingPages,
-				validatingPaymentMethods,
-				validatingScan,
-				validatingSiteId,
-				validatingSites,
-				validatingStats,
-				validatingStripePromise,
-				validatingSubscriptions,
-				validatingUptime,
-				validatingUptimeSummary,
-				validatingUser
+				user
 			}}
 		>
 			<MemoizedProgressBar />
