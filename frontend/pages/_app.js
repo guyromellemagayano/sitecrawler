@@ -203,16 +203,14 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// Router
 	const { isReady, query, asPath } = useRouter();
 
+	// Query values
+	const querySiteId = query.siteId ? handleConversionStringToNumber(query.siteId) : null;
+	const queryLinkId = query.linkId ? handleConversionStringToNumber(query.linkId) : null;
+	const queryPageId = query.pageId ? handleConversionStringToNumber(query.pageId) : null;
+	const queryImageId = query.imageId ? handleConversionStringToNumber(query.imageId) : null;
+
 	// Custom hooks
 	const { state: notificationMessageState, setConfig } = useNotificationMessage();
-
-	useEffect(() => {
-		if (isReady) {
-			setTimeout(() => dispatch({ type: "SET_COMPONENT_READY", payload: true }), ComponentReadyInterval);
-		} else {
-			dispatch({ type: "SET_COMPONENT_READY", payload: false });
-		}
-	}, [isReady]);
 
 	useEffect(() => {
 		// LogRocket setup
@@ -223,8 +221,16 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, []);
 
 	useEffect(() => {
+		if (isReady) {
+			setTimeout(() => dispatch({ type: "SET_COMPONENT_READY", payload: true }), ComponentReadyInterval);
+		} else {
+			dispatch({ type: "SET_COMPONENT_READY", payload: false });
+		}
+	}, [isReady]);
+
+	useEffect(() => {
 		// Custom API endpoint states that rely on `user` value
-		if (asPath.includes(DashboardSlug)) {
+		if (state.isComponentReady && asPath.includes(DashboardSlug)) {
 			dispatch({ type: "SET_CUSTOM_USER_API_ENDPOINT", payload: UserApiEndpoint });
 			dispatch({ type: "SET_CUSTOM_SITES_API_ENDPOINT", payload: SitesApiEndpoint });
 			dispatch({ type: "SET_CUSTOM_STRIPE_PROMISE_API_ENDPOINT", payload: StripePromiseApiEndpoint });
@@ -240,10 +246,10 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			dispatch({ type: "SET_CUSTOM_SUBSCRIPTIONS_API_ENDPOINT", payload: null });
 			dispatch({ type: "SET_CUSTOM_CURRENT_SUBSCRIPTION_API_ENDPOINT", payload: null });
 		}
-	}, [asPath]);
+	}, [asPath, state.isComponentReady]);
 
 	// `user` SWR hook
-	const { user, errorUser, validatingUser } = useUser(state.customUserApiEndpoint, {
+	const { user, validatingUser } = useUser(state.customUserApiEndpoint, {
 		refreshInterval: (e) =>
 			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
 				? NoInterval
@@ -251,45 +257,42 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	});
 
 	// `stripePromise` SWR hook
-	const { stripePromise, errorStripePromise, validatingStripePromise } = useStripePromise(
-		state.customStripePromiseApiEndpoint
-	);
+	const { stripePromise, validatingStripePromise } = useStripePromise(state.customStripePromiseApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
+				? NoInterval
+				: RevalidationInterval
+	});
 
 	// `paymentMethods` SWR hook
-	const { paymentMethods, errorPaymentMethods, validatingPaymentMethods } = usePaymentMethods(
-		state.customPaymentMethodsApiEndpoint,
-		{
-			refreshInterval: (e) =>
-				e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
-					? NoInterval
-					: RevalidationInterval
-		}
-	);
+	const { paymentMethods, validatingPaymentMethods } = usePaymentMethods(state.customPaymentMethodsApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
+				? NoInterval
+				: RevalidationInterval
+	});
 
 	// `defaultPaymentMethod` SWR hook
-	const { defaultPaymentMethod, errorDefaultPaymentMethod, validatingDefaultPaymentMethod } = useDefaultPaymentMethod(
+	const { defaultPaymentMethod, validatingDefaultPaymentMethod } = useDefaultPaymentMethod(
 		state.customDefaultPaymentMethodApiEndpoint,
 		{
 			refreshInterval: (e) =>
-				e && Math.round(e?.status / 100) === 2 && e?.data && Object.keys(e?.data)?.length > 0 && !e?.data?.detail
+				e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data)?.length > 0 && !e.data?.detail
 					? NoInterval
 					: RevalidationInterval
 		}
 	);
 
 	// `subscriptions` SWR hook
-	const { subscriptions, errorSubscriptions, validatingSubscriptions } = useSubscriptions(
-		state.customSubscriptionsApiEndpoint,
-		{
-			refreshInterval: (e) =>
-				e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
-					? NoInterval
-					: RevalidationInterval
-		}
-	);
+	const { subscriptions, validatingSubscriptions } = useSubscriptions(state.customSubscriptionsApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
+				? NoInterval
+				: RevalidationInterval
+	});
 
 	// `currentSubscription` SWR hook
-	const { currentSubscription, errorCurrentSubscription, validatingCurrentSubscription } = useCurrentSubscription(
+	const { currentSubscription, validatingCurrentSubscription } = useCurrentSubscription(
 		state.customCurrentSubscriptionApiEndpoint,
 		{
 			refreshInterval: (e) =>
@@ -300,28 +303,30 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	);
 
 	// `sites` SWR hook
-	const { sites, errorSites, validatingSites } = useSites(state.customSitesApiEndpoint, {
+	const { sites, validatingSites } = useSites(state.customSitesApiEndpoint, {
 		refreshInterval: (e) =>
 			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
 				? NoInterval
 				: RevalidationInterval
 	});
 
-	// Query values
-	const querySiteId = query?.siteId ? handleConversionStringToNumber(query.siteId) : null;
-	const queryLinkId = query?.linkId ? handleConversionStringToNumber(query.linkId) : null;
-	const queryPageId = query?.pageId ? handleConversionStringToNumber(query.pageId) : null;
-	const queryImageId = query?.imageId ? handleConversionStringToNumber(query.imageId) : null;
-
 	// Custom `siteId` SWR hook
 	useEffect(() => {
-		sites && sites.data && Object.keys(sites).length > 0 && state.customSitesApiEndpoint.length > 0 && querySiteId
-			? dispatch({ type: "SET_CUSTOM_SITES_ID_API_ENDPOINT", payload: querySiteId })
-			: dispatch({ type: "SET_CUSTOM_SITES_ID_API_ENDPOINT", payload: null });
+		if (
+			sites &&
+			sites.data &&
+			Object.keys(sites.data).length > 0 &&
+			state.customSitesApiEndpoint.length > 0 &&
+			querySiteId
+		) {
+			dispatch({ type: "SET_CUSTOM_SITES_ID_API_ENDPOINT", payload: querySiteId });
+		} else {
+			dispatch({ type: "SET_CUSTOM_SITES_ID_API_ENDPOINT", payload: null });
+		}
 	}, [sites, querySiteId, state.customSitesApiEndpoint]);
 
 	// `siteId` SWR hook
-	const { siteId, errorSiteId, validatingSiteId } = useSiteId(state.customSitesIdApiEndpoint, {
+	const { siteId, validatingSiteId } = useSiteId(state.customSitesIdApiEndpoint, {
 		refreshInterval: (e) =>
 			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
 				? NoInterval
@@ -376,7 +381,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [state.customUptimeApiEndpoint]);
 
 	// `uptime` SWR hook
-	const { uptime, errorUptime, validatingUptime } = useUptime(state.customUptimeApiEndpoint, {
+	const { uptime, validatingUptime } = useUptime(state.customUptimeApiEndpoint, {
 		refreshInterval: (e) =>
 			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
 				? NoInterval
@@ -384,19 +389,15 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	});
 
 	// `uptime summary` SWR hook
-	const { uptimeSummary, errorUptimeSummary, validatingUptimeSummary } = useUptimeSummary(
-		state.customUptimeSummaryApiEndpoint,
-		{
-			refreshInterval: (e) =>
-				e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
-					? NoInterval
-					: RevalidationInterval
-		}
-	);
+	const { uptimeSummary, validatingUptimeSummary } = useUptimeSummary(state.customUptimeSummaryApiEndpoint, {
+		refreshInterval: (e) =>
+			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
+				? NoInterval
+				: RevalidationInterval
+	});
 
 	// `scan` SWR hook
 	const {
-		errorScan,
 		handleCrawl,
 		isCrawlFinished,
 		isCrawlStarted,
@@ -424,7 +425,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [scan, state.customScanApiEndpoint, scanObjId]);
 
 	// `stats` SWR hook
-	const { stats, errorStats, validatingStats } = useStats(state.customStatsApiEndpoint, {
+	const { stats, validatingStats } = useStats(state.customStatsApiEndpoint, {
 		refreshInterval: (e) =>
 			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
 				? NoInterval
@@ -466,7 +467,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [stats, user, state.customStatsApiEndpoint]);
 
 	// `links` SWR hook
-	const { links, errorLinks, validatingLinks } = useLinks(state.customLinksApiEndpoint, {
+	const { links, validatingLinks } = useLinks(state.customLinksApiEndpoint, {
 		refreshInterval: (e) =>
 			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
 				? NoInterval
@@ -474,7 +475,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	});
 
 	// `pages` SWR hook
-	const { pages, errorPages, validatingPages } = usePages(state.customPagesApiEndpoint, {
+	const { pages, validatingPages } = usePages(state.customPagesApiEndpoint, {
 		refreshInterval: (e) =>
 			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
 				? NoInterval
@@ -482,9 +483,9 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	});
 
 	// `images` SWR hook
-	const { images, errorImages, validatingImages } = useImages(state.customImagesApiEndpoint, {
+	const { images, validatingImages } = useImages(state.customImagesApiEndpoint, {
 		refreshInterval: (e) =>
-			e && Math.round(e?.status / 100) === 2 && e?.data && Object.keys(e?.data)?.length > 0 && !e?.data?.detail
+			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data)?.length > 0 && !e.data?.detail
 				? NoInterval
 				: RevalidationInterval
 	});
@@ -505,7 +506,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [links, queryLinkId, state.customLinksApiEndpoint]);
 
 	// `linkId` SWR hook
-	const { linkId, errorLinkId, validatingLinkId } = useLinkId(state.customLinksIdApiEndpoint, {
+	const { linkId, validatingLinkId } = useLinkId(state.customLinksIdApiEndpoint, {
 		refreshInterval: (e) =>
 			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
 				? NoInterval
@@ -528,7 +529,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [pages, queryPageId, state.customPagesApiEndpoint]);
 
 	// `pageId` SWR hook
-	const { pageId, errorPageId, validatingPageId } = usePageId(state.customPagesIdApiEndpoint, {
+	const { pageId, validatingPageId } = usePageId(state.customPagesIdApiEndpoint, {
 		refreshInterval: (e) =>
 			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
 				? NoInterval
@@ -551,7 +552,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	}, [images, queryImageId, state.customImagesApiEndpoint]);
 
 	// `imageId` SWR hook
-	const { imageId, errorImageId, validatingImageId } = useImageId(state.customImagesIdApiEndpoint, {
+	const { imageId, validatingImageId } = useImageId(state.customImagesIdApiEndpoint, {
 		refreshInterval: (e) =>
 			e && Math.round(e.status / 100) === 2 && e.data && Object.keys(e.data).length > 0 && !e.data.detail
 				? NoInterval
@@ -568,24 +569,6 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 				currentSubscription,
 				state,
 				defaultPaymentMethod,
-				errorCurrentSubscription,
-				errorDefaultPaymentMethod,
-				errorImageId,
-				errorImages,
-				errorLinkId,
-				errorLinks,
-				errorPageId,
-				errorPages,
-				errorPaymentMethods,
-				errorScan,
-				errorSiteId,
-				errorSites,
-				errorStats,
-				errorStripePromise,
-				errorSubscriptions,
-				errorUptime,
-				errorUptimeSummary,
-				errorUser,
 				handleCrawl,
 				imageId,
 				images,
