@@ -1,11 +1,14 @@
-FROM node:17-alpine AS dev
+FROM node:19-alpine3.15 AS dev
 
 RUN apk add --no-cache libc6-compat
+
 WORKDIR /app
 
 COPY package.json yarn.lock ./
 
-RUN yarn install --frozen-lockfile
+RUN apk add yarn --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ && \
+	yarn install --pure-lockfile && \
+	apk del yarn
 
 COPY . ./
 

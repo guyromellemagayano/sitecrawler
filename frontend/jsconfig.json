@@ -5,15 +5,37 @@
 		"jsxImportSource": "react",
 		"resolveJsonModule": true,
 		"paths": {
-			"@components/*": ["./components/*"],
-			"@constants/*": ["./constants/*"],
-			"@enums/*": ["./enums/*"],
-			"@helpers/*": ["./helpers/*"],
-			"@hooks/*": ["./hooks/*"],
-			"@pages/*": ["./pages/*"],
-			"@styles/*": ["./styles/*"],
-			"@utils/*": ["./utils/*"]
+			"@components/*": [
+				"./components/*"
+			],
+			"@constants/*": [
+				"./constants/*"
+			],
+			"@contexts/*": [
+				"./contexts/*"
+			],
+			"@enums/*": [
+				"./enums/*"
+			],
+			"@helpers/*": [
+				"./helpers/*"
+			],
+			"@hooks/*": [
+				"./hooks/*"
+			],
+			"@pages/*": [
+				"./pages/*"
+			],
+			"@styles/*": [
+				"./styles/*"
+			],
+			"@utils/*": [
+				"./utils/*"
+			]
 		}
 	},
-	"exclude": ["./node_modules/", "./.next/"]
+	"exclude": [
+		"./node_modules/",
+		"./.next/"
+	]
 }

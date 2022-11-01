@@ -1,3 +1,5 @@
-
 # Sentry
 .sentryclirc
+
+# Yarn
+.yarn/
