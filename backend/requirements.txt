@@ -1,6 +1,6 @@
 django==3.2.7
 psycopg2==2.9.3
-boto3==1.22.4
+boto3==1.26.0
 django-filter==21.1
 django-health-check==3.16.5
 djangorestframework==3.13.1
