@@ -20,7 +20,7 @@ require (
 	github.com/stretchr/testify v1.6.1
 	github.com/vmihailenco/tagparser v0.1.2 // indirect
 	go.uber.org/zap v1.15.0
-	golang.org/x/crypto v0.0.0-20201012173705-84dcc777aaee // indirect
+	golang.org/x/crypto v0.1.0 // indirect
 	google.golang.org/api v0.54.0
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 )
