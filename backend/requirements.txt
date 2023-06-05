@@ -3,7 +3,7 @@ psycopg2==2.9.6
 boto3==1.26.0
 django-filter==21.1
 django-health-check==3.17.0
-djangorestframework==3.13.1
+djangorestframework==3.14.0
 django-rest-auth[with_social]==0.9.5
 drf-extensions==0.7.1
 requests==2.31.0
