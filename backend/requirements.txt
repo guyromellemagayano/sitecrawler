@@ -1,5 +1,5 @@
 django==4.2.4
-psycopg2==2.9.6
+psycopg2==2.9.7
 boto3==1.28.37
 django-filter==23.2
 django-health-check==3.17.0
