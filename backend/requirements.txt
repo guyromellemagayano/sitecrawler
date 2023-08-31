@@ -1,4 +1,4 @@
-django==4.2.1
+django==4.2.4
 psycopg2==2.9.6
 boto3==1.28.37
 django-filter==21.1
