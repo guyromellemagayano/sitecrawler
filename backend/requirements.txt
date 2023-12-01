@@ -11,7 +11,7 @@ django-filter==23.2
 django-filter==23.3
 sentry-sdk==1.25.0
 sentry-sdk==1.32.0
-stripe==6.7.0
+stripe==7.7.0
 django-better-admin-arrayfield==1.4.2
 django-loginas==0.3.11
 djangorestframework-csv==2.1.1
