@@ -10,13 +10,13 @@ updates:
     schedule:
       interval: "daily"
     reviewers:
-      - "domenipavec"
+      - "guyromellemagayano"
   - package-ecosystem: "pip"
     directory: "/deploy"
     schedule:
       interval: "daily"
     reviewers:
-      - "domenipavec"
+      - "guyromellemagayano"
   - package-ecosystem: "npm"
     directory: "/frontend"
     schedule:
