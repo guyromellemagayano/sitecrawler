@@ -4,7 +4,7 @@ django-filter==23.5
 django-health-check==3.17.0
 django-loginas==0.3.11
 django-rest-auth[with_social]==0.9.5
-django==5.0
+django==5.0.1
 djangorestframework-csv==2.1.1
 djangorestframework==3.14.0
 drf-extensions==0.7.1
