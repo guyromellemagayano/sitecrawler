@@ -1,4 +1,4 @@
 awscli==1.32.11
-boto3==1.34.11
+boto3==1.34.15
 fabric==3.2.2
 requests==2.31.0
