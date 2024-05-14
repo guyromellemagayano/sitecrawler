@@ -1,4 +1,4 @@
-boto3==1.34.103
+boto3==1.34.104
 django-better-admin-arrayfield==1.4.2
 django-filter==24.2
 django-health-check==3.18.2
