@@ -9,6 +9,6 @@ djangorestframework-csv==3.0.2
 djangorestframework==3.15.1
 drf-extensions==0.7.1
 psycopg2==2.9.9
-requests==2.31.0
+requests==2.32.0
 sentry-sdk==2.1.1
 stripe==9.6.0
