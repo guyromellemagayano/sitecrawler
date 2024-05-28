@@ -45,7 +45,7 @@
 		"@fortawesome/react-fontawesome": "^0.2.0",
 		"@headlessui/react": "2.0.3",
 		"@heroicons/react": "^2.0.12",
-		"@sentry/nextjs": "7.114.0",
+		"@sentry/nextjs": "8.5.0",
 		"@stripe/react-stripe-js": "^2.7.1",
 		"@stripe/stripe-js": "^3.4.0",
 		"@tailwindcss/aspect-ratio": "^0.4.2",
