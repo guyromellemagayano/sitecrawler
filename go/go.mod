@@ -10,14 +10,14 @@ require (
 	github.com/getsentry/sentry-go v0.7.0
 	github.com/go-pg/pg/v9 v9.0.1
 	github.com/go-pg/zerochecker v0.2.0 // indirect
-	github.com/hashicorp/go-retryablehttp v0.6.6
+	github.com/hashicorp/go-retryablehttp v0.7.7
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/onsi/ginkgo v1.14.2 // indirect
 	github.com/onsi/gomega v1.10.3 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/robfig/cron v1.2.0
 	github.com/robfig/cron/v3 v3.0.1
-	github.com/stretchr/testify v1.6.1
+	github.com/stretchr/testify v1.7.2
 	github.com/vmihailenco/tagparser v0.1.2 // indirect
 	go.uber.org/zap v1.15.0
 	golang.org/x/crypto v0.17.0 // indirect
