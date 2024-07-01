@@ -11,4 +11,4 @@ drf-extensions==0.7.1
 psycopg2==2.9.9
 requests==2.32.3
 sentry-sdk==2.7.1
-stripe==9.6.0
+stripe==10.1.0
