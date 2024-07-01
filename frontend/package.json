@@ -65,7 +65,7 @@
 		"next-compose-plugins": "^2.2.1",
 		"next-seo": "^6.5.0",
 		"next-translate": "^2.6.2",
-		"next": "^14.2.3",
+		"next": "^14.2.4",
 		"prop-types": "^15.8.1",
 		"rc-pagination": "^4.0.4",
 		"react-apexcharts": "^1.4.0",
