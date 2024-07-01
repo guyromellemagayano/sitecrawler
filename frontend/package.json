@@ -85,7 +85,7 @@
 		"yup": "^1.4.0"
 	},
 	"devDependencies": {
-		"@next/bundle-analyzer": "^14.2.3",
+		"@next/bundle-analyzer": "^14.2.4",
 		"autoprefixer": "^10.4.13",
 		"cross-env": "^7.0.3",
 		"eslint": "^9.2.0",
